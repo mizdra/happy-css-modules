@@ -15,6 +15,7 @@ interface RunOptions {
   camelCase?: boolean;
   namedExports?: boolean;
   dropExtension?: boolean;
+  declarationMap?: boolean;
   silent?: boolean;
 }
 
@@ -28,6 +29,7 @@ export async function run(searchDir: string, options: RunOptions = {}): Promise<
     camelCase: options.camelCase,
     namedExports: options.namedExports,
     dropExtension: options.dropExtension,
+    declarationMap: options.declarationMap,
   });
 
   const writeFile = async (f: string): Promise<void> => {

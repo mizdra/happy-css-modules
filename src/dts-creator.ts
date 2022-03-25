@@ -12,6 +12,7 @@ interface DtsCreatorOptions {
   camelCase?: CamelCaseOption;
   namedExports?: boolean;
   dropExtension?: boolean;
+  declarationMap?: boolean;
   EOL?: string;
   loaderPlugins?: Plugin<any>[];
 }
@@ -26,6 +27,7 @@ export class DtsCreator {
   private camelCase: CamelCaseOption;
   private namedExports: boolean;
   private dropExtension: boolean;
+  private declarationMap: boolean;
   private EOL: string;
 
   constructor(options?: DtsCreatorOptions) {
@@ -39,6 +41,7 @@ export class DtsCreator {
     this.camelCase = options.camelCase;
     this.namedExports = !!options.namedExports;
     this.dropExtension = !!options.dropExtension;
+    this.declarationMap = !!options.declarationMap;
     this.EOL = options.EOL || os.EOL;
   }
 
