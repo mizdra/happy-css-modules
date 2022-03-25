@@ -10,6 +10,10 @@ type Dictionary<T> = {
   [key: string]: T | undefined;
 };
 
+type ExportToken = {
+  name: string;
+};
+
 const readFile = util.promisify(fs.readFile);
 
 export default class FileSystemLoader {
@@ -32,7 +36,7 @@ export default class FileSystemLoader {
     relativeTo: string,
     _trace?: string,
     initialContents?: string,
-  ): Promise<Core.ExportTokens> {
+  ): Promise<ExportToken[]> {
     const newPath = _newPath.replace(/^["']|["']$/g, '');
     const trace = _trace || String.fromCharCode(this.importNr++);
 
@@ -54,14 +58,14 @@ export default class FileSystemLoader {
     if (!initialContents) {
       const tokens = this.tokensByFile[fileRelativePath];
       if (tokens) {
-        return tokens;
+        return Object.keys(tokens).map(name => ({ name }));
       }
 
       try {
         source = await readFile(fileRelativePath, 'utf-8');
       } catch (error) {
         if (relativeTo && relativeTo !== '/') {
-          return {};
+          return [];
         }
 
         throw error;
@@ -100,6 +104,6 @@ export default class FileSystemLoader {
 
     this.sources[trace] = injectableSource;
     this.tokensByFile[fileRelativePath] = tokens;
-    return tokens;
+    return Object.keys(tokens).map(name => ({ name }));
   }
 }

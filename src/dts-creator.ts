@@ -59,7 +59,7 @@ export class DtsCreator {
     const res = await this.loader.fetch(filePath, '/', undefined, initialContents);
     if (res) {
       const tokens = res;
-      const keys = Object.keys(tokens);
+      const rawTokenList = tokens.map(t => t.name);
 
       const content = new DtsContent({
         dropExtension: this.dropExtension,
@@ -67,7 +67,7 @@ export class DtsCreator {
         searchDir: this.searchDir,
         outDir: this.outDir,
         rInputPath,
-        rawTokenList: keys,
+        rawTokenList,
         namedExports: this.namedExports,
         camelCase: this.camelCase,
         EOL: this.EOL,
