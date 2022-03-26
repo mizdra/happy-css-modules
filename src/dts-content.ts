@@ -18,6 +18,7 @@ type Result = {
 
 interface DtsContentOptions {
   dropExtension: boolean;
+  declarationMap: boolean;
   rootDir: string;
   searchDir: string;
   outDir: string;
@@ -30,6 +31,7 @@ interface DtsContentOptions {
 
 export class DtsContent {
   private dropExtension: boolean;
+  private declarationMap: boolean;
   private rootDir: string;
   private searchDir: string;
   private outDir: string;
@@ -42,6 +44,7 @@ export class DtsContent {
 
   constructor(options: DtsContentOptions) {
     this.dropExtension = options.dropExtension;
+    this.declarationMap = options.declarationMap;
     this.rootDir = options.rootDir;
     this.searchDir = options.searchDir;
     this.outDir = options.outDir;

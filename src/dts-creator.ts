@@ -60,6 +60,7 @@ export class DtsCreator {
     if (rawTokenList) {
       const content = new DtsContent({
         dropExtension: this.dropExtension,
+        declarationMap: this.declarationMap,
         rootDir: this.rootDir,
         searchDir: this.searchDir,
         outDir: this.outDir,
