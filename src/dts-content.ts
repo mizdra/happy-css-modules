@@ -12,6 +12,10 @@ const readFile = util.promisify(fs.readFile);
 
 export type CamelCaseOption = boolean | 'dashes' | undefined;
 
+type Result = {
+  typeDeclaration: string;
+};
+
 interface DtsContentOptions {
   dropExtension: boolean;
   rootDir: string;
@@ -33,7 +37,7 @@ export class DtsContent {
   private rawTokenList: ExportToken[];
   private namedExports: boolean;
   private camelCase: CamelCaseOption;
-  private resultList: string[];
+  private resultList: Result[];
   private EOL: string;
 
   constructor(options: DtsContentOptions) {
@@ -58,7 +62,7 @@ export class DtsContent {
     this.resultList = this.createResultList();
   }
 
-  public get contents(): string[] {
+  public get contents(): Result[] {
     return this.resultList;
   }
 
@@ -67,14 +71,22 @@ export class DtsContent {
 
     if (this.namedExports) {
       return (
-        ['export const __esModule: true;', ...this.resultList.map(line => 'export ' + line), ''].join(os.EOL) + this.EOL
+        [
+          'export const __esModule: true;',
+          ...this.resultList.map(result => 'export ' + result.typeDeclaration),
+          '',
+        ].join(os.EOL) + this.EOL
       );
     }
 
     return (
-      ['declare const styles: {', ...this.resultList.map(line => '  ' + line), '};', 'export = styles;', ''].join(
-        os.EOL,
-      ) + this.EOL
+      [
+        'declare const styles: {',
+        ...this.resultList.map(result => '  ' + result.typeDeclaration),
+        '};',
+        'export = styles;',
+        '',
+      ].join(os.EOL) + this.EOL
     );
   }
 
@@ -116,12 +128,14 @@ export class DtsContent {
     }
   }
 
-  private createResultList(): string[] {
+  private createResultList(): Result[] {
     const convertKey = this.getConvertKeyMethod(this.camelCase);
 
-    const result = this.rawTokenList
-      .map(k => convertKey(k.name))
-      .map(k => (!this.namedExports ? 'readonly "' + k + '": string;' : 'const ' + k + ': string;'));
+    const result = this.rawTokenList.map(rawToken => {
+      const key = convertKey(rawToken.name);
+      const typeDeclaration = !this.namedExports ? 'readonly "' + key + '": string;' : 'const ' + key + ': string;';
+      return { typeDeclaration };
+    });
 
     return result;
   }
