@@ -84,6 +84,20 @@ function generateExportTokensWithOriginalPositions(
   }));
 }
 
+function mergeTokens(a: ExportToken[], b: ExportToken[]): ExportToken[] {
+  const result: ExportToken[] = [];
+  const names = new Set([...a.map(token => token.name), ...b.map(token => token.name)]);
+  for (const name of names) {
+    const aToken = a.find(token => token.name === name);
+    const bToken = b.find(token => token.name === name);
+    result.push({
+      name,
+      originalPositions: [...(aToken?.originalPositions || []), ...(bToken?.originalPositions || [])],
+    });
+  }
+  return result;
+}
+
 export default class FileSystemLoader {
   private root: string;
   private sources: Dictionary<string>;
@@ -173,7 +187,9 @@ export default class FileSystemLoader {
       }
     }
 
-    const tokens = { ...exportTokens, ...importTokens };
+    // `exportTokens` and `importTokens` may contain tokens with the same name.
+    // Therefore, `originalPositions` of the tokens with the same name must be merged.
+    const tokens = mergeTokens(exportTokens, importTokens);
 
     this.sources[trace] = injectableSource;
     this.tokensByFile[fileRelativePath] = tokens;
