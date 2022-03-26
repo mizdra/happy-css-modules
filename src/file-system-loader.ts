@@ -4,17 +4,85 @@ import Core from 'css-modules-loader-core';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as util from 'util';
-import { Plugin } from 'postcss';
+import postcss, { Plugin } from 'postcss';
 
 type Dictionary<T> = {
   [key: string]: T | undefined;
 };
 
-type ExportToken = {
+export type ExportToken = {
+  /** The name of the export token. */
   name: string;
+  /**
+   * The original positions of the export token in the source file.
+   * Cascading tokens may have multiple positions.
+   */
+  originalPositions: Position[];
+};
+
+export type Position = {
+  filePath: string;
+  /** The line number in the source file. It is 1-based. */
+  line?: number;
+  /** The column number in the source file. It is 0-based. */
+  column?: number;
 };
 
 const readFile = util.promisify(fs.readFile);
+
+/**
+ * Generate the export tokens with original positions from the source file.
+ * @param source The source file.
+ * @param fileRelativePath The relative path to the source file.
+ * @param exportTokenNames The names of the export tokens.
+ * @returns The export tokens.
+ */
+function generateExportTokensWithOriginalPositions(
+  source: string,
+  fileRelativePath: string,
+  exportTokenNames: string[],
+): ExportToken[] {
+  // It works as follows:
+  // 1. Convert source code to AST with postcss
+  // 2. Traverses AST and finds tokens matching `exportTokenNames`
+  // 3. Extract the location information of the token
+
+  const tokenToPositionsMap = new Map<string, Position[]>();
+
+  const ast = postcss.parse(source);
+
+  ast.walkRules(ruleInSource => {
+    exportTokenNames.forEach(tokenName => {
+      // In `ruleInSource.selector` comes the following string:
+      // 1. ".foo"
+      // 2. ".foo:hover"
+      // 3. ".foo, .bar"
+
+      // For the time being, only pattern 1 is supported.
+      // TODO: Support pattern 2 and 3.
+      const tokenNameInSource = ruleInSource.selector.replace(/^\./, '');
+      if (tokenNameInSource === tokenName) {
+        // The rule node derived from `postcss.parse` always has a source property. Therefore, this line is unreachable.
+        if (ruleInSource.source === undefined) throw new Error('ruleInSource.source is undefined');
+
+        const positions = tokenToPositionsMap.get(tokenName) || [];
+        const newPosition: Position = {
+          filePath: fileRelativePath,
+          // TODO: If `source` contains an inline sourcemap, use the sourcemap to get the line and column.
+          // This allows support for scss and less users.
+          line: ruleInSource.source.start?.line,
+          // Postcss's column is 1-based but our column is 0-based.
+          column: ruleInSource.source.start?.column ? ruleInSource.source.start.column - 1 : undefined,
+        };
+        tokenToPositionsMap.set(tokenName, [...positions, newPosition]);
+      }
+    });
+  });
+  return [...tokenToPositionsMap.entries()].map(([tokenName, positions]) => ({
+    name: tokenName,
+    originalPositions: positions,
+  }));
+}
 
 export default class FileSystemLoader {
   private root: string;
@@ -74,13 +142,17 @@ export default class FileSystemLoader {
       source = initialContents;
     }
 
-    const { injectableSource, exportTokens: exportTokenNames } = await this.core.load(
+    const { injectableSource, exportTokens: coreExportTokens } = await this.core.load(
       source,
       rootRelativePath,
       trace,
       this.fetch.bind(this),
     );
-    const exportTokens: ExportToken[] = Object.keys(exportTokenNames).map(name => ({ name }));
+    const exportTokens: ExportToken[] = generateExportTokensWithOriginalPositions(
+      source,
+      fileRelativePath,
+      Object.keys(coreExportTokens),
+    );
 
     const re = new RegExp(/@import\s'(\D+?)';/, 'gm');
 
