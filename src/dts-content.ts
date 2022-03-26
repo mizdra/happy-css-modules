@@ -5,6 +5,7 @@ import isThere from 'is-there';
 import * as mkdirp from 'mkdirp';
 import * as util from 'util';
 import camelcase from 'camelcase';
+import { ExportToken } from './file-system-loader';
 
 const writeFile = util.promisify(fs.writeFile);
 const readFile = util.promisify(fs.readFile);
@@ -17,7 +18,7 @@ interface DtsContentOptions {
   searchDir: string;
   outDir: string;
   rInputPath: string;
-  rawTokenList: string[];
+  rawTokenList: ExportToken[];
   namedExports: boolean;
   camelCase: CamelCaseOption;
   EOL: string;
@@ -29,7 +30,7 @@ export class DtsContent {
   private searchDir: string;
   private outDir: string;
   private rInputPath: string;
-  private rawTokenList: string[];
+  private rawTokenList: ExportToken[];
   private namedExports: boolean;
   private camelCase: CamelCaseOption;
   private resultList: string[];
@@ -77,7 +78,7 @@ export class DtsContent {
     );
   }
 
-  public get tokens(): string[] {
+  public get tokens(): ExportToken[] {
     return this.rawTokenList;
   }
 
@@ -119,7 +120,7 @@ export class DtsContent {
     const convertKey = this.getConvertKeyMethod(this.camelCase);
 
     const result = this.rawTokenList
-      .map(k => convertKey(k))
+      .map(k => convertKey(k.name))
       .map(k => (!this.namedExports ? 'readonly "' + k + '": string;' : 'const ' + k + ': string;'));
 
     return result;

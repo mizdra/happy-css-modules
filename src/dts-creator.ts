@@ -56,11 +56,8 @@ export class DtsCreator {
       this.loader.tokensByFile = {};
     }
 
-    const res = await this.loader.fetch(filePath, '/', undefined, initialContents);
-    if (res) {
-      const tokens = res;
-      const rawTokenList = tokens.map(t => t.name);
-
+    const rawTokenList = await this.loader.fetch(filePath, '/', undefined, initialContents);
+    if (rawTokenList) {
       const content = new DtsContent({
         dropExtension: this.dropExtension,
         rootDir: this.rootDir,
@@ -75,7 +72,7 @@ export class DtsCreator {
 
       return content;
     } else {
-      throw res;
+      throw rawTokenList;
     }
   }
 }
