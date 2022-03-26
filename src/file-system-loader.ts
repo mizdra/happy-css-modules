@@ -21,7 +21,7 @@ export default class FileSystemLoader {
   private sources: Dictionary<string>;
   private importNr: number;
   private core: Core;
-  public tokensByFile: Dictionary<Core.ExportTokens>;
+  public tokensByFile: Dictionary<ExportToken[]>;
 
   constructor(root: string, plugins?: Array<Plugin<any>>) {
     this.root = root;
@@ -58,7 +58,7 @@ export default class FileSystemLoader {
     if (!initialContents) {
       const tokens = this.tokensByFile[fileRelativePath];
       if (tokens) {
-        return Object.keys(tokens).map(name => ({ name }));
+        return tokens;
       }
 
       try {
@@ -74,16 +74,17 @@ export default class FileSystemLoader {
       source = initialContents;
     }
 
-    const { injectableSource, exportTokens } = await this.core.load(
+    const { injectableSource, exportTokens: exportTokenNames } = await this.core.load(
       source,
       rootRelativePath,
       trace,
       this.fetch.bind(this),
     );
+    const exportTokens: ExportToken[] = Object.keys(exportTokenNames).map(name => ({ name }));
 
     const re = new RegExp(/@import\s'(\D+?)';/, 'gm');
 
-    let importTokens: Core.ExportTokens = {};
+    let importTokens: ExportToken[] = [];
 
     let result;
 
@@ -104,6 +105,6 @@ export default class FileSystemLoader {
 
     this.sources[trace] = injectableSource;
     this.tokensByFile[fileRelativePath] = tokens;
-    return Object.keys(tokens).map(name => ({ name }));
+    return tokens;
   }
 }
