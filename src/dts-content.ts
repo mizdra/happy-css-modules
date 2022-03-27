@@ -212,13 +212,13 @@ export class DtsContent {
     if (!this.resultList || !this.resultList.length) {
       sourceNode = new SourceNode(null, null, null, '');
     } else if (this.namedExports) {
-      sourceNode = new SourceNode(null, null, null, [
+      sourceNode = new SourceNode(1, 0, path.resolve(this.rInputPath), [
         'export const __esModule: true;' + os.EOL,
         ...resultList.map(result => [result, os.EOL]),
         this.EOL,
       ]);
     } else {
-      sourceNode = new SourceNode(1, 0, this.rInputPath, [
+      sourceNode = new SourceNode(1, 0, path.resolve(this.rInputPath), [
         'declare const styles: {' + os.EOL,
         ...resultList.map(result => ['  ', result, os.EOL]),
         '};' + os.EOL,
