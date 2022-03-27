@@ -144,38 +144,47 @@ export class DtsContent {
 
   private createResultList(): typeof SourceNode[] {
     const convertKey = this.getConvertKeyMethod(this.camelCase);
+    const result: typeof SourceNode[] = [];
 
-    const result = this.rawTokenList.map(rawToken => {
-      // NOTE: Only one original position can be associated with one generated position.
-      // This is due to the sourcemap specification. Here we have no choice but to extract only one original position.
-      // TODO: Consider how to preserve multiple original positions.
-      const originalPosition = rawToken.originalPositions[0];
+    for (const rawToken of this.rawTokenList) {
       const key = convertKey(rawToken.name);
 
-      if (this.namedExports) {
-        return new SourceNode(null, null, null, [
-          'export const ',
-          new SourceNode(
-            originalPosition.line ?? null,
-            originalPosition.column ?? null,
-            originalPosition.filePath,
-            `${key}`,
-          ),
-          ': string;',
-        ]);
-      } else {
-        return new SourceNode(null, null, null, [
-          'readonly ',
-          new SourceNode(
-            originalPosition.line ?? null,
-            originalPosition.column ?? null,
-            originalPosition.filePath,
-            `"${key}"`,
-          ),
-          ': string;',
-        ]);
+      // Only one original position can be associated with one generated position.
+      // This is due to the sourcemap specification. Therefore, we output multiple type definitions
+      // with the same name and assign a separate original position to each.
+
+      // NOTE: `--namedExport` does not support multiple jump destinations
+      // TODO: Support multiple jump destinations with `--namedExport`
+      for (const originalPosition of rawToken.originalPositions) {
+        if (this.namedExports) {
+          result.push(
+            new SourceNode(null, null, null, [
+              'export const ',
+              new SourceNode(
+                originalPosition.line ?? null,
+                originalPosition.column ?? null,
+                originalPosition.filePath,
+                `${key}`,
+              ),
+              ': string;',
+            ]),
+          );
+        } else {
+          result.push(
+            new SourceNode(null, null, null, [
+              'readonly ',
+              new SourceNode(
+                originalPosition.line ?? null,
+                originalPosition.column ?? null,
+                originalPosition.filePath,
+                `"${key}"`,
+              ),
+              ': string;',
+            ]),
+          );
+        }
       }
-    });
+    }
     return result;
   }
 
