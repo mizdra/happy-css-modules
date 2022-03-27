@@ -4,7 +4,8 @@ import Core from 'css-modules-loader-core';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as util from 'util';
-import postcss, { Plugin } from 'postcss';
+import postcss, { Plugin, Rule } from 'postcss';
+import selectorParser from 'postcss-selector-parser';
 
 type Dictionary<T> = {
   [key: string]: T | undefined;
@@ -30,6 +31,26 @@ export type Position = {
 
 const readFile = util.promisify(fs.readFile);
 
+function walkClassNames(source: string, callback: (className: selectorParser.ClassName, rule: Rule) => void): void {
+  const ast = postcss.parse(source);
+  ast.walkRules(rule => {
+    // In `rule.selector` comes the following string:
+    // 1. ".foo"
+    // 2. ".foo:hover"
+    // 3. ".foo, .bar"
+    selectorParser(selectors => {
+      selectors.walk(selector => {
+        if (selector.type === 'class') {
+          // In `selector.value` comes the following string:
+          // 1. "foo"
+          // 2. "bar"
+          callback(selector, rule);
+        }
+      });
+    }).processSync(rule);
+  });
+}
+
 /**
  * Generate the export tokens with original positions from the source file.
  * @param source The source file.
@@ -49,35 +70,29 @@ function generateExportTokensWithOriginalPositions(
 
   const tokenToPositionsMap = new Map<string, Position[]>();
 
-  const ast = postcss.parse(source);
+  walkClassNames(source, (className, rule) => {
+    const matchTokenName = exportTokenNames.find(name => className.value === name);
+    if (!matchTokenName) return;
 
-  ast.walkRules(ruleInSource => {
-    exportTokenNames.forEach(tokenName => {
-      // In `ruleInSource.selector` comes the following string:
-      // 1. ".foo"
-      // 2. ".foo:hover"
-      // 3. ".foo, .bar"
+    // The node derived from `postcss.parse` always has `source` property. Therefore, this line is unreachable.
+    if (rule.source === undefined || className.source === undefined) throw new Error('Node#source is undefined');
+    // The node derived from `postcss.parse` always has `start` property. Therefore, this line is unreachable.
+    if (rule.source.start === undefined || className.source.start === undefined)
+      throw new Error('Node#start is undefined');
 
-      // For the time being, only pattern 1 is supported.
-      // TODO: Support pattern 2 and 3.
-      const tokenNameInSource = ruleInSource.selector.replace(/^\./, '');
-      if (tokenNameInSource === tokenName) {
-        // The rule node derived from `postcss.parse` always has a source property. Therefore, this line is unreachable.
-        if (ruleInSource.source === undefined) throw new Error('ruleInSource.source is undefined');
-
-        const positions = tokenToPositionsMap.get(tokenName) || [];
-        const newPosition: Position = {
-          filePath: fileRelativePath,
-          // TODO: If `source` contains an inline sourcemap, use the sourcemap to get the line and column.
-          // This allows support for scss and less users.
-          line: ruleInSource.source.start?.line,
-          // Postcss's column is 1-based but our column is 0-based.
-          column: ruleInSource.source.start?.column ? ruleInSource.source.start.column - 1 : undefined,
-        };
-        tokenToPositionsMap.set(tokenName, [...positions, newPosition]);
-      }
-    });
+    const positions = tokenToPositionsMap.get(matchTokenName) || [];
+    const newPosition: Position = {
+      filePath: fileRelativePath,
+      // The line is 1-based.
+      // TODO: If `source` contains an inline sourcemap, use the sourcemap to get the line and column.
+      // This allows support for scss and less users.
+      line: rule.source.start.line + className.source.start.line - 1,
+      // Postcss's column is 1-based but our column is 0-based.
+      column: rule.source.start.column - 1 + (className.source.start.column - 1),
+    };
+    tokenToPositionsMap.set(matchTokenName, [...positions, newPosition]);
   });
+
   return [...tokenToPositionsMap.entries()].map(([tokenName, positions]) => ({
     name: tokenName,
     originalPositions: positions,
