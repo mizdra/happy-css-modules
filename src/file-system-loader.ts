@@ -6,6 +6,8 @@ import * as path from 'path';
 import * as util from 'util';
 import postcss, { Plugin, Rule } from 'postcss';
 import selectorParser from 'postcss-selector-parser';
+import { fromComment } from 'convert-source-map';
+import { SourceMapConsumer } from 'source-map';
 
 type Dictionary<T> = {
   [key: string]: T | undefined;
@@ -58,17 +60,22 @@ function walkClassNames(source: string, callback: (className: selectorParser.Cla
  * @param exportTokenNames The names of the export tokens.
  * @returns The export tokens.
  */
-function generateExportTokensWithOriginalPositions(
+async function generateExportTokensWithOriginalPositions(
   source: string,
   fileRelativePath: string,
   exportTokenNames: string[],
-): ExportToken[] {
+): Promise<ExportToken[]> {
   // It works as follows:
   // 1. Convert source code to AST with postcss
   // 2. Traverses AST and finds tokens matching `exportTokenNames`
   // 3. Extract the location information of the token
 
   const tokenToPositionsMap = new Map<string, Position[]>();
+
+  let sourcemap: SourceMapConsumer | undefined;
+  try {
+    sourcemap = await new SourceMapConsumer(fromComment(source).toObject());
+  } catch (e) {}
 
   walkClassNames(source, (className, rule) => {
     const matchTokenName = exportTokenNames.find(name => className.value === name);
@@ -81,7 +88,7 @@ function generateExportTokensWithOriginalPositions(
       throw new Error('Node#start is undefined');
 
     const positions = tokenToPositionsMap.get(matchTokenName) || [];
-    const newPosition: Position = {
+    let newPosition: Position = {
       filePath: fileRelativePath,
       // The line is 1-based.
       // TODO: If `source` contains an inline sourcemap, use the sourcemap to get the line and column.
@@ -90,6 +97,18 @@ function generateExportTokensWithOriginalPositions(
       // Postcss's column is 1-based but our column is 0-based.
       column: rule.source.start.column - 1 + (className.source.start.column - 1),
     };
+
+    if (sourcemap && newPosition.line !== undefined && newPosition.column !== undefined) {
+      const originalPosition = sourcemap.originalPositionFor({
+        line: newPosition.line,
+        column: newPosition.column,
+      });
+      newPosition = {
+        filePath: originalPosition.source ?? fileRelativePath,
+        line: originalPosition.line ?? undefined,
+        column: originalPosition.column ?? undefined,
+      };
+    }
     tokenToPositionsMap.set(matchTokenName, [...positions, newPosition]);
   });
 
@@ -177,7 +196,7 @@ export default class FileSystemLoader {
       trace,
       this.fetch.bind(this),
     );
-    const exportTokens: ExportToken[] = generateExportTokensWithOriginalPositions(
+    const exportTokens: ExportToken[] = await generateExportTokensWithOriginalPositions(
       source,
       fileRelativePath,
       Object.keys(coreExportTokens),
