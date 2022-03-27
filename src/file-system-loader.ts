@@ -132,7 +132,7 @@ export default class FileSystemLoader {
     _newPath: string,
     relativeTo: string,
     _trace?: string,
-    initialContents?: string,
+    transform?: (newPath: string) => Promise<string>,
   ): Promise<ExportToken[]> {
     const newPath = _newPath.replace(/^["']|["']$/g, '');
     const trace = _trace || String.fromCharCode(this.importNr++);
@@ -152,7 +152,7 @@ export default class FileSystemLoader {
 
     let source: string;
 
-    if (!initialContents) {
+    if (!transform) {
       const tokens = this.tokensByFile[fileRelativePath];
       if (tokens) {
         return tokens;
@@ -168,7 +168,7 @@ export default class FileSystemLoader {
         throw error;
       }
     } else {
-      source = initialContents;
+      source = await transform(newPath);
     }
 
     const { injectableSource, exportTokens: coreExportTokens } = await this.core.load(
@@ -197,7 +197,7 @@ export default class FileSystemLoader {
           ? importFile
           : path.resolve(path.dirname(fileRelativePath), importFile);
 
-        const localTokens = await this.fetch(importFilePath, relativeTo, undefined, initialContents);
+        const localTokens = await this.fetch(importFilePath, relativeTo, undefined, transform);
         Object.assign(importTokens, localTokens);
       }
     }

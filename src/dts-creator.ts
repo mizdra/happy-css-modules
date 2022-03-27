@@ -45,7 +45,11 @@ export class DtsCreator {
     this.EOL = options.EOL || os.EOL;
   }
 
-  public async create(filePath: string, initialContents?: string, clearCache: boolean = false): Promise<DtsContent> {
+  public async create(
+    filePath: string,
+    transform?: (newPath: string) => Promise<string>,
+    clearCache: boolean = false,
+  ): Promise<DtsContent> {
     let rInputPath: string;
     if (path.isAbsolute(filePath)) {
       rInputPath = path.relative(this.inputDirectory, filePath);
@@ -56,7 +60,7 @@ export class DtsCreator {
       this.loader.tokensByFile = {};
     }
 
-    const rawTokenList = await this.loader.fetch(filePath, '/', undefined, initialContents);
+    const rawTokenList = await this.loader.fetch(filePath, '/', undefined, transform);
     if (rawTokenList) {
       const content = new DtsContent({
         dropExtension: this.dropExtension,
