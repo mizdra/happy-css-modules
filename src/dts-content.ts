@@ -151,17 +151,29 @@ export class DtsContent {
       // TODO: Consider how to preserve multiple original positions.
       const originalPosition = rawToken.originalPositions[0];
       const key = convertKey(rawToken.name);
-      const keySourceNode = new SourceNode(
-        originalPosition.line ?? null,
-        originalPosition.column ?? null,
-        originalPosition.filePath,
-        `"${key}"`,
-      );
 
       if (this.namedExports) {
-        return new SourceNode(null, null, null, ['const ', keySourceNode, ': string;']);
+        return new SourceNode(null, null, null, [
+          'export const ',
+          new SourceNode(
+            originalPosition.line ?? null,
+            originalPosition.column ?? null,
+            originalPosition.filePath,
+            `${key}`,
+          ),
+          ': string;',
+        ]);
       } else {
-        return new SourceNode(null, null, null, ['readonly ', keySourceNode, ': string;']);
+        return new SourceNode(null, null, null, [
+          'readonly ',
+          new SourceNode(
+            originalPosition.line ?? null,
+            originalPosition.column ?? null,
+            originalPosition.filePath,
+            `"${key}"`,
+          ),
+          ': string;',
+        ]);
       }
     });
     return result;
