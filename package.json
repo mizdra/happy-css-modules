@@ -43,6 +43,7 @@
     "glob": "^7.1.2",
     "is-there": "^4.4.2",
     "mkdirp": "^1.0.0",
+    "postcss-selector-parser": "^6.0.9",
     "source-map": "^0.7.3",
     "yargs": "^15.4.1"
   },
