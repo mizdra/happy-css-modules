@@ -11,6 +11,10 @@ import { CodeWithSourceMap, SourceNode } from './source-map';
 const writeFile = util.promisify(fs.writeFile);
 const readFile = util.promisify(fs.readFile);
 
+function getRelativePath(fromFilePath: string, toFilePath: string): string {
+  return path.relative(path.dirname(fromFilePath), toFilePath);
+}
+
 export type CamelCaseOption = boolean | 'dashes' | undefined;
 
 interface DtsContentOptions {
@@ -163,7 +167,7 @@ export class DtsContent {
               new SourceNode(
                 originalPosition.line ?? null,
                 originalPosition.column ?? null,
-                originalPosition.filePath,
+                getRelativePath(this.outputMapFilePath, originalPosition.filePath),
                 `${key}`,
               ),
               ': string;',
@@ -176,7 +180,7 @@ export class DtsContent {
               new SourceNode(
                 originalPosition.line ?? null,
                 originalPosition.column ?? null,
-                originalPosition.filePath,
+                getRelativePath(this.outputMapFilePath, originalPosition.filePath),
                 `"${key}"`,
               ),
               ': string;',
@@ -221,13 +225,13 @@ export class DtsContent {
     if (!this.resultList || !this.resultList.length) {
       sourceNode = new SourceNode(null, null, null, '');
     } else if (this.namedExports) {
-      sourceNode = new SourceNode(1, 0, path.resolve(this.rInputPath), [
+      sourceNode = new SourceNode(1, 0, getRelativePath(this.outputMapFilePath, this.rInputPath), [
         'export const __esModule: true;' + os.EOL,
         ...resultList.map(result => [result, os.EOL]),
         this.EOL,
       ]);
     } else {
-      sourceNode = new SourceNode(1, 0, path.resolve(this.rInputPath), [
+      sourceNode = new SourceNode(1, 0, getRelativePath(this.outputMapFilePath, this.rInputPath), [
         'declare const styles: {' + os.EOL,
         ...resultList.map(result => ['  ', result, os.EOL]),
         '};' + os.EOL,
