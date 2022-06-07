@@ -1,5 +1,5 @@
 {
-  "name": "typed-css-modules",
+  "name": "checkable-css-modules",
   "version": "0.7.0",
   "description": "Creates .d.ts files from CSS Modules .css files",
   "main": "lib/index.js",
@@ -23,7 +23,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Quramy/typed-css-modules.git"
+    "url": "https://github.com/Quramy/checkable-css-modules.git"
   },
   "keywords": [
     "css-modules",
