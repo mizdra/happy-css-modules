@@ -5,19 +5,26 @@ import isThere from 'is-there';
 import * as mkdirp from 'mkdirp';
 import * as util from 'util';
 import camelcase from 'camelcase';
+import { ExportToken } from './file-system-loader';
+import { CodeWithSourceMap, SourceNode } from './source-map';
 
 const writeFile = util.promisify(fs.writeFile);
 const readFile = util.promisify(fs.readFile);
+
+function getRelativePath(fromFilePath: string, toFilePath: string): string {
+  return path.relative(path.dirname(fromFilePath), toFilePath);
+}
 
 export type CamelCaseOption = boolean | 'dashes' | undefined;
 
 interface DtsContentOptions {
   dropExtension: boolean;
+  declarationMap: boolean;
   rootDir: string;
   searchDir: string;
   outDir: string;
   rInputPath: string;
-  rawTokenList: string[];
+  rawTokenList: ExportToken[];
   namedExports: boolean;
   camelCase: CamelCaseOption;
   EOL: string;
@@ -25,18 +32,20 @@ interface DtsContentOptions {
 
 export class DtsContent {
   private dropExtension: boolean;
+  private declarationMap: boolean;
   private rootDir: string;
   private searchDir: string;
   private outDir: string;
   private rInputPath: string;
-  private rawTokenList: string[];
+  private rawTokenList: ExportToken[];
   private namedExports: boolean;
   private camelCase: CamelCaseOption;
-  private resultList: string[];
+  private resultList: typeof SourceNode[];
   private EOL: string;
 
   constructor(options: DtsContentOptions) {
     this.dropExtension = options.dropExtension;
+    this.declarationMap = options.declarationMap;
     this.rootDir = options.rootDir;
     this.searchDir = options.searchDir;
     this.outDir = options.outDir;
@@ -58,26 +67,15 @@ export class DtsContent {
   }
 
   public get contents(): string[] {
-    return this.resultList;
+    return this.resultList.map(result => result.toString());
   }
 
   public get formatted(): string {
-    if (!this.resultList || !this.resultList.length) return '';
-
-    if (this.namedExports) {
-      return (
-        ['export const __esModule: true;', ...this.resultList.map(line => 'export ' + line), ''].join(os.EOL) + this.EOL
-      );
-    }
-
-    return (
-      ['declare const styles: {', ...this.resultList.map(line => '  ' + line), '};', 'export = styles;', ''].join(
-        os.EOL,
-      ) + this.EOL
-    );
+    const codeWithSourceMap = this.createCodeWithSourceMap();
+    return codeWithSourceMap.code;
   }
 
-  public get tokens(): string[] {
+  public get tokens(): ExportToken[] {
     return this.rawTokenList;
   }
 
@@ -86,12 +84,29 @@ export class DtsContent {
     return path.join(this.rootDir, this.outDir, outputFileName + '.d.ts');
   }
 
+  private get outputMapFilePath(): string {
+    return this.outputFilePath + '.map';
+  }
+
   public get inputFilePath(): string {
     return path.join(this.rootDir, this.searchDir, this.rInputPath);
   }
 
-  public async writeFile(postprocessor = (formatted: string) => formatted): Promise<void> {
-    const finalOutput = postprocessor(this.formatted);
+  public async writeFile(postprocessor?: (formatted: string) => string): Promise<void> {
+    // Positioning information is broken when processed by the postprocessor.
+    // Therefore, disable the output of the sourcemap.
+    // TODO: Allow postprocessor to handle sourcemap.
+    if (this.declarationMap && postprocessor) {
+      throw new Error('`postprocessor` and declaration map cannot be used together.');
+    }
+
+    const codeWithSourceMap = this.createCodeWithSourceMap();
+
+    // Since sourcemap and type definitions are in the same directory, they can be referenced by relative paths.
+    const finalOutput = postprocessor
+      ? postprocessor(codeWithSourceMap.code)
+      : codeWithSourceMap.code + `//# sourceMappingURL=${path.basename(this.outputMapFilePath)}` + this.EOL;
+    const finalMapOutput = this.declarationMap ? codeWithSourceMap.map.toString() : undefined;
 
     const outPathDir = path.dirname(this.outputFilePath);
     if (!isThere(outPathDir)) {
@@ -109,19 +124,71 @@ export class DtsContent {
         isDirty = true;
       }
     }
+    if (this.declarationMap) {
+      if (!isThere(this.outputMapFilePath)) {
+        isDirty = true;
+      } else {
+        const mapContent = (await readFile(this.outputMapFilePath)).toString();
+        if (mapContent !== finalMapOutput) {
+          isDirty = true;
+        }
+      }
+    }
 
     if (isDirty) {
-      await writeFile(this.outputFilePath, finalOutput, 'utf8');
+      if (finalMapOutput) {
+        // NOTE: tsserver does not support inline declaration maps. Therefore, sourcemap files must be output.
+        await writeFile(this.outputFilePath, finalOutput, 'utf8');
+        await writeFile(this.outputMapFilePath, finalMapOutput, 'utf8');
+      } else {
+        await writeFile(this.outputFilePath, finalOutput, 'utf8');
+      }
     }
   }
 
-  private createResultList(): string[] {
+  private createResultList(): typeof SourceNode[] {
     const convertKey = this.getConvertKeyMethod(this.camelCase);
+    const result: typeof SourceNode[] = [];
 
-    const result = this.rawTokenList
-      .map(k => convertKey(k))
-      .map(k => (!this.namedExports ? 'readonly "' + k + '": string;' : 'const ' + k + ': string;'));
+    for (const rawToken of this.rawTokenList) {
+      const key = convertKey(rawToken.name);
 
+      // Only one original position can be associated with one generated position.
+      // This is due to the sourcemap specification. Therefore, we output multiple type definitions
+      // with the same name and assign a separate original position to each.
+
+      // NOTE: `--namedExport` does not support multiple jump destinations
+      // TODO: Support multiple jump destinations with `--namedExport`
+      for (const originalPosition of rawToken.originalPositions) {
+        if (this.namedExports) {
+          result.push(
+            new SourceNode(null, null, null, [
+              'export const ',
+              new SourceNode(
+                originalPosition.line ?? null,
+                originalPosition.column ?? null,
+                getRelativePath(this.outputMapFilePath, originalPosition.filePath),
+                `${key}`,
+              ),
+              ': string;',
+            ]),
+          );
+        } else {
+          result.push(
+            new SourceNode(null, null, null, [
+              'readonly ',
+              new SourceNode(
+                originalPosition.line ?? null,
+                originalPosition.column ?? null,
+                getRelativePath(this.outputMapFilePath, originalPosition.filePath),
+                `"${key}"`,
+              ),
+              ': string;',
+            ]),
+          );
+        }
+      }
+    }
     return result;
   }
 
@@ -146,6 +213,38 @@ export class DtsContent {
     return str.replace(/-+(\w)/g, function (match, firstLetter) {
       return firstLetter.toUpperCase();
     });
+  }
+
+  /**
+   * Generate the `CodeWithSourceMap`.
+   */
+  private createCodeWithSourceMap(): CodeWithSourceMap {
+    const resultList = this.createResultList();
+
+    let sourceNode: typeof SourceNode;
+    if (!this.resultList || !this.resultList.length) {
+      sourceNode = new SourceNode(null, null, null, '');
+    } else if (this.namedExports) {
+      sourceNode = new SourceNode(1, 0, getRelativePath(this.outputMapFilePath, this.rInputPath), [
+        'export const __esModule: true;' + os.EOL,
+        ...resultList.map(result => [result, os.EOL]),
+        this.EOL,
+      ]);
+    } else {
+      sourceNode = new SourceNode(1, 0, getRelativePath(this.outputMapFilePath, this.rInputPath), [
+        'declare const styles: {' + os.EOL,
+        ...resultList.map(result => ['  ', result, os.EOL]),
+        '};' + os.EOL,
+        'export = styles;' + os.EOL,
+        this.EOL,
+      ]);
+    }
+    const codeWithSourceMap = sourceNode.toStringWithSourceMap({
+      // Since sourcemap and type definitions are in the same directory, they can be referenced by relative paths.
+      file: path.basename(this.outputFilePath),
+      sourceRoot: '',
+    });
+    return codeWithSourceMap;
   }
 }
 

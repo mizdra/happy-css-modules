@@ -15,6 +15,8 @@ interface RunOptions {
   camelCase?: boolean;
   namedExports?: boolean;
   dropExtension?: boolean;
+  declarationMap?: boolean;
+  transform?: (newPath: string) => Promise<string>;
   silent?: boolean;
 }
 
@@ -28,11 +30,12 @@ export async function run(searchDir: string, options: RunOptions = {}): Promise<
     camelCase: options.camelCase,
     namedExports: options.namedExports,
     dropExtension: options.dropExtension,
+    declarationMap: options.declarationMap,
   });
 
   const writeFile = async (f: string): Promise<void> => {
     try {
-      const content: DtsContent = await creator.create(f, undefined, !!options.watch);
+      const content: DtsContent = await creator.create(f, options.transform, !!options.watch);
       await content.writeFile();
 
       if (!options.silent) {

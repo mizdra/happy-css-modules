@@ -27,6 +27,8 @@ const yarg = yargs
   .boolean('e')
   .alias('d', 'dropExtension')
   .describe('d', 'Drop the input files extension')
+  .alias('dm', 'declarationMap')
+  .describe('dm', 'Create sourcemaps for d.ts files')
   .boolean('d')
   .alias('s', 'silent')
   .describe('s', 'Silent output. Do not show "files written" messages')
