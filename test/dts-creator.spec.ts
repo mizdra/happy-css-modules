@@ -63,12 +63,12 @@ describe('DtsContent', () => {
   describe('#tokens', () => {
     it('returns original tokens', async () => {
       const content = await new DtsCreator().create('test/testStyle.css');
-      assert.deepStrictEqual(content.tokens[0], {
+      expect(content.tokens[0]).toStrictEqual({
         name: 'myClass',
         originalPositions: [
           {
             column: 0,
-            filePath: '/Users/mizdra/src/github.com/mizdra/checkable-css-modules/test/testStyle.css',
+            filePath: expect.stringMatching(/\/test\/testStyle.css$/),
             line: 1,
           },
         ],
