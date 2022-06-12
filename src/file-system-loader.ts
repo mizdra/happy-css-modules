@@ -35,13 +35,13 @@ const readFile = util.promisify(fs.readFile);
 
 function walkClassNames(source: string, callback: (className: selectorParser.ClassName, rule: Rule) => void): void {
   const ast = postcss.parse(source);
-  ast.walkRules(rule => {
+  ast.walkRules((rule) => {
     // In `rule.selector` comes the following string:
     // 1. ".foo"
     // 2. ".foo:hover"
     // 3. ".foo, .bar"
-    selectorParser(selectors => {
-      selectors.walk(selector => {
+    selectorParser((selectors) => {
+      selectors.walk((selector) => {
         if (selector.type === 'class') {
           // In `selector.value` comes the following string:
           // 1. "foo"
@@ -78,7 +78,7 @@ async function generateExportTokensWithOriginalPositions(
   } catch (e) {}
 
   walkClassNames(source, (className, rule) => {
-    const matchTokenName = exportTokenNames.find(name => className.value === name);
+    const matchTokenName = exportTokenNames.find((name) => className.value === name);
     if (!matchTokenName) return;
 
     // The node derived from `postcss.parse` always has `source` property. Therefore, this line is unreachable.
@@ -120,10 +120,10 @@ async function generateExportTokensWithOriginalPositions(
 
 function mergeTokens(a: ExportToken[], b: ExportToken[]): ExportToken[] {
   const result: ExportToken[] = [];
-  const names = new Set([...a.map(token => token.name), ...b.map(token => token.name)]);
+  const names = new Set([...a.map((token) => token.name), ...b.map((token) => token.name)]);
   for (const name of names) {
-    const aToken = a.find(token => token.name === name);
-    const bToken = b.find(token => token.name === name);
+    const aToken = a.find((token) => token.name === name);
+    const bToken = b.find((token) => token.name === name);
     result.push({
       name,
       originalPositions: [...(aToken?.originalPositions || []), ...(bToken?.originalPositions || [])],

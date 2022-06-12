@@ -67,7 +67,7 @@ export class DtsContent {
   }
 
   public get contents(): string[] {
-    return this.resultList.map(result => result.toString());
+    return this.resultList.map((result) => result.toString());
   }
 
   public get formatted(): string {
@@ -199,7 +199,7 @@ export class DtsContent {
       case 'dashes':
         return this.dashesCamelCase;
       default:
-        return key => key;
+        return (key) => key;
     }
   }
 
@@ -227,13 +227,13 @@ export class DtsContent {
     } else if (this.namedExports) {
       sourceNode = new SourceNode(1, 0, getRelativePath(this.outputMapFilePath, this.rInputPath), [
         'export const __esModule: true;' + os.EOL,
-        ...resultList.map(result => [result, os.EOL]),
+        ...resultList.map((result) => [result, os.EOL]),
         this.EOL,
       ]);
     } else {
       sourceNode = new SourceNode(1, 0, getRelativePath(this.outputMapFilePath, this.rInputPath), [
         'declare const styles: {' + os.EOL,
-        ...resultList.map(result => ['  ', result, os.EOL]),
+        ...resultList.map((result) => ['  ', result, os.EOL]),
         '};' + os.EOL,
         'export = styles;' + os.EOL,
         this.EOL,
