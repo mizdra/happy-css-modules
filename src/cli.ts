@@ -44,7 +44,8 @@ const yarg = yargs
 main().catch(console.error);
 
 async function main(): Promise<void> {
-  const argv = yarg.argv;
+  // eslint-disable-next-line @typescript-eslint/await-thenable
+  const argv = await yarg.argv;
 
   if (argv.h) {
     yarg.showHelp();
@@ -53,7 +54,7 @@ async function main(): Promise<void> {
 
   let searchDir: string;
   if (argv._ && argv._[0]) {
-    searchDir = argv._[0];
+    searchDir = argv._[0].toString();
   } else if (argv.p) {
     searchDir = './';
   } else {
