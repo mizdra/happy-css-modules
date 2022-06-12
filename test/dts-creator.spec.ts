@@ -77,7 +77,16 @@ describe('DtsContent', () => {
   describe('#tokens', () => {
     it('returns original tokens', (done) => {
       void new DtsCreator().create('test/testStyle.css').then((content) => {
-        assert.equal(content.tokens[0], 'myClass');
+        assert.deepStrictEqual(content.tokens[0], {
+          name: 'myClass',
+          originalPositions: [
+            {
+              column: 0,
+              filePath: '/Users/mizdra/src/github.com/mizdra/checkable-css-modules/test/testStyle.css',
+              line: 1,
+            },
+          ],
+        });
         done();
       });
     });
