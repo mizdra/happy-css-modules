@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
 import * as yargs from 'yargs';
 import { run } from './run';
+
+const pkgJson = JSON.parse(readFileSync(resolve(__dirname, '../package.json'), 'utf-8'));
 
 const yarg = yargs
   .usage('Create .css.d.ts from CSS modules *.css files.\nUsage: $0 [options] <search directory>')
@@ -35,9 +39,9 @@ const yarg = yargs
   .boolean('s')
   .alias('h', 'help')
   .help('h')
-  .version(require('../package.json').version);
+  .version(pkgJson.version);
 
-main();
+main().catch(console.error);
 
 async function main(): Promise<void> {
   const argv = yarg.argv;

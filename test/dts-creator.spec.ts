@@ -1,56 +1,57 @@
 'use strict';
 
-import * as path from 'path';
-
 import * as assert from 'assert';
 import * as os from 'os';
+import * as path from 'path';
 import { DtsCreator } from '../src/dts-creator';
 
 describe('DtsCreator', () => {
-  var creator = new DtsCreator();
+  const creator = new DtsCreator();
 
   describe('#create', () => {
-    it('returns DtsContent instance simple css', done => {
-      creator.create('test/testStyle.css').then(content => {
+    it('returns DtsContent instance simple css', (done) => {
+      void creator.create('test/testStyle.css').then((content) => {
         assert.equal(content.contents.length, 1);
         assert.equal(content.contents[0], 'readonly "myClass": string;');
         done();
       });
     });
-    it('rejects an error with invalid CSS', done => {
+    it('rejects an error with invalid CSS', (done) => {
       creator
         .create('test/errorCss.css')
-        .then(content => {
+        .then((content) => {
           assert.fail();
         })
-        .catch(err => {
+        .catch((err) => {
           assert.equal(err.name, 'CssSyntaxError');
           done();
         });
     });
-    it('returns DtsContent instance from composing css', done => {
-      creator.create('test/composer.css').then(content => {
+    it('returns DtsContent instance from composing css', (done) => {
+      void creator.create('test/composer.css').then((content) => {
         assert.equal(content.contents.length, 1);
         assert.equal(content.contents[0], 'readonly "root": string;');
         done();
       });
     });
-    it('returns DtsContent instance from composing css whose has invalid import/composes', done => {
-      creator.create('test/invalidComposer.scss').then(content => {
+    it('returns DtsContent instance from composing css whose has invalid import/composes', (done) => {
+      void creator.create('test/invalidComposer.scss').then((content) => {
         assert.equal(content.contents.length, 1);
         assert.equal(content.contents[0], 'readonly "myClass": string;');
         done();
       });
     });
-    it('returns DtsContent instance from the pair of path and contents', done => {
-      creator.create('test/somePath', `.myClass { color: red }`).then(content => {
-        assert.equal(content.contents.length, 1);
-        assert.equal(content.contents[0], 'readonly "myClass": string;');
-        done();
-      });
+    it('returns DtsContent instance from the pair of path and contents', (done) => {
+      void creator
+        .create('test/somePath', async () => Promise.resolve(`.myClass { color: red }`))
+        .then((content) => {
+          assert.equal(content.contents.length, 1);
+          assert.equal(content.contents[0], 'readonly "myClass": string;');
+          done();
+        });
     });
-    it('returns DtsContent instance combined css', done => {
-      creator.create('test/combined/combined.css').then(content => {
+    it('returns DtsContent instance combined css', (done) => {
+      void creator.create('test/combined/combined.css').then((content) => {
         assert.equal(content.contents.length, 3);
         assert.equal(content.contents[0], 'readonly "block": string;');
         assert.equal(content.contents[1], 'readonly "myClass": string;');
@@ -61,10 +62,10 @@ describe('DtsCreator', () => {
   });
 
   describe('#modify path', () => {
-    it('can be set outDir', done => {
-      new DtsCreator({ searchDir: 'test', outDir: 'dist' })
+    it('can be set outDir', (done) => {
+      void new DtsCreator({ searchDir: 'test', outDir: 'dist' })
         .create(path.normalize('test/testStyle.css'))
-        .then(content => {
+        .then((content) => {
           assert.equal(path.relative(process.cwd(), content.outputFilePath), path.normalize('dist/testStyle.css.d.ts'));
           done();
         });
@@ -74,8 +75,8 @@ describe('DtsCreator', () => {
 
 describe('DtsContent', () => {
   describe('#tokens', () => {
-    it('returns original tokens', done => {
-      new DtsCreator().create('test/testStyle.css').then(content => {
+    it('returns original tokens', (done) => {
+      void new DtsCreator().create('test/testStyle.css').then((content) => {
         assert.equal(content.tokens[0], 'myClass');
         done();
       });
@@ -83,8 +84,8 @@ describe('DtsContent', () => {
   });
 
   describe('#inputFilePath', () => {
-    it('returns original CSS file name', done => {
-      new DtsCreator().create(path.normalize('test/testStyle.css')).then(content => {
+    it('returns original CSS file name', (done) => {
+      void new DtsCreator().create(path.normalize('test/testStyle.css')).then((content) => {
         assert.equal(path.relative(process.cwd(), content.inputFilePath), path.normalize('test/testStyle.css'));
         done();
       });
@@ -92,15 +93,15 @@ describe('DtsContent', () => {
   });
 
   describe('#outputFilePath', () => {
-    it('adds d.ts to the original filename', done => {
-      new DtsCreator().create(path.normalize('test/testStyle.css')).then(content => {
+    it('adds d.ts to the original filename', (done) => {
+      void new DtsCreator().create(path.normalize('test/testStyle.css')).then((content) => {
         assert.equal(path.relative(process.cwd(), content.outputFilePath), path.normalize('test/testStyle.css.d.ts'));
         done();
       });
     });
 
-    it('can drop the original extension when asked', done => {
-      new DtsCreator({ dropExtension: true }).create(path.normalize('test/testStyle.css')).then(content => {
+    it('can drop the original extension when asked', (done) => {
+      void new DtsCreator({ dropExtension: true }).create(path.normalize('test/testStyle.css')).then((content) => {
         assert.equal(path.relative(process.cwd(), content.outputFilePath), path.normalize('test/testStyle.d.ts'));
         done();
       });
@@ -108,8 +109,8 @@ describe('DtsContent', () => {
   });
 
   describe('#formatted', () => {
-    it('returns formatted .d.ts string', done => {
-      new DtsCreator().create('test/testStyle.css').then(content => {
+    it('returns formatted .d.ts string', (done) => {
+      void new DtsCreator().create('test/testStyle.css').then((content) => {
         assert.equal(
           content.formatted,
           `\
@@ -124,8 +125,8 @@ export = styles;
       });
     });
 
-    it('returns named exports formatted .d.ts string', done => {
-      new DtsCreator({ namedExports: true }).create('test/testStyle.css').then(content => {
+    it('returns named exports formatted .d.ts string', (done) => {
+      void new DtsCreator({ namedExports: true }).create('test/testStyle.css').then((content) => {
         assert.equal(
           content.formatted,
           `\
@@ -138,8 +139,8 @@ export const myClass: string;
       });
     });
 
-    it('returns camelcase names when using named exports as formatted .d.ts string', done => {
-      new DtsCreator({ namedExports: true }).create('test/kebabedUpperCase.css').then(content => {
+    it('returns camelcase names when using named exports as formatted .d.ts string', (done) => {
+      void new DtsCreator({ namedExports: true }).create('test/kebabedUpperCase.css').then((content) => {
         assert.equal(
           content.formatted,
           `\
@@ -152,16 +153,16 @@ export const myClass: string;
       });
     });
 
-    it('returns empty object exportion when the result list has no items', done => {
-      new DtsCreator().create('test/empty.css').then(content => {
+    it('returns empty object exportion when the result list has no items', (done) => {
+      void new DtsCreator().create('test/empty.css').then((content) => {
         assert.equal(content.formatted, '');
         done();
       });
     });
 
     describe('#camelCase option', () => {
-      it('camelCase == true: returns camelized tokens for lowercase classes', done => {
-        new DtsCreator({ camelCase: true }).create('test/kebabed.css').then(content => {
+      it('camelCase == true: returns camelized tokens for lowercase classes', (done) => {
+        void new DtsCreator({ camelCase: true }).create('test/kebabed.css').then((content) => {
           assert.equal(
             content.formatted,
             `\
@@ -176,8 +177,8 @@ export = styles;
         });
       });
 
-      it('camelCase == true: returns camelized tokens for uppercase classes ', done => {
-        new DtsCreator({ camelCase: true }).create('test/kebabedUpperCase.css').then(content => {
+      it('camelCase == true: returns camelized tokens for uppercase classes ', (done) => {
+        void new DtsCreator({ camelCase: true }).create('test/kebabedUpperCase.css').then((content) => {
           assert.equal(
             content.formatted,
             `\
@@ -192,8 +193,8 @@ export = styles;
         });
       });
 
-      it('camelCase == "dashes": returns camelized tokens for dashes only', done => {
-        new DtsCreator({ camelCase: 'dashes' }).create('test/kebabedUpperCase.css').then(content => {
+      it('camelCase == "dashes": returns camelized tokens for dashes only', (done) => {
+        void new DtsCreator({ camelCase: 'dashes' }).create('test/kebabedUpperCase.css').then((content) => {
           assert.equal(
             content.formatted,
             `\
@@ -211,12 +212,12 @@ export = styles;
   });
 
   describe('#writeFile', () => {
-    it('accepts a postprocessor function', done => {
-      new DtsCreator()
+    it('accepts a postprocessor function', (done) => {
+      void new DtsCreator()
         .create('test/testStyle.css')
-        .then(content => {
+        .then(async (content) => {
           return content.writeFile(
-            formatted => `// this banner was added to the .d.ts file automatically.\n${formatted}`,
+            (formatted) => `// this banner was added to the .d.ts file automatically.\n${formatted}`,
           );
         })
         .then(() => {
@@ -224,10 +225,10 @@ export = styles;
         });
     });
 
-    it('writes a file', done => {
-      new DtsCreator()
+    it('writes a file', (done) => {
+      void new DtsCreator()
         .create('test/testStyle.css')
-        .then(content => {
+        .then(async (content) => {
           return content.writeFile();
         })
         .then(() => {

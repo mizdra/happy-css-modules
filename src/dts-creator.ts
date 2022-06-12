@@ -1,9 +1,9 @@
-import * as process from 'process';
-import * as path from 'path';
 import * as os from 'os';
-import FileSystemLoader from './file-system-loader';
-import { DtsContent, CamelCaseOption } from './dts-content';
+import * as path from 'path';
+import * as process from 'process';
 import { Plugin } from 'postcss';
+import { DtsContent, CamelCaseOption } from './dts-content';
+import FileSystemLoader from './file-system-loader';
 
 interface DtsCreatorOptions {
   rootDir?: string;
@@ -14,6 +14,7 @@ interface DtsCreatorOptions {
   dropExtension?: boolean;
   declarationMap?: boolean;
   EOL?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   loaderPlugins?: Plugin<any>[];
 }
 
@@ -48,7 +49,7 @@ export class DtsCreator {
   public async create(
     filePath: string,
     transform?: (newPath: string) => Promise<string>,
-    clearCache: boolean = false,
+    clearCache = false,
   ): Promise<DtsContent> {
     let rInputPath: string;
     if (path.isAbsolute(filePath)) {

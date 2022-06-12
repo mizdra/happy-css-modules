@@ -1,10 +1,10 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import isThere from 'is-there';
-import * as mkdirp from 'mkdirp';
 import * as util from 'util';
 import camelcase from 'camelcase';
+import isThere from 'is-there';
+import * as mkdirp from 'mkdirp';
 import { ExportToken } from './file-system-loader';
 import { CodeWithSourceMap, SourceNode } from './source-map';
 
@@ -67,7 +67,7 @@ export class DtsContent {
   }
 
   public get contents(): string[] {
-    return this.resultList.map(result => result.toString());
+    return this.resultList.map((result) => result.toString());
   }
 
   public get formatted(): string {
@@ -197,9 +197,9 @@ export class DtsContent {
       case true:
         return camelcase;
       case 'dashes':
-        return this.dashesCamelCase;
+        return (str: string) => this.dashesCamelCase(str);
       default:
-        return key => key;
+        return (key) => key;
     }
   }
 
@@ -227,13 +227,13 @@ export class DtsContent {
     } else if (this.namedExports) {
       sourceNode = new SourceNode(1, 0, getRelativePath(this.outputMapFilePath, this.rInputPath), [
         'export const __esModule: true;' + os.EOL,
-        ...resultList.map(result => [result, os.EOL]),
+        ...resultList.map((result) => [result, os.EOL]),
         this.EOL,
       ]);
     } else {
       sourceNode = new SourceNode(1, 0, getRelativePath(this.outputMapFilePath, this.rInputPath), [
         'declare const styles: {' + os.EOL,
-        ...resultList.map(result => ['  ', result, os.EOL]),
+        ...resultList.map((result) => ['  ', result, os.EOL]),
         '};' + os.EOL,
         'export = styles;' + os.EOL,
         this.EOL,

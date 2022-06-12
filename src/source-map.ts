@@ -6,7 +6,9 @@ import { SourceNode as OriginalSourceNode, CodeWithSourceMap } from 'source-map'
 type Chunk = string | StrictlyTypedSourceNode | Chunk[];
 
 interface StrictlyTypedSourceNode extends OriginalSourceNode {
+  // eslint-disable-next-line @typescript-eslint/no-misused-new
   new (line: number | null, column: number | null, source: string | null): StrictlyTypedSourceNode;
+  // eslint-disable-next-line @typescript-eslint/no-misused-new
   new (
     line: number | null,
     column: number | null,
@@ -16,6 +18,7 @@ interface StrictlyTypedSourceNode extends OriginalSourceNode {
   ): StrictlyTypedSourceNode;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SourceNode: StrictlyTypedSourceNode = OriginalSourceNode as any;
 
 export { SourceNode, CodeWithSourceMap };

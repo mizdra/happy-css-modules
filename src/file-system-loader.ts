@@ -1,12 +1,12 @@
 /* this file is forked from https://raw.githubusercontent.com/css-modules/css-modules-loader-core/master/src/file-system-loader.js */
 
-import Core from 'css-modules-loader-core';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as util from 'util';
+import { fromComment } from 'convert-source-map';
+import Core from 'css-modules-loader-core';
 import postcss, { Plugin, Rule } from 'postcss';
 import selectorParser from 'postcss-selector-parser';
-import { fromComment } from 'convert-source-map';
 import { SourceMapConsumer } from 'source-map';
 
 type Dictionary<T> = {
@@ -35,13 +35,13 @@ const readFile = util.promisify(fs.readFile);
 
 function walkClassNames(source: string, callback: (className: selectorParser.ClassName, rule: Rule) => void): void {
   const ast = postcss.parse(source);
-  ast.walkRules(rule => {
+  ast.walkRules((rule) => {
     // In `rule.selector` comes the following string:
     // 1. ".foo"
     // 2. ".foo:hover"
     // 3. ".foo, .bar"
-    selectorParser(selectors => {
-      selectors.walk(selector => {
+    selectorParser((selectors) => {
+      selectors.walk((selector) => {
         if (selector.type === 'class') {
           // In `selector.value` comes the following string:
           // 1. "foo"
@@ -75,10 +75,12 @@ async function generateExportTokensWithOriginalPositions(
   let sourcemap: SourceMapConsumer | undefined;
   try {
     sourcemap = await new SourceMapConsumer(fromComment(source).toObject());
-  } catch (e) {}
+  } catch (e) {
+    // noop
+  }
 
   walkClassNames(source, (className, rule) => {
-    const matchTokenName = exportTokenNames.find(name => className.value === name);
+    const matchTokenName = exportTokenNames.find((name) => className.value === name);
     if (!matchTokenName) return;
 
     // The node derived from `postcss.parse` always has `source` property. Therefore, this line is unreachable.
@@ -120,10 +122,10 @@ async function generateExportTokensWithOriginalPositions(
 
 function mergeTokens(a: ExportToken[], b: ExportToken[]): ExportToken[] {
   const result: ExportToken[] = [];
-  const names = new Set([...a.map(token => token.name), ...b.map(token => token.name)]);
+  const names = new Set([...a.map((token) => token.name), ...b.map((token) => token.name)]);
   for (const name of names) {
-    const aToken = a.find(token => token.name === name);
-    const bToken = b.find(token => token.name === name);
+    const aToken = a.find((token) => token.name === name);
+    const bToken = b.find((token) => token.name === name);
     result.push({
       name,
       originalPositions: [...(aToken?.originalPositions || []), ...(bToken?.originalPositions || [])],
@@ -132,6 +134,7 @@ function mergeTokens(a: ExportToken[], b: ExportToken[]): ExportToken[] {
   return result;
 }
 
+// eslint-disable-next-line import/no-default-export
 export default class FileSystemLoader {
   private root: string;
   private sources: Dictionary<string>;
@@ -139,7 +142,8 @@ export default class FileSystemLoader {
   private core: Core;
   public tokensByFile: Dictionary<ExportToken[]>;
 
-  constructor(root: string, plugins?: Array<Plugin<any>>) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(root: string, plugins?: Plugin<any>[]) {
     this.root = root;
     this.sources = {};
     this.importNr = 0;
@@ -166,7 +170,9 @@ export default class FileSystemLoader {
     if (isNodeModule(newPath)) {
       try {
         fileRelativePath = require.resolve(newPath);
-      } catch (e) {}
+      } catch (e) {
+        // noop
+      }
     }
 
     let source: string;
@@ -194,6 +200,7 @@ export default class FileSystemLoader {
       source,
       rootRelativePath,
       trace,
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises -- MEMO: Maybe await is needed?
       this.fetch.bind(this),
     );
     const exportTokens: ExportToken[] = await generateExportTokensWithOriginalPositions(
@@ -204,7 +211,7 @@ export default class FileSystemLoader {
 
     const re = new RegExp(/@import\s'(\D+?)';/, 'gm');
 
-    let importTokens: ExportToken[] = [];
+    const importTokens: ExportToken[] = [];
 
     let result;
 
@@ -212,7 +219,7 @@ export default class FileSystemLoader {
       const importFile = result?.[1];
 
       if (importFile) {
-        let importFilePath = isNodeModule(importFile)
+        const importFilePath = isNodeModule(importFile)
           ? importFile
           : path.resolve(path.dirname(fileRelativePath), importFile);
 

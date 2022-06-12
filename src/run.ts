@@ -3,8 +3,8 @@ import * as util from 'util';
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 import _glob from 'glob';
-import { DtsCreator } from './dts-creator';
 import { DtsContent } from './dts-content';
+import { DtsCreator } from './dts-creator';
 
 const glob = util.promisify(_glob);
 
@@ -42,6 +42,7 @@ export async function run(searchDir: string, options: RunOptions = {}): Promise<
         console.log('Wrote ' + chalk.green(content.outputFilePath));
       }
     } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       console.error(chalk.red('[Error] ' + error));
     }
   };
@@ -53,12 +54,16 @@ export async function run(searchDir: string, options: RunOptions = {}): Promise<
     console.log('Watch ' + filesPattern + '...');
 
     const watcher = chokidar.watch([filesPattern.replace(/\\/g, '/')]);
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     watcher.on('add', writeFile);
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     watcher.on('change', writeFile);
     await waitForever();
   }
 }
 
 async function waitForever(): Promise<void> {
-  return new Promise<void>(() => {});
+  return new Promise<void>(() => {
+    // noop
+  });
 }
