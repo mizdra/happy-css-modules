@@ -5,18 +5,12 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "clean": "rimraf lib/",
-    "build": "npm run clean && tsc && chmod +x lib/cli.js",
     "prettier": "prettier \"*.{md,js,json.yml,yaml}\" \"{src,test}/**/*\"",
     "format": "npm run prettier -- --write",
     "lint": "npm run prettier -- --check",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:ci": "jest --coverage",
-    "prepublish": "npm run build",
-    "postinstall": "husky install",
-    "prepublishOnly": "pinst --disable",
-    "postpublish": "pinst --enable"
+    "test:ci": "jest --coverage"
   },
   "bin": {
     "tcm": "lib/cli.js"
