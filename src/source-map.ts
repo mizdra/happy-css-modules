@@ -5,9 +5,17 @@ import { SourceNode as OriginalSourceNode, CodeWithSourceMap } from 'source-map'
 
 type Chunk = string | StrictlyTypedSourceNode | Chunk[];
 
-declare class StrictlyTypedSourceNode extends OriginalSourceNode {
-  constructor(line: number | null, column: number | null, source: string | null);
-  constructor(line: number | null, column: number | null, source: string | null, chunk?: Chunk, name?: string);
+interface StrictlyTypedSourceNode extends OriginalSourceNode {
+  // eslint-disable-next-line @typescript-eslint/no-misused-new
+  new (line: number | null, column: number | null, source: string | null): StrictlyTypedSourceNode;
+  // eslint-disable-next-line @typescript-eslint/no-misused-new
+  new (
+    line: number | null,
+    column: number | null,
+    source: string | null,
+    chunk?: Chunk,
+    name?: string,
+  ): StrictlyTypedSourceNode;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
