@@ -6,7 +6,9 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "lint": "prettier --check .",
+    "lint": "run-s -c lint:*",
+    "lint:prettier": "eslint .",
+    "lint:eslint": "eslint .",
     "test": "jest"
   },
   "bin": {
