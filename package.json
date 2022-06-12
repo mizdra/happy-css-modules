@@ -8,9 +8,7 @@
     "prettier": "prettier \"*.{md,js,json.yml,yaml}\" \"{src,test}/**/*\"",
     "format": "npm run prettier -- --write",
     "lint": "npm run prettier -- --check",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:ci": "jest --coverage"
+    "test": "jest"
   },
   "bin": {
     "tcm": "lib/cli.js"
