@@ -1,3 +1,4 @@
 {
-  "extends": ["config:base"]
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["github>mizdra/renovate-config-mizdra:default.json5", "github>mizdra/renovate-config-mizdra:+lib.json5"]
 }
