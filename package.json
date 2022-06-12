@@ -43,12 +43,18 @@
     "yargs": "^15.4.1"
   },
   "devDependencies": {
+    "@mizdra/eslint-config-mizdra": "^1.2.0",
     "@mizdra/prettier-config-mizdra": "^1.0.0",
     "@types/glob": "7.1.4",
     "@types/jest": "27.0.2",
     "@types/mkdirp": "1.0.2",
     "@types/node": "14.17.18",
     "@types/yargs": "15.0.4",
+    "@typescript-eslint/eslint-plugin": "^5.27.1",
+    "@typescript-eslint/parser": "^5.27.1",
+    "eslint": "^8.17.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
     "jest": "27.2.5",
     "prettier": "2.4.1",
     "ts-jest": "27.0.5",
