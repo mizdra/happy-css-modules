@@ -5,9 +5,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "prettier": "prettier \"*.{md,js,json.yml,yaml}\" \"{src,test}/**/*\"",
-    "format": "npm run prettier -- --write",
-    "lint": "npm run prettier -- --check",
+    "lint": "prettier --check .",
     "test": "jest"
   },
   "bin": {
