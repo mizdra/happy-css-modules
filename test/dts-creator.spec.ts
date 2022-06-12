@@ -1,6 +1,6 @@
 'use strict';
 
-import * as assert from 'assert';
+import * as assert from 'assert/strict';
 import * as os from 'os';
 import * as path from 'path';
 import { DtsCreator } from '../src/dts-creator';
