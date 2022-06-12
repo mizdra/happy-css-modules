@@ -31,14 +31,14 @@
   "dependencies": {
     "@types/convert-source-map": "^1.5.2",
     "@types/css-modules-loader-core": "^1.1.0",
-    "camelcase": "^6.0.0",
-    "chalk": "^4.0.0",
+    "camelcase": "^6.3.0",
+    "chalk": "^4.1.2",
     "chokidar": "^3.5.3",
     "convert-source-map": "^1.8.0",
     "css-modules-loader-core": "^1.1.0",
     "glob": "^8.0.3",
     "is-there": "^4.5.1",
-    "mkdirp": "^1.0.0",
+    "mkdirp": "^1.0.4",
     "postcss-selector-parser": "^6.0.10",
     "source-map": "^0.7.4",
     "yargs": "^17.5.1"
