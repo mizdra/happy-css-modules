@@ -5,3 +5,4 @@ __snapshots__/
 coverage/
 *.css.d.ts
 test/**/*.css
+pnpm-lock.yaml
