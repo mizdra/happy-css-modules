@@ -1,12 +1,12 @@
 /* this file is forked from https://raw.githubusercontent.com/css-modules/css-modules-loader-core/master/src/file-system-loader.js */
 
-import Core from 'css-modules-loader-core';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as util from 'util';
+import { fromComment } from 'convert-source-map';
+import Core from 'css-modules-loader-core';
 import postcss, { Plugin, Rule } from 'postcss';
 import selectorParser from 'postcss-selector-parser';
-import { fromComment } from 'convert-source-map';
 import { SourceMapConsumer } from 'source-map';
 
 type Dictionary<T> = {
@@ -139,7 +139,7 @@ export default class FileSystemLoader {
   private core: Core;
   public tokensByFile: Dictionary<ExportToken[]>;
 
-  constructor(root: string, plugins?: Array<Plugin<any>>) {
+  constructor(root: string, plugins?: Plugin<any>[]) {
     this.root = root;
     this.sources = {};
     this.importNr = 0;
@@ -204,7 +204,7 @@ export default class FileSystemLoader {
 
     const re = new RegExp(/@import\s'(\D+?)';/, 'gm');
 
-    let importTokens: ExportToken[] = [];
+    const importTokens: ExportToken[] = [];
 
     let result;
 
@@ -212,7 +212,7 @@ export default class FileSystemLoader {
       const importFile = result?.[1];
 
       if (importFile) {
-        let importFilePath = isNodeModule(importFile)
+        const importFilePath = isNodeModule(importFile)
           ? importFile
           : path.resolve(path.dirname(fileRelativePath), importFile);
 

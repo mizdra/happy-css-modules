@@ -3,8 +3,8 @@ import * as util from 'util';
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 import _glob from 'glob';
-import { DtsCreator } from './dts-creator';
 import { DtsContent } from './dts-content';
+import { DtsCreator } from './dts-creator';
 
 const glob = util.promisify(_glob);
 
