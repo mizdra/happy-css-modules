@@ -36,7 +36,7 @@
     "chokidar": "^3.4.0",
     "convert-source-map": "^1.8.0",
     "css-modules-loader-core": "^1.1.0",
-    "glob": "^7.1.2",
+    "glob": "^7.2.3",
     "is-there": "^4.4.2",
     "mkdirp": "^1.0.0",
     "postcss-selector-parser": "^6.0.9",
@@ -46,7 +46,7 @@
   "devDependencies": {
     "@mizdra/eslint-config-mizdra": "^1.2.0",
     "@mizdra/prettier-config-mizdra": "^1.0.0",
-    "@types/glob": "7.1.4",
+    "@types/glob": "7.2.0",
     "@types/jest": "^28.1.1",
     "@types/mkdirp": "1.0.2",
     "@types/node": "^17.0.42",
