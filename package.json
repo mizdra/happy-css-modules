@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
+    "build": "tsc",
     "lint": "prettier --check .",
     "test": "jest"
   },
