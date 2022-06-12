@@ -6,9 +6,9 @@
   "scripts": {
     "tcm": "node ../lib/cli.js -e -p style01.css",
     "tcmw": "node ../lib/cli.js -e -w -p style01.css",
-    "compile": "npm run tcm && ./node_modules/.bin/tsc -p .",
-    "bundle": "npm run compile && ./node_modules/.bin/browserify -o bundle.js -p [ css-modulesify -o bundle.css ] app.js",
-    "start": "npm run bundle && node bundle.js"
+    "compile": "pnpm run tcm && ./node_modules/.bin/tsc -p .",
+    "bundle": "pnpm run compile && ./node_modules/.bin/browserify -o bundle.js -p [ css-modulesify -o bundle.css ] app.js",
+    "start": "pnpm run bundle && node bundle.js"
   },
   "keywords": [],
   "author": "",
