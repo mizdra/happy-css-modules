@@ -10,6 +10,9 @@ module.exports = {
       env: {
         node: true,
       },
+      rules: {
+        'import/no-extraneous-dependencies': 'error',
+      },
     },
     {
       files: ['*.{ts,tsx,cts,mts}'],
