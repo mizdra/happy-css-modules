@@ -41,6 +41,7 @@
     "yargs": "^15.4.1"
   },
   "devDependencies": {
+    "@mizdra/prettier-config-mizdra": "^1.0.0",
     "@types/glob": "7.1.4",
     "@types/jest": "27.0.2",
     "@types/mkdirp": "1.0.2",
