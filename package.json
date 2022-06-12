@@ -9,6 +9,7 @@
     "lint": "run-s -c lint:*",
     "lint:prettier": "eslint .",
     "lint:eslint": "eslint .",
+    "lint:tsc": "tsc --noEmit",
     "test": "jest"
   },
   "bin": {
