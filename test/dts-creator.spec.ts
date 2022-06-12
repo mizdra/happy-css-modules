@@ -42,11 +42,13 @@ describe('DtsCreator', () => {
       });
     });
     it('returns DtsContent instance from the pair of path and contents', (done) => {
-      void creator.create('test/somePath', `.myClass { color: red }`).then((content) => {
-        assert.equal(content.contents.length, 1);
-        assert.equal(content.contents[0], 'readonly "myClass": string;');
-        done();
-      });
+      void creator
+        .create('test/somePath', async () => Promise.resolve(`.myClass { color: red }`))
+        .then((content) => {
+          assert.equal(content.contents.length, 1);
+          assert.equal(content.contents[0], 'readonly "myClass": string;');
+          done();
+        });
     });
     it('returns DtsContent instance combined css', (done) => {
       void creator.create('test/combined/combined.css').then((content) => {
