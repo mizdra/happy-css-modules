@@ -14,6 +14,7 @@ interface DtsCreatorOptions {
   dropExtension?: boolean;
   declarationMap?: boolean;
   EOL?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   loaderPlugins?: Plugin<any>[];
 }
 

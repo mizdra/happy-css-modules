@@ -75,7 +75,9 @@ async function generateExportTokensWithOriginalPositions(
   let sourcemap: SourceMapConsumer | undefined;
   try {
     sourcemap = await new SourceMapConsumer(fromComment(source).toObject());
-  } catch (e) {}
+  } catch (e) {
+    // noop
+  }
 
   walkClassNames(source, (className, rule) => {
     const matchTokenName = exportTokenNames.find((name) => className.value === name);
@@ -132,6 +134,7 @@ function mergeTokens(a: ExportToken[], b: ExportToken[]): ExportToken[] {
   return result;
 }
 
+// eslint-disable-next-line import/no-default-export
 export default class FileSystemLoader {
   private root: string;
   private sources: Dictionary<string>;
@@ -139,6 +142,7 @@ export default class FileSystemLoader {
   private core: Core;
   public tokensByFile: Dictionary<ExportToken[]>;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(root: string, plugins?: Plugin<any>[]) {
     this.root = root;
     this.sources = {};
@@ -166,7 +170,9 @@ export default class FileSystemLoader {
     if (isNodeModule(newPath)) {
       try {
         fileRelativePath = require.resolve(newPath);
-      } catch (e) {}
+      } catch (e) {
+        // noop
+      }
     }
 
     let source: string;
@@ -194,6 +200,7 @@ export default class FileSystemLoader {
       source,
       rootRelativePath,
       trace,
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises -- MEMO: Maybe await is needed?
       this.fetch.bind(this),
     );
     const exportTokens: ExportToken[] = await generateExportTokensWithOriginalPositions(

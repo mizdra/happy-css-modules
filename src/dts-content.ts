@@ -197,7 +197,7 @@ export class DtsContent {
       case true:
         return camelcase;
       case 'dashes':
-        return this.dashesCamelCase;
+        return (str: string) => this.dashesCamelCase(str);
       default:
         return (key) => key;
     }
