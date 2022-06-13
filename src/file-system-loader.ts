@@ -211,7 +211,7 @@ export default class FileSystemLoader {
 
     const re = new RegExp(/@import\s'(\D+?)';/, 'gm');
 
-    const importTokens: ExportToken[] = [];
+    let importTokens: ExportToken[] = [];
 
     let result;
 
@@ -224,7 +224,9 @@ export default class FileSystemLoader {
           : path.resolve(path.dirname(fileRelativePath), importFile);
 
         const localTokens = await this.fetch(importFilePath, relativeTo, undefined, transform);
-        Object.assign(importTokens, localTokens);
+        // `importTokens` and `localTokens` may contain tokens with the same name.
+        // Therefore, `originalPositions` of the tokens with the same name must be merged.
+        importTokens = mergeTokens(importTokens, localTokens);
       }
     }
 
