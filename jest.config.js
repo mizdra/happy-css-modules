@@ -1,0 +1,13 @@
+// @ts-check
+
+/** @type {import('@jest/types').Config.InitialOptions} */
+const config = {
+  transform: {
+    '^.+\\.ts$': 'ts-jest',
+  },
+  testRegex: '(test/.*|(src/.*\\.test))\\.ts$',
+  testPathIgnorePatterns: ['/node_modules/', '\\.d\\.ts$', 'lib/', 'example/', 'coverage/'],
+  moduleFileExtensions: ['js', 'ts', 'json'],
+};
+
+module.exports = config;

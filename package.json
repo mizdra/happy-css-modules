@@ -67,23 +67,5 @@
     "postcss": "^7.0.0"
   },
   "packageManager": "pnpm@7.2.1",
-  "prettier": "@mizdra/prettier-config-mizdra",
-  "jest": {
-    "transform": {
-      "^.+\\.ts$": "ts-jest"
-    },
-    "testRegex": "(test/.*|(src/.*\\.test))\\.ts$",
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "\\.d\\.ts$",
-      "lib/",
-      "example/",
-      "coverage/"
-    ],
-    "moduleFileExtensions": [
-      "js",
-      "ts",
-      "json"
-    ]
-  }
+  "prettier": "@mizdra/prettier-config-mizdra"
 }
