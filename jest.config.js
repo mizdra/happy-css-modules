@@ -7,6 +7,7 @@ const config = {
   },
   testRegex: '(test/.*|(src/.*\\.test))\\.ts$',
   testPathIgnorePatterns: ['/node_modules/', '\\.d\\.ts$', 'lib/', 'example/', 'coverage/'],
+  watchPathIgnorePatterns: ['\\.d\\.ts$'],
   moduleFileExtensions: ['js', 'ts', 'json'],
 };
 
