@@ -8,15 +8,12 @@ import { run } from './run';
 const pkgJson = JSON.parse(readFileSync(resolve(__dirname, '../package.json'), 'utf-8'));
 
 const yarg = yargs
-  .usage('Create .css.d.ts from CSS modules *.css files.\nUsage: $0 [options] <search directory>')
+  .usage('Create .css.d.ts from CSS modules *.css files.\nUsage: $0 [options] [file|dir|glob]')
   .example('$0 src/styles', '')
   .example('$0 src -o dist', '')
-  .example('$0 -p styles/**/*.icss -w', '')
+  .example("$0 'styles/**/*.icss' -w", '')
   .detectLocale(false)
   .demand(['_'])
-  .alias('p', 'pattern')
-  .describe('p', 'Glob pattern with css files')
-  .string('p')
   .alias('o', 'outDir')
   .describe('o', 'Output directory')
   .string('o')
@@ -50,18 +47,14 @@ async function main(): Promise<void> {
     return;
   }
 
-  let searchDir: string;
-  if (argv._ && argv._[0]) {
-    searchDir = argv._[0].toString();
-  } else if (argv.p) {
-    searchDir = './';
-  } else {
+  // TODO: support multiple patterns
+  const patterns: string[] = argv._.map((pattern) => pattern.toString());
+  if (patterns.length !== 1) {
     yarg.showHelp();
     return;
   }
 
-  await run(searchDir, {
-    pattern: argv.p,
+  await run(patterns[0], {
     outDir: argv.o,
     watch: argv.w,
     camelCase: argv.c,

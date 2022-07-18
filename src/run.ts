@@ -1,4 +1,3 @@
-import * as path from 'path';
 import * as util from 'util';
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
@@ -9,7 +8,6 @@ import { DtsCreator } from './dts-creator';
 const glob = util.promisify(_glob);
 
 interface RunOptions {
-  pattern?: string;
   outDir?: string;
   watch?: boolean;
   camelCase?: boolean;
@@ -19,12 +17,9 @@ interface RunOptions {
   silent?: boolean;
 }
 
-export async function run(searchDir: string, options: RunOptions = {}): Promise<void> {
-  const filesPattern = path.join(searchDir, options.pattern || '**/*.css');
-
+export async function run(pattern: string, options: RunOptions = {}): Promise<void> {
   const creator = new DtsCreator({
     rootDir: process.cwd(),
-    searchDir,
     outDir: options.outDir,
     camelCase: options.camelCase,
     namedExport: options.namedExport,
@@ -46,12 +41,12 @@ export async function run(searchDir: string, options: RunOptions = {}): Promise<
   };
 
   if (!options.watch) {
-    const files = await glob(filesPattern);
+    const files = await glob(pattern);
     await Promise.all(files.map(writeFile));
   } else {
-    console.log('Watch ' + filesPattern + '...');
+    console.log('Watch ' + pattern + '...');
 
-    const watcher = chokidar.watch([filesPattern.replace(/\\/g, '/')]);
+    const watcher = chokidar.watch([pattern.replace(/\\/g, '/')]);
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     watcher.on('add', writeFile);
     // eslint-disable-next-line @typescript-eslint/no-misused-promises

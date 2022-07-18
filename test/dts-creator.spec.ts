@@ -49,10 +49,11 @@ describe('DtsCreator', () => {
 
   describe('#modify path', () => {
     it('can be set outDir', async () => {
-      const content = await new DtsCreator({ searchDir: 'test', outDir: 'dist' }).create(
-        path.normalize('test/testStyle.css'),
+      const content = await new DtsCreator({ outDir: 'dist' }).create(path.normalize('test/testStyle.css'));
+      assert.equal(
+        path.relative(process.cwd(), content.outputFilePath),
+        path.normalize('dist/test/testStyle.css.d.ts'),
       );
-      assert.equal(path.relative(process.cwd(), content.outputFilePath), path.normalize('dist/testStyle.css.d.ts'));
     });
   });
 });
