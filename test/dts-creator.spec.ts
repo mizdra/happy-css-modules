@@ -183,14 +183,6 @@ export = styles;
   });
 
   describe('#writeFile', () => {
-    it('accepts a postprocessor function', async () => {
-      await new DtsCreator().create('test/testStyle.css').then(async (content) => {
-        return content.writeFile(
-          (formatted) => `// this banner was added to the .d.ts file automatically.\n${formatted}`,
-        );
-      });
-    });
-
     it('writes a file', async () => {
       await new DtsCreator().create('test/testStyle.css').then(async (content) => {
         return content.writeFile();
