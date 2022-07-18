@@ -86,11 +86,6 @@ describe('DtsContent', () => {
       const content = await new DtsCreator().create(path.normalize('test/testStyle.css'));
       assert.equal(path.relative(process.cwd(), content.outputFilePath), path.normalize('test/testStyle.css.d.ts'));
     });
-
-    it('can drop the original extension when asked', async () => {
-      const content = await new DtsCreator({ dropExtension: true }).create(path.normalize('test/testStyle.css'));
-      assert.equal(path.relative(process.cwd(), content.outputFilePath), path.normalize('test/testStyle.d.ts'));
-    });
   });
 
   describe('#formatted', () => {

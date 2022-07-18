@@ -18,7 +18,6 @@ function getRelativePath(fromFilePath: string, toFilePath: string): string {
 export type CamelCaseOption = boolean | 'dashes' | undefined;
 
 interface DtsContentOptions {
-  dropExtension: boolean;
   declarationMap: boolean;
   rootDir: string;
   searchDir: string;
@@ -31,7 +30,6 @@ interface DtsContentOptions {
 }
 
 export class DtsContent {
-  private dropExtension: boolean;
   private declarationMap: boolean;
   private rootDir: string;
   private searchDir: string;
@@ -44,7 +42,6 @@ export class DtsContent {
   private EOL: string;
 
   constructor(options: DtsContentOptions) {
-    this.dropExtension = options.dropExtension;
     this.declarationMap = options.declarationMap;
     this.rootDir = options.rootDir;
     this.searchDir = options.searchDir;
@@ -80,8 +77,7 @@ export class DtsContent {
   }
 
   public get outputFilePath(): string {
-    const outputFileName = this.dropExtension ? removeExtension(this.rInputPath) : this.rInputPath;
-    return path.join(this.rootDir, this.outDir, outputFileName + '.d.ts');
+    return path.join(this.rootDir, this.outDir, this.rInputPath + '.d.ts');
   }
 
   private get outputMapFilePath(): string {
@@ -238,9 +234,4 @@ export class DtsContent {
     });
     return codeWithSourceMap;
   }
-}
-
-function removeExtension(filePath: string): string {
-  const ext = path.extname(filePath);
-  return filePath.replace(new RegExp(ext + '$'), '');
 }

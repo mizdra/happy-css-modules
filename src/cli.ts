@@ -29,8 +29,6 @@ const yarg = yargs
   .alias('e', 'namedExports')
   .describe('e', 'Use named exports as opposed to default exports to enable tree shaking.')
   .boolean('e')
-  .alias('d', 'dropExtension')
-  .describe('d', 'Drop the input files extension')
   .alias('dm', 'declarationMap')
   .describe('dm', 'Create sourcemaps for d.ts files')
   .boolean('d')
@@ -68,7 +66,6 @@ async function main(): Promise<void> {
     watch: argv.w,
     camelCase: argv.c,
     namedExports: argv.e,
-    dropExtension: argv.d,
     silent: argv.s,
   });
 }
