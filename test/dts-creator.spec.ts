@@ -104,7 +104,7 @@ export = styles;
     });
 
     it('returns named exports formatted .d.ts string', async () => {
-      const content = await new DtsCreator({ namedExports: true }).create('test/testStyle.css');
+      const content = await new DtsCreator({ namedExport: true }).create('test/testStyle.css');
       assert.equal(
         content.formatted,
         `\
@@ -116,7 +116,7 @@ export const myClass: string;
     });
 
     it('returns camelcase names when using named exports as formatted .d.ts string', async () => {
-      const content = await new DtsCreator({ namedExports: true }).create('test/kebabedUpperCase.css');
+      const content = await new DtsCreator({ namedExport: true }).create('test/kebabedUpperCase.css');
       assert.equal(
         content.formatted,
         `\

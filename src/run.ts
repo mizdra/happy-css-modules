@@ -13,7 +13,7 @@ interface RunOptions {
   outDir?: string;
   watch?: boolean;
   camelCase?: boolean;
-  namedExports?: boolean;
+  namedExport?: boolean;
   declarationMap?: boolean;
   transform?: (newPath: string) => Promise<string>;
   silent?: boolean;
@@ -27,7 +27,7 @@ export async function run(searchDir: string, options: RunOptions = {}): Promise<
     searchDir,
     outDir: options.outDir,
     camelCase: options.camelCase,
-    namedExports: options.namedExports,
+    namedExport: options.namedExport,
     declarationMap: options.declarationMap,
   });
 
