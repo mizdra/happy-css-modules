@@ -20,7 +20,6 @@ export type CamelCaseOption = boolean | 'dashes' | undefined;
 interface DtsContentOptions {
   declarationMap: boolean;
   rootDir: string;
-  pattern: string;
   outDir: string;
   rInputPath: string;
   rawTokenList: ExportToken[];
@@ -32,7 +31,6 @@ interface DtsContentOptions {
 export class DtsContent {
   private declarationMap: boolean;
   private rootDir: string;
-  private pattern: string;
   private outDir: string;
   private rInputPath: string;
   private rawTokenList: ExportToken[];
@@ -44,7 +42,6 @@ export class DtsContent {
   constructor(options: DtsContentOptions) {
     this.declarationMap = options.declarationMap;
     this.rootDir = options.rootDir;
-    this.pattern = options.pattern;
     this.outDir = options.outDir;
     this.rInputPath = options.rInputPath;
     this.rawTokenList = options.rawTokenList;

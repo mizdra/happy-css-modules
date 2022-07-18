@@ -20,7 +20,6 @@ interface RunOptions {
 export async function run(pattern: string, options: RunOptions = {}): Promise<void> {
   const creator = new DtsCreator({
     rootDir: process.cwd(),
-    pattern,
     outDir: options.outDir,
     camelCase: options.camelCase,
     namedExport: options.namedExport,
