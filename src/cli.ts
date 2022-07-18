@@ -26,7 +26,7 @@ const yarg = yargs
   .alias('c', 'camelCase')
   .describe('c', 'Convert CSS class tokens to camelcase')
   .boolean('c')
-  .alias('e', 'namedExports')
+  .alias('e', 'namedExport')
   .describe('e', 'Use named exports as opposed to default exports to enable tree shaking.')
   .boolean('e')
   .alias('dm', 'declarationMap')
@@ -65,7 +65,7 @@ async function main(): Promise<void> {
     outDir: argv.o,
     watch: argv.w,
     camelCase: argv.c,
-    namedExports: argv.e,
+    namedExport: argv.e,
     silent: argv.s,
   });
 }

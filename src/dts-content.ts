@@ -24,7 +24,7 @@ interface DtsContentOptions {
   outDir: string;
   rInputPath: string;
   rawTokenList: ExportToken[];
-  namedExports: boolean;
+  namedExport: boolean;
   camelCase: CamelCaseOption;
   EOL: string;
 }
@@ -36,7 +36,7 @@ export class DtsContent {
   private outDir: string;
   private rInputPath: string;
   private rawTokenList: ExportToken[];
-  private namedExports: boolean;
+  private namedExport: boolean;
   private camelCase: CamelCaseOption;
   private resultList: typeof SourceNode[];
   private EOL: string;
@@ -48,7 +48,7 @@ export class DtsContent {
     this.outDir = options.outDir;
     this.rInputPath = options.rInputPath;
     this.rawTokenList = options.rawTokenList;
-    this.namedExports = options.namedExports;
+    this.namedExport = options.namedExport;
     this.camelCase = options.camelCase;
     this.EOL = options.EOL;
 
@@ -56,7 +56,7 @@ export class DtsContent {
     // (see https://webpack.js.org/loaders/css-loader/#namedexport)
     // we still accept external control for the 'dashes' option,
     // so we only override in case is false or undefined
-    if (this.namedExports && !this.camelCase) {
+    if (this.namedExport && !this.camelCase) {
       this.camelCase = true;
     }
 
@@ -148,7 +148,7 @@ export class DtsContent {
       // NOTE: `--namedExport` does not support multiple jump destinations
       // TODO: Support multiple jump destinations with `--namedExport`
       for (const originalPosition of rawToken.originalPositions) {
-        if (this.namedExports) {
+        if (this.namedExport) {
           result.push(
             new SourceNode(null, null, null, [
               'export const ',
@@ -212,7 +212,7 @@ export class DtsContent {
     let sourceNode: typeof SourceNode;
     if (!this.resultList || !this.resultList.length) {
       sourceNode = new SourceNode(null, null, null, '');
-    } else if (this.namedExports) {
+    } else if (this.namedExport) {
       sourceNode = new SourceNode(1, 0, getRelativePath(this.outputMapFilePath, this.rInputPath), [
         'export const __esModule: true;' + os.EOL,
         ...resultList.map((result) => [result, os.EOL]),

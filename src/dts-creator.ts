@@ -10,7 +10,7 @@ interface DtsCreatorOptions {
   searchDir?: string;
   outDir?: string;
   camelCase?: CamelCaseOption;
-  namedExports?: boolean;
+  namedExport?: boolean;
   declarationMap?: boolean;
   EOL?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -25,7 +25,7 @@ export class DtsCreator {
   private inputDirectory: string;
   private outputDirectory: string;
   private camelCase: CamelCaseOption;
-  private namedExports: boolean;
+  private namedExport: boolean;
   private declarationMap: boolean;
   private EOL: string;
 
@@ -38,7 +38,7 @@ export class DtsCreator {
     this.inputDirectory = path.join(this.rootDir, this.searchDir);
     this.outputDirectory = path.join(this.rootDir, this.outDir);
     this.camelCase = options.camelCase;
-    this.namedExports = !!options.namedExports;
+    this.namedExport = !!options.namedExport;
     this.declarationMap = !!options.declarationMap;
     this.EOL = options.EOL || os.EOL;
   }
@@ -67,7 +67,7 @@ export class DtsCreator {
         outDir: this.outDir,
         rInputPath,
         rawTokenList,
-        namedExports: this.namedExports,
+        namedExport: this.namedExport,
         camelCase: this.camelCase,
         EOL: this.EOL,
       });
