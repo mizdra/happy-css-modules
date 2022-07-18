@@ -1,0 +1,13 @@
+{
+  // "include": ["src/**/*"], // Override by inheritance
+  // "exclude": ["node_modules"], // Override by inheritance
+  "compilerOptions": {
+    // "target": "ES2019", // Override by inheritance
+    "module": "CommonJS",
+    "sourceMap": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
+  }
+}
