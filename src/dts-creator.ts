@@ -11,7 +11,6 @@ interface DtsCreatorOptions {
   outDir?: string;
   camelCase?: CamelCaseOption;
   namedExports?: boolean;
-  dropExtension?: boolean;
   declarationMap?: boolean;
   EOL?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -27,7 +26,6 @@ export class DtsCreator {
   private outputDirectory: string;
   private camelCase: CamelCaseOption;
   private namedExports: boolean;
-  private dropExtension: boolean;
   private declarationMap: boolean;
   private EOL: string;
 
@@ -41,7 +39,6 @@ export class DtsCreator {
     this.outputDirectory = path.join(this.rootDir, this.outDir);
     this.camelCase = options.camelCase;
     this.namedExports = !!options.namedExports;
-    this.dropExtension = !!options.dropExtension;
     this.declarationMap = !!options.declarationMap;
     this.EOL = options.EOL || os.EOL;
   }
@@ -64,7 +61,6 @@ export class DtsCreator {
     const rawTokenList = await this.loader.fetch(filePath, '/', undefined, transform);
     if (rawTokenList) {
       const content = new DtsContent({
-        dropExtension: this.dropExtension,
         declarationMap: this.declarationMap,
         rootDir: this.rootDir,
         searchDir: this.searchDir,
