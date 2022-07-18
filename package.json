@@ -5,11 +5,13 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p tsconfig.src.json",
     "lint": "run-s -c lint:*",
     "lint:prettier": "prettier --check .",
     "lint:eslint": "eslint .",
-    "lint:tsc": "tsc --noEmit",
+    "lint:tsc": "run-s -c lint:tsc:*",
+    "lint:tsc:src": "tsc -p tsconfig.src.json --noEmit",
+    "lint:tsc:test": "tsc -p tsconfig.test.json --noEmit",
     "test": "jest"
   },
   "bin": {
