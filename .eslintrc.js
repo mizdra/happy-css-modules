@@ -17,6 +17,9 @@ module.exports = {
     {
       files: ['*.{ts,tsx,cts,mts}'],
       extends: ['@mizdra/mizdra/+typescript', '@mizdra/mizdra/+prettier'],
+      rules: {
+        '@typescript-eslint/no-unused-vars': 2,
+      },
     },
     {
       files: ['test/**/*.{ts,tsx,cts,mts}'],
