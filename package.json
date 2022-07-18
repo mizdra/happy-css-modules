@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "lint": "run-s -c lint:*",
-    "lint:prettier": "eslint .",
+    "lint:prettier": "prettier --check .",
     "lint:eslint": "eslint .",
     "lint:tsc": "tsc --noEmit",
     "test": "jest"
