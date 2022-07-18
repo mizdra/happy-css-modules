@@ -1,7 +1,6 @@
 'use strict';
 
 import * as assert from 'assert/strict';
-import * as os from 'os';
 import * as path from 'path';
 import { DtsCreator } from '../src/dts-creator';
 
@@ -185,7 +184,7 @@ export = styles;
 
   describe('#writeFile', () => {
     it('accepts a postprocessor function', async () => {
-      const content = await new DtsCreator().create('test/testStyle.css').then(async (content) => {
+      await new DtsCreator().create('test/testStyle.css').then(async (content) => {
         return content.writeFile(
           (formatted) => `// this banner was added to the .d.ts file automatically.\n${formatted}`,
         );
@@ -193,7 +192,7 @@ export = styles;
     });
 
     it('writes a file', async () => {
-      const content = await new DtsCreator().create('test/testStyle.css').then(async (content) => {
+      await new DtsCreator().create('test/testStyle.css').then(async (content) => {
         return content.writeFile();
       });
     });
