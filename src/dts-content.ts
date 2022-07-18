@@ -92,20 +92,12 @@ export class DtsContent {
     return path.join(this.rootDir, this.searchDir, this.rInputPath);
   }
 
-  public async writeFile(postprocessor?: (formatted: string) => string): Promise<void> {
-    // Positioning information is broken when processed by the postprocessor.
-    // Therefore, disable the output of the sourcemap.
-    // TODO: Allow postprocessor to handle sourcemap.
-    if (this.declarationMap && postprocessor) {
-      throw new Error('`postprocessor` and declaration map cannot be used together.');
-    }
-
+  public async writeFile(): Promise<void> {
     const codeWithSourceMap = this.createCodeWithSourceMap();
 
     // Since sourcemap and type definitions are in the same directory, they can be referenced by relative paths.
-    const finalOutput = postprocessor
-      ? postprocessor(codeWithSourceMap.code)
-      : codeWithSourceMap.code + `//# sourceMappingURL=${path.basename(this.outputMapFilePath)}` + this.EOL;
+    const finalOutput =
+      codeWithSourceMap.code + `//# sourceMappingURL=${path.basename(this.outputMapFilePath)}` + this.EOL;
     const finalMapOutput = this.declarationMap ? codeWithSourceMap.map.toString() : undefined;
 
     const outPathDir = path.dirname(this.outputFilePath);
