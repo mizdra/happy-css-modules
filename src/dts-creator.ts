@@ -7,7 +7,7 @@ import FileSystemLoader from './library/css-modules-loader-core/file-system-load
 
 interface DtsCreatorOptions {
   rootDir?: string;
-  searchDir?: string;
+  pattern?: string;
   outDir?: string;
   camelCase?: CamelCaseOption;
   namedExport?: boolean;
@@ -19,7 +19,7 @@ interface DtsCreatorOptions {
 
 export class DtsCreator {
   private rootDir: string;
-  private searchDir: string;
+  private pattern: string;
   private outDir: string;
   private loader: FileSystemLoader;
   private inputDirectory: string;
@@ -32,10 +32,10 @@ export class DtsCreator {
   constructor(options?: DtsCreatorOptions) {
     if (!options) options = {};
     this.rootDir = options.rootDir || process.cwd();
-    this.searchDir = options.searchDir || '';
-    this.outDir = options.outDir || this.searchDir;
+    this.pattern = options.pattern || '';
+    this.outDir = options.outDir || '.';
     this.loader = new FileSystemLoader(this.rootDir, options.loaderPlugins);
-    this.inputDirectory = path.join(this.rootDir, this.searchDir);
+    this.inputDirectory = this.rootDir;
     this.outputDirectory = path.join(this.rootDir, this.outDir);
     this.camelCase = options.camelCase;
     this.namedExport = !!options.namedExport;
@@ -63,7 +63,7 @@ export class DtsCreator {
       const content = new DtsContent({
         declarationMap: this.declarationMap,
         rootDir: this.rootDir,
-        searchDir: this.searchDir,
+        pattern: this.pattern,
         outDir: this.outDir,
         rInputPath,
         rawTokenList,
