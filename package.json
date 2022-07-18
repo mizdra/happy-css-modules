@@ -72,6 +72,6 @@
   "peerDependencies": {
     "postcss": "^6.0.0"
   },
-  "packageManager": "pnpm@7.2.1",
+  "packageManager": "pnpm@7.5.2",
   "prettier": "@mizdra/prettier-config-mizdra"
 }
