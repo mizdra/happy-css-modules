@@ -5,8 +5,8 @@ import * as util from 'util';
 import camelcase from 'camelcase';
 import isThere from 'is-there';
 import * as mkdirp from 'mkdirp';
-import { ExportToken } from './file-system-loader';
-import { CodeWithSourceMap, SourceNode } from './source-map';
+import { ExportToken } from './library/css-modules-loader-core/file-system-loader';
+import { CodeWithSourceMap, SourceNode } from './library/source-map';
 
 const writeFile = util.promisify(fs.writeFile);
 const readFile = util.promisify(fs.readFile);

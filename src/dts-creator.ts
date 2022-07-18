@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as process from 'process';
 import { Plugin } from 'postcss';
 import { DtsContent, CamelCaseOption } from './dts-content';
-import FileSystemLoader from './file-system-loader';
+import FileSystemLoader from './library/css-modules-loader-core/file-system-loader';
 
 interface DtsCreatorOptions {
   rootDir?: string;
