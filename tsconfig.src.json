@@ -4,6 +4,7 @@
   "exclude": ["node_modules"],
   "compilerOptions": {
     "outDir": "lib",
+    "rootDir": "src", // To avoid inadvertently changing the directory structure under lib/.
     // Compatible for Node.js v12 (ref: https://github.com/microsoft/TypeScript/wiki/Node-Target-Mapping)
     "target": "ES2019",
     "lib": ["ES2019"],
