@@ -7,7 +7,8 @@ import { DtsCreator } from './dts-creator';
 
 const glob = util.promisify(_glob);
 
-interface RunOptions {
+export interface RunOptions {
+  pattern: string;
   outDir?: string;
   watch?: boolean;
   camelCase?: boolean;
@@ -17,7 +18,11 @@ interface RunOptions {
   silent?: boolean;
 }
 
-export async function run(pattern: string, options: RunOptions = {}): Promise<void> {
+/**
+ * Run typed-css-module.
+ * @param options Runner options.
+ */
+export async function run(options: RunOptions): Promise<void> {
   const creator = new DtsCreator({
     rootDir: process.cwd(),
     outDir: options.outDir,
@@ -41,12 +46,12 @@ export async function run(pattern: string, options: RunOptions = {}): Promise<vo
   };
 
   if (!options.watch) {
-    const files = await glob(pattern);
+    const files = await glob(options.pattern);
     await Promise.all(files.map(writeFile));
   } else {
-    console.log('Watch ' + pattern + '...');
+    console.log('Watch ' + options.pattern + '...');
 
-    const watcher = chokidar.watch([pattern.replace(/\\/g, '/')]);
+    const watcher = chokidar.watch([options.pattern.replace(/\\/g, '/')]);
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     watcher.on('add', writeFile);
     // eslint-disable-next-line @typescript-eslint/no-misused-promises

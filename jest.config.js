@@ -6,7 +6,7 @@ const config = {
     '^.+\\.ts$': 'ts-jest',
   },
   testRegex: '(test/.*|(src/.*\\.test))\\.ts$',
-  testPathIgnorePatterns: ['/node_modules/', '\\.d\\.ts$', 'lib/', 'example/', 'coverage/'],
+  testPathIgnorePatterns: ['/node_modules/', '\\.d\\.ts$', 'dist/', 'example/', 'coverage/'],
   watchPathIgnorePatterns: ['\\.d\\.ts$'],
   moduleFileExtensions: ['js', 'ts', 'json'],
   globals: {

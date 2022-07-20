@@ -3,11 +3,11 @@
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import * as yargs from 'yargs';
-import { run } from './run';
+import { run, RunOptions } from './run';
 
 const pkgJson = JSON.parse(readFileSync(resolve(__dirname, '../package.json'), 'utf-8'));
 
-const yarg = yargs
+const argv = yargs
   .usage('Create .css.d.ts from CSS modules *.css files.\nUsage: $0 [options] [file|dir|glob]')
   .example('$0 src/styles', '')
   .example('$0 src -o dist', '')
@@ -34,31 +34,31 @@ const yarg = yargs
   .boolean('s')
   .alias('h', 'help')
   .help('h')
-  .version(pkgJson.version);
-
-main().catch(console.error);
-
-async function main(): Promise<void> {
-  // eslint-disable-next-line @typescript-eslint/await-thenable
-  const argv = await yarg.argv;
-
-  if (argv.h) {
-    yarg.showHelp();
-    return;
-  }
-
-  // TODO: support multiple patterns
-  const patterns: string[] = argv._.map((pattern) => pattern.toString());
-  if (patterns.length !== 1) {
-    yarg.showHelp();
-    return;
-  }
-
-  await run(patterns[0], {
-    outDir: argv.o,
-    watch: argv.w,
-    camelCase: argv.c,
-    namedExport: argv.e,
-    silent: argv.s,
+  .version(pkgJson.version)
+  .check((argv) => {
+    const patterns = argv._;
+    // TODO: support multiple patterns
+    if (patterns.length !== 1) throw new Error('Only one pattern is allowed.');
+    return true;
   });
+
+/**
+ * Parse command line arguments.
+ * @returns Runner options.
+ */
+export function parseArgv(): RunOptions {
+  const parsedArgv = argv.parseSync();
+  const patterns: string[] = parsedArgv._.map((pattern) => pattern.toString());
+  return {
+    pattern: patterns[0],
+    outDir: parsedArgv.o,
+    watch: parsedArgv.w,
+    camelCase: parsedArgv.c,
+    namedExport: parsedArgv.e,
+    silent: parsedArgv.s,
+  };
+}
+
+export async function main(): Promise<void> {
+  await run(parseArgv());
 }
