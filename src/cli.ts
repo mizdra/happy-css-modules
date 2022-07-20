@@ -66,6 +66,7 @@ export function parseArgv(argv: string[]): RunOptions {
     watch: parsedArgv.watch,
     camelCase: parsedArgv.camelCase,
     namedExport: parsedArgv.namedExport,
+    declarationMap: parsedArgv.declarationMap,
     silent: parsedArgv.silent,
   };
 }
