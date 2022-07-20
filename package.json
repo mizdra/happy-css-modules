@@ -25,6 +25,11 @@
     "css-modules",
     "typescript"
   ],
+  "files": [
+    "bin",
+    "src",
+    "lib"
+  ],
   "author": "mizdra",
   "license": "MIT",
   "engines": {
