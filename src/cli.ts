@@ -7,7 +7,7 @@ import { run, RunOptions } from './run';
 
 const pkgJson = JSON.parse(readFileSync(resolve(__dirname, '../package.json'), 'utf-8'));
 
-const argv = yargs
+const yargsInstance = yargs
   .usage('Create .css.d.ts from CSS modules *.css files.\nUsage: $0 [options] [file|dir|glob]')
   .example('$0 src/styles', '')
   .example('$0 src -o dist', '')
@@ -46,8 +46,8 @@ const argv = yargs
  * Parse command line arguments.
  * @returns Runner options.
  */
-export function parseArgv(): RunOptions {
-  const parsedArgv = argv.parseSync();
+export function parseArgv(argv: string[]): RunOptions {
+  const parsedArgv = yargsInstance.parseSync(argv.slice(2));
   const patterns: string[] = parsedArgv._.map((pattern) => pattern.toString());
   return {
     pattern: patterns[0],
@@ -60,5 +60,5 @@ export function parseArgv(): RunOptions {
 }
 
 export async function main(): Promise<void> {
-  await run(parseArgv());
+  await run(parseArgv(process.argv));
 }
