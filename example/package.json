@@ -4,8 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "tcm": "node ../lib/cli.js -e -p style01.css",
-    "tcmw": "node ../lib/cli.js -e -w -p style01.css",
+    "tcm": "node ../dist/cli.js -e -p style01.css",
+    "tcmw": "node ../dist/cli.js -e -w -p style01.css",
     "compile": "pnpm run tcm && ./node_modules/.bin/tsc -p .",
     "bundle": "pnpm run compile && ./node_modules/.bin/browserify -o bundle.js -p [ css-modulesify -o bundle.css ] app.js",
     "start": "pnpm run bundle && node bundle.js"

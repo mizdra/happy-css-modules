@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-const { main } = require('../lib/cli');
+const { main } = require('../dist/cli');
 
 main().catch(console.error);
