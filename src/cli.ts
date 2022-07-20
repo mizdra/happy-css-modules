@@ -14,26 +14,37 @@ const yargsInstance = yargs
   .example("$0 'styles/**/*.icss' -w", '')
   .detectLocale(false)
   .demand(['_'])
-  .alias('o', 'outDir')
-  .describe('o', 'Output directory')
-  .string('o')
-  .alias('w', 'watch')
-  .describe('w', "Watch input directory's css files or pattern")
-  .boolean('w')
-  .alias('c', 'camelCase')
-  .describe('c', 'Convert CSS class tokens to camelcase')
-  .boolean('c')
-  .alias('e', 'namedExport')
-  .describe('e', 'Use named exports as opposed to default exports to enable tree shaking.')
-  .boolean('e')
-  .alias('dm', 'declarationMap')
-  .describe('dm', 'Create sourcemaps for d.ts files')
-  .boolean('d')
-  .alias('s', 'silent')
-  .describe('s', 'Silent output. Do not show "files written" messages')
-  .boolean('s')
+  .option('outDir', {
+    type: 'string',
+    alias: 'o',
+    describe: 'Output directory',
+  })
+  .option('watch', {
+    type: 'boolean',
+    alias: 'w',
+    describe: "Watch input directory's css files or pattern",
+  })
+  .option('camelCase', {
+    type: 'boolean',
+    alias: 'c',
+    describe: 'Convert CSS class tokens to camelcase',
+  })
+  .option('namedExport', {
+    type: 'boolean',
+    alias: 'e',
+    describe: 'Use named exports as opposed to default exports to enable tree shaking',
+  })
+  .option('declarationMap', {
+    type: 'boolean',
+    alias: 'dm',
+    describe: 'Create sourcemaps for d.ts files',
+  })
+  .option('silent', {
+    type: 'boolean',
+    alias: 's',
+    describe: 'Silent output. Do not show "files written" messages',
+  })
   .alias('h', 'help')
-  .help('h')
   .version(pkgJson.version)
   .check((argv) => {
     const patterns = argv._;
@@ -51,11 +62,11 @@ export function parseArgv(argv: string[]): RunOptions {
   const patterns: string[] = parsedArgv._.map((pattern) => pattern.toString());
   return {
     pattern: patterns[0],
-    outDir: parsedArgv.o,
-    watch: parsedArgv.w,
-    camelCase: parsedArgv.c,
-    namedExport: parsedArgv.e,
-    silent: parsedArgv.s,
+    outDir: parsedArgv.outDir,
+    watch: parsedArgv.watch,
+    camelCase: parsedArgv.camelCase,
+    namedExport: parsedArgv.namedExport,
+    silent: parsedArgv.silent,
   };
 }
 
