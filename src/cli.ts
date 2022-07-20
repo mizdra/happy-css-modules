@@ -17,7 +17,6 @@ const yargsInstance = yargs
   .example('$0 src -o dist', '')
   .example("$0 'styles/**/*.icss' -w", '')
   .detectLocale(false)
-  .demand(['_'])
   .option('outDir', {
     type: 'string',
     alias: 'o',
