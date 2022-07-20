@@ -36,9 +36,7 @@ const yarg = yargs
   .help('h')
   .version(pkgJson.version);
 
-main().catch(console.error);
-
-async function main(): Promise<void> {
+export async function main(): Promise<void> {
   // eslint-disable-next-line @typescript-eslint/await-thenable
   const argv = await yarg.argv;
 

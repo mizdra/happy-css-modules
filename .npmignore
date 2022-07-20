@@ -3,6 +3,7 @@
 
 # include these:
 !/lib/**/*
+!/bin/**/*
 !LICENSE.md
 !README.md
 

@@ -15,7 +15,7 @@
     "test": "jest"
   },
   "bin": {
-    "tcm": "lib/cli.js"
+    "tcm": "bin/tcm.js"
   },
   "repository": {
     "type": "git",
