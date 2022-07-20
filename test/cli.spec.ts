@@ -37,11 +37,10 @@ describe('parseArgv', () => {
     expect(parseArgv([...baseArgs, '--namedExport']).namedExport).toBe(true);
     expect(parseArgv([...baseArgs, '--no-namedExport']).namedExport).toBe(false);
   });
-  // FIXME
-  // test('--declarationMap', () => {
-  //   expect(parseArgv([...baseArgs, '--declarationMap']).declarationMap).toBe(true);
-  //   expect(parseArgv([...baseArgs, '--no-declarationMap']).declarationMap).toBe(false);
-  // });
+  test('--declarationMap', () => {
+    expect(parseArgv([...baseArgs, '--declarationMap']).declarationMap).toBe(true);
+    expect(parseArgv([...baseArgs, '--no-declarationMap']).declarationMap).toBe(false);
+  });
   test('--silent', () => {
     expect(parseArgv([...baseArgs, '--silent']).silent).toBe(true);
     expect(parseArgv([...baseArgs, '--no-silent']).silent).toBe(false);
