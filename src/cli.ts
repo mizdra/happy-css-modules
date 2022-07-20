@@ -8,6 +8,10 @@ import { run, RunOptions } from './run';
 const pkgJson = JSON.parse(readFileSync(resolve(__dirname, '../package.json'), 'utf-8'));
 
 const yargsInstance = yargs
+  .parserConfiguration({
+    // workaround for https://github.com/yargs/yargs/issues/1318
+    'duplicate-arguments-array': false,
+  })
   .usage('Create .css.d.ts from CSS modules *.css files.\nUsage: $0 [options] [file|dir|glob]')
   .example('$0 src/styles', '')
   .example('$0 src -o dist', '')
