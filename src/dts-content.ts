@@ -1,15 +1,9 @@
-import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import * as util from 'util';
 import camelcase from 'camelcase';
-import isThere from 'is-there';
-import * as mkdirp from 'mkdirp';
+import { writeFileIfChanged } from './file-system';
 import { ExportToken } from './library/css-modules-loader-core/file-system-loader';
 import { CodeWithSourceMap, SourceNode } from './library/source-map';
-
-const writeFile = util.promisify(fs.writeFile);
-const readFile = util.promisify(fs.readFile);
 
 function getRelativePath(fromFilePath: string, toFilePath: string): string {
   return path.relative(path.dirname(fromFilePath), toFilePath);
@@ -93,41 +87,10 @@ export class DtsContent {
       codeWithSourceMap.code + `//# sourceMappingURL=${path.basename(this.outputMapFilePath)}` + this.EOL;
     const finalMapOutput = this.declarationMap ? codeWithSourceMap.map.toString() : undefined;
 
-    const outPathDir = path.dirname(this.outputFilePath);
-    if (!isThere(outPathDir)) {
-      mkdirp.sync(outPathDir);
-    }
-
-    let isDirty = false;
-
-    if (!isThere(this.outputFilePath)) {
-      isDirty = true;
-    } else {
-      const content = (await readFile(this.outputFilePath)).toString();
-
-      if (content !== finalOutput) {
-        isDirty = true;
-      }
-    }
-    if (this.declarationMap) {
-      if (!isThere(this.outputMapFilePath)) {
-        isDirty = true;
-      } else {
-        const mapContent = (await readFile(this.outputMapFilePath)).toString();
-        if (mapContent !== finalMapOutput) {
-          isDirty = true;
-        }
-      }
-    }
-
-    if (isDirty) {
-      if (finalMapOutput) {
-        // NOTE: tsserver does not support inline declaration maps. Therefore, sourcemap files must be output.
-        await writeFile(this.outputFilePath, finalOutput, 'utf8');
-        await writeFile(this.outputMapFilePath, finalMapOutput, 'utf8');
-      } else {
-        await writeFile(this.outputFilePath, finalOutput, 'utf8');
-      }
+    await writeFileIfChanged(this.outputFilePath, finalOutput);
+    if (finalMapOutput) {
+      // NOTE: tsserver does not support inline declaration maps. Therefore, sourcemap files must be output.
+      await writeFileIfChanged(this.outputMapFilePath, finalMapOutput);
     }
   }
 
