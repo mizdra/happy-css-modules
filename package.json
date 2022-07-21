@@ -42,7 +42,7 @@
     "convert-source-map": "^1.8.0",
     "css-modules-loader-core": "^1.1.0",
     "glob": "^8.0.3",
-    "postcss": "6.0.1",
+    "postcss": "7.0.36",
     "postcss-selector-parser": "^6.0.10",
     "source-map": "^0.7.4",
     "yargs": "^17.5.1"

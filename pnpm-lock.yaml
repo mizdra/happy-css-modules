@@ -27,7 +27,7 @@ specifiers:
   glob: ^8.0.3
   jest: ^28.1.3
   npm-run-all: ^4.1.5
-  postcss: 6.0.1
+  postcss: 7.0.36
   postcss-selector-parser: ^6.0.10
   prettier: ~2.7.1
   source-map: ^0.7.4
@@ -42,7 +42,7 @@ dependencies:
   convert-source-map: 1.8.0
   css-modules-loader-core: 1.1.0
   glob: 8.0.3
-  postcss: 6.0.1
+  postcss: 7.0.36
   postcss-selector-parser: 6.0.10
   source-map: 0.7.4
   yargs: 17.5.1
@@ -3212,6 +3212,15 @@ packages:
       supports-color: 5.5.0
     dev: false
 
+  /postcss/7.0.36:
+    resolution: {integrity: sha512-BebJSIUMwJHRH0HAQoxN4u1CN86glsrwsW0q7T+/m44eXOUAxSNdHRkNZPYz5vVUbg17hFgOQDE7fZk7li3pZw==}
+    engines: {node: '>=6.0.0'}
+    dependencies:
+      chalk: 2.4.2
+      source-map: 0.6.1
+      supports-color: 6.1.0
+    dev: false
+
   /prelude-ls/1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
@@ -3557,6 +3566,13 @@ packages:
     engines: {node: '>=4'}
     dependencies:
       has-flag: 3.0.0
+
+  /supports-color/6.1.0:
+    resolution: {integrity: sha512-qe1jfm1Mg7Nq/NSh6XE24gPXROEVsWHxC1LIx//XNlD9iw7YZQGjZNjYN7xGaEG6iKdA8EtNFW6R0gjnVXp+wQ==}
+    engines: {node: '>=6'}
+    dependencies:
+      has-flag: 3.0.0
+    dev: false
 
   /supports-color/7.2.0:
     resolution: {integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==}
