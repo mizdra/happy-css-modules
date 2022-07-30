@@ -1,0 +1,68 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generateDtsContentWithSourceMap change export type by namedExport 2`] = `
+Object {
+  "file": "test.module.css.d.ts",
+  "mappings": "AAAA;AAAA,E,SAAA,K,SAAA;AAAA,E,SACA,K,SADA;AAAA;AAAA",
+  "names": Array [],
+  "sourceRoot": "",
+  "sources": Array [
+    "test.module.css",
+  ],
+  "version": 3,
+}
+`;
+
+exports[`generateDtsContentWithSourceMap change export type by namedExport 4`] = `
+Object {
+  "file": "test.module.css.d.ts",
+  "mappings": "AAAA;aAAA,G,SAAA;aACA,G,SADA",
+  "names": Array [],
+  "sourceRoot": "",
+  "sources": Array [
+    "test.module.css",
+  ],
+  "version": 3,
+}
+`;
+
+exports[`generateDtsContentWithSourceMap emit other directory 2`] = `
+Object {
+  "file": "test.module.css.d.ts",
+  "mappings": "AAAA;AAAA,E,SAAA,K,SAAA;AAAA,E,SACA,K,SADA;AAAA;AAAA",
+  "names": Array [],
+  "sourceRoot": "",
+  "sources": Array [
+    "../src/test.module.css",
+  ],
+  "version": 3,
+}
+`;
+
+exports[`generateDtsContentWithSourceMap generate dts content with source map 1`] = `
+"declare const styles: {
+  readonly \\"foo\\": string;
+  readonly \\"bar\\": string;
+  readonly \\"baz\\": string;
+  readonly \\"baz\\": string;
+  readonly \\"qux\\": string;
+  readonly \\"quux\\": string;
+  readonly \\"quux\\": string;
+};
+export = styles;
+"
+`;
+
+exports[`generateDtsContentWithSourceMap generate dts content with source map 2`] = `
+Object {
+  "file": "test.module.css.d.ts",
+  "mappings": "AAAA;AAAA,E,SAAA,K,SAAA;AAAA,E,SACA,K,SADA;AAAA,E,SAEA,K,SAFA;AAAA,E,SAGA,K,SAHA;AAAA,E,SCIA,K,SDJA;AAAA,E,SCKA,M,SDLA;AAAA,E,SCMA,M,SDNA;AAAA;AAAA",
+  "names": Array [],
+  "sourceRoot": "",
+  "sources": Array [
+    "test.module.css",
+    "other.module.css",
+  ],
+  "version": 3,
+}
+`;
