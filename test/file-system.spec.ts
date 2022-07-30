@@ -1,4 +1,4 @@
-import { readFile, rm, rmdir, stat } from 'fs/promises';
+import { readFile, rm, stat } from 'fs/promises';
 import { tmpdir } from 'os';
 import { join } from 'path';
 import { writeFileIfChanged } from '../src/file-system';
@@ -14,7 +14,7 @@ beforeEach(async () => {
   await writeFileIfChanged(TEST_FILE_PATH, OLD_CONTENT);
 });
 afterEach(async () => {
-  await rmdir(TMP_DIR, { recursive: true });
+  await rm(TMP_DIR, { recursive: true });
 });
 
 describe('writeFileIfChanged', () => {
