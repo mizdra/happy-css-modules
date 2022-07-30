@@ -2,7 +2,8 @@ import * as os from 'os';
 import * as path from 'path';
 import * as process from 'process';
 import { Plugin } from 'postcss';
-import { DtsContent, CamelCaseOption } from './dts-content';
+import { DtsContent } from './dts-content';
+import { CamelCaseOption } from './emitter';
 import FileSystemLoader from './library/css-modules-loader-core/file-system-loader';
 
 interface DtsCreatorOptions {
