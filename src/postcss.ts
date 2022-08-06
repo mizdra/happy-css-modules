@@ -1,4 +1,4 @@
-import postcss, { Rule, AtRule, Root } from 'postcss';
+import postcss, { Rule, AtRule, Root, Node } from 'postcss';
 import modules from 'postcss-modules';
 import selectorParser, { ClassName } from 'postcss-selector-parser';
 import valueParser from 'postcss-value-parser';
@@ -44,6 +44,7 @@ export function generateOriginalPosition(rule: Rule, classSelector: ClassName): 
   // The node derived from `postcss.parse` always has `start` property. Therefore, this line is unreachable.
   if (rule.source.start === undefined || classSelector.source.start === undefined)
     throw new Error('Node#start is undefined');
+  if (rule.source.input.file === undefined) throw new Error('Node#input.file is undefined');
 
   return {
     filePath: rule.source.input.file,
@@ -61,15 +62,15 @@ type Matcher = {
   classSelector: (rule: Rule, classSelector: ClassName) => void;
 };
 
-function isAtRuleNode(node: postcss.Node): node is AtRule {
+function isAtRuleNode(node: Node): node is AtRule {
   return node.type === 'atrule';
 }
 
-function isAtImportNode(node: postcss.Node): node is AtRule {
+function isAtImportNode(node: Node): node is AtRule {
   return isAtRuleNode(node) && node.name === 'import';
 }
 
-function isRuleNode(node: postcss.Node): node is Rule {
+function isRuleNode(node: Node): node is Rule {
   return node.type === 'rule';
 }
 
