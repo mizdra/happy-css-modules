@@ -3,13 +3,21 @@ import modules from 'postcss-modules';
 import selectorParser, { ClassName } from 'postcss-selector-parser';
 import valueParser from 'postcss-value-parser';
 
-/** The position of node. */
+/** The pair of line number and column number. */
 export type Position = {
-  filePath: string;
   /** The line number in the source file. It is 1-based. */
-  line?: number;
+  line: number;
   /** The column number in the source file. It is 0-based. */
-  column?: number;
+  column: number;
+};
+
+/** The location of class selector. */
+export type Location = {
+  filePath: string;
+  /** The starting position of the node's source. */
+  start: Position;
+  /** The ending position of the node's source. */
+  end: Position;
 };
 
 /**
@@ -33,27 +41,34 @@ export async function generateLocalTokenNames(ast: Root): Promise<string[]> {
 }
 
 /**
- * Generate the token's position on the source file.
+ * Get the token's location on the source file.
  * @param rule The rule node that contains the token.
  * @param classSelector The class selector node that contains the token.
- * @returns The token's position on the source file.
+ * @returns The token's location on the source file.
  */
-export function generateOriginalPosition(rule: Rule, classSelector: ClassName): Position {
+export function getOriginalLocation(rule: Rule, classSelector: ClassName): Location {
   // The node derived from `postcss.parse` always has `source` property. Therefore, this line is unreachable.
   if (rule.source === undefined || classSelector.source === undefined) throw new Error('Node#source is undefined');
-  // The node derived from `postcss.parse` always has `start` property. Therefore, this line is unreachable.
+  // The node derived from `postcss.parse` always has `start` and `end` property. Therefore, this line is unreachable.
   if (rule.source.start === undefined || classSelector.source.start === undefined)
     throw new Error('Node#start is undefined');
+  if (rule.source.end === undefined || classSelector.source.end === undefined) throw new Error('Node#end is undefined');
   if (rule.source.input.file === undefined) throw new Error('Node#input.file is undefined');
 
   return {
     filePath: rule.source.input.file,
-    // The line is 1-based.
-    // TODO: If `source` contains an inline sourcemap, use the sourcemap to get the line and column.
-    // This allows support for scss and less users.
-    line: rule.source.start.line + classSelector.source.start.line - 1,
-    // Postcss's column is 1-based but our column is 0-based.
-    column: rule.source.start.column - 1 + (classSelector.source.start.column - 1),
+    start: {
+      // The line is 1-based.
+      // TODO: If `source` contains an inline sourcemap, use the sourcemap to get the line and column.
+      // This allows support for scss and less users.
+      line: rule.source.start.line + classSelector.source.start.line - 1,
+      // Postcss's column is 1-based but our column is 0-based.
+      column: rule.source.start.column - 1 + (classSelector.source.start.column - 1),
+    },
+    end: {
+      line: rule.source.end.line + classSelector.source.end.line - 1,
+      column: rule.source.end.column - 1 + (classSelector.source.end.column - 1),
+    },
   };
 }
 

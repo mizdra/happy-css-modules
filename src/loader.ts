@@ -1,6 +1,6 @@
 import { readFile, stat } from 'fs/promises';
 import postcss from 'postcss';
-import { generateOriginalPosition, generateLocalTokenNames, parseAtImport, Position, walkByMatcher } from './postcss';
+import { getOriginalLocation, generateLocalTokenNames, parseAtImport, Location, walkByMatcher } from './postcss';
 
 /** The value returned from the transformer. */
 export type TransformResult = {
@@ -17,11 +17,8 @@ export type Transformer = (source: string, from: string) => TransformResult | Pr
 export type Token = {
   /** The token name. */
   name: string;
-  /**
-   * The original positions of the token in the source file.
-   * Cascading tokens may have multiple positions.
-   */
-  originalPositions: Position[];
+  /** The original locations of the token in the source file. */
+  originalLocations: Location[];
 };
 
 type CacheEntry = {
@@ -80,15 +77,15 @@ export class Loader {
         // NOTE: This method has false positives. However, it works as expected in many cases.
         if (!localTokenNames.includes(classSelector.value)) return;
 
-        const originalPosition = generateOriginalPosition(rule, classSelector);
+        const originalLocation = getOriginalLocation(rule, classSelector);
 
         const localToken = localTokens.find((token) => token.name === classSelector.value);
         if (localToken) {
-          localToken.originalPositions.push(originalPosition);
+          localToken.originalLocations.push(originalLocation);
         } else {
           localTokens.push({
             name: classSelector.value,
-            originalPositions: [originalPosition],
+            originalLocations: [originalLocation],
           });
         }
       },
