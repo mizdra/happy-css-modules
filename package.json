@@ -42,7 +42,7 @@
     "convert-source-map": "^1.8.0",
     "css-modules-loader-core": "^1.1.0",
     "glob": "^8.0.3",
-    "postcss": "6.0.1",
+    "postcss": "^8.4.14",
     "postcss-modules": "^4.3.1",
     "postcss-selector-parser": "^6.0.10",
     "postcss-value-parser": "^4.2.0",
@@ -70,15 +70,8 @@
     "ts-jest": "^28.0.7",
     "typescript": "^4.7.4"
   },
-  "pnpm": {
-    "overrides": {
-      "@types/css-modules-loader-core>postcss": "6.0.1",
-      "css-modules-loader-core>postcss": "6.0.1",
-      "postcss-modules>postcss": "6.0.1"
-    }
-  },
   "peerDependencies": {
-    "postcss": "^6.0.0"
+    "postcss": "^8.0.0"
   },
   "packageManager": "pnpm@7.5.2",
   "prettier": "@mizdra/prettier-config-mizdra"
