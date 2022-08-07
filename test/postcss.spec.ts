@@ -7,59 +7,28 @@ describe('generateLocalTokenNames', () => {
     expect(
       await generateLocalTokenNames(
         createRoot(`
-        .basic {
-          content: "basic";
-        }
-        .cascading {
-          content: "cascading_1";
-        }
-        .cascading {
-          content: "cascading_2";
-        }
-        .pseudo_class {
-          content: "pseudo_class";
-        }
-        .pseudo_class:hover {
-          content: "pseudo_class:hover";
-        }
-        .pseudo_class:before {
-          content: "pseudo_class:before";
-        }
-        .multiple_selector_1.multiple_selector_2 {
-          content: "multiple_selector";
-        }
-        .combinator_1 + .combinator_2 {
-          content: "combinator";
-        }
+        .basic {}
+        .cascading {}
+        .cascading {}
+        .pseudo_class {}
+        .pseudo_class:hover {}
+        .pseudo_class:before {}
+        .multiple_selector_1.multiple_selector_2 {}
+        .combinator_1 + .combinator_2 {}
         @supports (display: flex) {
           @media screen and (min-width: 900px) {
-            .at_rule {
-              content: "at_rule";
+            .at_rule {}
             }
           }
-        }
-        .selector_list_1, .selector_list_2 {
-          content: "selector_list";
-        }
-        :local .local_class_name_1 {
-          content: "local_class_name_1";
-        }
+        .selector_list_1, .selector_list_2 {}
+        :local .local_class_name_1 {}
         :local {
-          .local_class_name_2 {
-            content: "local_class_name_2";
+          .local_class_name_2 {}
+          .local_class_name_3 {}
           }
-          .local_class_name_3 {
-            content: "local_class_name_3";
-          }
-        }
-        :local(.local_class_name_4) {
-          content: "local_class_name_4";
-        }
-        .composes_target {
-          content: "composes_target";
-        }
+        :local(.local_class_name_4) {}
+        .composes_target {}
         .composes {
-          content: "composes";
           composes: composes_target;
         }
         `),
@@ -109,9 +78,7 @@ describe('getOriginalLocation', () => {
   test('basic', () => {
     const [basic] = createClassSelectors(
       createRoot(dedent`
-      .basic {
-        content: "basic";
-      }
+      .basic {}
       `),
     );
     expect(getOriginalLocation(basic.rule, basic.classSelector)).toMatchInlineSnapshot(`
@@ -132,12 +99,8 @@ describe('getOriginalLocation', () => {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const [cascading_1, cascading_2] = createClassSelectors(
       createRoot(dedent`
-      .cascading {
-        content: "cascading_1";
-      }
-      .cascading {
-        content: "cascading_2";
-      }
+      .cascading {}
+      .cascading {}
       `),
     );
     expect(getOriginalLocation(cascading_1.rule, cascading_1.classSelector)).toMatchInlineSnapshot(`
@@ -157,12 +120,12 @@ describe('getOriginalLocation', () => {
       Object {
         "end": Object {
           "column": 9,
-          "line": 4,
+          "line": 2,
         },
         "filePath": "/test/test.css",
         "start": Object {
           "column": 0,
-          "line": 4,
+          "line": 2,
         },
       }
     `);
@@ -171,15 +134,9 @@ describe('getOriginalLocation', () => {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const [pseudo_class, pseudo_class_hover, pseudo_class_before] = createClassSelectors(
       createRoot(dedent`
-      .pseudo_class {
-        content: "pseudo_class";
-      }
-      .pseudo_class:hover {
-        content: "pseudo_class:hover";
-      }
-      .pseudo_class:before {
-        content: "pseudo_class:before";
-      }
+      .pseudo_class {}
+      .pseudo_class:hover {}
+      .pseudo_class:before {}
       `),
     );
     expect(getOriginalLocation(pseudo_class.rule, pseudo_class.classSelector)).toMatchInlineSnapshot(`
@@ -199,12 +156,12 @@ describe('getOriginalLocation', () => {
       Object {
         "end": Object {
           "column": 12,
-          "line": 4,
+          "line": 2,
         },
         "filePath": "/test/test.css",
         "start": Object {
           "column": 0,
-          "line": 4,
+          "line": 2,
         },
       }
     `);
@@ -212,12 +169,12 @@ describe('getOriginalLocation', () => {
       Object {
         "end": Object {
           "column": 12,
-          "line": 7,
+          "line": 3,
         },
         "filePath": "/test/test.css",
         "start": Object {
           "column": 0,
-          "line": 7,
+          "line": 3,
         },
       }
     `);
@@ -226,9 +183,7 @@ describe('getOriginalLocation', () => {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const [multiple_selector_1, multiple_selector_2] = createClassSelectors(
       createRoot(dedent`
-      .multiple_selector_1.multiple_selector_2 {
-        content: "multiple_selector";
-      }
+      .multiple_selector_1.multiple_selector_2 {}
       `),
     );
     expect(getOriginalLocation(multiple_selector_1.rule, multiple_selector_1.classSelector)).toMatchInlineSnapshot(`
@@ -263,9 +218,7 @@ describe('getOriginalLocation', () => {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const [combinator_1, combinator_2] = createClassSelectors(
       createRoot(dedent`
-      .combinator_1 + .combinator_2 {
-        content: "combinator";
-      }
+      .combinator_1 + .combinator_2 {}
       `),
     );
     expect(getOriginalLocation(combinator_1.rule, combinator_1.classSelector)).toMatchInlineSnapshot(`
@@ -301,9 +254,7 @@ describe('getOriginalLocation', () => {
       createRoot(dedent`
       @supports (display: flex) {
         @media screen and (min-width: 900px) {
-          .at_rule {
-            content: "at_rule";
-          }
+          .at_rule {}
         }
       }
       `),
@@ -326,9 +277,7 @@ describe('getOriginalLocation', () => {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const [selector_list_1, selector_list_2] = createClassSelectors(
       createRoot(dedent`
-      .selector_list_1, .selector_list_2 {
-        content: "selector_list";
-      }
+      .selector_list_1, .selector_list_2 {}
       `),
     );
     expect(getOriginalLocation(selector_list_1.rule, selector_list_1.classSelector)).toMatchInlineSnapshot(`
@@ -362,20 +311,12 @@ describe('getOriginalLocation', () => {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const [local_class_name_1, local_class_name_2, local_class_name_3, local_class_name_4] = createClassSelectors(
       createRoot(dedent`
-      :local .local_class_name_1 {
-        content: "local_class_name_1";
-      }
+      :local .local_class_name_1 {}
       :local {
-        .local_class_name_2 {
-          content: "local_class_name_2";
+        .local_class_name_2 {}
+        .local_class_name_3 {}
         }
-        .local_class_name_3 {
-          content: "local_class_name_3";
-        }
-      }
-      :local(.local_class_name_4) {
-        content: "local_class_name_4";
-      }
+      :local(.local_class_name_4) {}
       `),
     );
     expect(getOriginalLocation(local_class_name_1.rule, local_class_name_1.classSelector)).toMatchInlineSnapshot(`
@@ -395,12 +336,12 @@ describe('getOriginalLocation', () => {
       Object {
         "end": Object {
           "column": 20,
-          "line": 5,
+          "line": 3,
         },
         "filePath": "/test/test.css",
         "start": Object {
           "column": 2,
-          "line": 5,
+          "line": 3,
         },
       }
     `);
@@ -408,12 +349,12 @@ describe('getOriginalLocation', () => {
       Object {
         "end": Object {
           "column": 20,
-          "line": 8,
+          "line": 4,
         },
         "filePath": "/test/test.css",
         "start": Object {
           "column": 2,
-          "line": 8,
+          "line": 4,
         },
       }
     `);
@@ -421,12 +362,12 @@ describe('getOriginalLocation', () => {
       Object {
         "end": Object {
           "column": 25,
-          "line": 12,
+          "line": 6,
         },
         "filePath": "/test/test.css",
         "start": Object {
           "column": 7,
-          "line": 12,
+          "line": 6,
         },
       }
     `);
@@ -435,11 +376,8 @@ describe('getOriginalLocation', () => {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const [composes_target, composes] = createClassSelectors(
       createRoot(dedent`
-      .composes_target {
-        content: "composes_target";
-      }
+      .composes_target {}
       .composes {
-        content: "composes";
         composes: composes_target;
       }
       `),
@@ -461,12 +399,12 @@ describe('getOriginalLocation', () => {
       Object {
         "end": Object {
           "column": 8,
-          "line": 4,
+          "line": 2,
         },
         "filePath": "/test/test.css",
         "start": Object {
           "column": 0,
-          "line": 4,
+          "line": 2,
         },
       }
     `);
@@ -477,9 +415,7 @@ describe('getOriginalLocation', () => {
       createRoot(dedent`
       .with_newline_1,
       .with_newline_2
-        + .with_newline_3, {
-        content: "with_newline";
-      }
+        + .with_newline_3, {}
       `),
     );
     expect(getOriginalLocation(with_newline_1.rule, with_newline_1.classSelector)).toMatchInlineSnapshot(`
