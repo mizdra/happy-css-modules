@@ -10,9 +10,9 @@ describe('generateLocalTokenNames', () => {
         .basic {}
         .cascading {}
         .cascading {}
-        .pseudo_class {}
-        .pseudo_class:hover {}
-        .pseudo_class:before {}
+        .pseudo_class_1 {}
+        .pseudo_class_2:hover {}
+        :not(.pseudo_class_3) {}
         .multiple_selector_1.multiple_selector_2 {}
         .combinator_1 + .combinator_2 {}
         @supports (display: flex) {
@@ -36,7 +36,9 @@ describe('generateLocalTokenNames', () => {
     ).toStrictEqual([
       'basic',
       'cascading',
-      'pseudo_class',
+      'pseudo_class_1',
+      'pseudo_class_2',
+      'pseudo_class_3',
       'multiple_selector_1',
       'multiple_selector_2',
       'combinator_1',
@@ -132,17 +134,17 @@ describe('getOriginalLocation', () => {
   });
   test('pseudo_class', () => {
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    const [pseudo_class, pseudo_class_hover, pseudo_class_before] = createClassSelectors(
+    const [pseudo_class_1, pseudo_class_2, pseudo_class_3] = createClassSelectors(
       createRoot(dedent`
-      .pseudo_class {}
-      .pseudo_class:hover {}
-      .pseudo_class:before {}
+      .pseudo_class_1 {}
+      .pseudo_class_2:hover {}
+      :not(.pseudo_class_3) {}
       `),
     );
-    expect(getOriginalLocation(pseudo_class.rule, pseudo_class.classSelector)).toMatchInlineSnapshot(`
+    expect(getOriginalLocation(pseudo_class_1.rule, pseudo_class_1.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 12,
+          "column": 14,
           "line": 1,
         },
         "filePath": "/test/test.css",
@@ -152,10 +154,10 @@ describe('getOriginalLocation', () => {
         },
       }
     `);
-    expect(getOriginalLocation(pseudo_class_hover.rule, pseudo_class_hover.classSelector)).toMatchInlineSnapshot(`
+    expect(getOriginalLocation(pseudo_class_2.rule, pseudo_class_2.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 12,
+          "column": 14,
           "line": 2,
         },
         "filePath": "/test/test.css",
@@ -165,15 +167,15 @@ describe('getOriginalLocation', () => {
         },
       }
     `);
-    expect(getOriginalLocation(pseudo_class_before.rule, pseudo_class_before.classSelector)).toMatchInlineSnapshot(`
+    expect(getOriginalLocation(pseudo_class_3.rule, pseudo_class_3.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 12,
+          "column": 19,
           "line": 3,
         },
         "filePath": "/test/test.css",
         "start": Object {
-          "column": 0,
+          "column": 5,
           "line": 3,
         },
       }
