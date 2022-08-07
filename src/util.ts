@@ -25,3 +25,7 @@ export function isObject(value: unknown): value is object {
 export function hasProp<T extends string>(obj: object, prop: T): obj is { [key in T]: unknown } {
   return prop in obj;
 }
+
+export function unique<T>(array: T[]): T[] {
+  return [...new Set(array)];
+}
