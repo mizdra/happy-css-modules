@@ -70,7 +70,7 @@ export function getOriginalLocation(rule: Rule, classSelector: ClassName): Locat
   };
 }
 
-type Matcher = {
+export type Matcher = {
   atImport?: (atImport: AtRule) => void;
   classSelector?: (rule: Rule, classSelector: ClassName) => void;
   composesDeclaration?: (composesDeclaration: Declaration) => void;

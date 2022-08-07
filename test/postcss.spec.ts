@@ -1,5 +1,5 @@
 import dedent from 'dedent';
-import { generateLocalTokenNames, getOriginalLocation } from '../src/postcss';
+import { generateLocalTokenNames, getOriginalLocation, walkByMatcher, Matcher } from '../src/postcss';
 import { createRoot, createClassSelectors } from './test/util';
 
 describe('generateLocalTokenNames', () => {
@@ -18,14 +18,14 @@ describe('generateLocalTokenNames', () => {
         @supports (display: flex) {
           @media screen and (min-width: 900px) {
             .at_rule {}
-            }
           }
+        }
         .selector_list_1, .selector_list_2 {}
         :local .local_class_name_1 {}
         :local {
           .local_class_name_2 {}
           .local_class_name_3 {}
-          }
+        }
         :local(.local_class_name_4) {}
         .composes_target {}
         .composes {
@@ -317,7 +317,7 @@ describe('getOriginalLocation', () => {
       :local {
         .local_class_name_2 {}
         .local_class_name_3 {}
-        }
+      }
       :local(.local_class_name_4) {}
       `),
     );
@@ -460,5 +460,115 @@ describe('getOriginalLocation', () => {
         },
       }
     `);
+  });
+});
+
+describe('walkByMatcher', () => {
+  test('atImport', () => {
+    const ast = createRoot(dedent`
+    @import;
+    @import "test.css";
+    @import url("test.css");
+    @import url(test.css);
+    @import "test.css" print;
+    @ignored;
+    `);
+    const expected = [
+      `@import`,
+      `@import "test.css"`,
+      `@import url("test.css")`,
+      `@import url(test.css)`,
+      `@import "test.css" print`,
+    ];
+    const atImport = jest.fn<
+      ReturnType<NonNullable<Matcher['atImport']>>,
+      Parameters<NonNullable<Matcher['atImport']>>
+    >();
+
+    walkByMatcher(ast, { atImport });
+
+    expect(atImport).toHaveBeenCalledTimes(expected.length);
+    expected.forEach((expected, i) => {
+      expect(atImport.mock.calls[i][0].toString()).toBe(expected);
+    });
+  });
+  test('classSelector', () => {
+    const ast = createRoot(dedent`
+    .basic {}
+    .cascading {}
+    .cascading {}
+    .pseudo_class_1 {}
+    .pseudo_class_2:hover {}
+    :not(.pseudo_class_3) {}
+    .multiple_selector_1.multiple_selector_2 {}
+    .combinator_1 + .combinator_2 {}
+    @supports (display: flex) {
+      @media screen and (min-width: 900px) {
+        .at_rule {}
+      }
+    }
+    .selector_list_1, .selector_list_2 {}
+    :local .local_class_name_1 {}
+    :local {
+      .local_class_name_2 {}
+      .local_class_name_3 {}
+    }
+    :local(.local_class_name_4) {}
+    #ignored {}
+    `);
+    const expected = [
+      [`.basic {}`, `.basic`],
+      [`.cascading {}`, `.cascading`],
+      [`.cascading {}`, `.cascading`],
+      [`.pseudo_class_1 {}`, `.pseudo_class_1`],
+      [`.pseudo_class_2:hover {}`, `.pseudo_class_2`],
+      [`:not(.pseudo_class_3) {}`, `.pseudo_class_3`],
+      [`.multiple_selector_1.multiple_selector_2 {}`, `.multiple_selector_1`],
+      [`.multiple_selector_1.multiple_selector_2 {}`, `.multiple_selector_2`],
+      [`.combinator_1 + .combinator_2 {}`, `.combinator_1`],
+      [`.combinator_1 + .combinator_2 {}`, `.combinator_2`],
+      [`.at_rule {}`, `.at_rule`],
+      [`.selector_list_1, .selector_list_2 {}`, `.selector_list_1`],
+      [`.selector_list_1, .selector_list_2 {}`, `.selector_list_2`],
+      [`:local .local_class_name_1 {}`, `.local_class_name_1`],
+      [`.local_class_name_2 {}`, `.local_class_name_2`],
+      [`.local_class_name_3 {}`, `.local_class_name_3`],
+      [`:local(.local_class_name_4) {}`, `.local_class_name_4`],
+    ];
+    const classSelector = jest.fn<
+      ReturnType<NonNullable<Matcher['classSelector']>>,
+      Parameters<NonNullable<Matcher['classSelector']>>
+    >();
+    walkByMatcher(ast, { classSelector });
+    expect(classSelector).toHaveBeenCalledTimes(expected.length);
+    expected.forEach((expected, i) => {
+      expect([
+        classSelector.mock.calls[i][0].toString(),
+        // NOTE: The result of `toString()` contains space, so remove it.
+        classSelector.mock.calls[i][1].toString().trim(),
+      ]).toStrictEqual(expected);
+    });
+  });
+  test('composesDeclaration', () => {
+    const ast = createRoot(dedent`
+    .a {
+      composes: a;
+      composes: b from "./test.css";
+    }
+    .b {
+      composes: c;
+      ignored: "ignored";
+    }
+    `);
+    const expected = [`composes: a`, `composes: b from "./test.css"`, `composes: c`];
+    const composesDeclaration = jest.fn<
+      ReturnType<NonNullable<Matcher['composesDeclaration']>>,
+      Parameters<NonNullable<Matcher['composesDeclaration']>>
+    >();
+    walkByMatcher(ast, { composesDeclaration });
+    expect(composesDeclaration).toHaveBeenCalledTimes(expected.length);
+    expected.forEach((expected, i) => {
+      expect(composesDeclaration.mock.calls[i][0].toString()).toStrictEqual(expected);
+    });
   });
 });
