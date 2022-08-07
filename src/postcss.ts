@@ -71,9 +71,9 @@ export function getOriginalLocation(rule: Rule, classSelector: ClassName): Locat
 }
 
 type Matcher = {
-  atImport: (atImport: AtRule) => void;
-  classSelector: (rule: Rule, classSelector: ClassName) => void;
-  composesDeclaration: (composesDeclaration: Declaration) => void;
+  atImport?: (atImport: AtRule) => void;
+  classSelector?: (rule: Rule, classSelector: ClassName) => void;
+  composesDeclaration?: (composesDeclaration: Declaration) => void;
 };
 
 function isAtRuleNode(node: Node): node is AtRule {
@@ -104,7 +104,7 @@ function isComposesDeclaration(node: Node): node is Declaration {
 export function walkByMatcher(ast: Root, matcher: Matcher): void {
   ast.walk((node) => {
     if (isAtImportNode(node)) {
-      matcher.atImport(node);
+      matcher.atImport?.(node);
     } else if (isRuleNode(node)) {
       // In `rule.selector` comes the following string:
       // 1. ".foo"
@@ -116,12 +116,12 @@ export function walkByMatcher(ast: Root, matcher: Matcher): void {
             // In `selector.value` comes the following string:
             // 1. "foo"
             // 2. "bar"
-            matcher.classSelector(node, selector);
+            matcher.classSelector?.(node, selector);
           }
         });
       }).processSync(node);
     } else if (isComposesDeclaration(node)) {
-      matcher.composesDeclaration(node);
+      matcher.composesDeclaration?.(node);
     }
   });
 }
