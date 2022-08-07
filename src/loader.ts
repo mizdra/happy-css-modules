@@ -1,4 +1,5 @@
 import { readFile, stat } from 'fs/promises';
+import { dirname, resolve } from 'path';
 import postcss from 'postcss';
 import {
   getOriginalLocation,
@@ -8,6 +9,7 @@ import {
   walkByMatcher,
   parseComposesDeclarationWithFromUrl,
 } from './postcss';
+import { unique } from './util';
 
 /** The value returned from the transformer. */
 export type TransformResult = {
@@ -79,7 +81,7 @@ export class Loader {
       map = result.map;
     }
 
-    const ast = postcss.parse(css, { from: filePath, map: { inline: false, prev: map ?? true } });
+    const ast = postcss.parse(css, { from: filePath, map: { inline: false, prev: map } });
 
     // Get the local tokens exported by the source file.
     // The tokens are fetched using `postcss-modules` plugin.
@@ -93,7 +95,7 @@ export class Loader {
       // Collect the sheets imported by `@import` rule.
       atImport: (atImport) => {
         const importedSheetPath = parseAtImport(atImport);
-        if (importedSheetPath) importedSheetPaths.push(importedSheetPath);
+        if (importedSheetPath) importedSheetPaths.push(resolve(dirname(filePath), importedSheetPath));
       },
       // Traverse the source file to find a class selector that matches the local token.
       classSelector: (rule, classSelector) => {
@@ -116,8 +118,9 @@ export class Loader {
       composesDeclaration: (composesDeclaration) => {
         const result = parseComposesDeclarationWithFromUrl(composesDeclaration);
         if (result) {
-          const oldTokenNames = filePathToImportedTokenNames.get(result.from) ?? [];
-          filePathToImportedTokenNames.set(result.from, [...oldTokenNames, ...result.tokenNames]);
+          const from = resolve(dirname(filePath), result.from);
+          const oldTokenNames = filePathToImportedTokenNames.get(from) ?? [];
+          filePathToImportedTokenNames.set(from, [...oldTokenNames, ...result.tokenNames]);
         }
       },
     });
@@ -144,14 +147,14 @@ export class Loader {
           filePathToTokenImport.set(filePath, {
             fromResult: tokenImport.fromResult,
             type: 'byNames',
-            names: [...tokenImport.names, ...tokenNames], // TODO: dedupe
+            names: unique([...tokenImport.names, ...tokenNames]),
           });
         }
       } else {
         filePathToTokenImport.set(filePath, {
           fromResult: await this.load(filePath, transform),
           type: 'byNames',
-          names: tokenNames,
+          names: unique(tokenNames),
         });
       }
     }

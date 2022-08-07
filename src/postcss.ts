@@ -35,7 +35,8 @@ export async function generateLocalTokenNames(ast: Root): Promise<string[]> {
           },
         }),
       )
-      .process(ast)
+      // NOTE: `process` modifies ast, so clone it.
+      .process(ast.clone())
       .catch(reject);
   });
 }
