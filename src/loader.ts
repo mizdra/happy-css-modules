@@ -16,7 +16,7 @@ export type TransformResult = {
   /** The transformed code. */
   css: string;
   /** The source map from the transformed code to the original code. */
-  map?: string;
+  map?: string | object;
 };
 
 /** The function to transform source code. */
@@ -74,7 +74,7 @@ export class Loader {
     if (cacheEntry && cacheEntry.mtime === mtime) return cacheEntry.result;
 
     let css = await readFile(filePath, 'utf-8');
-    let map: string | undefined;
+    let map: string | object | undefined;
     if (transform) {
       const result = await transform(css, filePath);
       css = result.css;

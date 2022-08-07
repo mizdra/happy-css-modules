@@ -1,6 +1,8 @@
 import fs from 'fs/promises';
-import { pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
+import { basename, dirname, relative, resolve } from 'path';
 import dedent from 'dedent';
+import less from 'less';
 import mockfs from 'mock-fs';
 import sass from 'sass';
 import { Loader, Transformer } from '../src/loader';
@@ -552,14 +554,20 @@ test('returns the result from the cache when the file has not been modified', as
 });
 
 describe('called with transform option', () => {
-  const transform: Transformer = (source: string, from: string) => {
+  const transform: Transformer = async (source: string, from: string) => {
     if (from.endsWith('.scss')) {
-      const result = sass.compileString(source, { url: pathToFileURL(from), sourceMap: true });
-      return { css: result.css, sourceMap: result.sourceMap };
+      const result = sass.compile(from, { sourceMap: true });
+      return { css: result.css, map: result.sourceMap };
+    } else if (from.endsWith('.less')) {
+      const result = await less.render(source, {
+        filename: from,
+        sourceMap: {},
+      });
+      return { css: result.css, map: result.map };
     }
     return { css: source };
   };
-  test('supports transpiler', async () => {
+  test('supports sass transpiler', async () => {
     mockfs({
       '/test/1.scss': dedent`
       @use './2.scss' as two; // sass feature test (@use)
@@ -597,7 +605,7 @@ describe('called with transform option', () => {
                     "column": 3,
                     "line": 1,
                   },
-                  "filePath": "/test/1.scss",
+                  "filePath": "/test/2.scss",
                   "start": Object {
                     "column": 0,
                     "line": 1,
@@ -611,12 +619,12 @@ describe('called with transform option', () => {
                 Object {
                   "end": Object {
                     "column": 1,
-                    "line": 5,
+                    "line": 1,
                   },
-                  "filePath": "/test/1.scss",
+                  "filePath": "/test/3.scss",
                   "start": Object {
                     "column": 0,
-                    "line": 5,
+                    "line": 1,
                   },
                 },
               ],
@@ -627,12 +635,12 @@ describe('called with transform option', () => {
                 Object {
                   "end": Object {
                     "column": 3,
-                    "line": 9,
+                    "line": 3,
                   },
                   "filePath": "/test/1.scss",
                   "start": Object {
                     "column": 0,
-                    "line": 9,
+                    "line": 3,
                   },
                 },
               ],
@@ -643,12 +651,12 @@ describe('called with transform option', () => {
                 Object {
                   "end": Object {
                     "column": 3,
-                    "line": 13,
+                    "line": 4,
                   },
                   "filePath": "/test/1.scss",
                   "start": Object {
                     "column": 0,
-                    "line": 13,
+                    "line": 4,
                   },
                 },
               ],
@@ -680,6 +688,119 @@ describe('called with transform option', () => {
               },
               "names": Array [
                 "d",
+              ],
+              "type": "byNames",
+            },
+          ],
+        }
+      `),
+    );
+  });
+  test('supports less transpiler', async () => {
+    mockfs({
+      '/test/1.less': dedent`
+      @import './2.less'; // less feature test (@use)
+      .a_1 { dummy: ''; }
+      .a_2 {
+        dummy: '';
+        .a_3 {} // less feature test (nesting)
+        .b_1();
+        .b_2();
+        composes: a_1; // css module feature test (composes)
+        composes: c from './3.less'; // css module feature test (composes from other file)
+      }
+      `,
+      '/test/2.less': dedent`
+      .b_1 { dummy: ''; }
+      .b_2() { dummy: ''; }
+      `,
+      '/test/3.less': dedent`
+      .c { dummy: ''; }
+      `,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      'node_modules': mockfs.load(resolve(__dirname, '../node_modules')),
+    });
+    const result = await loader.load('/test/1.less', transform);
+    mockfs.bypass(() =>
+      expect(result).toMatchInlineSnapshot(`
+        Object {
+          "filePath": "/test/1.less",
+          "localTokens": Array [
+            Object {
+              "name": "b_1",
+              "originalLocations": Array [
+                Object {
+                  "end": Object {
+                    "column": 3,
+                    "line": 1,
+                  },
+                  "filePath": "/test/2.less",
+                  "start": Object {
+                    "column": 0,
+                    "line": 1,
+                  },
+                },
+              ],
+            },
+            Object {
+              "name": "a_1",
+              "originalLocations": Array [
+                Object {
+                  "end": Object {
+                    "column": 3,
+                    "line": 2,
+                  },
+                  "filePath": "/test/1.less",
+                  "start": Object {
+                    "column": 0,
+                    "line": 2,
+                  },
+                },
+              ],
+            },
+            Object {
+              "name": "a_2",
+              "originalLocations": Array [
+                Object {
+                  "end": Object {
+                    "column": 3,
+                    "line": 3,
+                  },
+                  "filePath": "/test/1.less",
+                  "start": Object {
+                    "column": 0,
+                    "line": 3,
+                  },
+                },
+              ],
+            },
+          ],
+          "tokenImports": Array [
+            Object {
+              "fromResult": Object {
+                "filePath": "/test/3.less",
+                "localTokens": Array [
+                  Object {
+                    "name": "c",
+                    "originalLocations": Array [
+                      Object {
+                        "end": Object {
+                          "column": 1,
+                          "line": 1,
+                        },
+                        "filePath": "/test/3.less",
+                        "start": Object {
+                          "column": 0,
+                          "line": 1,
+                        },
+                      },
+                    ],
+                  },
+                ],
+                "tokenImports": Array [],
+              },
+              "names": Array [
+                "c",
               ],
               "type": "byNames",
             },

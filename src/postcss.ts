@@ -56,19 +56,45 @@ export function getOriginalLocation(rule: Rule, classSelector: ClassName): Locat
   if (rule.source.end === undefined || classSelector.source.end === undefined) throw new Error('Node#end is undefined');
   if (rule.source.input.file === undefined) throw new Error('Node#input.file is undefined');
 
-  return {
-    filePath: rule.source.input.file,
-    start: {
-      // The line is 1-based.
-      line: rule.source.start.line + classSelector.source.start.line - 1,
-      // Postcss's column is 1-based but our column is 0-based.
-      column: rule.source.start.column - 1 + (classSelector.source.start.column - 1),
-    },
-    end: {
-      line: rule.source.start.line + classSelector.source.end.line - 1,
-      column: rule.source.start.column - 1 + (classSelector.source.end.column - 1),
-    },
+  const start = {
+    // The line is 1-based.
+    line: rule.source.start.line + classSelector.source.start.line - 1,
+    // Postcss's column is 1-based but our column is 0-based.
+    column: rule.source.start.column - 1 + (classSelector.source.start.column - 1),
   };
+  const end = {
+    line: start.line,
+    column: start.column + classSelector.value.length,
+  };
+  let location = {
+    filePath: rule.source.input.file,
+    start,
+    end,
+  };
+
+  if (rule.source.input.map) {
+    const origin = rule.source.input.origin(
+      location.start.line,
+      // Postcss's column is 1-based but our column is 0-based.
+      location.start.column + 1,
+    );
+    if (origin === false) throw new Error('`Input#origin` returned false');
+    if (origin.file === undefined) throw new Error('`FilePosition#file` is undefined');
+
+    location = {
+      filePath: origin.file,
+      start: {
+        line: origin.line,
+        column: origin.column,
+      },
+      end: {
+        line: origin.line,
+        column: origin.column + classSelector.value.length,
+      },
+    };
+  }
+
+  return location;
 }
 
 export type Matcher = {
