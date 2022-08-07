@@ -1,4 +1,4 @@
-import postcss, { Rule, AtRule, Root, Node } from 'postcss';
+import postcss, { Rule, AtRule, Root, Node, Declaration } from 'postcss';
 import modules from 'postcss-modules';
 import selectorParser, { ClassName } from 'postcss-selector-parser';
 import valueParser from 'postcss-value-parser';
@@ -75,6 +75,7 @@ export function getOriginalLocation(rule: Rule, classSelector: ClassName): Locat
 type Matcher = {
   atImport: (atImport: AtRule) => void;
   classSelector: (rule: Rule, classSelector: ClassName) => void;
+  composesDeclaration: (composesDeclaration: Declaration) => void;
 };
 
 function isAtRuleNode(node: Node): node is AtRule {
@@ -87,6 +88,14 @@ function isAtImportNode(node: Node): node is AtRule {
 
 function isRuleNode(node: Node): node is Rule {
   return node.type === 'rule';
+}
+
+function isDeclaration(node: Node): node is Declaration {
+  return node.type === 'decl';
+}
+
+function isComposesDeclaration(node: Node): node is Declaration {
+  return isDeclaration(node) && node.prop === 'composes';
 }
 
 /**
@@ -113,6 +122,8 @@ export function walkByMatcher(ast: Root, matcher: Matcher): void {
           }
         });
       }).processSync(node);
+    } else if (isComposesDeclaration(node)) {
+      matcher.composesDeclaration(node);
     }
   });
 }
@@ -124,8 +135,44 @@ export function walkByMatcher(ast: Root, matcher: Matcher): void {
  */
 export function parseAtImport(atImport: AtRule): string | undefined {
   const firstNode = valueParser(atImport.params).nodes[0];
+  if (firstNode === undefined) return undefined;
   if (firstNode.type === 'string') return firstNode.value;
   if (firstNode.type === 'function' && firstNode.value === 'url') {
     if (firstNode.nodes[0].type === 'string') return firstNode.nodes[0].value;
   }
+}
+
+/**
+ * Parse `composes` declaration with `from <url>`.
+ * If the declaration is not found or do not have `from <url>`, return `undefined`.
+ * @param composesDeclaration The `composes` declaration to parse.
+ * @returns The information of the declaration.
+ */
+export function parseComposesDeclarationWithFromUrl(
+  composesDeclaration: Declaration,
+): { from: string; tokenNames: string[] } | undefined {
+  // NOTE: `composes` property syntax is...
+  // - syntax: `composes: <class-name> [...<class-name>] [from <url>];`
+  // - variables:
+  //   - `<class-name>`: `<sting>`
+  //   - `<url>`: `<string>`
+  // - ref:
+  //   - https://github.com/css-modules/css-modules#composition
+  //   - https://github.com/css-modules/css-modules#composing-from-other-files
+  //   - https://github.com/css-modules/postcss-modules-extract-imports#specification
+
+  const nodes = valueParser(composesDeclaration.value).nodes;
+  if (nodes.length < 5) return undefined;
+
+  const classNamesOrSpaces = nodes.slice(0, -3);
+  const [from, , url] = nodes.slice(-3);
+
+  const classNames = classNamesOrSpaces.filter((node) => node.type === 'word');
+
+  // validate nodes
+  if (from.type !== 'word' || from.value !== 'from') return undefined;
+  if (url.type !== 'string') return undefined;
+  if (classNames.length === 0) return undefined;
+
+  return { from: url.value, tokenNames: classNames.map((node) => node.value) };
 }

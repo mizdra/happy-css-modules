@@ -1,6 +1,13 @@
 import { readFile, stat } from 'fs/promises';
 import postcss from 'postcss';
-import { getOriginalLocation, generateLocalTokenNames, parseAtImport, Location, walkByMatcher } from './postcss';
+import {
+  getOriginalLocation,
+  generateLocalTokenNames,
+  parseAtImport,
+  Location,
+  walkByMatcher,
+  parseComposesDeclarationWithFromUrl,
+} from './postcss';
 
 /** The value returned from the transformer. */
 export type TransformResult = {
@@ -26,12 +33,28 @@ type CacheEntry = {
   result: LoadResult;
 };
 
+type TokenImport =
+  | {
+      /** The `LoadResult` of the imported file. */
+      fromResult: LoadResult;
+      /** The import method. if `all`, import all tokens from the file. */
+      type: 'all';
+    }
+  | {
+      /** The `LoadResult` of the imported file. */
+      fromResult: LoadResult;
+      /** The import method. if `byNames`, import tokens from the file by the names. */
+      type: 'byNames';
+      /** The name of imported token. */
+      names: string[];
+    };
+
 /** The result of `Loader#load`. */
 export type LoadResult = {
   /** The file path of the source file. */
   filePath: string;
-  /** The stylesheets imported by the source file. */
-  importedSheets: LoadResult[];
+  /** The external tokens imported from the source file. */
+  tokenImports: TokenImport[];
   /** The tokens exported by the source file. */
   localTokens: Token[];
 };
@@ -63,6 +86,7 @@ export class Loader {
     const localTokenNames = await generateLocalTokenNames(ast);
 
     const importedSheetPaths: string[] = [];
+    const filePathToImportedTokenNames = new Map<string, string[]>();
     const localTokens: Token[] = [];
 
     walkByMatcher(ast, {
@@ -89,17 +113,52 @@ export class Loader {
           });
         }
       },
+      composesDeclaration: (composesDeclaration) => {
+        const result = parseComposesDeclarationWithFromUrl(composesDeclaration);
+        if (result) {
+          const oldTokenNames = filePathToImportedTokenNames.get(result.from) ?? [];
+          filePathToImportedTokenNames.set(result.from, [...oldTokenNames, ...result.tokenNames]);
+        }
+      },
     });
 
+    const filePathToTokenImport = new Map<string, TokenImport>();
+
     // Load imported sheets recursively.
-    const importedSheets: LoadResult[] = [];
     for (const importedSheetPath of importedSheetPaths) {
-      importedSheets.push(await this.load(importedSheetPath));
+      if (filePathToTokenImport.has(importedSheetPath)) continue;
+      const fromResult = await this.load(importedSheetPath, transform);
+      filePathToTokenImport.set(importedSheetPath, {
+        fromResult,
+        type: 'all',
+      });
+    }
+
+    // Load imported tokens by the names.
+    for (const [filePath, tokenNames] of filePathToImportedTokenNames) {
+      const tokenImport = filePathToTokenImport.get(filePath);
+      if (tokenImport) {
+        if (tokenImport.type === 'all') {
+          // noop
+        } else {
+          filePathToTokenImport.set(filePath, {
+            fromResult: tokenImport.fromResult,
+            type: 'byNames',
+            names: [...tokenImport.names, ...tokenNames], // TODO: dedupe
+          });
+        }
+      } else {
+        filePathToTokenImport.set(filePath, {
+          fromResult: await this.load(filePath, transform),
+          type: 'byNames',
+          names: tokenNames,
+        });
+      }
     }
 
     const result: LoadResult = {
       filePath,
-      importedSheets,
+      tokenImports: [...filePathToTokenImport.values()],
       localTokens,
     };
     this.cache.set(filePath, { mtime, result });
