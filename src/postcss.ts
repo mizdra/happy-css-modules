@@ -137,6 +137,7 @@ export function parseAtImport(atImport: AtRule): string | undefined {
   if (firstNode.type === 'string') return firstNode.value;
   if (firstNode.type === 'function' && firstNode.value === 'url') {
     if (firstNode.nodes[0].type === 'string') return firstNode.nodes[0].value;
+    if (firstNode.nodes[0].type === 'word') return firstNode.nodes[0].value;
   }
 }
 

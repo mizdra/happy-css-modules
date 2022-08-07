@@ -1,6 +1,13 @@
 import dedent from 'dedent';
-import { generateLocalTokenNames, getOriginalLocation, walkByMatcher, Matcher } from '../src/postcss';
-import { createRoot, createClassSelectors } from './test/util';
+import {
+  generateLocalTokenNames,
+  getOriginalLocation,
+  walkByMatcher,
+  Matcher,
+  parseAtImport,
+  parseComposesDeclarationWithFromUrl,
+} from '../src/postcss';
+import { createRoot, createClassSelectors, createAtImports, createComposesDeclarations } from './test/util';
 
 describe('generateLocalTokenNames', () => {
   test('basic', async () => {
@@ -570,5 +577,51 @@ describe('walkByMatcher', () => {
     expected.forEach((expected, i) => {
       expect(composesDeclaration.mock.calls[i][0].toString()).toStrictEqual(expected);
     });
+  });
+});
+
+test('parseAtImport', () => {
+  const atImports = createAtImports(
+    createRoot(dedent`
+    @import;
+    @import "test.css";
+    @import url("test.css");
+    @import url(test.css);
+    @import "test.css" print;
+    `),
+  );
+  expect(parseAtImport(atImports[0])).toBe(undefined);
+  expect(parseAtImport(atImports[1])).toBe('test.css');
+  expect(parseAtImport(atImports[2])).toBe('test.css');
+  expect(parseAtImport(atImports[3])).toBe('test.css');
+  expect(parseAtImport(atImports[4])).toBe('test.css');
+});
+
+test('parseComposesDeclarationWithFromUrl', () => {
+  const composesDeclarations = createComposesDeclarations(
+    createRoot(dedent`
+    .a {
+      composes: a;
+      composes: a b c;
+      composes: a from "test.css";
+      composes: a b c from "test.css";
+      composes: from from from from "test.css";
+      /* NOTE: CSS Modules do not support '... from url("test.css")'. */
+    }
+    `),
+  );
+  expect(parseComposesDeclarationWithFromUrl(composesDeclarations[0])).toStrictEqual(undefined);
+  expect(parseComposesDeclarationWithFromUrl(composesDeclarations[1])).toStrictEqual(undefined);
+  expect(parseComposesDeclarationWithFromUrl(composesDeclarations[2])).toStrictEqual({
+    from: 'test.css',
+    tokenNames: ['a'],
+  });
+  expect(parseComposesDeclarationWithFromUrl(composesDeclarations[3])).toStrictEqual({
+    from: 'test.css',
+    tokenNames: ['a', 'b', 'c'],
+  });
+  expect(parseComposesDeclarationWithFromUrl(composesDeclarations[4])).toStrictEqual({
+    from: 'test.css',
+    tokenNames: ['from', 'from', 'from'], // do not deduplicate.
   });
 });
