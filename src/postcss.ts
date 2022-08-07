@@ -59,15 +59,13 @@ export function getOriginalLocation(rule: Rule, classSelector: ClassName): Locat
     filePath: rule.source.input.file,
     start: {
       // The line is 1-based.
-      // TODO: If `source` contains an inline sourcemap, use the sourcemap to get the line and column.
-      // This allows support for scss and less users.
       line: rule.source.start.line + classSelector.source.start.line - 1,
       // Postcss's column is 1-based but our column is 0-based.
       column: rule.source.start.column - 1 + (classSelector.source.start.column - 1),
     },
     end: {
-      line: rule.source.end.line + classSelector.source.end.line - 1,
-      column: rule.source.end.column - 1 + (classSelector.source.end.column - 1),
+      line: rule.source.start.line + classSelector.source.end.line - 1,
+      column: rule.source.start.column - 1 + (classSelector.source.end.column - 1),
     },
   };
 }
