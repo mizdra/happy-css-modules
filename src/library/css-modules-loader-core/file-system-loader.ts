@@ -142,12 +142,12 @@ export default class FileSystemLoader {
   private core: Core;
   public tokensByFile: Dictionary<ExportToken[]>;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(root: string, plugins?: Plugin<any>[]) {
+  constructor(root: string, plugins?: Plugin[]) {
     this.root = root;
     this.sources = {};
     this.importNr = 0;
-    this.core = new Core(plugins);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.core = new Core(plugins as any);
     this.tokensByFile = {};
   }
 

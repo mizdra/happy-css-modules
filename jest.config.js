@@ -5,7 +5,7 @@ const config = {
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
-  testRegex: '(test/.*|(src/.*\\.test))\\.ts$',
+  testMatch: ['<rootDir>/test/**/*.spec.ts?(x)'],
   testPathIgnorePatterns: ['/node_modules/', '\\.d\\.ts$', 'dist/', 'example/', 'coverage/'],
   watchPathIgnorePatterns: ['\\.d\\.ts$'],
   moduleFileExtensions: ['js', 'ts', 'json'],

@@ -42,8 +42,10 @@
     "convert-source-map": "^1.8.0",
     "css-modules-loader-core": "^1.1.0",
     "glob": "^8.0.3",
-    "postcss": "6.0.1",
+    "postcss": "^8.4.14",
+    "postcss-modules": "^4.3.1",
     "postcss-selector-parser": "^6.0.10",
+    "postcss-value-parser": "^4.2.0",
     "source-map": "^0.7.4",
     "yargs": "^17.5.1"
   },
@@ -52,30 +54,31 @@
     "@mizdra/prettier-config-mizdra": "^1.0.0",
     "@types/convert-source-map": "^1.5.2",
     "@types/css-modules-loader-core": "^1.1.0",
+    "@types/dedent": "^0.7.0",
     "@types/glob": "^7.2.0",
     "@types/jest": "^28.1.6",
+    "@types/less": "^3.0.3",
     "@types/mkdirp": "^1.0.2",
+    "@types/mock-fs": "^4.13.1",
     "@types/node": "^18.0.6",
     "@types/yargs": "^17.0.10",
     "@typescript-eslint/eslint-plugin": "^5.31.0",
     "@typescript-eslint/parser": "^5.31.0",
+    "dedent": "^0.7.0",
     "eslint": "^8.20.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
     "jest": "^28.1.3",
+    "less": "^4.1.3",
+    "mock-fs": "^5.1.4",
     "npm-run-all": "^4.1.5",
     "prettier": "~2.7.1",
+    "sass": "^1.54.3",
     "ts-jest": "^28.0.7",
     "typescript": "^4.7.4"
   },
-  "pnpm": {
-    "overrides": {
-      "@types/css-modules-loader-core>postcss": "6.0.1",
-      "css-modules-loader-core>postcss": "6.0.1"
-    }
-  },
   "peerDependencies": {
-    "postcss": "^6.0.0"
+    "postcss": "^8.0.0"
   },
   "packageManager": "pnpm@7.5.2",
   "prettier": "@mizdra/prettier-config-mizdra"

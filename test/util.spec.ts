@@ -1,4 +1,4 @@
-import { hasProp, isObject, isSystemError } from '../src/util';
+import { hasProp, isObject, isSystemError, unique } from '../src/util';
 
 function fakeSystemError({ code }: { code: string }) {
   const error = new Error();
@@ -36,4 +36,8 @@ test('hasProp', () => {
   // it can check prototype
   expect(hasProp({}, 'toString')).toBe(true);
   expect(hasProp([], 'length')).toBe(true);
+});
+
+test('unique', () => {
+  expect(unique([0, 1, 1, 2, 1])).toStrictEqual([0, 1, 2]);
 });
