@@ -34,12 +34,12 @@ test('basic', async () => {
             "originalLocations": Array [
               Object {
                 "end": Object {
-                  "column": 1,
+                  "column": 2,
                   "line": 1,
                 },
                 "filePath": "/test/1.css",
                 "start": Object {
-                  "column": 0,
+                  "column": 1,
                   "line": 1,
                 },
               },
@@ -50,12 +50,12 @@ test('basic', async () => {
             "originalLocations": Array [
               Object {
                 "end": Object {
-                  "column": 1,
+                  "column": 2,
                   "line": 2,
                 },
                 "filePath": "/test/1.css",
                 "start": Object {
-                  "column": 0,
+                  "column": 1,
                   "line": 2,
                 },
               },
@@ -101,12 +101,12 @@ test('tracks other files when `@import` is present', async () => {
                   "originalLocations": Array [
                     Object {
                       "end": Object {
-                        "column": 1,
+                        "column": 2,
                         "line": 1,
                       },
                       "filePath": "/test/2.css",
                       "start": Object {
-                        "column": 0,
+                        "column": 1,
                         "line": 1,
                       },
                     },
@@ -126,12 +126,12 @@ test('tracks other files when `@import` is present', async () => {
                   "originalLocations": Array [
                     Object {
                       "end": Object {
-                        "column": 1,
+                        "column": 2,
                         "line": 1,
                       },
                       "filePath": "/test/3.css",
                       "start": Object {
-                        "column": 0,
+                        "column": 1,
                         "line": 1,
                       },
                     },
@@ -151,12 +151,12 @@ test('tracks other files when `@import` is present', async () => {
                   "originalLocations": Array [
                     Object {
                       "end": Object {
-                        "column": 1,
+                        "column": 2,
                         "line": 1,
                       },
                       "filePath": "/test/4.css",
                       "start": Object {
-                        "column": 0,
+                        "column": 1,
                         "line": 1,
                       },
                     },
@@ -204,12 +204,12 @@ test('tracks other files when `composes` is present', async () => {
             "originalLocations": Array [
               Object {
                 "end": Object {
-                  "column": 1,
+                  "column": 2,
                   "line": 1,
                 },
                 "filePath": "/test/1.css",
                 "start": Object {
-                  "column": 0,
+                  "column": 1,
                   "line": 1,
                 },
               },
@@ -226,12 +226,12 @@ test('tracks other files when `composes` is present', async () => {
                   "originalLocations": Array [
                     Object {
                       "end": Object {
-                        "column": 1,
+                        "column": 2,
                         "line": 1,
                       },
                       "filePath": "/test/2.css",
                       "start": Object {
-                        "column": 0,
+                        "column": 1,
                         "line": 1,
                       },
                     },
@@ -254,12 +254,12 @@ test('tracks other files when `composes` is present', async () => {
                   "originalLocations": Array [
                     Object {
                       "end": Object {
-                        "column": 1,
+                        "column": 2,
                         "line": 1,
                       },
                       "filePath": "/test/3.css",
                       "start": Object {
-                        "column": 0,
+                        "column": 1,
                         "line": 1,
                       },
                     },
@@ -270,12 +270,12 @@ test('tracks other files when `composes` is present', async () => {
                   "originalLocations": Array [
                     Object {
                       "end": Object {
-                        "column": 1,
+                        "column": 2,
                         "line": 2,
                       },
                       "filePath": "/test/3.css",
                       "start": Object {
-                        "column": 0,
+                        "column": 1,
                         "line": 2,
                       },
                     },
@@ -299,12 +299,12 @@ test('tracks other files when `composes` is present', async () => {
                   "originalLocations": Array [
                     Object {
                       "end": Object {
-                        "column": 1,
+                        "column": 2,
                         "line": 1,
                       },
                       "filePath": "/test/4.css",
                       "start": Object {
-                        "column": 0,
+                        "column": 1,
                         "line": 1,
                       },
                     },
@@ -347,12 +347,12 @@ test('deduplicates `TokenImport#names` when `TokenImport` is `byNames` type', as
             "originalLocations": Array [
               Object {
                 "end": Object {
-                  "column": 1,
+                  "column": 2,
                   "line": 1,
                 },
                 "filePath": "/test/1.css",
                 "start": Object {
-                  "column": 0,
+                  "column": 1,
                   "line": 1,
                 },
               },
@@ -369,12 +369,12 @@ test('deduplicates `TokenImport#names` when `TokenImport` is `byNames` type', as
                   "originalLocations": Array [
                     Object {
                       "end": Object {
-                        "column": 1,
+                        "column": 2,
                         "line": 1,
                       },
                       "filePath": "/test/2.css",
                       "start": Object {
-                        "column": 0,
+                        "column": 1,
                         "line": 1,
                       },
                     },
@@ -447,12 +447,12 @@ test('give priority to `all` type over `byNames` type', async () => {
             "originalLocations": Array [
               Object {
                 "end": Object {
-                  "column": 1,
+                  "column": 2,
                   "line": 2,
                 },
                 "filePath": "/test/1.css",
                 "start": Object {
-                  "column": 0,
+                  "column": 1,
                   "line": 2,
                 },
               },
@@ -469,12 +469,12 @@ test('give priority to `all` type over `byNames` type', async () => {
                   "originalLocations": Array [
                     Object {
                       "end": Object {
-                        "column": 1,
+                        "column": 2,
                         "line": 1,
                       },
                       "filePath": "/test/2.css",
                       "start": Object {
-                        "column": 0,
+                        "column": 1,
                         "line": 1,
                       },
                     },
@@ -485,12 +485,12 @@ test('give priority to `all` type over `byNames` type', async () => {
                   "originalLocations": Array [
                     Object {
                       "end": Object {
-                        "column": 1,
+                        "column": 2,
                         "line": 2,
                       },
                       "filePath": "/test/2.css",
                       "start": Object {
-                        "column": 0,
+                        "column": 1,
                         "line": 2,
                       },
                     },
@@ -602,12 +602,12 @@ describe('called with transform option', () => {
               "originalLocations": Array [
                 Object {
                   "end": Object {
-                    "column": 3,
+                    "column": 4,
                     "line": 1,
                   },
                   "filePath": "/test/2.scss",
                   "start": Object {
-                    "column": 0,
+                    "column": 1,
                     "line": 1,
                   },
                 },
@@ -618,12 +618,12 @@ describe('called with transform option', () => {
               "originalLocations": Array [
                 Object {
                   "end": Object {
-                    "column": 1,
+                    "column": 2,
                     "line": 1,
                   },
                   "filePath": "/test/3.scss",
                   "start": Object {
-                    "column": 0,
+                    "column": 1,
                     "line": 1,
                   },
                 },
@@ -634,12 +634,12 @@ describe('called with transform option', () => {
               "originalLocations": Array [
                 Object {
                   "end": Object {
-                    "column": 3,
+                    "column": 4,
                     "line": 3,
                   },
                   "filePath": "/test/1.scss",
                   "start": Object {
-                    "column": 0,
+                    "column": 1,
                     "line": 3,
                   },
                 },
@@ -650,12 +650,12 @@ describe('called with transform option', () => {
               "originalLocations": Array [
                 Object {
                   "end": Object {
-                    "column": 3,
+                    "column": 4,
                     "line": 4,
                   },
                   "filePath": "/test/1.scss",
                   "start": Object {
-                    "column": 0,
+                    "column": 1,
                     "line": 4,
                   },
                 },
@@ -672,12 +672,12 @@ describe('called with transform option', () => {
                     "originalLocations": Array [
                       Object {
                         "end": Object {
-                          "column": 1,
+                          "column": 2,
                           "line": 1,
                         },
                         "filePath": "/test/4.scss",
                         "start": Object {
-                          "column": 0,
+                          "column": 1,
                           "line": 1,
                         },
                       },
@@ -731,12 +731,12 @@ describe('called with transform option', () => {
               "originalLocations": Array [
                 Object {
                   "end": Object {
-                    "column": 3,
+                    "column": 4,
                     "line": 1,
                   },
                   "filePath": "/test/2.less",
                   "start": Object {
-                    "column": 0,
+                    "column": 1,
                     "line": 1,
                   },
                 },
@@ -747,12 +747,12 @@ describe('called with transform option', () => {
               "originalLocations": Array [
                 Object {
                   "end": Object {
-                    "column": 3,
+                    "column": 4,
                     "line": 2,
                   },
                   "filePath": "/test/1.less",
                   "start": Object {
-                    "column": 0,
+                    "column": 1,
                     "line": 2,
                   },
                 },
@@ -763,12 +763,12 @@ describe('called with transform option', () => {
               "originalLocations": Array [
                 Object {
                   "end": Object {
-                    "column": 3,
+                    "column": 4,
                     "line": 3,
                   },
                   "filePath": "/test/1.less",
                   "start": Object {
-                    "column": 0,
+                    "column": 1,
                     "line": 3,
                   },
                 },
@@ -785,12 +785,12 @@ describe('called with transform option', () => {
                     "originalLocations": Array [
                       Object {
                         "end": Object {
-                          "column": 1,
+                          "column": 2,
                           "line": 1,
                         },
                         "filePath": "/test/3.less",
                         "start": Object {
-                          "column": 0,
+                          "column": 1,
                           "line": 1,
                         },
                       },

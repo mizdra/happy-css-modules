@@ -7,16 +7,16 @@ import valueParser from 'postcss-value-parser';
 export type Position = {
   /** The line number in the source file. It is 1-based. */
   line: number;
-  /** The column number in the source file. It is 0-based. */
+  /** The column number in the source file. It is 1-based. */
   column: number;
 };
 
 /** The location of class selector. */
 export type Location = {
   filePath: string;
-  /** The starting position of the node's source. */
+  /** The inclusive starting position of the node's source. */
   start: Position;
-  /** The ending position of the node's source. */
+  /** The inclusive ending position of the node's source. */
   end: Position;
 };
 
@@ -58,9 +58,9 @@ export function getOriginalLocation(rule: Rule, classSelector: ClassName): Locat
 
   const start = {
     // The line is 1-based.
-    line: rule.source.start.line + classSelector.source.start.line - 1,
-    // Postcss's column is 1-based but our column is 0-based.
-    column: rule.source.start.column - 1 + (classSelector.source.start.column - 1),
+    line: rule.source.start.line + (classSelector.source.start.line - 1),
+    // The column is 1-based.
+    column: rule.source.start.column + (classSelector.source.start.column - 1),
   };
   const end = {
     line: start.line,
@@ -75,8 +75,8 @@ export function getOriginalLocation(rule: Rule, classSelector: ClassName): Locat
   if (rule.source.input.map) {
     const origin = rule.source.input.origin(
       location.start.line,
-      // Postcss's column is 1-based but our column is 0-based.
-      location.start.column + 1,
+      // The column of `Input#origin` is 0-based. This behavior is undocumented and probably a postcss's bug.
+      location.start.column - 1,
     );
     if (origin === false) throw new Error('`Input#origin` returned false');
     if (origin.file === undefined) throw new Error('`FilePosition#file` is undefined');
@@ -85,11 +85,13 @@ export function getOriginalLocation(rule: Rule, classSelector: ClassName): Locat
       filePath: origin.file,
       start: {
         line: origin.line,
-        column: origin.column,
+        // The column of `Input#origin` is 0-based.
+        column: origin.column + 1,
       },
       end: {
         line: origin.line,
-        column: origin.column + classSelector.value.length,
+        // The column of `Input#origin` is 0-based.
+        column: origin.column + 1 + classSelector.value.length,
       },
     };
   }

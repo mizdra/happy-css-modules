@@ -93,12 +93,12 @@ describe('getOriginalLocation', () => {
     expect(getOriginalLocation(basic.rule, basic.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 5,
+          "column": 6,
           "line": 1,
         },
         "filePath": "/test/test.css",
         "start": Object {
-          "column": 0,
+          "column": 1,
           "line": 1,
         },
       }
@@ -115,12 +115,12 @@ describe('getOriginalLocation', () => {
     expect(getOriginalLocation(cascading_1.rule, cascading_1.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 9,
+          "column": 10,
           "line": 1,
         },
         "filePath": "/test/test.css",
         "start": Object {
-          "column": 0,
+          "column": 1,
           "line": 1,
         },
       }
@@ -128,12 +128,12 @@ describe('getOriginalLocation', () => {
     expect(getOriginalLocation(cascading_2.rule, cascading_2.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 9,
+          "column": 10,
           "line": 2,
         },
         "filePath": "/test/test.css",
         "start": Object {
-          "column": 0,
+          "column": 1,
           "line": 2,
         },
       }
@@ -151,12 +151,12 @@ describe('getOriginalLocation', () => {
     expect(getOriginalLocation(pseudo_class_1.rule, pseudo_class_1.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 14,
+          "column": 15,
           "line": 1,
         },
         "filePath": "/test/test.css",
         "start": Object {
-          "column": 0,
+          "column": 1,
           "line": 1,
         },
       }
@@ -164,12 +164,12 @@ describe('getOriginalLocation', () => {
     expect(getOriginalLocation(pseudo_class_2.rule, pseudo_class_2.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 14,
+          "column": 15,
           "line": 2,
         },
         "filePath": "/test/test.css",
         "start": Object {
-          "column": 0,
+          "column": 1,
           "line": 2,
         },
       }
@@ -177,12 +177,12 @@ describe('getOriginalLocation', () => {
     expect(getOriginalLocation(pseudo_class_3.rule, pseudo_class_3.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 19,
+          "column": 20,
           "line": 3,
         },
         "filePath": "/test/test.css",
         "start": Object {
-          "column": 5,
+          "column": 6,
           "line": 3,
         },
       }
@@ -198,12 +198,12 @@ describe('getOriginalLocation', () => {
     expect(getOriginalLocation(multiple_selector_1.rule, multiple_selector_1.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 19,
+          "column": 20,
           "line": 1,
         },
         "filePath": "/test/test.css",
         "start": Object {
-          "column": 0,
+          "column": 1,
           "line": 1,
         },
       }
@@ -211,12 +211,12 @@ describe('getOriginalLocation', () => {
     expect(getOriginalLocation(multiple_selector_2.rule, multiple_selector_2.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 39,
+          "column": 40,
           "line": 1,
         },
         "filePath": "/test/test.css",
         "start": Object {
-          "column": 20,
+          "column": 21,
           "line": 1,
         },
       }
@@ -233,12 +233,12 @@ describe('getOriginalLocation', () => {
     expect(getOriginalLocation(combinator_1.rule, combinator_1.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 12,
+          "column": 13,
           "line": 1,
         },
         "filePath": "/test/test.css",
         "start": Object {
-          "column": 0,
+          "column": 1,
           "line": 1,
         },
       }
@@ -246,12 +246,12 @@ describe('getOriginalLocation', () => {
     expect(getOriginalLocation(combinator_2.rule, combinator_2.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 28,
+          "column": 29,
           "line": 1,
         },
         "filePath": "/test/test.css",
         "start": Object {
-          "column": 16,
+          "column": 17,
           "line": 1,
         },
       }
@@ -271,12 +271,12 @@ describe('getOriginalLocation', () => {
     expect(getOriginalLocation(at_rule.rule, at_rule.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 11,
+          "column": 12,
           "line": 3,
         },
         "filePath": "/test/test.css",
         "start": Object {
-          "column": 4,
+          "column": 5,
           "line": 3,
         },
       }
@@ -292,12 +292,12 @@ describe('getOriginalLocation', () => {
     expect(getOriginalLocation(selector_list_1.rule, selector_list_1.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 15,
+          "column": 16,
           "line": 1,
         },
         "filePath": "/test/test.css",
         "start": Object {
-          "column": 0,
+          "column": 1,
           "line": 1,
         },
       }
@@ -305,12 +305,12 @@ describe('getOriginalLocation', () => {
     expect(getOriginalLocation(selector_list_2.rule, selector_list_2.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 33,
+          "column": 34,
           "line": 1,
         },
         "filePath": "/test/test.css",
         "start": Object {
-          "column": 18,
+          "column": 19,
           "line": 1,
         },
       }
@@ -331,12 +331,12 @@ describe('getOriginalLocation', () => {
     expect(getOriginalLocation(local_class_name_1.rule, local_class_name_1.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 25,
+          "column": 26,
           "line": 1,
         },
         "filePath": "/test/test.css",
         "start": Object {
-          "column": 7,
+          "column": 8,
           "line": 1,
         },
       }
@@ -344,12 +344,12 @@ describe('getOriginalLocation', () => {
     expect(getOriginalLocation(local_class_name_2.rule, local_class_name_2.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 20,
+          "column": 21,
           "line": 3,
         },
         "filePath": "/test/test.css",
         "start": Object {
-          "column": 2,
+          "column": 3,
           "line": 3,
         },
       }
@@ -357,12 +357,12 @@ describe('getOriginalLocation', () => {
     expect(getOriginalLocation(local_class_name_3.rule, local_class_name_3.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 20,
+          "column": 21,
           "line": 4,
         },
         "filePath": "/test/test.css",
         "start": Object {
-          "column": 2,
+          "column": 3,
           "line": 4,
         },
       }
@@ -370,12 +370,12 @@ describe('getOriginalLocation', () => {
     expect(getOriginalLocation(local_class_name_4.rule, local_class_name_4.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 25,
+          "column": 26,
           "line": 6,
         },
         "filePath": "/test/test.css",
         "start": Object {
-          "column": 7,
+          "column": 8,
           "line": 6,
         },
       }
@@ -394,12 +394,12 @@ describe('getOriginalLocation', () => {
     expect(getOriginalLocation(composes_target.rule, composes_target.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 15,
+          "column": 16,
           "line": 1,
         },
         "filePath": "/test/test.css",
         "start": Object {
-          "column": 0,
+          "column": 1,
           "line": 1,
         },
       }
@@ -407,12 +407,12 @@ describe('getOriginalLocation', () => {
     expect(getOriginalLocation(composes.rule, composes.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 8,
+          "column": 9,
           "line": 2,
         },
         "filePath": "/test/test.css",
         "start": Object {
-          "column": 0,
+          "column": 1,
           "line": 2,
         },
       }
@@ -430,12 +430,12 @@ describe('getOriginalLocation', () => {
     expect(getOriginalLocation(with_newline_1.rule, with_newline_1.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 14,
+          "column": 15,
           "line": 1,
         },
         "filePath": "/test/test.css",
         "start": Object {
-          "column": 0,
+          "column": 1,
           "line": 1,
         },
       }
@@ -443,12 +443,12 @@ describe('getOriginalLocation', () => {
     expect(getOriginalLocation(with_newline_2.rule, with_newline_2.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 14,
+          "column": 15,
           "line": 2,
         },
         "filePath": "/test/test.css",
         "start": Object {
-          "column": 0,
+          "column": 1,
           "line": 2,
         },
       }
@@ -457,12 +457,12 @@ describe('getOriginalLocation', () => {
     expect(getOriginalLocation(with_newline_3.rule, with_newline_3.classSelector)).toMatchInlineSnapshot(`
       Object {
         "end": Object {
-          "column": 18,
+          "column": 19,
           "line": 3,
         },
         "filePath": "/test/test.css",
         "start": Object {
-          "column": 4,
+          "column": 5,
           "line": 3,
         },
       }
