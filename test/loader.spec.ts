@@ -1,6 +1,5 @@
 import fs from 'fs/promises';
-import { fileURLToPath } from 'node:url';
-import { basename, dirname, relative, resolve } from 'path';
+import { resolve } from 'path';
 import dedent from 'dedent';
 import less from 'less';
 import mockfs from 'mock-fs';
