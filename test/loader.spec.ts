@@ -6,8 +6,6 @@ import mockfs from 'mock-fs';
 import sass from 'sass';
 import { Loader, Transformer } from '../src/loader';
 
-const loader = new Loader();
-
 const readFileSpy = jest.spyOn(fs, 'readFile');
 
 const transform: Transformer = async (source: string, from: string) => {
@@ -23,6 +21,8 @@ const transform: Transformer = async (source: string, from: string) => {
   }
   return false;
 };
+
+const loader = new Loader(transform);
 
 afterEach(() => {
   mockfs.restore();
@@ -461,7 +461,7 @@ describe('supports transpiler', () => {
         .d { dummy: ''; }
         `,
     });
-    const result = await loader.load('/test/1.scss', transform);
+    const result = await loader.load('/test/1.scss');
     mockfs.bypass(() =>
       expect(result).toMatchInlineSnapshot(`
           Object {
@@ -580,7 +580,7 @@ describe('supports transpiler', () => {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       'node_modules': mockfs.load(resolve(__dirname, '../node_modules')),
     });
-    const result = await loader.load('/test/1.less', transform);
+    const result = await loader.load('/test/1.less');
     mockfs.bypass(() =>
       expect(result).toMatchInlineSnapshot(`
           Object {
@@ -675,7 +675,7 @@ describe('tracks dependencies that have been pre-bundled by transpiler', () => {
       '/test/4.scss': dedent`
       `,
     });
-    const result = await loader.load('/test/1.scss', transform);
+    const result = await loader.load('/test/1.scss');
     expect(result.dependencies).toStrictEqual(['/test/2.scss', '/test/3.scss', '/test/4.scss']);
   });
   test('less', async () => {
@@ -692,7 +692,7 @@ describe('tracks dependencies that have been pre-bundled by transpiler', () => {
       '/test/4.less': dedent`
       `,
     });
-    const result = await loader.load('/test/1.less', transform);
+    const result = await loader.load('/test/1.less');
     expect(result.dependencies).toStrictEqual(['/test/2.less', '/test/3.less', '/test/4.less']);
   });
 });

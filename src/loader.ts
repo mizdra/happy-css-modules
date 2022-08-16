@@ -69,7 +69,12 @@ function normalizeTokens(tokens: Token[]): Token[] {
  * A class inspired by `css-modules-loader-core` to collect information about css modules.
  */
 export class Loader {
-  private cache: Map<string, CacheEntry> = new Map();
+  private readonly cache: Map<string, CacheEntry> = new Map();
+  private readonly transform: Transformer | undefined;
+
+  constructor(transform?: Transformer) {
+    this.transform = transform;
+  }
 
   /** Returns `true` if the cache is outdated. */
   private async isCacheOutdated(filePath: string): Promise<boolean> {
@@ -79,7 +84,7 @@ export class Loader {
     if (entry.mtime !== mtime) return true;
     return (await Promise.all(entry.result.dependencies.map(async (dep) => this.isCacheOutdated(dep)))).some(Boolean);
   }
-  async load(filePath: string, transform?: Transformer): Promise<LoadResult> {
+  async load(filePath: string): Promise<LoadResult> {
     if (!(await this.isCacheOutdated(filePath))) {
       const cacheEntry = this.cache.get(filePath)!;
       return cacheEntry.result;
@@ -89,8 +94,8 @@ export class Loader {
     const mtime = (await stat(filePath)).mtime.getTime();
     let css = await readFile(filePath, 'utf-8');
     let map: string | object | undefined;
-    if (transform) {
-      const result = await transform(css, filePath);
+    if (this.transform) {
+      const result = await this.transform(css, filePath);
       if (result) {
         css = result.css;
         map = result.map;
@@ -142,7 +147,7 @@ export class Loader {
       const importedSheetPath = parseAtImport(atImport);
       if (!importedSheetPath) continue;
       const from = resolve(dirname(filePath), importedSheetPath);
-      const result = await this.load(from, transform);
+      const result = await this.load(from);
       const externalTokens = result.tokens;
       dependencies.push(from);
       tokens.push(...externalTokens);
@@ -153,7 +158,7 @@ export class Loader {
       const declarationDetail = parseComposesDeclarationWithFromUrl(composesDeclaration);
       if (!declarationDetail) continue;
       const from = resolve(dirname(filePath), declarationDetail.from);
-      const result = await this.load(from, transform);
+      const result = await this.load(from);
       const externalTokens = result.tokens.filter((token) => declarationDetail.tokenNames.includes(token.name));
       dependencies.push(from);
       tokens.push(...externalTokens);
