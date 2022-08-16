@@ -27,6 +27,9 @@ export type Location = {
  */
 export async function generateLocalTokenNames(ast: Root): Promise<string[]> {
   return new Promise((resolve, reject) => {
+    // If a token is imported with the composes property from a non-existent file,
+    // postcss-modules will cause a warning to be printed to standard output.
+    // TODO: remove `composes` property before calling process
     postcss()
       .use(
         modules({

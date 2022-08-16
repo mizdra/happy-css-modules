@@ -65,9 +65,7 @@ function normalizeTokens(tokens: Token[]): Token[] {
   }));
 }
 
-/**
- * A class inspired by `css-modules-loader-core` to collect information about css modules.
- */
+/** This class collects information on tokens exported from CSS Modules files. */
 export class Loader {
   private readonly cache: Map<string, CacheEntry> = new Map();
   private readonly transform: Transformer | undefined;
@@ -84,6 +82,8 @@ export class Loader {
     if (entry.mtime !== mtime) return true;
     return (await Promise.all(entry.result.dependencies.map(async (dep) => this.isCacheOutdated(dep)))).some(Boolean);
   }
+
+  /** Returns information about the tokens exported from the CSS Modules file. */
   async load(filePath: string): Promise<LoadResult> {
     if (!(await this.isCacheOutdated(filePath))) {
       const cacheEntry = this.cache.get(filePath)!;
@@ -92,6 +92,8 @@ export class Loader {
 
     const dependencies: string[] = [];
     const mtime = (await stat(filePath)).mtime.getTime();
+
+    // TODO: Refactor the following as `const { css, map, dependencies } = await readCSS(transform);`
     let css = await readFile(filePath, 'utf-8');
     let map: string | object | undefined;
     if (this.transform) {
@@ -119,6 +121,7 @@ export class Loader {
 
     const atImports: AtRule[] = [];
     const composesDeclarations: Declaration[] = [];
+    // TODO: Refactor with async `walkByMatcher`
     walkByMatcher(ast, {
       // Collect the sheets imported by `@import` rule.
       atImport: (atImport) => {

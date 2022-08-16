@@ -2,7 +2,7 @@ import fs from 'fs/promises';
 import { resolve } from 'path';
 import dedent from 'dedent';
 import less from 'less';
-import mockfs from 'mock-fs';
+import mockfs from 'mock-fs'; // TODO: use memfs instead of mock-fs
 import sass from 'sass';
 import { Loader, Transformer } from '../src/loader';
 
@@ -38,6 +38,7 @@ test('basic', async () => {
   });
   const result = await loader.load('/test/1.css');
   mockfs.bypass(() =>
+    // TODO: Refactor with custom matcher
     expect(result).toMatchInlineSnapshot(`
       Object {
         "dependencies": Array [],
