@@ -1,4 +1,4 @@
-import { hasProp, isObject, isSystemError, unique } from '../src/util';
+import { hasProp, isObject, isSystemError, unique, uniqueBy } from '../src/util';
 
 function fakeSystemError({ code }: { code: string }) {
   const error = new Error();
@@ -40,4 +40,25 @@ test('hasProp', () => {
 
 test('unique', () => {
   expect(unique([0, 1, 1, 2, 1])).toStrictEqual([0, 1, 2]);
+});
+
+test('uniqueBy', () => {
+  expect(uniqueBy([], () => 0)).toStrictEqual([]);
+  expect(
+    uniqueBy(
+      [
+        { key: 'a', value: 0 },
+        { key: 'a', value: 1 },
+        { key: 'b', value: 2 },
+        { key: 'b', value: 3 },
+        { key: 'c', value: 4 },
+        { key: 'c', value: 5 },
+      ],
+      (el) => el.key,
+    ),
+  ).toStrictEqual([
+    { key: 'a', value: 0 },
+    { key: 'b', value: 2 },
+    { key: 'c', value: 4 },
+  ]);
 });

@@ -2,13 +2,27 @@ import fs from 'fs/promises';
 import { resolve } from 'path';
 import dedent from 'dedent';
 import less from 'less';
-import mockfs from 'mock-fs';
+import mockfs from 'mock-fs'; // TODO: use memfs instead of mock-fs
 import sass from 'sass';
 import { Loader, Transformer } from '../src/loader';
 
-const loader = new Loader();
-
 const readFileSpy = jest.spyOn(fs, 'readFile');
+
+const transform: Transformer = async (source: string, from: string) => {
+  if (from.endsWith('.scss')) {
+    const result = sass.compile(from, { sourceMap: true });
+    return { css: result.css, map: result.sourceMap!, dependencies: result.loadedUrls };
+  } else if (from.endsWith('.less')) {
+    const result = await less.render(source, {
+      filename: from,
+      sourceMap: {},
+    });
+    return { css: result.css, map: result.map, dependencies: result.imports };
+  }
+  return false;
+};
+
+const loader = new Loader(transform);
 
 afterEach(() => {
   mockfs.restore();
@@ -24,10 +38,11 @@ test('basic', async () => {
   });
   const result = await loader.load('/test/1.css');
   mockfs.bypass(() =>
+    // TODO: Refactor with custom matcher
     expect(result).toMatchInlineSnapshot(`
       Object {
-        "filePath": "/test/1.css",
-        "localTokens": Array [
+        "dependencies": Array [],
+        "tokens": Array [
           Object {
             "name": "a",
             "originalLocations": Array [
@@ -61,7 +76,6 @@ test('basic', async () => {
             ],
           },
         ],
-        "tokenImports": Array [],
       }
     `),
   );
@@ -88,83 +102,59 @@ test('tracks other files when `@import` is present', async () => {
   mockfs.bypass(() =>
     expect(result).toMatchInlineSnapshot(`
       Object {
-        "filePath": "/test/1.css",
-        "localTokens": Array [],
-        "tokenImports": Array [
+        "dependencies": Array [
+          "/test/2.css",
+          "/test/3.css",
+          "/test/4.css",
+        ],
+        "tokens": Array [
           Object {
-            "fromResult": Object {
-              "filePath": "/test/2.css",
-              "localTokens": Array [
-                Object {
-                  "name": "a",
-                  "originalLocations": Array [
-                    Object {
-                      "end": Object {
-                        "column": 2,
-                        "line": 1,
-                      },
-                      "filePath": "/test/2.css",
-                      "start": Object {
-                        "column": 1,
-                        "line": 1,
-                      },
-                    },
-                  ],
+            "name": "a",
+            "originalLocations": Array [
+              Object {
+                "end": Object {
+                  "column": 2,
+                  "line": 1,
                 },
-              ],
-              "tokenImports": Array [],
-            },
-            "type": "all",
+                "filePath": "/test/2.css",
+                "start": Object {
+                  "column": 1,
+                  "line": 1,
+                },
+              },
+            ],
           },
           Object {
-            "fromResult": Object {
-              "filePath": "/test/3.css",
-              "localTokens": Array [
-                Object {
-                  "name": "b",
-                  "originalLocations": Array [
-                    Object {
-                      "end": Object {
-                        "column": 2,
-                        "line": 1,
-                      },
-                      "filePath": "/test/3.css",
-                      "start": Object {
-                        "column": 1,
-                        "line": 1,
-                      },
-                    },
-                  ],
+            "name": "b",
+            "originalLocations": Array [
+              Object {
+                "end": Object {
+                  "column": 2,
+                  "line": 1,
                 },
-              ],
-              "tokenImports": Array [],
-            },
-            "type": "all",
+                "filePath": "/test/3.css",
+                "start": Object {
+                  "column": 1,
+                  "line": 1,
+                },
+              },
+            ],
           },
           Object {
-            "fromResult": Object {
-              "filePath": "/test/4.css",
-              "localTokens": Array [
-                Object {
-                  "name": "c",
-                  "originalLocations": Array [
-                    Object {
-                      "end": Object {
-                        "column": 2,
-                        "line": 1,
-                      },
-                      "filePath": "/test/4.css",
-                      "start": Object {
-                        "column": 1,
-                        "line": 1,
-                      },
-                    },
-                  ],
+            "name": "c",
+            "originalLocations": Array [
+              Object {
+                "end": Object {
+                  "column": 2,
+                  "line": 1,
                 },
-              ],
-              "tokenImports": Array [],
-            },
-            "type": "all",
+                "filePath": "/test/4.css",
+                "start": Object {
+                  "column": 1,
+                  "line": 1,
+                },
+              },
+            ],
           },
         ],
       }
@@ -196,8 +186,12 @@ test('tracks other files when `composes` is present', async () => {
   mockfs.bypass(() =>
     expect(result).toMatchInlineSnapshot(`
       Object {
-        "filePath": "/test/1.css",
-        "localTokens": Array [
+        "dependencies": Array [
+          "/test/2.css",
+          "/test/3.css",
+          "/test/4.css",
+        ],
+        "tokens": Array [
           Object {
             "name": "a",
             "originalLocations": Array [
@@ -214,108 +208,69 @@ test('tracks other files when `composes` is present', async () => {
               },
             ],
           },
-        ],
-        "tokenImports": Array [
           Object {
-            "fromResult": Object {
-              "filePath": "/test/2.css",
-              "localTokens": Array [
-                Object {
-                  "name": "b",
-                  "originalLocations": Array [
-                    Object {
-                      "end": Object {
-                        "column": 2,
-                        "line": 1,
-                      },
-                      "filePath": "/test/2.css",
-                      "start": Object {
-                        "column": 1,
-                        "line": 1,
-                      },
-                    },
-                  ],
+            "name": "b",
+            "originalLocations": Array [
+              Object {
+                "end": Object {
+                  "column": 2,
+                  "line": 1,
                 },
-              ],
-              "tokenImports": Array [],
-            },
-            "names": Array [
-              "b",
+                "filePath": "/test/2.css",
+                "start": Object {
+                  "column": 1,
+                  "line": 1,
+                },
+              },
             ],
-            "type": "byNames",
           },
           Object {
-            "fromResult": Object {
-              "filePath": "/test/3.css",
-              "localTokens": Array [
-                Object {
-                  "name": "c",
-                  "originalLocations": Array [
-                    Object {
-                      "end": Object {
-                        "column": 2,
-                        "line": 1,
-                      },
-                      "filePath": "/test/3.css",
-                      "start": Object {
-                        "column": 1,
-                        "line": 1,
-                      },
-                    },
-                  ],
+            "name": "c",
+            "originalLocations": Array [
+              Object {
+                "end": Object {
+                  "column": 2,
+                  "line": 1,
                 },
-                Object {
-                  "name": "d",
-                  "originalLocations": Array [
-                    Object {
-                      "end": Object {
-                        "column": 2,
-                        "line": 2,
-                      },
-                      "filePath": "/test/3.css",
-                      "start": Object {
-                        "column": 1,
-                        "line": 2,
-                      },
-                    },
-                  ],
+                "filePath": "/test/3.css",
+                "start": Object {
+                  "column": 1,
+                  "line": 1,
                 },
-              ],
-              "tokenImports": Array [],
-            },
-            "names": Array [
-              "c",
-              "d",
+              },
             ],
-            "type": "byNames",
           },
           Object {
-            "fromResult": Object {
-              "filePath": "/test/4.css",
-              "localTokens": Array [
-                Object {
-                  "name": "e",
-                  "originalLocations": Array [
-                    Object {
-                      "end": Object {
-                        "column": 2,
-                        "line": 1,
-                      },
-                      "filePath": "/test/4.css",
-                      "start": Object {
-                        "column": 1,
-                        "line": 1,
-                      },
-                    },
-                  ],
+            "name": "d",
+            "originalLocations": Array [
+              Object {
+                "end": Object {
+                  "column": 2,
+                  "line": 2,
                 },
-              ],
-              "tokenImports": Array [],
-            },
-            "names": Array [
-              "e",
+                "filePath": "/test/3.css",
+                "start": Object {
+                  "column": 1,
+                  "line": 2,
+                },
+              },
             ],
-            "type": "byNames",
+          },
+          Object {
+            "name": "e",
+            "originalLocations": Array [
+              Object {
+                "end": Object {
+                  "column": 2,
+                  "line": 1,
+                },
+                "filePath": "/test/4.css",
+                "start": Object {
+                  "column": 1,
+                  "line": 1,
+                },
+              },
+            ],
           },
         ],
       }
@@ -323,115 +278,27 @@ test('tracks other files when `composes` is present', async () => {
   );
 });
 
-test('deduplicates `TokenImport#names` when `TokenImport` is `byNames` type', async () => {
+test('normalizes tokens', async () => {
   mockfs({
     '/test/1.css': dedent`
+    /* duplicate import */
+    @import './2.css';
+    @import '2.css';
     .a {
+      /* duplicate composes */
+      composes: c from './3.css';
+      composes: c from '3.css';
+      composes: c c from './3.css';
+      /* duplicate import and composes */
       composes: b from './2.css';
-      composes: b b from './2.css';
     }
+    .a {} /* duplicate class selector */
     `,
     '/test/2.css': dedent`
+    .a {} /* class selector that duplicates the import source */
     .b {}
     `,
-  });
-  const result = await loader.load('/test/1.css');
-  mockfs.bypass(() =>
-    expect(result).toMatchInlineSnapshot(`
-      Object {
-        "filePath": "/test/1.css",
-        "localTokens": Array [
-          Object {
-            "name": "a",
-            "originalLocations": Array [
-              Object {
-                "end": Object {
-                  "column": 2,
-                  "line": 1,
-                },
-                "filePath": "/test/1.css",
-                "start": Object {
-                  "column": 1,
-                  "line": 1,
-                },
-              },
-            ],
-          },
-        ],
-        "tokenImports": Array [
-          Object {
-            "fromResult": Object {
-              "filePath": "/test/2.css",
-              "localTokens": Array [
-                Object {
-                  "name": "b",
-                  "originalLocations": Array [
-                    Object {
-                      "end": Object {
-                        "column": 2,
-                        "line": 1,
-                      },
-                      "filePath": "/test/2.css",
-                      "start": Object {
-                        "column": 1,
-                        "line": 1,
-                      },
-                    },
-                  ],
-                },
-              ],
-              "tokenImports": Array [],
-            },
-            "names": Array [
-              "b",
-            ],
-            "type": "byNames",
-          },
-        ],
-      }
-    `),
-  );
-});
-
-test('deduplicates `tokenImports` when `TokenImport` is `all` type', async () => {
-  mockfs({
-    '/test/1.css': dedent`
-    @import './2.css';
-    @import './2.css';
-    `,
-    '/test/2.css': dedent``,
-  });
-  const result = await loader.load('/test/1.css');
-  mockfs.bypass(() =>
-    expect(result).toMatchInlineSnapshot(`
-      Object {
-        "filePath": "/test/1.css",
-        "localTokens": Array [],
-        "tokenImports": Array [
-          Object {
-            "fromResult": Object {
-              "filePath": "/test/2.css",
-              "localTokens": Array [],
-              "tokenImports": Array [],
-            },
-            "type": "all",
-          },
-        ],
-      }
-    `),
-  );
-});
-
-test('give priority to `all` type over `byNames` type', async () => {
-  mockfs({
-    '/test/1.css': dedent`
-    @import './2.css';
-    .a {
-      composes: b c from './2.css';
-    }
-    `,
-    '/test/2.css': dedent`
-    .b {}
+    '/test/3.css': dedent`
     .c {}
     `,
   });
@@ -439,17 +306,58 @@ test('give priority to `all` type over `byNames` type', async () => {
   mockfs.bypass(() =>
     expect(result).toMatchInlineSnapshot(`
       Object {
-        "filePath": "/test/1.css",
-        "localTokens": Array [
+        "dependencies": Array [
+          "/test/2.css",
+          "/test/3.css",
+        ],
+        "tokens": Array [
           Object {
             "name": "a",
             "originalLocations": Array [
               Object {
                 "end": Object {
                   "column": 2,
-                  "line": 2,
+                  "line": 4,
                 },
                 "filePath": "/test/1.css",
+                "start": Object {
+                  "column": 1,
+                  "line": 4,
+                },
+              },
+              Object {
+                "end": Object {
+                  "column": 2,
+                  "line": 12,
+                },
+                "filePath": "/test/1.css",
+                "start": Object {
+                  "column": 1,
+                  "line": 12,
+                },
+              },
+              Object {
+                "end": Object {
+                  "column": 2,
+                  "line": 1,
+                },
+                "filePath": "/test/2.css",
+                "start": Object {
+                  "column": 1,
+                  "line": 1,
+                },
+              },
+            ],
+          },
+          Object {
+            "name": "b",
+            "originalLocations": Array [
+              Object {
+                "end": Object {
+                  "column": 2,
+                  "line": 2,
+                },
+                "filePath": "/test/2.css",
                 "start": Object {
                   "column": 1,
                   "line": 2,
@@ -457,48 +365,21 @@ test('give priority to `all` type over `byNames` type', async () => {
               },
             ],
           },
-        ],
-        "tokenImports": Array [
           Object {
-            "fromResult": Object {
-              "filePath": "/test/2.css",
-              "localTokens": Array [
-                Object {
-                  "name": "b",
-                  "originalLocations": Array [
-                    Object {
-                      "end": Object {
-                        "column": 2,
-                        "line": 1,
-                      },
-                      "filePath": "/test/2.css",
-                      "start": Object {
-                        "column": 1,
-                        "line": 1,
-                      },
-                    },
-                  ],
+            "name": "c",
+            "originalLocations": Array [
+              Object {
+                "end": Object {
+                  "column": 2,
+                  "line": 1,
                 },
-                Object {
-                  "name": "c",
-                  "originalLocations": Array [
-                    Object {
-                      "end": Object {
-                        "column": 2,
-                        "line": 2,
-                      },
-                      "filePath": "/test/2.css",
-                      "start": Object {
-                        "column": 1,
-                        "line": 2,
-                      },
-                    },
-                  ],
+                "filePath": "/test/3.css",
+                "start": Object {
+                  "column": 1,
+                  "line": 1,
                 },
-              ],
-              "tokenImports": Array [],
-            },
-            "type": "all",
+              },
+            ],
           },
         ],
       }
@@ -541,271 +422,312 @@ test('returns the result from the cache when the file has not been modified', as
     '/test/2.css': mockfs.file({ content: content2, mtime: new Date(1) }),
     '/test/3.css': mockfs.file({ content: content3, mtime: new Date(0) }),
   });
-
-  // `1.css` is not updated, so the cache is used. Therefore, `readFile` is not called.
-  await loader.load('/test/1.css');
+  // `3.css` is not updated, so the cache is used. Therefore, `readFile` is not called.
+  await loader.load('/test/3.css');
   expect(readFileSpy).toHaveBeenCalledTimes(0);
 
-  // `2.css` is updated, so the cache is not used. Therefore, `readFile` is called.
+  // `1.css` is not updated, but dependencies are updated, so the cache is used. Therefore, `readFile` is called.
+  await loader.load('/test/1.css');
+  expect(readFileSpy).toHaveBeenCalledTimes(2);
+  expect(readFileSpy).toHaveBeenNthCalledWith(1, '/test/1.css', 'utf-8');
+  expect(readFileSpy).toHaveBeenNthCalledWith(2, '/test/2.css', 'utf-8');
+
+  // ``2.css` is updated, but the cache is already available because it was updated in the previous step. Therefore, `readFile` is not called.
   await loader.load('/test/2.css');
-  expect(readFileSpy).toHaveBeenCalledTimes(1);
-  expect(readFileSpy).toHaveBeenNthCalledWith(1, '/test/2.css', 'utf-8');
+  expect(readFileSpy).toHaveBeenCalledTimes(2);
 });
 
-describe('called with transform option', () => {
-  const transform: Transformer = async (source: string, from: string) => {
-    if (from.endsWith('.scss')) {
-      const result = sass.compile(from, { sourceMap: true });
-      return { css: result.css, map: result.sourceMap };
-    } else if (from.endsWith('.less')) {
-      const result = await less.render(source, {
-        filename: from,
-        sourceMap: {},
-      });
-      return { css: result.css, map: result.map };
-    }
-    return { css: source };
-  };
-  test('supports sass transpiler', async () => {
+describe('supports transpiler', () => {
+  test('sass', async () => {
     mockfs({
       '/test/1.scss': dedent`
-      @use './2.scss' as two; // sass feature test (@use)
-      @import './3.scss'; // css feature test (@import)
-      .a_1 { dummy: ''; }
-      .a_2 {
-        dummy: '';
-        .a_3 {} // sass feature test (nesting)
-        composes: a_1; // css module feature test (composes)
-        composes: d from './4.scss'; // css module feature test (composes from other file)
-      }
-      `,
+        @use './2.scss' as two; // sass feature test (@use)
+        @import './3.scss'; // css feature test (@import)
+        .a_1 { dummy: ''; }
+        .a_2 {
+          dummy: '';
+          .a_3 {} // sass feature test (nesting)
+          composes: a_1; // css module feature test (composes)
+          composes: d from './4.scss'; // css module feature test (composes from other file)
+        }
+        `,
       '/test/2.scss': dedent`
-      .b_1 { dummy: ''; }
-      @mixin b_2 { dummy: ''; }
-      `,
+        .b_1 { dummy: ''; }
+        @mixin b_2 { dummy: ''; }
+        `,
       '/test/3.scss': dedent`
-      .c { dummy: ''; }
-      `,
+        .c { dummy: ''; }
+        `,
       '/test/4.scss': dedent`
-      .d { dummy: ''; }
-      `,
+        .d { dummy: ''; }
+        `,
     });
-    const result = await loader.load('/test/1.scss', transform);
+    const result = await loader.load('/test/1.scss');
     mockfs.bypass(() =>
       expect(result).toMatchInlineSnapshot(`
-        Object {
-          "filePath": "/test/1.scss",
-          "localTokens": Array [
-            Object {
-              "name": "b_1",
-              "originalLocations": Array [
-                Object {
-                  "end": Object {
-                    "column": 4,
-                    "line": 1,
-                  },
-                  "filePath": "/test/2.scss",
-                  "start": Object {
-                    "column": 1,
-                    "line": 1,
-                  },
-                },
-              ],
-            },
-            Object {
-              "name": "c",
-              "originalLocations": Array [
-                Object {
-                  "end": Object {
-                    "column": 2,
-                    "line": 1,
-                  },
-                  "filePath": "/test/3.scss",
-                  "start": Object {
-                    "column": 1,
-                    "line": 1,
-                  },
-                },
-              ],
-            },
-            Object {
-              "name": "a_1",
-              "originalLocations": Array [
-                Object {
-                  "end": Object {
-                    "column": 4,
-                    "line": 3,
-                  },
-                  "filePath": "/test/1.scss",
-                  "start": Object {
-                    "column": 1,
-                    "line": 3,
-                  },
-                },
-              ],
-            },
-            Object {
-              "name": "a_2",
-              "originalLocations": Array [
-                Object {
-                  "end": Object {
-                    "column": 4,
-                    "line": 4,
-                  },
-                  "filePath": "/test/1.scss",
-                  "start": Object {
-                    "column": 1,
-                    "line": 4,
-                  },
-                },
-              ],
-            },
-          ],
-          "tokenImports": Array [
-            Object {
-              "fromResult": Object {
-                "filePath": "/test/4.scss",
-                "localTokens": Array [
+          Object {
+            "dependencies": Array [
+              "/test/2.scss",
+              "/test/3.scss",
+              "/test/4.scss",
+            ],
+            "tokens": Array [
+              Object {
+                "name": "b_1",
+                "originalLocations": Array [
                   Object {
-                    "name": "d",
-                    "originalLocations": Array [
-                      Object {
-                        "end": Object {
-                          "column": 2,
-                          "line": 1,
-                        },
-                        "filePath": "/test/4.scss",
-                        "start": Object {
-                          "column": 1,
-                          "line": 1,
-                        },
-                      },
-                    ],
+                    "end": Object {
+                      "column": 4,
+                      "line": 1,
+                    },
+                    "filePath": "/test/2.scss",
+                    "start": Object {
+                      "column": 1,
+                      "line": 1,
+                    },
                   },
                 ],
-                "tokenImports": Array [],
               },
-              "names": Array [
-                "d",
-              ],
-              "type": "byNames",
-            },
-          ],
-        }
-      `),
+              Object {
+                "name": "c",
+                "originalLocations": Array [
+                  Object {
+                    "end": Object {
+                      "column": 2,
+                      "line": 1,
+                    },
+                    "filePath": "/test/3.scss",
+                    "start": Object {
+                      "column": 1,
+                      "line": 1,
+                    },
+                  },
+                ],
+              },
+              Object {
+                "name": "a_1",
+                "originalLocations": Array [
+                  Object {
+                    "end": Object {
+                      "column": 4,
+                      "line": 3,
+                    },
+                    "filePath": "/test/1.scss",
+                    "start": Object {
+                      "column": 1,
+                      "line": 3,
+                    },
+                  },
+                ],
+              },
+              Object {
+                "name": "a_2",
+                "originalLocations": Array [
+                  Object {
+                    "end": Object {
+                      "column": 4,
+                      "line": 4,
+                    },
+                    "filePath": "/test/1.scss",
+                    "start": Object {
+                      "column": 1,
+                      "line": 4,
+                    },
+                  },
+                ],
+              },
+              Object {
+                "name": "d",
+                "originalLocations": Array [
+                  Object {
+                    "end": Object {
+                      "column": 2,
+                      "line": 1,
+                    },
+                    "filePath": "/test/4.scss",
+                    "start": Object {
+                      "column": 1,
+                      "line": 1,
+                    },
+                  },
+                ],
+              },
+            ],
+          }
+        `),
     );
   });
-  test('supports less transpiler', async () => {
+  test('less', async () => {
     mockfs({
       '/test/1.less': dedent`
-      @import './2.less'; // less feature test (@use)
-      .a_1 { dummy: ''; }
-      .a_2 {
-        dummy: '';
-        .a_3 {} // less feature test (nesting)
-        .b_1();
-        .b_2();
-        composes: a_1; // css module feature test (composes)
-        composes: c from './3.less'; // css module feature test (composes from other file)
-      }
-      `,
+        @import './2.less'; // less feature test (@use)
+        .a_1 { dummy: ''; }
+        .a_2 {
+          dummy: '';
+          .a_3 {} // less feature test (nesting)
+          .b_1();
+          .b_2();
+          composes: a_1; // css module feature test (composes)
+          composes: c from './3.less'; // css module feature test (composes from other file)
+        }
+        `,
       '/test/2.less': dedent`
-      .b_1 { dummy: ''; }
-      .b_2() { dummy: ''; }
-      `,
+        .b_1 { dummy: ''; }
+        .b_2() { dummy: ''; }
+        `,
       '/test/3.less': dedent`
-      .c { dummy: ''; }
-      `,
+        .c { dummy: ''; }
+        `,
       // eslint-disable-next-line @typescript-eslint/naming-convention
       'node_modules': mockfs.load(resolve(__dirname, '../node_modules')),
     });
-    const result = await loader.load('/test/1.less', transform);
+    const result = await loader.load('/test/1.less');
     mockfs.bypass(() =>
       expect(result).toMatchInlineSnapshot(`
-        Object {
-          "filePath": "/test/1.less",
-          "localTokens": Array [
-            Object {
-              "name": "b_1",
-              "originalLocations": Array [
-                Object {
-                  "end": Object {
-                    "column": 4,
-                    "line": 1,
-                  },
-                  "filePath": "/test/2.less",
-                  "start": Object {
-                    "column": 1,
-                    "line": 1,
-                  },
-                },
-              ],
-            },
-            Object {
-              "name": "a_1",
-              "originalLocations": Array [
-                Object {
-                  "end": Object {
-                    "column": 4,
-                    "line": 2,
-                  },
-                  "filePath": "/test/1.less",
-                  "start": Object {
-                    "column": 1,
-                    "line": 2,
-                  },
-                },
-              ],
-            },
-            Object {
-              "name": "a_2",
-              "originalLocations": Array [
-                Object {
-                  "end": Object {
-                    "column": 4,
-                    "line": 3,
-                  },
-                  "filePath": "/test/1.less",
-                  "start": Object {
-                    "column": 1,
-                    "line": 3,
-                  },
-                },
-              ],
-            },
-          ],
-          "tokenImports": Array [
-            Object {
-              "fromResult": Object {
-                "filePath": "/test/3.less",
-                "localTokens": Array [
+          Object {
+            "dependencies": Array [
+              "/test/2.less",
+              "/test/3.less",
+            ],
+            "tokens": Array [
+              Object {
+                "name": "b_1",
+                "originalLocations": Array [
                   Object {
-                    "name": "c",
-                    "originalLocations": Array [
-                      Object {
-                        "end": Object {
-                          "column": 2,
-                          "line": 1,
-                        },
-                        "filePath": "/test/3.less",
-                        "start": Object {
-                          "column": 1,
-                          "line": 1,
-                        },
-                      },
-                    ],
+                    "end": Object {
+                      "column": 4,
+                      "line": 1,
+                    },
+                    "filePath": "/test/2.less",
+                    "start": Object {
+                      "column": 1,
+                      "line": 1,
+                    },
                   },
                 ],
-                "tokenImports": Array [],
               },
-              "names": Array [
-                "c",
-              ],
-              "type": "byNames",
-            },
-          ],
-        }
-      `),
+              Object {
+                "name": "a_1",
+                "originalLocations": Array [
+                  Object {
+                    "end": Object {
+                      "column": 4,
+                      "line": 2,
+                    },
+                    "filePath": "/test/1.less",
+                    "start": Object {
+                      "column": 1,
+                      "line": 2,
+                    },
+                  },
+                ],
+              },
+              Object {
+                "name": "a_2",
+                "originalLocations": Array [
+                  Object {
+                    "end": Object {
+                      "column": 4,
+                      "line": 3,
+                    },
+                    "filePath": "/test/1.less",
+                    "start": Object {
+                      "column": 1,
+                      "line": 3,
+                    },
+                  },
+                ],
+              },
+              Object {
+                "name": "c",
+                "originalLocations": Array [
+                  Object {
+                    "end": Object {
+                      "column": 2,
+                      "line": 1,
+                    },
+                    "filePath": "/test/3.less",
+                    "start": Object {
+                      "column": 1,
+                      "line": 1,
+                    },
+                  },
+                ],
+              },
+            ],
+          }
+        `),
     );
   });
+});
+
+describe('tracks dependencies that have been pre-bundled by transpiler', () => {
+  test('sass', async () => {
+    mockfs({
+      '/test/1.scss': dedent`
+      @import './2.scss';
+      @import './3.scss';
+      `,
+      '/test/2.scss': dedent`
+      `,
+      '/test/3.scss': dedent`
+      @import './4.scss';
+      `,
+      '/test/4.scss': dedent`
+      `,
+    });
+    const result = await loader.load('/test/1.scss');
+    expect(result.dependencies).toStrictEqual(['/test/2.scss', '/test/3.scss', '/test/4.scss']);
+  });
+  test('less', async () => {
+    mockfs({
+      '/test/1.less': dedent`
+      @import './2.less';
+      @import './3.less';
+      `,
+      '/test/2.less': dedent`
+      `,
+      '/test/3.less': dedent`
+      @import './4.less';
+      `,
+      '/test/4.less': dedent`
+      `,
+    });
+    const result = await loader.load('/test/1.less');
+    expect(result.dependencies).toStrictEqual(['/test/2.less', '/test/3.less', '/test/4.less']);
+  });
+});
+
+test('ignores the composition of non-existent tokens', async () => {
+  // In css-loader and postcss-modules, compositions of non-existent tokens are simply ignored.
+  // Therefore, checkable-css-modules follows suit.
+  // It may be preferable to warn rather than ignore, but for now, we will focus on compatibility.
+  // ref: https://github.com/css-modules/css-modules/issues/356
+  mockfs({
+    '/test/1.css': dedent`
+    .a {
+      composes: b c from './2.css';
+    }
+    `,
+    '/test/2.css': dedent`
+    .b {}
+    `,
+  });
+  const result = await loader.load('/test/1.css');
+  expect(result.tokens.map((t) => t.name)).toStrictEqual(['a', 'b']);
+});
+
+test('throws error the composition of non-existent file', async () => {
+  // In postcss-modules, compositions of non-existent file are causes an error.
+  // Therefore, checkable-css-modules follows suit.
+  mockfs({
+    '/test/1.css': dedent`
+    .a {
+      composes: a from './2.css';
+    }
+    `,
+  });
+  await expect(async () => {
+    await loader.load('/test/1.css');
+  }).rejects.toThrow(); // TODO: better error message
 });

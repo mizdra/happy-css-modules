@@ -1,6 +1,6 @@
 import { readFile, stat } from 'fs/promises';
 import { dirname, resolve } from 'path';
-import postcss from 'postcss';
+import postcss, { AtRule, Declaration } from 'postcss';
 import {
   getOriginalLocation,
   generateLocalTokenNames,
@@ -9,15 +9,21 @@ import {
   walkByMatcher,
   parseComposesDeclarationWithFromUrl,
 } from './postcss';
-import { unique } from './util';
+import { unique, uniqueBy } from './util';
 
-/** The value returned from the transformer. */
-export type TransformResult = {
-  /** The transformed code. */
-  css: string;
-  /** The source map from the transformed code to the original code. */
-  map?: string | object;
-};
+/**
+ * The value returned from the transformer.
+ * `false` means to skip transpiling on that file.
+ * */
+export type TransformResult =
+  | {
+      /** The transformed code. */
+      css: string;
+      /** The source map from the transformed code to the original code. */
+      map: string | object;
+      dependencies: (string | URL)[];
+    }
+  | false;
 
 /** The function to transform source code. */
 export type Transformer = (source: string, from: string) => TransformResult | Promise<TransformResult>;
@@ -35,50 +41,82 @@ type CacheEntry = {
   result: LoadResult;
 };
 
-type TokenImport =
-  | {
-      /** The `LoadResult` of the imported file. */
-      fromResult: LoadResult;
-      /** The import method. if `all`, import all tokens from the file. */
-      type: 'all';
-    }
-  | {
-      /** The `LoadResult` of the imported file. */
-      fromResult: LoadResult;
-      /** The import method. if `byNames`, import tokens from the file by the names. */
-      type: 'byNames';
-      /** The name of imported token. */
-      names: string[];
-    };
-
 /** The result of `Loader#load`. */
 export type LoadResult = {
-  /** The file path of the source file. */
-  filePath: string;
-  /** The external tokens imported from the source file. */
-  tokenImports: TokenImport[];
+  /** The path of the file imported from the source file with `@import` or `composes`. */
+  dependencies: string[];
   /** The tokens exported by the source file. */
-  localTokens: Token[];
+  tokens: Token[];
 };
 
-/**
- * A class inspired by `css-modules-loader-core` to collect information about css modules.
- */
-export class Loader {
-  private cache: Map<string, CacheEntry> = new Map();
-  async load(filePath: string, transform?: Transformer): Promise<LoadResult> {
-    // If cache available, return it.
-    // TODO: use `@file-cache/core`
-    const mtime = (await stat(filePath)).mtime.getTime();
-    const cacheEntry = this.cache.get(filePath);
-    if (cacheEntry && cacheEntry.mtime === mtime) return cacheEntry.result;
+function normalizeTokens(tokens: Token[]): Token[] {
+  const tokenNameToOriginalLocations = new Map<string, Location[]>();
+  for (const token of tokens) {
+    tokenNameToOriginalLocations.set(
+      token.name,
+      uniqueBy([...(tokenNameToOriginalLocations.get(token.name) ?? []), ...token.originalLocations], (location) =>
+        JSON.stringify(location),
+      ),
+    );
+  }
+  return Array.from(tokenNameToOriginalLocations.entries()).map(([name, originalLocations]) => ({
+    name,
+    originalLocations,
+  }));
+}
 
+/** This class collects information on tokens exported from CSS Modules files. */
+export class Loader {
+  private readonly cache: Map<string, CacheEntry> = new Map();
+  private readonly transform: Transformer | undefined;
+
+  constructor(transform?: Transformer) {
+    this.transform = transform;
+  }
+
+  /** Returns `true` if the cache is outdated. */
+  private async isCacheOutdated(filePath: string): Promise<boolean> {
+    const entry = this.cache.get(filePath);
+    if (!entry) return true;
+    const mtime = (await stat(filePath)).mtime.getTime();
+    if (entry.mtime !== mtime) return true;
+
+    const { dependencies } = entry.result;
+    for (const dependency of dependencies) {
+      const entry = this.cache.get(dependency);
+      if (!entry) return true;
+      const mtime = (await stat(dependency)).mtime.getTime();
+      if (entry.mtime !== mtime) return true;
+    }
+    return false;
+  }
+
+  /** Returns information about the tokens exported from the CSS Modules file. */
+  async load(filePath: string): Promise<LoadResult> {
+    if (!(await this.isCacheOutdated(filePath))) {
+      const cacheEntry = this.cache.get(filePath)!;
+      return cacheEntry.result;
+    }
+
+    const dependencies: string[] = [];
+    const mtime = (await stat(filePath)).mtime.getTime();
+
+    // TODO: Refactor the following as `const { css, map, dependencies } = await readCSS(transform);`
     let css = await readFile(filePath, 'utf-8');
     let map: string | object | undefined;
-    if (transform) {
-      const result = await transform(css, filePath);
-      css = result.css;
-      map = result.map;
+    if (this.transform) {
+      const result = await this.transform(css, filePath);
+      if (result) {
+        css = result.css;
+        map = result.map;
+        dependencies.push(
+          ...result.dependencies.map((dep) => {
+            if (typeof dep === 'string') return dep;
+            if (dep.protocol !== 'file:') throw new Error('Unsupported protocol: ' + dep.protocol);
+            return dep.pathname;
+          }),
+        );
+      }
     }
 
     const ast = postcss.parse(css, { from: filePath, map: { inline: false, prev: map } });
@@ -87,15 +125,15 @@ export class Loader {
     // The tokens are fetched using `postcss-modules` plugin.
     const localTokenNames = await generateLocalTokenNames(ast);
 
-    const importedSheetPaths: string[] = [];
-    const filePathToImportedTokenNames = new Map<string, string[]>();
-    const localTokens: Token[] = [];
+    const tokens: Token[] = [];
 
+    const atImports: AtRule[] = [];
+    const composesDeclarations: Declaration[] = [];
+    // TODO: Refactor with async `walkByMatcher`
     walkByMatcher(ast, {
       // Collect the sheets imported by `@import` rule.
       atImport: (atImport) => {
-        const importedSheetPath = parseAtImport(atImport);
-        if (importedSheetPath) importedSheetPaths.push(resolve(dirname(filePath), importedSheetPath));
+        atImports.push(atImport);
       },
       // Traverse the source file to find a class selector that matches the local token.
       classSelector: (rule, classSelector) => {
@@ -105,64 +143,41 @@ export class Loader {
 
         const originalLocation = getOriginalLocation(rule, classSelector);
 
-        const localToken = localTokens.find((token) => token.name === classSelector.value);
-        if (localToken) {
-          localToken.originalLocations.push(originalLocation);
-        } else {
-          localTokens.push({
-            name: classSelector.value,
-            originalLocations: [originalLocation],
-          });
-        }
+        tokens.push({
+          name: classSelector.value,
+          originalLocations: [originalLocation],
+        });
       },
       composesDeclaration: (composesDeclaration) => {
-        const result = parseComposesDeclarationWithFromUrl(composesDeclaration);
-        if (result) {
-          const from = resolve(dirname(filePath), result.from);
-          const oldTokenNames = filePathToImportedTokenNames.get(from) ?? [];
-          filePathToImportedTokenNames.set(from, [...oldTokenNames, ...result.tokenNames]);
-        }
+        composesDeclarations.push(composesDeclaration);
       },
     });
 
-    const filePathToTokenImport = new Map<string, TokenImport>();
-
     // Load imported sheets recursively.
-    for (const importedSheetPath of importedSheetPaths) {
-      if (filePathToTokenImport.has(importedSheetPath)) continue;
-      const fromResult = await this.load(importedSheetPath, transform);
-      filePathToTokenImport.set(importedSheetPath, {
-        fromResult,
-        type: 'all',
-      });
+    for (const atImport of atImports) {
+      const importedSheetPath = parseAtImport(atImport);
+      if (!importedSheetPath) continue;
+      const from = resolve(dirname(filePath), importedSheetPath);
+      const result = await this.load(from);
+      const externalTokens = result.tokens;
+      dependencies.push(from);
+      tokens.push(...externalTokens);
     }
 
-    // Load imported tokens by the names.
-    for (const [filePath, tokenNames] of filePathToImportedTokenNames) {
-      const tokenImport = filePathToTokenImport.get(filePath);
-      if (tokenImport) {
-        if (tokenImport.type === 'all') {
-          // noop
-        } else {
-          filePathToTokenImport.set(filePath, {
-            fromResult: tokenImport.fromResult,
-            type: 'byNames',
-            names: unique([...tokenImport.names, ...tokenNames]),
-          });
-        }
-      } else {
-        filePathToTokenImport.set(filePath, {
-          fromResult: await this.load(filePath, transform),
-          type: 'byNames',
-          names: unique(tokenNames),
-        });
-      }
+    // Load imported tokens by the names recursively.
+    for (const composesDeclaration of composesDeclarations) {
+      const declarationDetail = parseComposesDeclarationWithFromUrl(composesDeclaration);
+      if (!declarationDetail) continue;
+      const from = resolve(dirname(filePath), declarationDetail.from);
+      const result = await this.load(from);
+      const externalTokens = result.tokens.filter((token) => declarationDetail.tokenNames.includes(token.name));
+      dependencies.push(from);
+      tokens.push(...externalTokens);
     }
 
     const result: LoadResult = {
-      filePath,
-      tokenImports: [...filePathToTokenImport.values()],
-      localTokens,
+      dependencies: unique(dependencies).filter((dep) => dep !== filePath),
+      tokens: normalizeTokens(tokens),
     };
     this.cache.set(filePath, { mtime, result });
     return result;
