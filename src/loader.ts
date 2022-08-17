@@ -80,7 +80,15 @@ export class Loader {
     if (!entry) return true;
     const mtime = (await stat(filePath)).mtime.getTime();
     if (entry.mtime !== mtime) return true;
-    return (await Promise.all(entry.result.dependencies.map(async (dep) => this.isCacheOutdated(dep)))).some(Boolean);
+
+    const { dependencies } = entry.result;
+    for (const dependency of dependencies) {
+      const entry = this.cache.get(dependency);
+      if (!entry) return true;
+      const mtime = (await stat(dependency)).mtime.getTime();
+      if (entry.mtime !== mtime) return true;
+    }
+    return false;
   }
 
   /** Returns information about the tokens exported from the CSS Modules file. */
