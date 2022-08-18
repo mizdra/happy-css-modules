@@ -91,6 +91,31 @@ export class Loader {
     return false;
   }
 
+  /**
+   * Reads the source file and returns the code.
+   * If transform is specified, the code is transformed before returning.
+   */
+  private async readCSS(
+    filePath: string,
+  ): Promise<
+    | { css: string; map: undefined; dependencies: string[] }
+    | { css: string; map: string | object | undefined; dependencies: string[] }
+  > {
+    const css = await readFile(filePath, 'utf-8');
+    if (!this.transform) return { css, map: undefined, dependencies: [] };
+    const result = await this.transform(css, filePath);
+    if (result === false) return { css, map: undefined, dependencies: [] };
+    return {
+      css: result.css,
+      map: result.map,
+      dependencies: result.dependencies.map((dep) => {
+        if (typeof dep === 'string') return dep;
+        if (dep.protocol !== 'file:') throw new Error('Unsupported protocol: ' + dep.protocol);
+        return dep.pathname;
+      }),
+    };
+  }
+
   /** Returns information about the tokens exported from the CSS Modules file. */
   async load(filePath: string): Promise<LoadResult> {
     if (!(await this.isCacheOutdated(filePath))) {
@@ -98,26 +123,9 @@ export class Loader {
       return cacheEntry.result;
     }
 
-    const dependencies: string[] = [];
     const mtime = (await stat(filePath)).mtime.getTime();
 
-    // TODO: Refactor the following as `const { css, map, dependencies } = await readCSS(transform);`
-    let css = await readFile(filePath, 'utf-8');
-    let map: string | object | undefined;
-    if (this.transform) {
-      const result = await this.transform(css, filePath);
-      if (result) {
-        css = result.css;
-        map = result.map;
-        dependencies.push(
-          ...result.dependencies.map((dep) => {
-            if (typeof dep === 'string') return dep;
-            if (dep.protocol !== 'file:') throw new Error('Unsupported protocol: ' + dep.protocol);
-            return dep.pathname;
-          }),
-        );
-      }
-    }
+    const { css, map, dependencies } = await this.readCSS(filePath);
 
     const ast = postcss.parse(css, { from: filePath, map: { inline: false, prev: map } });
 
