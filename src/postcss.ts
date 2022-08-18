@@ -102,12 +102,6 @@ export function getOriginalLocation(rule: Rule, classSelector: ClassName): Locat
   return location;
 }
 
-export type Matcher = {
-  atImport?: (atImport: AtRule) => void;
-  classSelector?: (rule: Rule, classSelector: ClassName) => void;
-  composesDeclaration?: (composesDeclaration: Declaration) => void;
-};
-
 function isAtRuleNode(node: Node): node is AtRule {
   return node.type === 'atrule';
 }
@@ -128,15 +122,23 @@ function isComposesDeclaration(node: Node): node is Declaration {
   return isDeclaration(node) && node.prop === 'composes';
 }
 
+type CollectNodesResult = {
+  atImports: AtRule[];
+  classSelectors: { rule: Rule; classSelector: ClassName }[];
+  composesDeclarations: Declaration[];
+};
+
 /**
- * Walk the AST and call the matcher functions.
- * @param ast The AST to walk.
- * @param matcher The matcher functions to call.
+ * Collect nodes from the AST.
+ * @param ast The AST.
  */
-export function walkByMatcher(ast: Root, matcher: Matcher): void {
+export function collectNodes(ast: Root): CollectNodesResult {
+  const atImports: AtRule[] = [];
+  const classSelectors: { rule: Rule; classSelector: ClassName }[] = [];
+  const composesDeclarations: Declaration[] = [];
   ast.walk((node) => {
     if (isAtImportNode(node)) {
-      matcher.atImport?.(node);
+      atImports.push(node);
     } else if (isRuleNode(node)) {
       // In `rule.selector` comes the following string:
       // 1. ".foo"
@@ -148,14 +150,15 @@ export function walkByMatcher(ast: Root, matcher: Matcher): void {
             // In `selector.value` comes the following string:
             // 1. "foo"
             // 2. "bar"
-            matcher.classSelector?.(node, selector);
+            classSelectors.push({ rule: node, classSelector: selector });
           }
         });
       }).processSync(node);
     } else if (isComposesDeclaration(node)) {
-      matcher.composesDeclaration?.(node);
+      composesDeclarations.push(node);
     }
   });
+  return { atImports, classSelectors, composesDeclarations };
 }
 
 /**

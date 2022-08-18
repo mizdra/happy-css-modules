@@ -1,13 +1,13 @@
 import { readFile, stat } from 'fs/promises';
 import { dirname, resolve } from 'path';
-import postcss, { AtRule, Declaration } from 'postcss';
+import postcss from 'postcss';
 import {
   getOriginalLocation,
   generateLocalTokenNames,
   parseAtImport,
   Location,
-  walkByMatcher,
   parseComposesDeclarationWithFromUrl,
+  collectNodes,
 } from './postcss';
 import { unique, uniqueBy } from './util';
 
@@ -127,31 +127,7 @@ export class Loader {
 
     const tokens: Token[] = [];
 
-    const atImports: AtRule[] = [];
-    const composesDeclarations: Declaration[] = [];
-    // TODO: Refactor with async `walkByMatcher`
-    walkByMatcher(ast, {
-      // Collect the sheets imported by `@import` rule.
-      atImport: (atImport) => {
-        atImports.push(atImport);
-      },
-      // Traverse the source file to find a class selector that matches the local token.
-      classSelector: (rule, classSelector) => {
-        // Consider a class selector to be the origin of a token if it matches a token fetched by postcss-modules.
-        // NOTE: This method has false positives. However, it works as expected in many cases.
-        if (!localTokenNames.includes(classSelector.value)) return;
-
-        const originalLocation = getOriginalLocation(rule, classSelector);
-
-        tokens.push({
-          name: classSelector.value,
-          originalLocations: [originalLocation],
-        });
-      },
-      composesDeclaration: (composesDeclaration) => {
-        composesDeclarations.push(composesDeclaration);
-      },
-    });
+    const { atImports, classSelectors, composesDeclarations } = collectNodes(ast);
 
     // Load imported sheets recursively.
     for (const atImport of atImports) {
@@ -162,6 +138,20 @@ export class Loader {
       const externalTokens = result.tokens;
       dependencies.push(from);
       tokens.push(...externalTokens);
+    }
+
+    // Traverse the source file to find a class selector that matches the local token.
+    for (const { rule, classSelector } of classSelectors) {
+      // Consider a class selector to be the origin of a token if it matches a token fetched by postcss-modules.
+      // NOTE: This method has false positives. However, it works as expected in many cases.
+      if (!localTokenNames.includes(classSelector.value)) continue;
+
+      const originalLocation = getOriginalLocation(rule, classSelector);
+
+      tokens.push({
+        name: classSelector.value,
+        originalLocations: [originalLocation],
+      });
     }
 
     // Load imported tokens by the names recursively.
