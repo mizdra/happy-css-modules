@@ -1,4 +1,5 @@
 import dedent from 'dedent';
+import mockfs from 'mock-fs';
 import {
   generateLocalTokenNames,
   getOriginalLocation,
@@ -7,6 +8,10 @@ import {
   collectNodes,
 } from '../src/postcss';
 import { createRoot, createClassSelectors, createAtImports, createComposesDeclarations } from './test/util';
+
+afterEach(() => {
+  mockfs.restore();
+});
 
 describe('generateLocalTokenNames', () => {
   test('basic', async () => {
@@ -61,20 +66,30 @@ describe('generateLocalTokenNames', () => {
     ]);
   });
   test('does not track styles imported by @import in other file because it is not a local token', async () => {
+    mockfs({
+      '/test/1.css': dedent`
+      .a {}
+      `,
+    });
     expect(
       await generateLocalTokenNames(
         createRoot(`
-        @import "./other.css";
+        @import "/test/1.css";
         `),
       ),
     ).toStrictEqual([]);
   });
   test('does not track styles imported by composes in other file because it is not a local token', async () => {
+    mockfs({
+      '/test/1.css': dedent`
+      .b {}
+      `,
+    });
     expect(
       await generateLocalTokenNames(
         createRoot(`
         .a {
-          composes: b from "./other.css";
+          composes: b from "/test/1.css";
         }
         `),
       ),
