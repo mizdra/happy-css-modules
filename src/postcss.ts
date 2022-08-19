@@ -1,4 +1,4 @@
-import postcss, { Rule, AtRule, Root, Node, Declaration } from 'postcss';
+import postcss, { Rule, AtRule, Root, Node, Declaration, Plugin } from 'postcss';
 import modules from 'postcss-modules';
 import selectorParser, { ClassName } from 'postcss-selector-parser';
 import valueParser from 'postcss-value-parser';
@@ -20,17 +20,37 @@ export type Location = {
   end: Position;
 };
 
+function removeDependenciesPlugin(): Plugin {
+  return {
+    postcssPlugin: 'remove-dependencies',
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    AtRule(atRule) {
+      if (isAtImportNode(atRule)) {
+        atRule.remove();
+      }
+    },
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    Declaration(declaration) {
+      if (isComposesDeclaration(declaration)) {
+        declaration.remove();
+      }
+    },
+  };
+}
+
 /**
- * The name of exported token by the source file excluding the imported from other sheets.
- * @param ast The root node of the source file.
- * @returns The exported token names.
+ * Traverses a local token from the AST and returns its name.
+ * @param ast The AST to traverse.
+ * @returns The name of the local token.
  */
 export async function generateLocalTokenNames(ast: Root): Promise<string[]> {
   return new Promise((resolve, reject) => {
-    // If a token is imported with the composes property from a non-existent file,
-    // postcss-modules will cause a warning to be printed to standard output.
-    // TODO: remove `composes` property before calling process
     postcss()
+      // postcss-modules collects tokens (i.e., includes external tokens) by following
+      // the dependencies specified in the @import and composes properties.
+      // However, we do not want `generateLocalTokenNames` to return external tokens.
+      // So we remove the @import and composes properties beforehand.
+      .use(removeDependenciesPlugin())
       .use(
         modules({
           getJSON: (_cssFileName, json) => {
@@ -102,12 +122,6 @@ export function getOriginalLocation(rule: Rule, classSelector: ClassName): Locat
   return location;
 }
 
-export type Matcher = {
-  atImport?: (atImport: AtRule) => void;
-  classSelector?: (rule: Rule, classSelector: ClassName) => void;
-  composesDeclaration?: (composesDeclaration: Declaration) => void;
-};
-
 function isAtRuleNode(node: Node): node is AtRule {
   return node.type === 'atrule';
 }
@@ -128,15 +142,23 @@ function isComposesDeclaration(node: Node): node is Declaration {
   return isDeclaration(node) && node.prop === 'composes';
 }
 
+type CollectNodesResult = {
+  atImports: AtRule[];
+  classSelectors: { rule: Rule; classSelector: ClassName }[];
+  composesDeclarations: Declaration[];
+};
+
 /**
- * Walk the AST and call the matcher functions.
- * @param ast The AST to walk.
- * @param matcher The matcher functions to call.
+ * Collect nodes from the AST.
+ * @param ast The AST.
  */
-export function walkByMatcher(ast: Root, matcher: Matcher): void {
+export function collectNodes(ast: Root): CollectNodesResult {
+  const atImports: AtRule[] = [];
+  const classSelectors: { rule: Rule; classSelector: ClassName }[] = [];
+  const composesDeclarations: Declaration[] = [];
   ast.walk((node) => {
     if (isAtImportNode(node)) {
-      matcher.atImport?.(node);
+      atImports.push(node);
     } else if (isRuleNode(node)) {
       // In `rule.selector` comes the following string:
       // 1. ".foo"
@@ -148,14 +170,15 @@ export function walkByMatcher(ast: Root, matcher: Matcher): void {
             // In `selector.value` comes the following string:
             // 1. "foo"
             // 2. "bar"
-            matcher.classSelector?.(node, selector);
+            classSelectors.push({ rule: node, classSelector: selector });
           }
         });
       }).processSync(node);
     } else if (isComposesDeclaration(node)) {
-      matcher.composesDeclaration?.(node);
+      composesDeclarations.push(node);
     }
   });
+  return { atImports, classSelectors, composesDeclarations };
 }
 
 /**

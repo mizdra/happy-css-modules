@@ -1,13 +1,13 @@
 import { readFile, stat } from 'fs/promises';
 import { dirname, resolve } from 'path';
-import postcss, { AtRule, Declaration } from 'postcss';
+import postcss from 'postcss';
 import {
   getOriginalLocation,
   generateLocalTokenNames,
   parseAtImport,
   Location,
-  walkByMatcher,
   parseComposesDeclarationWithFromUrl,
+  collectNodes,
 } from './postcss';
 import { unique, uniqueBy } from './util';
 
@@ -91,6 +91,31 @@ export class Loader {
     return false;
   }
 
+  /**
+   * Reads the source file and returns the code.
+   * If transform is specified, the code is transformed before returning.
+   */
+  private async readCSS(
+    filePath: string,
+  ): Promise<
+    | { css: string; map: undefined; dependencies: string[] }
+    | { css: string; map: string | object | undefined; dependencies: string[] }
+  > {
+    const css = await readFile(filePath, 'utf-8');
+    if (!this.transform) return { css, map: undefined, dependencies: [] };
+    const result = await this.transform(css, filePath);
+    if (result === false) return { css, map: undefined, dependencies: [] };
+    return {
+      css: result.css,
+      map: result.map,
+      dependencies: result.dependencies.map((dep) => {
+        if (typeof dep === 'string') return dep;
+        if (dep.protocol !== 'file:') throw new Error('Unsupported protocol: ' + dep.protocol);
+        return dep.pathname;
+      }),
+    };
+  }
+
   /** Returns information about the tokens exported from the CSS Modules file. */
   async load(filePath: string): Promise<LoadResult> {
     if (!(await this.isCacheOutdated(filePath))) {
@@ -98,26 +123,9 @@ export class Loader {
       return cacheEntry.result;
     }
 
-    const dependencies: string[] = [];
     const mtime = (await stat(filePath)).mtime.getTime();
 
-    // TODO: Refactor the following as `const { css, map, dependencies } = await readCSS(transform);`
-    let css = await readFile(filePath, 'utf-8');
-    let map: string | object | undefined;
-    if (this.transform) {
-      const result = await this.transform(css, filePath);
-      if (result) {
-        css = result.css;
-        map = result.map;
-        dependencies.push(
-          ...result.dependencies.map((dep) => {
-            if (typeof dep === 'string') return dep;
-            if (dep.protocol !== 'file:') throw new Error('Unsupported protocol: ' + dep.protocol);
-            return dep.pathname;
-          }),
-        );
-      }
-    }
+    const { css, map, dependencies } = await this.readCSS(filePath);
 
     const ast = postcss.parse(css, { from: filePath, map: { inline: false, prev: map } });
 
@@ -127,31 +135,7 @@ export class Loader {
 
     const tokens: Token[] = [];
 
-    const atImports: AtRule[] = [];
-    const composesDeclarations: Declaration[] = [];
-    // TODO: Refactor with async `walkByMatcher`
-    walkByMatcher(ast, {
-      // Collect the sheets imported by `@import` rule.
-      atImport: (atImport) => {
-        atImports.push(atImport);
-      },
-      // Traverse the source file to find a class selector that matches the local token.
-      classSelector: (rule, classSelector) => {
-        // Consider a class selector to be the origin of a token if it matches a token fetched by postcss-modules.
-        // NOTE: This method has false positives. However, it works as expected in many cases.
-        if (!localTokenNames.includes(classSelector.value)) return;
-
-        const originalLocation = getOriginalLocation(rule, classSelector);
-
-        tokens.push({
-          name: classSelector.value,
-          originalLocations: [originalLocation],
-        });
-      },
-      composesDeclaration: (composesDeclaration) => {
-        composesDeclarations.push(composesDeclaration);
-      },
-    });
+    const { atImports, classSelectors, composesDeclarations } = collectNodes(ast);
 
     // Load imported sheets recursively.
     for (const atImport of atImports) {
@@ -162,6 +146,20 @@ export class Loader {
       const externalTokens = result.tokens;
       dependencies.push(from);
       tokens.push(...externalTokens);
+    }
+
+    // Traverse the source file to find a class selector that matches the local token.
+    for (const { rule, classSelector } of classSelectors) {
+      // Consider a class selector to be the origin of a token if it matches a token fetched by postcss-modules.
+      // NOTE: This method has false positives. However, it works as expected in many cases.
+      if (!localTokenNames.includes(classSelector.value)) continue;
+
+      const originalLocation = getOriginalLocation(rule, classSelector);
+
+      tokens.push({
+        name: classSelector.value,
+        originalLocations: [originalLocation],
+      });
     }
 
     // Load imported tokens by the names recursively.

@@ -317,34 +317,34 @@ test('normalizes tokens', async () => {
               Object {
                 "end": Object {
                   "column": 2,
-                  "line": 4,
-                },
-                "filePath": "/test/1.css",
-                "start": Object {
-                  "column": 1,
-                  "line": 4,
-                },
-              },
-              Object {
-                "end": Object {
-                  "column": 2,
-                  "line": 12,
-                },
-                "filePath": "/test/1.css",
-                "start": Object {
-                  "column": 1,
-                  "line": 12,
-                },
-              },
-              Object {
-                "end": Object {
-                  "column": 2,
                   "line": 1,
                 },
                 "filePath": "/test/2.css",
                 "start": Object {
                   "column": 1,
                   "line": 1,
+                },
+              },
+              Object {
+                "end": Object {
+                  "column": 2,
+                  "line": 4,
+                },
+                "filePath": "/test/1.css",
+                "start": Object {
+                  "column": 1,
+                  "line": 4,
+                },
+              },
+              Object {
+                "end": Object {
+                  "column": 2,
+                  "line": 12,
+                },
+                "filePath": "/test/1.css",
+                "start": Object {
+                  "column": 1,
+                  "line": 12,
                 },
               },
             ],
