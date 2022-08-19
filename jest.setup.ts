@@ -6,8 +6,11 @@ import {
 } from 'jest-snapshot';
 import mockfs from 'mock-fs';
 
+// There is a problem that snapshots cannot be written when the filesystem is mocked with mock-fs.
+// Here is a workaround for that problem by overriding the default matcher.
+// ref: https://github.com/tschaub/mock-fs#using-with-jest-snapshot-testing
 expect.extend({
-  toMatchInlineSnapshot(...args) {
+  toMatchInlineSnapshot(...args: Parameters<typeof toMatchInlineSnapshot>) {
     // @ts-ignore
     return mockfs.bypass(() => toMatchInlineSnapshot.call(this, ...args));
   },

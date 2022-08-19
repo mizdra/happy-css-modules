@@ -2,7 +2,7 @@ import fs from 'fs/promises';
 import { resolve } from 'path';
 import dedent from 'dedent';
 import less from 'less';
-import mockfs from 'mock-fs'; // TODO: use memfs instead of mock-fs
+import mockfs from 'mock-fs';
 import sass from 'sass';
 import { Loader, Transformer } from '../src/loader';
 
@@ -37,9 +37,8 @@ test('basic', async () => {
     `,
   });
   const result = await loader.load('/test/1.css');
-  mockfs.bypass(() =>
-    // TODO: Refactor with custom matcher
-    expect(result).toMatchInlineSnapshot(`
+  // TODO: Refactor with custom matcher
+  expect(result).toMatchInlineSnapshot(`
       Object {
         "dependencies": Array [],
         "tokens": Array [
@@ -77,8 +76,7 @@ test('basic', async () => {
           },
         ],
       }
-    `),
-  );
+    `);
 });
 
 test('tracks other files when `@import` is present', async () => {
@@ -99,8 +97,7 @@ test('tracks other files when `@import` is present', async () => {
     `,
   });
   const result = await loader.load('/test/1.css');
-  mockfs.bypass(() =>
-    expect(result).toMatchInlineSnapshot(`
+  expect(result).toMatchInlineSnapshot(`
       Object {
         "dependencies": Array [
           "/test/2.css",
@@ -158,8 +155,7 @@ test('tracks other files when `@import` is present', async () => {
           },
         ],
       }
-    `),
-  );
+    `);
 });
 
 test('tracks other files when `composes` is present', async () => {
@@ -183,8 +179,7 @@ test('tracks other files when `composes` is present', async () => {
     `,
   });
   const result = await loader.load('/test/1.css');
-  mockfs.bypass(() =>
-    expect(result).toMatchInlineSnapshot(`
+  expect(result).toMatchInlineSnapshot(`
       Object {
         "dependencies": Array [
           "/test/2.css",
@@ -274,8 +269,7 @@ test('tracks other files when `composes` is present', async () => {
           },
         ],
       }
-    `),
-  );
+    `);
 });
 
 test('normalizes tokens', async () => {
@@ -303,8 +297,7 @@ test('normalizes tokens', async () => {
     `,
   });
   const result = await loader.load('/test/1.css');
-  mockfs.bypass(() =>
-    expect(result).toMatchInlineSnapshot(`
+  expect(result).toMatchInlineSnapshot(`
       Object {
         "dependencies": Array [
           "/test/2.css",
@@ -383,8 +376,7 @@ test('normalizes tokens', async () => {
           },
         ],
       }
-    `),
-  );
+    `);
 });
 
 test('returns the result from the cache when the file has not been modified', async () => {
@@ -463,8 +455,7 @@ describe('supports transpiler', () => {
         `,
     });
     const result = await loader.load('/test/1.scss');
-    mockfs.bypass(() =>
-      expect(result).toMatchInlineSnapshot(`
+    expect(result).toMatchInlineSnapshot(`
           Object {
             "dependencies": Array [
               "/test/2.scss",
@@ -554,8 +545,7 @@ describe('supports transpiler', () => {
               },
             ],
           }
-        `),
-    );
+        `);
   });
   test('less', async () => {
     mockfs({
@@ -582,8 +572,7 @@ describe('supports transpiler', () => {
       'node_modules': mockfs.load(resolve(__dirname, '../node_modules')),
     });
     const result = await loader.load('/test/1.less');
-    mockfs.bypass(() =>
-      expect(result).toMatchInlineSnapshot(`
+    expect(result).toMatchInlineSnapshot(`
           Object {
             "dependencies": Array [
               "/test/2.less",
@@ -656,8 +645,7 @@ describe('supports transpiler', () => {
               },
             ],
           }
-        `),
-    );
+        `);
   });
 });
 
