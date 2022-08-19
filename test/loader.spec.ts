@@ -715,7 +715,8 @@ test('throws error the composition of non-existent file', async () => {
     }
     `,
   });
+  // TODO: better error message
   await expect(async () => {
     await loader.load('/test/1.css');
-  }).rejects.toThrow(); // TODO: better error message
+  }).rejects.toThrowErrorMatchingInlineSnapshot(`"ENOENT, no such file or directory '/test/2.css'"`);
 });
