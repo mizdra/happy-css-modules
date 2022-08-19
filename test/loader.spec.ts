@@ -56,7 +56,6 @@ test('basic', async () => {
         }
       ]
     }
-
   `);
 });
 
@@ -102,7 +101,6 @@ test('tracks other files when `@import` is present', async () => {
         }
       ]
     }
-
   `);
 });
 
@@ -163,7 +161,6 @@ test('tracks other files when `composes` is present', async () => {
         }
       ]
     }
-
   `);
 });
 
@@ -218,7 +215,6 @@ test('normalizes tokens', async () => {
         }
       ]
     }
-
   `);
 });
 
@@ -334,7 +330,6 @@ describe('supports transpiler', () => {
           }
         ]
       }
-
     `);
   });
   test('less', async () => {
@@ -392,7 +387,6 @@ describe('supports transpiler', () => {
           }
         ]
       }
-
     `);
   });
 });

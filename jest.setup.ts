@@ -31,7 +31,7 @@ expect.extend({
 
 const jsonSerializer: jest.SnapshotSerializerPlugin = {
   serialize(val) {
-    return format(JSON.stringify(val), { parser: 'json', printWidth: 120 });
+    return format(JSON.stringify(val), { parser: 'json', printWidth: 120 }).trimEnd();
   },
 
   test(val) {
