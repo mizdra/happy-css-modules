@@ -9,6 +9,7 @@ const config = {
   testPathIgnorePatterns: ['/node_modules/', '\\.d\\.ts$', 'dist/', 'example/', 'coverage/'],
   watchPathIgnorePatterns: ['\\.d\\.ts$'],
   moduleFileExtensions: ['js', 'ts', 'json'],
+  setupFilesAfterEnv: ['./jest.setup.ts'],
   globals: {
     'ts-jest': {
       tsconfig: 'tsconfig.test.json',

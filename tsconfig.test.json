@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.base.json",
-  "include": ["src/**/*", "test/**/*"],
+  "include": ["src/**/*", "test/**/*", "jest.setup.ts"],
   "exclude": ["node_modules"],
   "compilerOptions": {
     // "outDir": "./dist/",
