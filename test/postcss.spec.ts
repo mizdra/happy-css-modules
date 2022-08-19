@@ -105,16 +105,16 @@ describe('getOriginalLocation', () => {
       `),
     );
     expect(getOriginalLocation(basic.rule, basic.classSelector)).toMatchInlineSnapshot(`
-      Object {
-        "end": Object {
-          "column": 6,
-          "line": 1,
-        },
+      {
         "filePath": "/test/test.css",
-        "start": Object {
-          "column": 1,
+        "start": {
           "line": 1,
+          "column": 1
         },
+        "end": {
+          "line": 1,
+          "column": 6
+        }
       }
     `);
   });
@@ -127,29 +127,29 @@ describe('getOriginalLocation', () => {
       `),
     );
     expect(getOriginalLocation(cascading_1.rule, cascading_1.classSelector)).toMatchInlineSnapshot(`
-      Object {
-        "end": Object {
-          "column": 10,
-          "line": 1,
-        },
+      {
         "filePath": "/test/test.css",
-        "start": Object {
-          "column": 1,
+        "start": {
           "line": 1,
+          "column": 1
         },
+        "end": {
+          "line": 1,
+          "column": 10
+        }
       }
     `);
     expect(getOriginalLocation(cascading_2.rule, cascading_2.classSelector)).toMatchInlineSnapshot(`
-      Object {
-        "end": Object {
-          "column": 10,
-          "line": 2,
-        },
+      {
         "filePath": "/test/test.css",
-        "start": Object {
-          "column": 1,
+        "start": {
           "line": 2,
+          "column": 1
         },
+        "end": {
+          "line": 2,
+          "column": 10
+        }
       }
     `);
   });
@@ -163,42 +163,42 @@ describe('getOriginalLocation', () => {
       `),
     );
     expect(getOriginalLocation(pseudo_class_1.rule, pseudo_class_1.classSelector)).toMatchInlineSnapshot(`
-      Object {
-        "end": Object {
-          "column": 15,
-          "line": 1,
-        },
+      {
         "filePath": "/test/test.css",
-        "start": Object {
-          "column": 1,
+        "start": {
           "line": 1,
+          "column": 1
         },
+        "end": {
+          "line": 1,
+          "column": 15
+        }
       }
     `);
     expect(getOriginalLocation(pseudo_class_2.rule, pseudo_class_2.classSelector)).toMatchInlineSnapshot(`
-      Object {
-        "end": Object {
-          "column": 15,
-          "line": 2,
-        },
+      {
         "filePath": "/test/test.css",
-        "start": Object {
-          "column": 1,
+        "start": {
           "line": 2,
+          "column": 1
         },
+        "end": {
+          "line": 2,
+          "column": 15
+        }
       }
     `);
     expect(getOriginalLocation(pseudo_class_3.rule, pseudo_class_3.classSelector)).toMatchInlineSnapshot(`
-      Object {
-        "end": Object {
-          "column": 20,
-          "line": 3,
-        },
+      {
         "filePath": "/test/test.css",
-        "start": Object {
-          "column": 6,
+        "start": {
           "line": 3,
+          "column": 6
         },
+        "end": {
+          "line": 3,
+          "column": 20
+        }
       }
     `);
   });
@@ -210,29 +210,29 @@ describe('getOriginalLocation', () => {
       `),
     );
     expect(getOriginalLocation(multiple_selector_1.rule, multiple_selector_1.classSelector)).toMatchInlineSnapshot(`
-      Object {
-        "end": Object {
-          "column": 20,
-          "line": 1,
-        },
+      {
         "filePath": "/test/test.css",
-        "start": Object {
-          "column": 1,
+        "start": {
           "line": 1,
+          "column": 1
         },
+        "end": {
+          "line": 1,
+          "column": 20
+        }
       }
     `);
     expect(getOriginalLocation(multiple_selector_2.rule, multiple_selector_2.classSelector)).toMatchInlineSnapshot(`
-      Object {
-        "end": Object {
-          "column": 40,
-          "line": 1,
-        },
+      {
         "filePath": "/test/test.css",
-        "start": Object {
-          "column": 21,
+        "start": {
           "line": 1,
+          "column": 21
         },
+        "end": {
+          "line": 1,
+          "column": 40
+        }
       }
     `);
   });
@@ -245,29 +245,29 @@ describe('getOriginalLocation', () => {
       `),
     );
     expect(getOriginalLocation(combinator_1.rule, combinator_1.classSelector)).toMatchInlineSnapshot(`
-      Object {
-        "end": Object {
-          "column": 13,
-          "line": 1,
-        },
+      {
         "filePath": "/test/test.css",
-        "start": Object {
-          "column": 1,
+        "start": {
           "line": 1,
+          "column": 1
         },
+        "end": {
+          "line": 1,
+          "column": 13
+        }
       }
     `);
     expect(getOriginalLocation(combinator_2.rule, combinator_2.classSelector)).toMatchInlineSnapshot(`
-      Object {
-        "end": Object {
-          "column": 29,
-          "line": 1,
-        },
+      {
         "filePath": "/test/test.css",
-        "start": Object {
-          "column": 17,
+        "start": {
           "line": 1,
+          "column": 17
         },
+        "end": {
+          "line": 1,
+          "column": 29
+        }
       }
     `);
   });
@@ -283,16 +283,16 @@ describe('getOriginalLocation', () => {
       `),
     );
     expect(getOriginalLocation(at_rule.rule, at_rule.classSelector)).toMatchInlineSnapshot(`
-      Object {
-        "end": Object {
-          "column": 12,
-          "line": 3,
-        },
+      {
         "filePath": "/test/test.css",
-        "start": Object {
-          "column": 5,
+        "start": {
           "line": 3,
+          "column": 5
         },
+        "end": {
+          "line": 3,
+          "column": 12
+        }
       }
     `);
   });
@@ -304,29 +304,29 @@ describe('getOriginalLocation', () => {
       `),
     );
     expect(getOriginalLocation(selector_list_1.rule, selector_list_1.classSelector)).toMatchInlineSnapshot(`
-      Object {
-        "end": Object {
-          "column": 16,
-          "line": 1,
-        },
+      {
         "filePath": "/test/test.css",
-        "start": Object {
-          "column": 1,
+        "start": {
           "line": 1,
+          "column": 1
         },
+        "end": {
+          "line": 1,
+          "column": 16
+        }
       }
     `);
     expect(getOriginalLocation(selector_list_2.rule, selector_list_2.classSelector)).toMatchInlineSnapshot(`
-      Object {
-        "end": Object {
-          "column": 34,
-          "line": 1,
-        },
+      {
         "filePath": "/test/test.css",
-        "start": Object {
-          "column": 19,
+        "start": {
           "line": 1,
+          "column": 19
         },
+        "end": {
+          "line": 1,
+          "column": 34
+        }
       }
     `);
   });
@@ -343,55 +343,55 @@ describe('getOriginalLocation', () => {
       `),
     );
     expect(getOriginalLocation(local_class_name_1.rule, local_class_name_1.classSelector)).toMatchInlineSnapshot(`
-      Object {
-        "end": Object {
-          "column": 26,
-          "line": 1,
-        },
+      {
         "filePath": "/test/test.css",
-        "start": Object {
-          "column": 8,
+        "start": {
           "line": 1,
+          "column": 8
         },
+        "end": {
+          "line": 1,
+          "column": 26
+        }
       }
     `);
     expect(getOriginalLocation(local_class_name_2.rule, local_class_name_2.classSelector)).toMatchInlineSnapshot(`
-      Object {
-        "end": Object {
-          "column": 21,
-          "line": 3,
-        },
+      {
         "filePath": "/test/test.css",
-        "start": Object {
-          "column": 3,
+        "start": {
           "line": 3,
+          "column": 3
         },
+        "end": {
+          "line": 3,
+          "column": 21
+        }
       }
     `);
     expect(getOriginalLocation(local_class_name_3.rule, local_class_name_3.classSelector)).toMatchInlineSnapshot(`
-      Object {
-        "end": Object {
-          "column": 21,
-          "line": 4,
-        },
+      {
         "filePath": "/test/test.css",
-        "start": Object {
-          "column": 3,
+        "start": {
           "line": 4,
+          "column": 3
         },
+        "end": {
+          "line": 4,
+          "column": 21
+        }
       }
     `);
     expect(getOriginalLocation(local_class_name_4.rule, local_class_name_4.classSelector)).toMatchInlineSnapshot(`
-      Object {
-        "end": Object {
-          "column": 26,
-          "line": 6,
-        },
+      {
         "filePath": "/test/test.css",
-        "start": Object {
-          "column": 8,
+        "start": {
           "line": 6,
+          "column": 8
         },
+        "end": {
+          "line": 6,
+          "column": 26
+        }
       }
     `);
   });
@@ -406,29 +406,29 @@ describe('getOriginalLocation', () => {
       `),
     );
     expect(getOriginalLocation(composes_target.rule, composes_target.classSelector)).toMatchInlineSnapshot(`
-      Object {
-        "end": Object {
-          "column": 16,
-          "line": 1,
-        },
+      {
         "filePath": "/test/test.css",
-        "start": Object {
-          "column": 1,
+        "start": {
           "line": 1,
+          "column": 1
         },
+        "end": {
+          "line": 1,
+          "column": 16
+        }
       }
     `);
     expect(getOriginalLocation(composes.rule, composes.classSelector)).toMatchInlineSnapshot(`
-      Object {
-        "end": Object {
-          "column": 9,
-          "line": 2,
-        },
+      {
         "filePath": "/test/test.css",
-        "start": Object {
-          "column": 1,
+        "start": {
           "line": 2,
+          "column": 1
         },
+        "end": {
+          "line": 2,
+          "column": 9
+        }
       }
     `);
   });
@@ -442,43 +442,43 @@ describe('getOriginalLocation', () => {
       `),
     );
     expect(getOriginalLocation(with_newline_1.rule, with_newline_1.classSelector)).toMatchInlineSnapshot(`
-      Object {
-        "end": Object {
-          "column": 15,
-          "line": 1,
-        },
+      {
         "filePath": "/test/test.css",
-        "start": Object {
-          "column": 1,
+        "start": {
           "line": 1,
+          "column": 1
         },
+        "end": {
+          "line": 1,
+          "column": 15
+        }
       }
     `);
     expect(getOriginalLocation(with_newline_2.rule, with_newline_2.classSelector)).toMatchInlineSnapshot(`
-      Object {
-        "end": Object {
-          "column": 15,
-          "line": 2,
-        },
+      {
         "filePath": "/test/test.css",
-        "start": Object {
-          "column": 1,
+        "start": {
           "line": 2,
+          "column": 1
         },
+        "end": {
+          "line": 2,
+          "column": 15
+        }
       }
     `);
 
     expect(getOriginalLocation(with_newline_3.rule, with_newline_3.classSelector)).toMatchInlineSnapshot(`
-      Object {
-        "end": Object {
-          "column": 19,
-          "line": 3,
-        },
+      {
         "filePath": "/test/test.css",
-        "start": Object {
-          "column": 5,
+        "start": {
           "line": 3,
+          "column": 5
         },
+        "end": {
+          "line": 3,
+          "column": 19
+        }
       }
     `);
   });

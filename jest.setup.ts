@@ -27,3 +27,24 @@ expect.extend({
     return mockfs.bypass(() => toThrowErrorMatchingSnapshot.call(this, ...args));
   },
 });
+
+const jsonSerializer: jest.SnapshotSerializerPlugin = {
+  serialize(val) {
+    return JSON.stringify(val, null, 2);
+  },
+
+  test(val) {
+    const isLoadResult =
+      val &&
+      Object.prototype.hasOwnProperty.call(val, 'tokens') &&
+      Object.prototype.hasOwnProperty.call(val, 'dependencies');
+    const isLocation =
+      val &&
+      Object.prototype.hasOwnProperty.call(val, 'filePath') &&
+      Object.prototype.hasOwnProperty.call(val, 'start') &&
+      Object.prototype.hasOwnProperty.call(val, 'end');
+    return isLoadResult || isLocation;
+  },
+};
+
+expect.addSnapshotSerializer(jsonSerializer);

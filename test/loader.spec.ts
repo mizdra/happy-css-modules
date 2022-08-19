@@ -39,42 +39,42 @@ test('basic', async () => {
   const result = await loader.load('/test/1.css');
   // TODO: Refactor with custom matcher
   expect(result).toMatchInlineSnapshot(`
-    Object {
-      "dependencies": Array [],
-      "tokens": Array [
-        Object {
+    {
+      "dependencies": [],
+      "tokens": [
+        {
           "name": "a",
-          "originalLocations": Array [
-            Object {
-              "end": Object {
-                "column": 2,
-                "line": 1,
-              },
+          "originalLocations": [
+            {
               "filePath": "/test/1.css",
-              "start": Object {
-                "column": 1,
+              "start": {
                 "line": 1,
+                "column": 1
               },
-            },
-          ],
+              "end": {
+                "line": 1,
+                "column": 2
+              }
+            }
+          ]
         },
-        Object {
+        {
           "name": "b",
-          "originalLocations": Array [
-            Object {
-              "end": Object {
-                "column": 2,
-                "line": 2,
-              },
+          "originalLocations": [
+            {
               "filePath": "/test/1.css",
-              "start": Object {
-                "column": 1,
+              "start": {
                 "line": 2,
+                "column": 1
               },
-            },
-          ],
-        },
-      ],
+              "end": {
+                "line": 2,
+                "column": 2
+              }
+            }
+          ]
+        }
+      ]
     }
   `);
 });
@@ -98,62 +98,62 @@ test('tracks other files when `@import` is present', async () => {
   });
   const result = await loader.load('/test/1.css');
   expect(result).toMatchInlineSnapshot(`
-    Object {
-      "dependencies": Array [
+    {
+      "dependencies": [
         "/test/2.css",
         "/test/3.css",
-        "/test/4.css",
+        "/test/4.css"
       ],
-      "tokens": Array [
-        Object {
+      "tokens": [
+        {
           "name": "a",
-          "originalLocations": Array [
-            Object {
-              "end": Object {
-                "column": 2,
-                "line": 1,
-              },
+          "originalLocations": [
+            {
               "filePath": "/test/2.css",
-              "start": Object {
-                "column": 1,
+              "start": {
                 "line": 1,
+                "column": 1
               },
-            },
-          ],
+              "end": {
+                "line": 1,
+                "column": 2
+              }
+            }
+          ]
         },
-        Object {
+        {
           "name": "b",
-          "originalLocations": Array [
-            Object {
-              "end": Object {
-                "column": 2,
-                "line": 1,
-              },
+          "originalLocations": [
+            {
               "filePath": "/test/3.css",
-              "start": Object {
-                "column": 1,
+              "start": {
                 "line": 1,
+                "column": 1
               },
-            },
-          ],
+              "end": {
+                "line": 1,
+                "column": 2
+              }
+            }
+          ]
         },
-        Object {
+        {
           "name": "c",
-          "originalLocations": Array [
-            Object {
-              "end": Object {
-                "column": 2,
-                "line": 1,
-              },
+          "originalLocations": [
+            {
               "filePath": "/test/4.css",
-              "start": Object {
-                "column": 1,
+              "start": {
                 "line": 1,
+                "column": 1
               },
-            },
-          ],
-        },
-      ],
+              "end": {
+                "line": 1,
+                "column": 2
+              }
+            }
+          ]
+        }
+      ]
     }
   `);
 });
@@ -180,94 +180,94 @@ test('tracks other files when `composes` is present', async () => {
   });
   const result = await loader.load('/test/1.css');
   expect(result).toMatchInlineSnapshot(`
-    Object {
-      "dependencies": Array [
+    {
+      "dependencies": [
         "/test/2.css",
         "/test/3.css",
-        "/test/4.css",
+        "/test/4.css"
       ],
-      "tokens": Array [
-        Object {
+      "tokens": [
+        {
           "name": "a",
-          "originalLocations": Array [
-            Object {
-              "end": Object {
-                "column": 2,
-                "line": 1,
-              },
+          "originalLocations": [
+            {
               "filePath": "/test/1.css",
-              "start": Object {
-                "column": 1,
+              "start": {
                 "line": 1,
+                "column": 1
               },
-            },
-          ],
+              "end": {
+                "line": 1,
+                "column": 2
+              }
+            }
+          ]
         },
-        Object {
+        {
           "name": "b",
-          "originalLocations": Array [
-            Object {
-              "end": Object {
-                "column": 2,
-                "line": 1,
-              },
+          "originalLocations": [
+            {
               "filePath": "/test/2.css",
-              "start": Object {
-                "column": 1,
+              "start": {
                 "line": 1,
+                "column": 1
               },
-            },
-          ],
+              "end": {
+                "line": 1,
+                "column": 2
+              }
+            }
+          ]
         },
-        Object {
+        {
           "name": "c",
-          "originalLocations": Array [
-            Object {
-              "end": Object {
-                "column": 2,
-                "line": 1,
-              },
+          "originalLocations": [
+            {
               "filePath": "/test/3.css",
-              "start": Object {
-                "column": 1,
+              "start": {
                 "line": 1,
+                "column": 1
               },
-            },
-          ],
+              "end": {
+                "line": 1,
+                "column": 2
+              }
+            }
+          ]
         },
-        Object {
+        {
           "name": "d",
-          "originalLocations": Array [
-            Object {
-              "end": Object {
-                "column": 2,
-                "line": 2,
-              },
+          "originalLocations": [
+            {
               "filePath": "/test/3.css",
-              "start": Object {
-                "column": 1,
+              "start": {
                 "line": 2,
+                "column": 1
               },
-            },
-          ],
+              "end": {
+                "line": 2,
+                "column": 2
+              }
+            }
+          ]
         },
-        Object {
+        {
           "name": "e",
-          "originalLocations": Array [
-            Object {
-              "end": Object {
-                "column": 2,
-                "line": 1,
-              },
+          "originalLocations": [
+            {
               "filePath": "/test/4.css",
-              "start": Object {
-                "column": 1,
+              "start": {
                 "line": 1,
+                "column": 1
               },
-            },
-          ],
-        },
-      ],
+              "end": {
+                "line": 1,
+                "column": 2
+              }
+            }
+          ]
+        }
+      ]
     }
   `);
 });
@@ -298,83 +298,83 @@ test('normalizes tokens', async () => {
   });
   const result = await loader.load('/test/1.css');
   expect(result).toMatchInlineSnapshot(`
-    Object {
-      "dependencies": Array [
+    {
+      "dependencies": [
         "/test/2.css",
-        "/test/3.css",
+        "/test/3.css"
       ],
-      "tokens": Array [
-        Object {
+      "tokens": [
+        {
           "name": "a",
-          "originalLocations": Array [
-            Object {
-              "end": Object {
-                "column": 2,
-                "line": 1,
-              },
+          "originalLocations": [
+            {
               "filePath": "/test/2.css",
-              "start": Object {
-                "column": 1,
+              "start": {
                 "line": 1,
+                "column": 1
               },
+              "end": {
+                "line": 1,
+                "column": 2
+              }
             },
-            Object {
-              "end": Object {
-                "column": 2,
-                "line": 4,
-              },
+            {
               "filePath": "/test/1.css",
-              "start": Object {
-                "column": 1,
+              "start": {
                 "line": 4,
+                "column": 1
               },
+              "end": {
+                "line": 4,
+                "column": 2
+              }
             },
-            Object {
-              "end": Object {
-                "column": 2,
-                "line": 12,
-              },
+            {
               "filePath": "/test/1.css",
-              "start": Object {
-                "column": 1,
+              "start": {
                 "line": 12,
+                "column": 1
               },
-            },
-          ],
+              "end": {
+                "line": 12,
+                "column": 2
+              }
+            }
+          ]
         },
-        Object {
+        {
           "name": "b",
-          "originalLocations": Array [
-            Object {
-              "end": Object {
-                "column": 2,
-                "line": 2,
-              },
+          "originalLocations": [
+            {
               "filePath": "/test/2.css",
-              "start": Object {
-                "column": 1,
+              "start": {
                 "line": 2,
+                "column": 1
               },
-            },
-          ],
+              "end": {
+                "line": 2,
+                "column": 2
+              }
+            }
+          ]
         },
-        Object {
+        {
           "name": "c",
-          "originalLocations": Array [
-            Object {
-              "end": Object {
-                "column": 2,
-                "line": 1,
-              },
+          "originalLocations": [
+            {
               "filePath": "/test/3.css",
-              "start": Object {
-                "column": 1,
+              "start": {
                 "line": 1,
+                "column": 1
               },
-            },
-          ],
-        },
-      ],
+              "end": {
+                "line": 1,
+                "column": 2
+              }
+            }
+          ]
+        }
+      ]
     }
   `);
 });
@@ -456,94 +456,94 @@ describe('supports transpiler', () => {
     });
     const result = await loader.load('/test/1.scss');
     expect(result).toMatchInlineSnapshot(`
-      Object {
-        "dependencies": Array [
+      {
+        "dependencies": [
           "/test/2.scss",
           "/test/3.scss",
-          "/test/4.scss",
+          "/test/4.scss"
         ],
-        "tokens": Array [
-          Object {
+        "tokens": [
+          {
             "name": "b_1",
-            "originalLocations": Array [
-              Object {
-                "end": Object {
-                  "column": 4,
-                  "line": 1,
-                },
+            "originalLocations": [
+              {
                 "filePath": "/test/2.scss",
-                "start": Object {
-                  "column": 1,
+                "start": {
                   "line": 1,
+                  "column": 1
                 },
-              },
-            ],
+                "end": {
+                  "line": 1,
+                  "column": 4
+                }
+              }
+            ]
           },
-          Object {
+          {
             "name": "c",
-            "originalLocations": Array [
-              Object {
-                "end": Object {
-                  "column": 2,
-                  "line": 1,
-                },
+            "originalLocations": [
+              {
                 "filePath": "/test/3.scss",
-                "start": Object {
-                  "column": 1,
+                "start": {
                   "line": 1,
+                  "column": 1
                 },
-              },
-            ],
+                "end": {
+                  "line": 1,
+                  "column": 2
+                }
+              }
+            ]
           },
-          Object {
+          {
             "name": "a_1",
-            "originalLocations": Array [
-              Object {
-                "end": Object {
-                  "column": 4,
-                  "line": 3,
-                },
+            "originalLocations": [
+              {
                 "filePath": "/test/1.scss",
-                "start": Object {
-                  "column": 1,
+                "start": {
                   "line": 3,
+                  "column": 1
                 },
-              },
-            ],
+                "end": {
+                  "line": 3,
+                  "column": 4
+                }
+              }
+            ]
           },
-          Object {
+          {
             "name": "a_2",
-            "originalLocations": Array [
-              Object {
-                "end": Object {
-                  "column": 4,
-                  "line": 4,
-                },
+            "originalLocations": [
+              {
                 "filePath": "/test/1.scss",
-                "start": Object {
-                  "column": 1,
+                "start": {
                   "line": 4,
+                  "column": 1
                 },
-              },
-            ],
+                "end": {
+                  "line": 4,
+                  "column": 4
+                }
+              }
+            ]
           },
-          Object {
+          {
             "name": "d",
-            "originalLocations": Array [
-              Object {
-                "end": Object {
-                  "column": 2,
-                  "line": 1,
-                },
+            "originalLocations": [
+              {
                 "filePath": "/test/4.scss",
-                "start": Object {
-                  "column": 1,
+                "start": {
                   "line": 1,
+                  "column": 1
                 },
-              },
-            ],
-          },
-        ],
+                "end": {
+                  "line": 1,
+                  "column": 2
+                }
+              }
+            ]
+          }
+        ]
       }
     `);
   });
@@ -573,77 +573,77 @@ describe('supports transpiler', () => {
     });
     const result = await loader.load('/test/1.less');
     expect(result).toMatchInlineSnapshot(`
-      Object {
-        "dependencies": Array [
+      {
+        "dependencies": [
           "/test/2.less",
-          "/test/3.less",
+          "/test/3.less"
         ],
-        "tokens": Array [
-          Object {
+        "tokens": [
+          {
             "name": "b_1",
-            "originalLocations": Array [
-              Object {
-                "end": Object {
-                  "column": 4,
-                  "line": 1,
-                },
+            "originalLocations": [
+              {
                 "filePath": "/test/2.less",
-                "start": Object {
-                  "column": 1,
+                "start": {
                   "line": 1,
+                  "column": 1
                 },
-              },
-            ],
+                "end": {
+                  "line": 1,
+                  "column": 4
+                }
+              }
+            ]
           },
-          Object {
+          {
             "name": "a_1",
-            "originalLocations": Array [
-              Object {
-                "end": Object {
-                  "column": 4,
-                  "line": 2,
-                },
+            "originalLocations": [
+              {
                 "filePath": "/test/1.less",
-                "start": Object {
-                  "column": 1,
+                "start": {
                   "line": 2,
+                  "column": 1
                 },
-              },
-            ],
+                "end": {
+                  "line": 2,
+                  "column": 4
+                }
+              }
+            ]
           },
-          Object {
+          {
             "name": "a_2",
-            "originalLocations": Array [
-              Object {
-                "end": Object {
-                  "column": 4,
-                  "line": 3,
-                },
+            "originalLocations": [
+              {
                 "filePath": "/test/1.less",
-                "start": Object {
-                  "column": 1,
+                "start": {
                   "line": 3,
+                  "column": 1
                 },
-              },
-            ],
+                "end": {
+                  "line": 3,
+                  "column": 4
+                }
+              }
+            ]
           },
-          Object {
+          {
             "name": "c",
-            "originalLocations": Array [
-              Object {
-                "end": Object {
-                  "column": 2,
-                  "line": 1,
-                },
+            "originalLocations": [
+              {
                 "filePath": "/test/3.less",
-                "start": Object {
-                  "column": 1,
+                "start": {
                   "line": 1,
+                  "column": 1
                 },
-              },
-            ],
-          },
-        ],
+                "end": {
+                  "line": 1,
+                  "column": 2
+                }
+              }
+            ]
+          }
+        ]
       }
     `);
   });
