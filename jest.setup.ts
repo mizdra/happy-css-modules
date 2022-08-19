@@ -5,6 +5,7 @@ import {
   toThrowErrorMatchingSnapshot,
 } from 'jest-snapshot';
 import mockfs from 'mock-fs';
+import { format } from 'prettier';
 
 // There is a problem that snapshots cannot be written when the filesystem is mocked with mock-fs.
 // Here is a workaround for that problem by overriding the default matcher.
@@ -30,7 +31,7 @@ expect.extend({
 
 const jsonSerializer: jest.SnapshotSerializerPlugin = {
   serialize(val) {
-    return JSON.stringify(val, null, 2);
+    return format(JSON.stringify(val), { parser: 'json' });
   },
 
   test(val) {

@@ -47,14 +47,8 @@ test('basic', async () => {
           "originalLocations": [
             {
               "filePath": "/test/1.css",
-              "start": {
-                "line": 1,
-                "column": 1
-              },
-              "end": {
-                "line": 1,
-                "column": 2
-              }
+              "start": { "line": 1, "column": 1 },
+              "end": { "line": 1, "column": 2 }
             }
           ]
         },
@@ -63,19 +57,14 @@ test('basic', async () => {
           "originalLocations": [
             {
               "filePath": "/test/1.css",
-              "start": {
-                "line": 2,
-                "column": 1
-              },
-              "end": {
-                "line": 2,
-                "column": 2
-              }
+              "start": { "line": 2, "column": 1 },
+              "end": { "line": 2, "column": 2 }
             }
           ]
         }
       ]
     }
+
   `);
 });
 
@@ -99,25 +88,15 @@ test('tracks other files when `@import` is present', async () => {
   const result = await loader.load('/test/1.css');
   expect(result).toMatchInlineSnapshot(`
     {
-      "dependencies": [
-        "/test/2.css",
-        "/test/3.css",
-        "/test/4.css"
-      ],
+      "dependencies": ["/test/2.css", "/test/3.css", "/test/4.css"],
       "tokens": [
         {
           "name": "a",
           "originalLocations": [
             {
               "filePath": "/test/2.css",
-              "start": {
-                "line": 1,
-                "column": 1
-              },
-              "end": {
-                "line": 1,
-                "column": 2
-              }
+              "start": { "line": 1, "column": 1 },
+              "end": { "line": 1, "column": 2 }
             }
           ]
         },
@@ -126,14 +105,8 @@ test('tracks other files when `@import` is present', async () => {
           "originalLocations": [
             {
               "filePath": "/test/3.css",
-              "start": {
-                "line": 1,
-                "column": 1
-              },
-              "end": {
-                "line": 1,
-                "column": 2
-              }
+              "start": { "line": 1, "column": 1 },
+              "end": { "line": 1, "column": 2 }
             }
           ]
         },
@@ -142,19 +115,14 @@ test('tracks other files when `@import` is present', async () => {
           "originalLocations": [
             {
               "filePath": "/test/4.css",
-              "start": {
-                "line": 1,
-                "column": 1
-              },
-              "end": {
-                "line": 1,
-                "column": 2
-              }
+              "start": { "line": 1, "column": 1 },
+              "end": { "line": 1, "column": 2 }
             }
           ]
         }
       ]
     }
+
   `);
 });
 
@@ -181,25 +149,15 @@ test('tracks other files when `composes` is present', async () => {
   const result = await loader.load('/test/1.css');
   expect(result).toMatchInlineSnapshot(`
     {
-      "dependencies": [
-        "/test/2.css",
-        "/test/3.css",
-        "/test/4.css"
-      ],
+      "dependencies": ["/test/2.css", "/test/3.css", "/test/4.css"],
       "tokens": [
         {
           "name": "a",
           "originalLocations": [
             {
               "filePath": "/test/1.css",
-              "start": {
-                "line": 1,
-                "column": 1
-              },
-              "end": {
-                "line": 1,
-                "column": 2
-              }
+              "start": { "line": 1, "column": 1 },
+              "end": { "line": 1, "column": 2 }
             }
           ]
         },
@@ -208,14 +166,8 @@ test('tracks other files when `composes` is present', async () => {
           "originalLocations": [
             {
               "filePath": "/test/2.css",
-              "start": {
-                "line": 1,
-                "column": 1
-              },
-              "end": {
-                "line": 1,
-                "column": 2
-              }
+              "start": { "line": 1, "column": 1 },
+              "end": { "line": 1, "column": 2 }
             }
           ]
         },
@@ -224,14 +176,8 @@ test('tracks other files when `composes` is present', async () => {
           "originalLocations": [
             {
               "filePath": "/test/3.css",
-              "start": {
-                "line": 1,
-                "column": 1
-              },
-              "end": {
-                "line": 1,
-                "column": 2
-              }
+              "start": { "line": 1, "column": 1 },
+              "end": { "line": 1, "column": 2 }
             }
           ]
         },
@@ -240,14 +186,8 @@ test('tracks other files when `composes` is present', async () => {
           "originalLocations": [
             {
               "filePath": "/test/3.css",
-              "start": {
-                "line": 2,
-                "column": 1
-              },
-              "end": {
-                "line": 2,
-                "column": 2
-              }
+              "start": { "line": 2, "column": 1 },
+              "end": { "line": 2, "column": 2 }
             }
           ]
         },
@@ -256,19 +196,14 @@ test('tracks other files when `composes` is present', async () => {
           "originalLocations": [
             {
               "filePath": "/test/4.css",
-              "start": {
-                "line": 1,
-                "column": 1
-              },
-              "end": {
-                "line": 1,
-                "column": 2
-              }
+              "start": { "line": 1, "column": 1 },
+              "end": { "line": 1, "column": 2 }
             }
           ]
         }
       ]
     }
+
   `);
 });
 
@@ -299,46 +234,25 @@ test('normalizes tokens', async () => {
   const result = await loader.load('/test/1.css');
   expect(result).toMatchInlineSnapshot(`
     {
-      "dependencies": [
-        "/test/2.css",
-        "/test/3.css"
-      ],
+      "dependencies": ["/test/2.css", "/test/3.css"],
       "tokens": [
         {
           "name": "a",
           "originalLocations": [
             {
               "filePath": "/test/2.css",
-              "start": {
-                "line": 1,
-                "column": 1
-              },
-              "end": {
-                "line": 1,
-                "column": 2
-              }
+              "start": { "line": 1, "column": 1 },
+              "end": { "line": 1, "column": 2 }
             },
             {
               "filePath": "/test/1.css",
-              "start": {
-                "line": 4,
-                "column": 1
-              },
-              "end": {
-                "line": 4,
-                "column": 2
-              }
+              "start": { "line": 4, "column": 1 },
+              "end": { "line": 4, "column": 2 }
             },
             {
               "filePath": "/test/1.css",
-              "start": {
-                "line": 12,
-                "column": 1
-              },
-              "end": {
-                "line": 12,
-                "column": 2
-              }
+              "start": { "line": 12, "column": 1 },
+              "end": { "line": 12, "column": 2 }
             }
           ]
         },
@@ -347,14 +261,8 @@ test('normalizes tokens', async () => {
           "originalLocations": [
             {
               "filePath": "/test/2.css",
-              "start": {
-                "line": 2,
-                "column": 1
-              },
-              "end": {
-                "line": 2,
-                "column": 2
-              }
+              "start": { "line": 2, "column": 1 },
+              "end": { "line": 2, "column": 2 }
             }
           ]
         },
@@ -363,19 +271,14 @@ test('normalizes tokens', async () => {
           "originalLocations": [
             {
               "filePath": "/test/3.css",
-              "start": {
-                "line": 1,
-                "column": 1
-              },
-              "end": {
-                "line": 1,
-                "column": 2
-              }
+              "start": { "line": 1, "column": 1 },
+              "end": { "line": 1, "column": 2 }
             }
           ]
         }
       ]
     }
+
   `);
 });
 
@@ -457,25 +360,15 @@ describe('supports transpiler', () => {
     const result = await loader.load('/test/1.scss');
     expect(result).toMatchInlineSnapshot(`
       {
-        "dependencies": [
-          "/test/2.scss",
-          "/test/3.scss",
-          "/test/4.scss"
-        ],
+        "dependencies": ["/test/2.scss", "/test/3.scss", "/test/4.scss"],
         "tokens": [
           {
             "name": "b_1",
             "originalLocations": [
               {
                 "filePath": "/test/2.scss",
-                "start": {
-                  "line": 1,
-                  "column": 1
-                },
-                "end": {
-                  "line": 1,
-                  "column": 4
-                }
+                "start": { "line": 1, "column": 1 },
+                "end": { "line": 1, "column": 4 }
               }
             ]
           },
@@ -484,14 +377,8 @@ describe('supports transpiler', () => {
             "originalLocations": [
               {
                 "filePath": "/test/3.scss",
-                "start": {
-                  "line": 1,
-                  "column": 1
-                },
-                "end": {
-                  "line": 1,
-                  "column": 2
-                }
+                "start": { "line": 1, "column": 1 },
+                "end": { "line": 1, "column": 2 }
               }
             ]
           },
@@ -500,14 +387,8 @@ describe('supports transpiler', () => {
             "originalLocations": [
               {
                 "filePath": "/test/1.scss",
-                "start": {
-                  "line": 3,
-                  "column": 1
-                },
-                "end": {
-                  "line": 3,
-                  "column": 4
-                }
+                "start": { "line": 3, "column": 1 },
+                "end": { "line": 3, "column": 4 }
               }
             ]
           },
@@ -516,14 +397,8 @@ describe('supports transpiler', () => {
             "originalLocations": [
               {
                 "filePath": "/test/1.scss",
-                "start": {
-                  "line": 4,
-                  "column": 1
-                },
-                "end": {
-                  "line": 4,
-                  "column": 4
-                }
+                "start": { "line": 4, "column": 1 },
+                "end": { "line": 4, "column": 4 }
               }
             ]
           },
@@ -532,19 +407,14 @@ describe('supports transpiler', () => {
             "originalLocations": [
               {
                 "filePath": "/test/4.scss",
-                "start": {
-                  "line": 1,
-                  "column": 1
-                },
-                "end": {
-                  "line": 1,
-                  "column": 2
-                }
+                "start": { "line": 1, "column": 1 },
+                "end": { "line": 1, "column": 2 }
               }
             ]
           }
         ]
       }
+
     `);
   });
   test('less', async () => {
@@ -574,24 +444,15 @@ describe('supports transpiler', () => {
     const result = await loader.load('/test/1.less');
     expect(result).toMatchInlineSnapshot(`
       {
-        "dependencies": [
-          "/test/2.less",
-          "/test/3.less"
-        ],
+        "dependencies": ["/test/2.less", "/test/3.less"],
         "tokens": [
           {
             "name": "b_1",
             "originalLocations": [
               {
                 "filePath": "/test/2.less",
-                "start": {
-                  "line": 1,
-                  "column": 1
-                },
-                "end": {
-                  "line": 1,
-                  "column": 4
-                }
+                "start": { "line": 1, "column": 1 },
+                "end": { "line": 1, "column": 4 }
               }
             ]
           },
@@ -600,14 +461,8 @@ describe('supports transpiler', () => {
             "originalLocations": [
               {
                 "filePath": "/test/1.less",
-                "start": {
-                  "line": 2,
-                  "column": 1
-                },
-                "end": {
-                  "line": 2,
-                  "column": 4
-                }
+                "start": { "line": 2, "column": 1 },
+                "end": { "line": 2, "column": 4 }
               }
             ]
           },
@@ -616,14 +471,8 @@ describe('supports transpiler', () => {
             "originalLocations": [
               {
                 "filePath": "/test/1.less",
-                "start": {
-                  "line": 3,
-                  "column": 1
-                },
-                "end": {
-                  "line": 3,
-                  "column": 4
-                }
+                "start": { "line": 3, "column": 1 },
+                "end": { "line": 3, "column": 4 }
               }
             ]
           },
@@ -632,19 +481,14 @@ describe('supports transpiler', () => {
             "originalLocations": [
               {
                 "filePath": "/test/3.less",
-                "start": {
-                  "line": 1,
-                  "column": 1
-                },
-                "end": {
-                  "line": 1,
-                  "column": 2
-                }
+                "start": { "line": 1, "column": 1 },
+                "end": { "line": 1, "column": 2 }
               }
             ]
           }
         ]
       }
+
     `);
   });
 });
