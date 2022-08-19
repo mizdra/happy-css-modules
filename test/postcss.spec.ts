@@ -105,11 +105,7 @@ describe('getOriginalLocation', () => {
       `),
     );
     expect(getOriginalLocation(basic.rule, basic.classSelector)).toMatchInlineSnapshot(`
-      {
-        "filePath": "/test/test.css",
-        "start": { "line": 1, "column": 1 },
-        "end": { "line": 1, "column": 6 }
-      }
+      { "filePath": "/test/test.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 6 } }
 
     `);
   });
@@ -122,19 +118,11 @@ describe('getOriginalLocation', () => {
       `),
     );
     expect(getOriginalLocation(cascading_1.rule, cascading_1.classSelector)).toMatchInlineSnapshot(`
-      {
-        "filePath": "/test/test.css",
-        "start": { "line": 1, "column": 1 },
-        "end": { "line": 1, "column": 10 }
-      }
+      { "filePath": "/test/test.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 10 } }
 
     `);
     expect(getOriginalLocation(cascading_2.rule, cascading_2.classSelector)).toMatchInlineSnapshot(`
-      {
-        "filePath": "/test/test.css",
-        "start": { "line": 2, "column": 1 },
-        "end": { "line": 2, "column": 10 }
-      }
+      { "filePath": "/test/test.css", "start": { "line": 2, "column": 1 }, "end": { "line": 2, "column": 10 } }
 
     `);
   });
@@ -148,27 +136,15 @@ describe('getOriginalLocation', () => {
       `),
     );
     expect(getOriginalLocation(pseudo_class_1.rule, pseudo_class_1.classSelector)).toMatchInlineSnapshot(`
-      {
-        "filePath": "/test/test.css",
-        "start": { "line": 1, "column": 1 },
-        "end": { "line": 1, "column": 15 }
-      }
+      { "filePath": "/test/test.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 15 } }
 
     `);
     expect(getOriginalLocation(pseudo_class_2.rule, pseudo_class_2.classSelector)).toMatchInlineSnapshot(`
-      {
-        "filePath": "/test/test.css",
-        "start": { "line": 2, "column": 1 },
-        "end": { "line": 2, "column": 15 }
-      }
+      { "filePath": "/test/test.css", "start": { "line": 2, "column": 1 }, "end": { "line": 2, "column": 15 } }
 
     `);
     expect(getOriginalLocation(pseudo_class_3.rule, pseudo_class_3.classSelector)).toMatchInlineSnapshot(`
-      {
-        "filePath": "/test/test.css",
-        "start": { "line": 3, "column": 6 },
-        "end": { "line": 3, "column": 20 }
-      }
+      { "filePath": "/test/test.css", "start": { "line": 3, "column": 6 }, "end": { "line": 3, "column": 20 } }
 
     `);
   });
@@ -180,19 +156,11 @@ describe('getOriginalLocation', () => {
       `),
     );
     expect(getOriginalLocation(multiple_selector_1.rule, multiple_selector_1.classSelector)).toMatchInlineSnapshot(`
-      {
-        "filePath": "/test/test.css",
-        "start": { "line": 1, "column": 1 },
-        "end": { "line": 1, "column": 20 }
-      }
+      { "filePath": "/test/test.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 20 } }
 
     `);
     expect(getOriginalLocation(multiple_selector_2.rule, multiple_selector_2.classSelector)).toMatchInlineSnapshot(`
-      {
-        "filePath": "/test/test.css",
-        "start": { "line": 1, "column": 21 },
-        "end": { "line": 1, "column": 40 }
-      }
+      { "filePath": "/test/test.css", "start": { "line": 1, "column": 21 }, "end": { "line": 1, "column": 40 } }
 
     `);
   });
@@ -205,19 +173,11 @@ describe('getOriginalLocation', () => {
       `),
     );
     expect(getOriginalLocation(combinator_1.rule, combinator_1.classSelector)).toMatchInlineSnapshot(`
-      {
-        "filePath": "/test/test.css",
-        "start": { "line": 1, "column": 1 },
-        "end": { "line": 1, "column": 13 }
-      }
+      { "filePath": "/test/test.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 13 } }
 
     `);
     expect(getOriginalLocation(combinator_2.rule, combinator_2.classSelector)).toMatchInlineSnapshot(`
-      {
-        "filePath": "/test/test.css",
-        "start": { "line": 1, "column": 17 },
-        "end": { "line": 1, "column": 29 }
-      }
+      { "filePath": "/test/test.css", "start": { "line": 1, "column": 17 }, "end": { "line": 1, "column": 29 } }
 
     `);
   });
@@ -233,11 +193,7 @@ describe('getOriginalLocation', () => {
       `),
     );
     expect(getOriginalLocation(at_rule.rule, at_rule.classSelector)).toMatchInlineSnapshot(`
-      {
-        "filePath": "/test/test.css",
-        "start": { "line": 3, "column": 5 },
-        "end": { "line": 3, "column": 12 }
-      }
+      { "filePath": "/test/test.css", "start": { "line": 3, "column": 5 }, "end": { "line": 3, "column": 12 } }
 
     `);
   });
@@ -249,19 +205,11 @@ describe('getOriginalLocation', () => {
       `),
     );
     expect(getOriginalLocation(selector_list_1.rule, selector_list_1.classSelector)).toMatchInlineSnapshot(`
-      {
-        "filePath": "/test/test.css",
-        "start": { "line": 1, "column": 1 },
-        "end": { "line": 1, "column": 16 }
-      }
+      { "filePath": "/test/test.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 16 } }
 
     `);
     expect(getOriginalLocation(selector_list_2.rule, selector_list_2.classSelector)).toMatchInlineSnapshot(`
-      {
-        "filePath": "/test/test.css",
-        "start": { "line": 1, "column": 19 },
-        "end": { "line": 1, "column": 34 }
-      }
+      { "filePath": "/test/test.css", "start": { "line": 1, "column": 19 }, "end": { "line": 1, "column": 34 } }
 
     `);
   });
@@ -278,35 +226,19 @@ describe('getOriginalLocation', () => {
       `),
     );
     expect(getOriginalLocation(local_class_name_1.rule, local_class_name_1.classSelector)).toMatchInlineSnapshot(`
-      {
-        "filePath": "/test/test.css",
-        "start": { "line": 1, "column": 8 },
-        "end": { "line": 1, "column": 26 }
-      }
+      { "filePath": "/test/test.css", "start": { "line": 1, "column": 8 }, "end": { "line": 1, "column": 26 } }
 
     `);
     expect(getOriginalLocation(local_class_name_2.rule, local_class_name_2.classSelector)).toMatchInlineSnapshot(`
-      {
-        "filePath": "/test/test.css",
-        "start": { "line": 3, "column": 3 },
-        "end": { "line": 3, "column": 21 }
-      }
+      { "filePath": "/test/test.css", "start": { "line": 3, "column": 3 }, "end": { "line": 3, "column": 21 } }
 
     `);
     expect(getOriginalLocation(local_class_name_3.rule, local_class_name_3.classSelector)).toMatchInlineSnapshot(`
-      {
-        "filePath": "/test/test.css",
-        "start": { "line": 4, "column": 3 },
-        "end": { "line": 4, "column": 21 }
-      }
+      { "filePath": "/test/test.css", "start": { "line": 4, "column": 3 }, "end": { "line": 4, "column": 21 } }
 
     `);
     expect(getOriginalLocation(local_class_name_4.rule, local_class_name_4.classSelector)).toMatchInlineSnapshot(`
-      {
-        "filePath": "/test/test.css",
-        "start": { "line": 6, "column": 8 },
-        "end": { "line": 6, "column": 26 }
-      }
+      { "filePath": "/test/test.css", "start": { "line": 6, "column": 8 }, "end": { "line": 6, "column": 26 } }
 
     `);
   });
@@ -321,19 +253,11 @@ describe('getOriginalLocation', () => {
       `),
     );
     expect(getOriginalLocation(composes_target.rule, composes_target.classSelector)).toMatchInlineSnapshot(`
-      {
-        "filePath": "/test/test.css",
-        "start": { "line": 1, "column": 1 },
-        "end": { "line": 1, "column": 16 }
-      }
+      { "filePath": "/test/test.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 16 } }
 
     `);
     expect(getOriginalLocation(composes.rule, composes.classSelector)).toMatchInlineSnapshot(`
-      {
-        "filePath": "/test/test.css",
-        "start": { "line": 2, "column": 1 },
-        "end": { "line": 2, "column": 9 }
-      }
+      { "filePath": "/test/test.css", "start": { "line": 2, "column": 1 }, "end": { "line": 2, "column": 9 } }
 
     `);
   });
@@ -347,28 +271,16 @@ describe('getOriginalLocation', () => {
       `),
     );
     expect(getOriginalLocation(with_newline_1.rule, with_newline_1.classSelector)).toMatchInlineSnapshot(`
-      {
-        "filePath": "/test/test.css",
-        "start": { "line": 1, "column": 1 },
-        "end": { "line": 1, "column": 15 }
-      }
+      { "filePath": "/test/test.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 15 } }
 
     `);
     expect(getOriginalLocation(with_newline_2.rule, with_newline_2.classSelector)).toMatchInlineSnapshot(`
-      {
-        "filePath": "/test/test.css",
-        "start": { "line": 2, "column": 1 },
-        "end": { "line": 2, "column": 15 }
-      }
+      { "filePath": "/test/test.css", "start": { "line": 2, "column": 1 }, "end": { "line": 2, "column": 15 } }
 
     `);
 
     expect(getOriginalLocation(with_newline_3.rule, with_newline_3.classSelector)).toMatchInlineSnapshot(`
-      {
-        "filePath": "/test/test.css",
-        "start": { "line": 3, "column": 5 },
-        "end": { "line": 3, "column": 19 }
-      }
+      { "filePath": "/test/test.css", "start": { "line": 3, "column": 5 }, "end": { "line": 3, "column": 19 } }
 
     `);
   });
