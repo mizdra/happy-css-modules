@@ -37,7 +37,6 @@ test('basic', async () => {
     `,
   });
   const result = await loader.load('/test/1.css');
-  // TODO: Refactor with custom matcher
   expect(result).toMatchInlineSnapshot(`
     {
       "dependencies": [],
