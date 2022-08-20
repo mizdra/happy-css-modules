@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "tcm": "../bin/tcm.js --declarationMap '**/*.css'"
+    "tcm": "./tcm.js"
   },
   "author": "mizdra",
   "license": "MIT"
