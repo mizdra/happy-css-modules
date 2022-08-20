@@ -25,41 +25,43 @@ export interface RunnerOptions {
  * @param options Runner options.
  */
 export async function run(options: RunnerOptions): Promise<void> {
-  const writeFile = async (f: string): Promise<void> => {
+  const loader = new Loader(options.transform);
+
+  async function processFile(filePath: string) {
     try {
-      const loader = new Loader(options.transform);
-      const result = await loader.load(f);
-      const rootDir = process.cwd();
-      const outDir = options.outDir;
-      await emitGeneratedFiles(process.cwd(), options.outDir, f, result.tokens, options.declarationMap, {
+      const result = await loader.load(filePath);
+      const rootDir = process.cwd(); // TODO: support `--rootDir` option
+      await emitGeneratedFiles(rootDir, options.outDir, filePath, result.tokens, options.declarationMap, {
         camelCase: options.camelCase,
         namedExport: options.namedExport,
       });
-
       if (!options.silent) {
-        const dtsFilePath = getDtsFilePath(rootDir, outDir, f);
+        const dtsFilePath = getDtsFilePath(rootDir, options.outDir, filePath);
         console.log('Wrote ' + chalk.green(dtsFilePath));
       }
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       console.error(chalk.red('[Error] ' + error));
     }
-  };
+  }
 
-  if (!options.watch) {
-    const files = (await glob(options.pattern))
-      // convert relative path to absolute path
-      .map((file) => resolve(file));
-    await Promise.all(files.map(writeFile));
-  } else {
+  if (options.watch) {
     console.log('Watch ' + options.pattern + '...');
-
     const watcher = chokidar.watch([options.pattern.replace(/\\/g, '/')]);
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    watcher.on('add', writeFile);
+    watcher.on('add', processFile);
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    watcher.on('change', writeFile);
+    watcher.on('change', processFile);
     await waitForever();
+  } else {
+    const filePaths = (await glob(options.pattern, { dot: true }))
+      // convert relative path to absolute path
+      .map((file) => resolve(file));
+
+    // TODO: Use `@file-cache/core` to process only files that have changed
+    filePaths.forEach((filePath) => {
+      void processFile(filePath);
+    });
   }
 }
 
