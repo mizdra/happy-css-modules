@@ -48,7 +48,7 @@ export class DtsContent {
     }
   }
 
-  public async writeFile(): Promise<void> {
+  public async emitGeneratedFiles(): Promise<void> {
     const dtsFilePath = getDtsFilePath(this.rootDir, this.outDir, this.rInputPath);
     const sourceMapFilePath = getSourceMapFilePath(this.rootDir, this.outDir, this.rInputPath);
     const { dtsContent, sourceMap } = generateDtsContentWithSourceMap(

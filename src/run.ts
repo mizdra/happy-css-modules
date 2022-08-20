@@ -34,7 +34,7 @@ export async function run(options: RunOptions): Promise<void> {
   const writeFile = async (f: string): Promise<void> => {
     try {
       const content: DtsContent = await creator.create(f, options.transform, !!options.watch);
-      await content.writeFile();
+      await content.emitGeneratedFiles();
 
       if (!options.silent) {
         console.log('Wrote ' + chalk.green(content.outputFilePath));
