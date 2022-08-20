@@ -1,8 +1,9 @@
 import { EOL } from 'os';
-import { basename, dirname, join, relative } from 'path';
+import { basename, dirname, isAbsolute, join, relative } from 'path';
 import camelcase from 'camelcase';
-import { ExportToken } from './library/css-modules-loader-core/file-system-loader';
+import { writeFileIfChanged } from './file-system';
 import { CodeWithSourceMap, SourceNode } from './library/source-map';
+import { Token } from './loader';
 
 export type CamelCaseOption = boolean | 'dashes' | undefined;
 
@@ -10,23 +11,35 @@ function getRelativePath(fromFilePath: string, toFilePath: string): string {
   return relative(dirname(fromFilePath), toFilePath);
 }
 
+function isSubDirectoryFile(fromDirectory: string, toFilePath: string): boolean {
+  return isAbsolute(toFilePath) && toFilePath.startsWith(fromDirectory);
+}
+
 /**
  * Get .d.ts file path.
- * @param rootDir Root directory.
- * @param outDir The path to the output directory. It is relative to `rootDir`.
- * @param filePath The path to the source file. It is relative to `rootDir`.
- * @returns
+ * @param rootDir Root directory. It is absolute.
+ * @param outDir The path to the output directory. It is absolute.
+ * @param filePath The path to the source file. It is absolute.
+ * @returns The path to the .d.ts file. It is absolute.
  */
 export function getDtsFilePath(rootDir: string, outDir: string | undefined, filePath: string): string {
-  return outDir ? join(rootDir, outDir, filePath + '.d.ts') : join(rootDir, filePath + '.d.ts');
+  if (!isSubDirectoryFile(rootDir, filePath))
+    throw new Error(`The filePath(${filePath}) is not a subdirectory of rootDir(${rootDir}).`);
+  if (outDir) {
+    if (!isSubDirectoryFile(rootDir, outDir))
+      throw new Error(`The outDir(${outDir}) is not a subdirectory of rootDir(${rootDir}).`);
+    return join(outDir, relative(rootDir, filePath) + '.d.ts');
+  } else {
+    return join(rootDir, relative(rootDir, filePath) + '.d.ts');
+  }
 }
 
 /**
  * Get .d.ts.map file path.
- * @param rootDir Root directory.
- * @param outDir The path to the output directory. It is relative to `rootDir`.
- * @param filePath The path to the source file. It is relative to `rootDir`.
- * @returns
+ * @param rootDir Root directory. It is absolute.
+ * @param outDir The path to the output directory. It is absolute.
+ * @param filePath The path to the source file. It is absolute.
+ * @returns The path to the .d.ts.map file. It is absolute.
  */
 export function getSourceMapFilePath(rootDir: string, outDir: string | undefined, filePath: string): string {
   return getDtsFilePath(rootDir, outDir, filePath) + '.map';
@@ -55,14 +68,14 @@ function getConvertKeyMethod(camelCaseOption: CamelCaseOption): (str: string) =>
 
 function generateTokenDeclarations(
   sourceMapFilePath: string,
-  rawTokenList: ExportToken[],
+  tokens: Token[],
   dtsFormatOptions: DtsFormatOptions,
 ): typeof SourceNode[] {
   const convertKey = getConvertKeyMethod(dtsFormatOptions.camelCase);
   const result: typeof SourceNode[] = [];
 
-  for (const rawToken of rawTokenList) {
-    const key = convertKey(rawToken.name);
+  for (const token of tokens) {
+    const key = convertKey(token.name);
 
     // Only one original position can be associated with one generated position.
     // This is due to the sourcemap specification. Therefore, we output multiple type definitions
@@ -70,16 +83,18 @@ function generateTokenDeclarations(
 
     // NOTE: `--namedExport` does not support multiple jump destinations
     // TODO: Support multiple jump destinations with `--namedExport`
-    for (const originalPosition of rawToken.originalPositions) {
+    for (const originalLocation of token.originalLocations) {
       if (dtsFormatOptions.namedExport) {
         result.push(
           new SourceNode(null, null, null, [
             'export const ',
             new SourceNode(
-              originalPosition.line ?? null,
-              originalPosition.column ?? null,
-              getRelativePath(sourceMapFilePath, originalPosition.filePath),
+              originalLocation.start.line ?? null,
+              // The SourceNode's column is 0-based, but the originalLocation's column is 1-based.
+              originalLocation.start.column - 1 ?? null,
+              getRelativePath(sourceMapFilePath, originalLocation.filePath),
               `${key}`,
+              token.name,
             ),
             ': string;',
           ]),
@@ -89,10 +104,12 @@ function generateTokenDeclarations(
           new SourceNode(null, null, null, [
             'readonly ',
             new SourceNode(
-              originalPosition.line ?? null,
-              originalPosition.column ?? null,
-              getRelativePath(sourceMapFilePath, originalPosition.filePath),
+              originalLocation.start.line ?? null,
+              // The SourceNode's column is 0-based, but the originalLocation's column is 1-based.
+              originalLocation.start.column - 1 ?? null,
+              getRelativePath(sourceMapFilePath, originalLocation.filePath),
               `"${key}"`,
+              token.name,
             ),
             ': string;',
           ]),
@@ -105,17 +122,17 @@ function generateTokenDeclarations(
 
 export type DtsFormatOptions = {
   camelCase: CamelCaseOption;
-  namedExport: boolean;
+  namedExport?: boolean;
 };
 
 export function generateDtsContentWithSourceMap(
   filePath: string,
   dtsFilePath: string,
   sourceMapFilePath: string,
-  rawTokenList: ExportToken[],
+  tokens: Token[],
   dtsFormatOptions: DtsFormatOptions,
 ): { dtsContent: CodeWithSourceMap['code']; sourceMap: CodeWithSourceMap['map'] } {
-  const tokenDeclarations = generateTokenDeclarations(sourceMapFilePath, rawTokenList, dtsFormatOptions);
+  const tokenDeclarations = generateTokenDeclarations(sourceMapFilePath, tokens, dtsFormatOptions);
 
   let sourceNode: typeof SourceNode;
   if (!tokenDeclarations || !tokenDeclarations.length) {
@@ -142,4 +159,32 @@ export function generateDtsContentWithSourceMap(
     dtsContent: codeWithSourceMap.code,
     sourceMap: codeWithSourceMap.map,
   };
+}
+
+export async function emitGeneratedFiles(
+  rootDir: string,
+  outDir: string | undefined,
+  filePath: string,
+  tokens: Token[],
+  emitDeclarationMap: boolean | undefined,
+  dtsFormatOptions: DtsFormatOptions,
+): Promise<void> {
+  const dtsFilePath = getDtsFilePath(rootDir, outDir, filePath);
+  const sourceMapFilePath = getSourceMapFilePath(rootDir, outDir, filePath);
+  const { dtsContent, sourceMap } = generateDtsContentWithSourceMap(
+    filePath,
+    dtsFilePath,
+    sourceMapFilePath,
+    tokens,
+    dtsFormatOptions,
+  );
+
+  if (emitDeclarationMap) {
+    const sourceMappingURLComment = generateSourceMappingURLComment(dtsFilePath, sourceMapFilePath);
+    await writeFileIfChanged(dtsFilePath, dtsContent + sourceMappingURLComment);
+    // NOTE: tsserver does not support inline declaration maps. Therefore, sourcemap files must be output.
+    await writeFileIfChanged(sourceMapFilePath, sourceMap.toString());
+  } else {
+    await writeFileIfChanged(dtsFilePath, dtsContent);
+  }
 }

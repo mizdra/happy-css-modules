@@ -1,9 +1,10 @@
+import * as process from 'process';
 import * as util from 'util';
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 import _glob from 'glob';
-import { DtsContent } from './dts-content';
-import { DtsCreator } from './dts-creator';
+import { emitGeneratedFiles, getDtsFilePath } from './emitter';
+import { Loader, Transformer } from './loader';
 
 const glob = util.promisify(_glob);
 
@@ -14,7 +15,7 @@ export interface RunOptions {
   camelCase?: boolean;
   namedExport?: boolean;
   declarationMap?: boolean;
-  transform?: (newPath: string) => Promise<string>;
+  transform?: Transformer;
   silent?: boolean;
 }
 
@@ -23,21 +24,20 @@ export interface RunOptions {
  * @param options Runner options.
  */
 export async function run(options: RunOptions): Promise<void> {
-  const creator = new DtsCreator({
-    rootDir: process.cwd(),
-    outDir: options.outDir,
-    camelCase: options.camelCase,
-    namedExport: options.namedExport,
-    declarationMap: options.declarationMap,
-  });
-
   const writeFile = async (f: string): Promise<void> => {
     try {
-      const content: DtsContent = await creator.create(f, options.transform, !!options.watch);
-      await content.writeFile();
+      const loader = new Loader(options.transform);
+      const result = await loader.load(f);
+      const rootDir = process.cwd();
+      const outDir = options.outDir;
+      await emitGeneratedFiles(process.cwd(), options.outDir, f, result.tokens, options.declarationMap, {
+        camelCase: options.camelCase,
+        namedExport: options.namedExport,
+      });
 
       if (!options.silent) {
-        console.log('Wrote ' + chalk.green(content.outputFilePath));
+        const dtsFilePath = getDtsFilePath(rootDir, outDir, f);
+        console.log('Wrote ' + chalk.green(dtsFilePath));
       }
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands

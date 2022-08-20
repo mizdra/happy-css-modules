@@ -6,78 +6,94 @@ import {
   generateDtsContentWithSourceMap,
   DtsFormatOptions,
 } from '../src/emitter';
-import { ExportToken, Position } from '../src/library/css-modules-loader-core/file-system-loader';
+import { Token } from '../src/loader';
+import { Location } from '../src/postcss';
 
 test('getDtsFilePath', () => {
-  expect(getDtsFilePath('/app', undefined, 'src/dir/a.module.css')).toBe('/app/src/dir/a.module.css.d.ts');
-  expect(getDtsFilePath('/app', 'dist', 'src/dir/a.module.css')).toBe('/app/dist/src/dir/a.module.css.d.ts');
+  expect(getDtsFilePath('/app', undefined, '/app/src/dir/1.css')).toBe('/app/src/dir/1.css.d.ts');
+  expect(() => getDtsFilePath('/app', undefined, '/tmp/src/dir/1.css')).toThrow();
+  expect(getDtsFilePath('/app', '/app/dist', '/app/src/dir/1.css')).toBe('/app/dist/src/dir/1.css.d.ts');
+  expect(() => getDtsFilePath('/app', '/app/dist', '/tmp/src/dir/1.css')).toThrow();
+  expect(() => getDtsFilePath('/app', '/tmp/dist', '/app/src/dir/1.css')).toThrow();
 });
 
 test('getSourceMapFilePath', () => {
-  expect(getSourceMapFilePath('/app', undefined, 'src/dir/a.module.css')).toBe('/app/src/dir/a.module.css.d.ts.map');
-  expect(getSourceMapFilePath('/app', 'dist', 'src/dir/a.module.css')).toBe('/app/dist/src/dir/a.module.css.d.ts.map');
+  expect(getSourceMapFilePath('/app', undefined, '/app/src/dir/1.css')).toBe('/app/src/dir/1.css.d.ts.map');
+  expect(() => getSourceMapFilePath('/app', undefined, '/tmp/src/dir/1.css')).toThrow();
+  expect(getSourceMapFilePath('/app', '/app/dist', '/app/src/dir/1.css')).toBe('/app/dist/src/dir/1.css.d.ts.map');
+  expect(() => getSourceMapFilePath('/app', '/app/dist', '/tmp/src/dir/1.css')).toThrow();
+  expect(() => getSourceMapFilePath('/app', '/tmp/dist', '/app/src/dir/1.css')).toThrow();
 });
 
 test('generateSourceMappingURLComment', () => {
-  expect(generateSourceMappingURLComment('/app/src/dir/a.module.css.d.ts', '/app/src/dir/a.module.css.d.ts.map')).toBe(
-    '//# sourceMappingURL=a.module.css.d.ts.map' + EOL,
+  expect(generateSourceMappingURLComment('/app/src/dir/1.css.d.ts', '/app/src/dir/1.css.d.ts.map')).toBe(
+    '//# sourceMappingURL=1.css.d.ts.map' + EOL,
   );
-  expect(
-    generateSourceMappingURLComment('/app/src/dir1/a.module.css.d.ts', '/app/src/dir2/a.module.css.d.ts.map'),
-  ).toBe('//# sourceMappingURL=../dir2/a.module.css.d.ts.map' + EOL);
+  expect(generateSourceMappingURLComment('/app/src/dir1/1.css.d.ts', '/app/src/dir2/1.css.d.ts.map')).toBe(
+    '//# sourceMappingURL=../dir2/1.css.d.ts.map' + EOL,
+  );
 });
 
-function fakePosition(args?: Partial<Position>): Position {
+function fakeToken(args: {
+  name: Token['name'];
+  originalLocations: { filePath?: Location['filePath']; start: Location['start'] }[];
+}): Token {
   return {
-    filePath: 'test.module.css',
-    line: 1,
-    column: 0,
-    ...args,
+    name: args.name,
+    originalLocations: args.originalLocations.map((location) => ({
+      filePath: location.filePath ?? '/test/1.css',
+      start: location.start,
+      end: {
+        line: location.start.line,
+        column: location.start.column + args.name.length - 1,
+      },
+    })),
   };
 }
 
 describe('generateDtsContentWithSourceMap', () => {
-  const filePath = 'test.module.css';
-  const dtsFilePath = 'test.module.css.d.ts';
-  const sourceMapFilePath = 'test.module.css.map';
+  const filePath = '/test/1.css';
+  const dtsFilePath = '/test/1.css.d.ts';
+  const sourceMapFilePath = '/test/1.css.map';
   const dtsFormatOptions: DtsFormatOptions = {
     camelCase: false,
     namedExport: false,
   };
   test('generate dts content with source map', () => {
-    const rawTokenList: ExportToken[] = [
-      { name: 'foo', originalPositions: [fakePosition({ filePath: 'test.module.css', line: 1, column: 0 })] },
-      { name: 'bar', originalPositions: [fakePosition({ filePath: 'test.module.css', line: 2, column: 0 })] },
-      {
+    const tokens: Token[] = [
+      fakeToken({ name: 'foo', originalLocations: [{ filePath: '/test/1.css', start: { line: 1, column: 1 } }] }),
+      fakeToken({ name: 'bar', originalLocations: [{ filePath: '/test/1.css', start: { line: 2, column: 1 } }] }),
+
+      fakeToken({
         name: 'baz',
-        originalPositions: [
-          fakePosition({ filePath: 'test.module.css', line: 3, column: 0 }),
-          fakePosition({ filePath: 'test.module.css', line: 4, column: 0 }),
+        originalLocations: [
+          { filePath: '/test/1.css', start: { line: 3, column: 1 } },
+          { filePath: '/test/1.css', start: { line: 4, column: 1 } },
         ],
-      },
-      { name: 'qux', originalPositions: [fakePosition({ filePath: 'other.module.css', line: 5, column: 0 })] },
-      {
+      }),
+      fakeToken({ name: 'qux', originalLocations: [{ filePath: '/test/2.css', start: { line: 5, column: 1 } }] }),
+      fakeToken({
         name: 'quux',
-        originalPositions: [
-          fakePosition({ filePath: 'other.module.css', line: 6, column: 0 }),
-          fakePosition({ filePath: 'other.module.css', line: 7, column: 0 }),
+        originalLocations: [
+          { filePath: '/test/2.css', start: { line: 6, column: 1 } },
+          { filePath: '/test/2.css', start: { line: 7, column: 1 } },
         ],
-      },
+      }),
     ];
     const { dtsContent, sourceMap } = generateDtsContentWithSourceMap(
       filePath,
       dtsFilePath,
       sourceMapFilePath,
-      rawTokenList,
+      tokens,
       dtsFormatOptions,
     );
     expect(dtsContent).toMatchSnapshot();
     expect(sourceMap).toMatchSnapshot(); // TODO: Make snapshot human-readable
   });
   test('format case by camelCase', () => {
-    const rawTokenList: ExportToken[] = [
-      { name: 'foo-bar', originalPositions: [fakePosition({ line: 1, column: 0 })] },
-      { name: 'foo_bar', originalPositions: [fakePosition({ line: 1, column: 0 })] },
+    const rawTokenList: Token[] = [
+      fakeToken({ name: 'foo-bar', originalLocations: [{ start: { line: 1, column: 1 } }] }),
+      fakeToken({ name: 'foo_bar', originalLocations: [{ start: { line: 2, column: 1 } }] }),
     ];
     const { dtsContent: dtsContentWithoutCamelCase } = generateDtsContentWithSourceMap(
       filePath,
@@ -118,12 +134,12 @@ describe('generateDtsContentWithSourceMap', () => {
   });
 
   test('change export type by namedExport', () => {
-    const rawTokenList: ExportToken[] = [
-      { name: 'foo', originalPositions: [fakePosition({ line: 1, column: 0 })] },
-      { name: 'bar', originalPositions: [fakePosition({ line: 2, column: 0 })] },
+    const tokens: Token[] = [
+      fakeToken({ name: 'foo', originalLocations: [{ start: { line: 1, column: 1 } }] }),
+      fakeToken({ name: 'bar', originalLocations: [{ start: { line: 2, column: 1 } }] }),
     ];
     const { dtsContent: dtsContentWithoutNamedExport, sourceMap: sourceMapWithoutNamedExport } =
-      generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, rawTokenList, {
+      generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, tokens, {
         ...dtsFormatOptions,
         namedExport: false,
       });
@@ -137,7 +153,7 @@ describe('generateDtsContentWithSourceMap', () => {
     `);
     expect(sourceMapWithoutNamedExport).toMatchSnapshot(); // TODO: Make snapshot human-readable
     const { dtsContent: dtsContentWithNamedExport, sourceMap: sourceMapWithNamedExport } =
-      generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, rawTokenList, {
+      generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, tokens, {
         ...dtsFormatOptions,
         namedExport: true,
       });
@@ -150,15 +166,21 @@ describe('generateDtsContentWithSourceMap', () => {
     expect(sourceMapWithNamedExport).toMatchSnapshot(); // TODO: Make snapshot human-readable
   });
   test('emit other directory', () => {
-    const rawTokenList: ExportToken[] = [
-      { name: 'foo', originalPositions: [fakePosition({ filePath: 'src/test.module.css', line: 1, column: 0 })] },
-      { name: 'bar', originalPositions: [fakePosition({ filePath: 'src/test.module.css', line: 2, column: 0 })] },
+    const tokens: Token[] = [
+      fakeToken({
+        name: 'foo',
+        originalLocations: [{ filePath: '/test/src/1.css', start: { line: 1, column: 1 } }],
+      }),
+      fakeToken({
+        name: 'bar',
+        originalLocations: [{ filePath: '/test/src/1.css', start: { line: 2, column: 1 } }],
+      }),
     ];
     const { dtsContent, sourceMap } = generateDtsContentWithSourceMap(
-      'src/test.module.css',
-      'dist/test.module.css.d.ts',
-      'dist/test.module.css.d.ts.map',
-      rawTokenList,
+      '/test/src/1.css',
+      '/test/dist/1.css.d.ts',
+      '/test/dist/1.css.d.ts.map',
+      tokens,
       dtsFormatOptions,
     );
     expect(dtsContent).toMatchInlineSnapshot(`

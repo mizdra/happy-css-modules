@@ -1,6 +1,0 @@
-@import './imported.css';
-@import '../composee.css';
-
-.block {
-    display: block;
-}
