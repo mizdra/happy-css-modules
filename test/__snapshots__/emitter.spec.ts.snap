@@ -3,8 +3,11 @@
 exports[`generateDtsContentWithSourceMap change export type by namedExport 2`] = `
 Object {
   "file": "test.module.css.d.ts",
-  "mappings": "AAAA;AAAA,E,SAAA,K,SAAA;AAAA,E,SACA,K,SADA;AAAA;AAAA",
-  "names": Array [],
+  "mappings": "AAAA;AAAA,E,SAAAA,K,SAAA;AAAA,E,SACAC,K,SADA;AAAA;AAAA",
+  "names": Array [
+    "foo",
+    "bar",
+  ],
   "sourceRoot": "",
   "sources": Array [
     "test.module.css",
@@ -16,8 +19,11 @@ Object {
 exports[`generateDtsContentWithSourceMap change export type by namedExport 4`] = `
 Object {
   "file": "test.module.css.d.ts",
-  "mappings": "AAAA;aAAA,G,SAAA;aACA,G,SADA",
-  "names": Array [],
+  "mappings": "AAAA;aAAAA,G,SAAA;aACAC,G,SADA",
+  "names": Array [
+    "foo",
+    "bar",
+  ],
   "sourceRoot": "",
   "sources": Array [
     "test.module.css",
@@ -29,8 +35,11 @@ Object {
 exports[`generateDtsContentWithSourceMap emit other directory 2`] = `
 Object {
   "file": "test.module.css.d.ts",
-  "mappings": "AAAA;AAAA,E,SAAA,K,SAAA;AAAA,E,SACA,K,SADA;AAAA;AAAA",
-  "names": Array [],
+  "mappings": "AAAA;AAAA,E,SAAAA,K,SAAA;AAAA,E,SACAC,K,SADA;AAAA;AAAA",
+  "names": Array [
+    "foo",
+    "bar",
+  ],
   "sourceRoot": "",
   "sources": Array [
     "../src/test.module.css",
@@ -56,8 +65,14 @@ export = styles;
 exports[`generateDtsContentWithSourceMap generate dts content with source map 2`] = `
 Object {
   "file": "test.module.css.d.ts",
-  "mappings": "AAAA;AAAA,E,SAAA,K,SAAA;AAAA,E,SACA,K,SADA;AAAA,E,SAEA,K,SAFA;AAAA,E,SAGA,K,SAHA;AAAA,E,SCIA,K,SDJA;AAAA,E,SCKA,M,SDLA;AAAA,E,SCMA,M,SDNA;AAAA;AAAA",
-  "names": Array [],
+  "mappings": "AAAA;AAAA,E,SAAAA,K,SAAA;AAAA,E,SACAC,K,SADA;AAAA,E,SAEAC,K,SAFA;AAAA,E,SAGAA,K,SAHA;AAAA,E,SCIAC,K,SDJA;AAAA,E,SCKAC,M,SDLA;AAAA,E,SCMAA,M,SDNA;AAAA;AAAA",
+  "names": Array [
+    "foo",
+    "bar",
+    "baz",
+    "qux",
+    "quux",
+  ],
   "sourceRoot": "",
   "sources": Array [
     "test.module.css",
