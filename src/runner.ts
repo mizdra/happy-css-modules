@@ -1,4 +1,4 @@
-import { resolve } from 'path';
+import { relative, resolve } from 'path';
 import * as process from 'process';
 import * as util from 'util';
 import chalk from 'chalk';
@@ -37,7 +37,7 @@ export async function run(options: RunnerOptions): Promise<void> {
       });
       if (!options.silent) {
         const dtsFilePath = getDtsFilePath(rootDir, options.outDir, filePath);
-        console.log('Wrote ' + chalk.green(dtsFilePath));
+        console.log('Wrote ' + chalk.green(relative(process.cwd(), dtsFilePath)));
       }
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
