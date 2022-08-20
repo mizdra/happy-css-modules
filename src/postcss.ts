@@ -87,7 +87,8 @@ export function getOriginalLocation(rule: Rule, classSelector: ClassName): Locat
   };
   const end = {
     line: start.line,
-    column: start.column + classSelector.value.length,
+    // The column is inclusive.
+    column: start.column + (classSelector.value.length - 1),
   };
   let location = {
     filePath: rule.source.input.file,
@@ -113,8 +114,8 @@ export function getOriginalLocation(rule: Rule, classSelector: ClassName): Locat
       },
       end: {
         line: origin.line,
-        // The column of `Input#origin` is 0-based.
-        column: origin.column + 1 + classSelector.value.length,
+        // The column of `Input#origin` is 0-based. Also, the column of checkable-css-modules is inclusive.
+        column: origin.column + 1 + (classSelector.value.length - 1),
       },
     };
   }
