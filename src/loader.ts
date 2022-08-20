@@ -37,7 +37,7 @@ export type Token = {
 };
 
 type CacheEntry = {
-  mtime: number;
+  mtime: number; // TODO: `--cache-strategy` option will allow you to switch between `content` and `metadata` modes.
   result: LoadResult;
 };
 
@@ -71,6 +71,9 @@ export class Loader {
   private readonly transform: Transformer | undefined;
 
   constructor(transform?: Transformer) {
+    // TODO: support resolver
+    // TODO: support default transformer
+    // TODO: support default resolver
     this.transform = transform;
   }
 

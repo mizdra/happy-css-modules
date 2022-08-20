@@ -10,6 +10,7 @@ import { format } from 'prettier';
 // There is a problem that snapshots cannot be written when the filesystem is mocked with mock-fs.
 // Here is a workaround for that problem by overriding the default matcher.
 // ref: https://github.com/tschaub/mock-fs#using-with-jest-snapshot-testing
+// TODO: open an issue on tschaub/mock-fs
 expect.extend({
   toMatchInlineSnapshot(...args: Parameters<typeof toMatchInlineSnapshot>) {
     // @ts-ignore

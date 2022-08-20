@@ -194,3 +194,5 @@ describe('generateDtsContentWithSourceMap', () => {
     expect(sourceMap).toMatchSnapshot(); // TODO: Make snapshot human-readable
   });
 });
+
+test.todo('emitGeneratedFiles');
