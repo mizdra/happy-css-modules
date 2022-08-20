@@ -32,3 +32,21 @@ jobs:
       - run: pnpm run test
         env:
           CI: true
+
+  verify-if-example-is-outdated:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'pnpm'
+      - run: pnpm install
+      - run: pnpm run build
+      - run: pnpm run tcm
+        working-directory: example
+      - name: Verify if there is a difference in example
+        run: |
+          git add --intent-to-add .
+          git diff --exit-code example
