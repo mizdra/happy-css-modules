@@ -4,7 +4,7 @@ import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 import _glob from 'glob';
 import { emitGeneratedFiles, getDtsFilePath } from './emitter';
-import { Loader } from './loader';
+import { Loader, Transformer } from './loader';
 
 const glob = util.promisify(_glob);
 
@@ -15,7 +15,7 @@ export interface RunOptions {
   camelCase?: boolean;
   namedExport?: boolean;
   declarationMap?: boolean;
-  transform?: (newPath: string) => Promise<string>;
+  transform?: Transformer;
   silent?: boolean;
 }
 
@@ -26,7 +26,7 @@ export interface RunOptions {
 export async function run(options: RunOptions): Promise<void> {
   const writeFile = async (f: string): Promise<void> => {
     try {
-      const loader = new Loader(); // TODO: support transform
+      const loader = new Loader(options.transform);
       const result = await loader.load(f);
       const rootDir = process.cwd();
       const outDir = options.outDir;
