@@ -276,7 +276,9 @@ describe('supports transpiler', () => {
         .a_1 { dummy: ''; }
         .a_2 {
           dummy: '';
-          .a_3 {} // sass feature test (nesting)
+          // sass feature test (nesting)
+          .a_2_1 { dummy: ''; }
+          &_2 { dummy: ''; }
           composes: a_1; // css module feature test (composes)
           composes: d from './4.scss'; // css module feature test (composes from other file)
         }
@@ -318,7 +320,20 @@ describe('supports transpiler', () => {
           {
             "name": "a_2",
             "originalLocations": [
-              { "filePath": "/test/1.scss", "start": { "line": 4, "column": 1 }, "end": { "line": 4, "column": 3 } }
+              { "filePath": "/test/1.scss", "start": { "line": 4, "column": 1 }, "end": { "line": 4, "column": 3 } },
+              { "filePath": "/test/1.scss", "start": { "line": 7, "column": 3 }, "end": { "line": 7, "column": 5 } }
+            ]
+          },
+          {
+            "name": "a_2_1",
+            "originalLocations": [
+              { "filePath": "/test/1.scss", "start": { "line": 7, "column": 3 }, "end": { "line": 7, "column": 7 } }
+            ]
+          },
+          {
+            "name": "a_2_2",
+            "originalLocations": [
+              { "filePath": "/test/1.scss", "start": { "line": 8, "column": 3 }, "end": { "line": 8, "column": 7 } }
             ]
           },
           {
@@ -338,7 +353,9 @@ describe('supports transpiler', () => {
         .a_1 { dummy: ''; }
         .a_2 {
           dummy: '';
-          .a_3 {} // less feature test (nesting)
+          // less feature test (nesting)
+          .a_2_1 { dummy: ''; }
+          &_2 { dummy: ''; }
           .b_1();
           .b_2();
           composes: a_1; // css module feature test (composes)
@@ -376,6 +393,18 @@ describe('supports transpiler', () => {
             "name": "a_2",
             "originalLocations": [
               { "filePath": "/test/1.less", "start": { "line": 3, "column": 1 }, "end": { "line": 3, "column": 3 } }
+            ]
+          },
+          {
+            "name": "a_2_1",
+            "originalLocations": [
+              { "filePath": "/test/1.less", "start": { "line": 6, "column": 3 }, "end": { "line": 6, "column": 7 } }
+            ]
+          },
+          {
+            "name": "a_2_2",
+            "originalLocations": [
+              { "filePath": "/test/1.less", "start": { "line": 7, "column": 3 }, "end": { "line": 7, "column": 7 } }
             ]
           },
           {
