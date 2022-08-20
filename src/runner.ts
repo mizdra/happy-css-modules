@@ -9,7 +9,7 @@ import { Loader, Transformer } from './loader';
 
 const glob = util.promisify(_glob);
 
-export interface RunOptions {
+export interface RunnerOptions {
   pattern: string;
   outDir?: string;
   watch?: boolean;
@@ -24,7 +24,7 @@ export interface RunOptions {
  * Run typed-css-module.
  * @param options Runner options.
  */
-export async function run(options: RunOptions): Promise<void> {
+export async function run(options: RunnerOptions): Promise<void> {
   const writeFile = async (f: string): Promise<void> => {
     try {
       const loader = new Loader(options.transform);
