@@ -1,3 +1,4 @@
+import { resolve } from 'path';
 import * as process from 'process';
 import * as util from 'util';
 import chalk from 'chalk';
@@ -46,7 +47,9 @@ export async function run(options: RunOptions): Promise<void> {
   };
 
   if (!options.watch) {
-    const files = await glob(options.pattern);
+    const files = (await glob(options.pattern))
+      // convert relative path to absolute path
+      .map((file) => resolve(file));
     await Promise.all(files.map(writeFile));
   } else {
     console.log('Watch ' + options.pattern + '...');
