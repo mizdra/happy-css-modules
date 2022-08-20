@@ -1,0 +1,40 @@
+.basic {
+}
+.cascading {
+}
+.cascading {
+}
+.pseudo_class_1 {
+}
+.pseudo_class_2:hover {
+}
+:not(.pseudo_class_3) {
+}
+.multiple_selector_1.multiple_selector_2 {
+}
+.combinator_1 + .combinator_2 {
+}
+@supports (display: flex) {
+  @media screen and (min-width: 900px) {
+    .at_rule {
+    }
+  }
+}
+.selector_list_1,
+.selector_list_2 {
+}
+:local .local_class_name_1 {
+}
+:local {
+  .local_class_name_2 {
+  }
+  .local_class_name_3 {
+  }
+}
+:local(.local_class_name_4) {
+}
+.composes_target {
+}
+.composes {
+  composes: composes_target;
+}

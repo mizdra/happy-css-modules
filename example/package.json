@@ -4,22 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "tcm": "node ../dist/cli.js -e -p style01.css",
-    "tcmw": "node ../dist/cli.js -e -w -p style01.css",
-    "compile": "pnpm run tcm && ./node_modules/.bin/tsc -p .",
-    "bundle": "pnpm run compile && ./node_modules/.bin/browserify -o bundle.js -p [ css-modulesify -o bundle.css ] app.js",
-    "start": "pnpm run bundle && node bundle.js"
+    "tcm": "../bin/tcm.js --declarationMap '**/*.css'"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "browserify": "^17.0.0",
-    "css-modulesify": "^0.28.0",
-    "typescript": "^4.7.4",
-    "checkable-css-modules": "file:../"
-  },
-  "devDependencies": {
-    "tslint": "5.20.1"
-  }
+  "author": "mizdra",
+  "license": "MIT"
 }
