@@ -44,13 +44,13 @@ test('basic', async () => {
         {
           "name": "a",
           "originalLocations": [
-            { "filePath": "/test/1.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 2 } }
+            { "filePath": "/test/1.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 1 } }
           ]
         },
         {
           "name": "b",
           "originalLocations": [
-            { "filePath": "/test/1.css", "start": { "line": 2, "column": 1 }, "end": { "line": 2, "column": 2 } }
+            { "filePath": "/test/1.css", "start": { "line": 2, "column": 1 }, "end": { "line": 2, "column": 1 } }
           ]
         }
       ]
@@ -83,19 +83,19 @@ test('tracks other files when `@import` is present', async () => {
         {
           "name": "a",
           "originalLocations": [
-            { "filePath": "/test/2.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 2 } }
+            { "filePath": "/test/2.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 1 } }
           ]
         },
         {
           "name": "b",
           "originalLocations": [
-            { "filePath": "/test/3.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 2 } }
+            { "filePath": "/test/3.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 1 } }
           ]
         },
         {
           "name": "c",
           "originalLocations": [
-            { "filePath": "/test/4.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 2 } }
+            { "filePath": "/test/4.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 1 } }
           ]
         }
       ]
@@ -131,31 +131,31 @@ test('tracks other files when `composes` is present', async () => {
         {
           "name": "a",
           "originalLocations": [
-            { "filePath": "/test/1.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 2 } }
+            { "filePath": "/test/1.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 1 } }
           ]
         },
         {
           "name": "b",
           "originalLocations": [
-            { "filePath": "/test/2.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 2 } }
+            { "filePath": "/test/2.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 1 } }
           ]
         },
         {
           "name": "c",
           "originalLocations": [
-            { "filePath": "/test/3.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 2 } }
+            { "filePath": "/test/3.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 1 } }
           ]
         },
         {
           "name": "d",
           "originalLocations": [
-            { "filePath": "/test/3.css", "start": { "line": 2, "column": 1 }, "end": { "line": 2, "column": 2 } }
+            { "filePath": "/test/3.css", "start": { "line": 2, "column": 1 }, "end": { "line": 2, "column": 1 } }
           ]
         },
         {
           "name": "e",
           "originalLocations": [
-            { "filePath": "/test/4.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 2 } }
+            { "filePath": "/test/4.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 1 } }
           ]
         }
       ]
@@ -195,21 +195,21 @@ test('normalizes tokens', async () => {
         {
           "name": "a",
           "originalLocations": [
-            { "filePath": "/test/2.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 2 } },
-            { "filePath": "/test/1.css", "start": { "line": 4, "column": 1 }, "end": { "line": 4, "column": 2 } },
-            { "filePath": "/test/1.css", "start": { "line": 12, "column": 1 }, "end": { "line": 12, "column": 2 } }
+            { "filePath": "/test/2.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 1 } },
+            { "filePath": "/test/1.css", "start": { "line": 4, "column": 1 }, "end": { "line": 4, "column": 1 } },
+            { "filePath": "/test/1.css", "start": { "line": 12, "column": 1 }, "end": { "line": 12, "column": 1 } }
           ]
         },
         {
           "name": "b",
           "originalLocations": [
-            { "filePath": "/test/2.css", "start": { "line": 2, "column": 1 }, "end": { "line": 2, "column": 2 } }
+            { "filePath": "/test/2.css", "start": { "line": 2, "column": 1 }, "end": { "line": 2, "column": 1 } }
           ]
         },
         {
           "name": "c",
           "originalLocations": [
-            { "filePath": "/test/3.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 2 } }
+            { "filePath": "/test/3.css", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 1 } }
           ]
         }
       ]
@@ -300,31 +300,31 @@ describe('supports transpiler', () => {
           {
             "name": "b_1",
             "originalLocations": [
-              { "filePath": "/test/2.scss", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 4 } }
+              { "filePath": "/test/2.scss", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 3 } }
             ]
           },
           {
             "name": "c",
             "originalLocations": [
-              { "filePath": "/test/3.scss", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 2 } }
+              { "filePath": "/test/3.scss", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 1 } }
             ]
           },
           {
             "name": "a_1",
             "originalLocations": [
-              { "filePath": "/test/1.scss", "start": { "line": 3, "column": 1 }, "end": { "line": 3, "column": 4 } }
+              { "filePath": "/test/1.scss", "start": { "line": 3, "column": 1 }, "end": { "line": 3, "column": 3 } }
             ]
           },
           {
             "name": "a_2",
             "originalLocations": [
-              { "filePath": "/test/1.scss", "start": { "line": 4, "column": 1 }, "end": { "line": 4, "column": 4 } }
+              { "filePath": "/test/1.scss", "start": { "line": 4, "column": 1 }, "end": { "line": 4, "column": 3 } }
             ]
           },
           {
             "name": "d",
             "originalLocations": [
-              { "filePath": "/test/4.scss", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 2 } }
+              { "filePath": "/test/4.scss", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 1 } }
             ]
           }
         ]
@@ -363,25 +363,25 @@ describe('supports transpiler', () => {
           {
             "name": "b_1",
             "originalLocations": [
-              { "filePath": "/test/2.less", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 4 } }
+              { "filePath": "/test/2.less", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 3 } }
             ]
           },
           {
             "name": "a_1",
             "originalLocations": [
-              { "filePath": "/test/1.less", "start": { "line": 2, "column": 1 }, "end": { "line": 2, "column": 4 } }
+              { "filePath": "/test/1.less", "start": { "line": 2, "column": 1 }, "end": { "line": 2, "column": 3 } }
             ]
           },
           {
             "name": "a_2",
             "originalLocations": [
-              { "filePath": "/test/1.less", "start": { "line": 3, "column": 1 }, "end": { "line": 3, "column": 4 } }
+              { "filePath": "/test/1.less", "start": { "line": 3, "column": 1 }, "end": { "line": 3, "column": 3 } }
             ]
           },
           {
             "name": "c",
             "originalLocations": [
-              { "filePath": "/test/3.less", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 2 } }
+              { "filePath": "/test/3.less", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 1 } }
             ]
           }
         ]
