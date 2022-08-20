@@ -15,34 +15,40 @@ function isSubDirectoryFile(fromDirectory: string, toFilePath: string): boolean 
   return isAbsolute(toFilePath) && toFilePath.startsWith(fromDirectory);
 }
 
+/** The distribution option. */
+type DistOptions = {
+  /** Root directory. It is absolute. */
+  rootDir: string;
+  /** The path to the output directory. It is absolute. */
+  outDir: string;
+};
+
 /**
  * Get .d.ts file path.
- * @param rootDir Root directory. It is absolute.
- * @param outDir The path to the output directory. It is absolute.
  * @param filePath The path to the source file. It is absolute.
+ * @param distOptions The distribution option.
  * @returns The path to the .d.ts file. It is absolute.
  */
-export function getDtsFilePath(rootDir: string, outDir: string | undefined, filePath: string): string {
-  if (!isSubDirectoryFile(rootDir, filePath))
-    throw new Error(`The filePath(${filePath}) is not a subdirectory of rootDir(${rootDir}).`);
-  if (outDir) {
-    if (!isSubDirectoryFile(rootDir, outDir))
-      throw new Error(`The outDir(${outDir}) is not a subdirectory of rootDir(${rootDir}).`);
-    return join(outDir, relative(rootDir, filePath) + '.d.ts');
+export function getDtsFilePath(filePath: string, distOptions: DistOptions | undefined): string {
+  if (distOptions) {
+    if (!isSubDirectoryFile(distOptions.rootDir, filePath))
+      throw new Error(`The filePath(${filePath}) is not a subdirectory of rootDir(${distOptions.rootDir}).`);
+    if (!isSubDirectoryFile(distOptions.rootDir, distOptions.outDir))
+      throw new Error(`The outDir(${distOptions.outDir}) is not a subdirectory of rootDir(${distOptions.rootDir}).`);
+    return join(distOptions.outDir, relative(distOptions.rootDir, filePath) + '.d.ts');
   } else {
-    return join(rootDir, relative(rootDir, filePath) + '.d.ts');
+    return filePath + '.d.ts';
   }
 }
 
 /**
  * Get .d.ts.map file path.
- * @param rootDir Root directory. It is absolute.
- * @param outDir The path to the output directory. It is absolute.
  * @param filePath The path to the source file. It is absolute.
+ * @param distOptions The distribution option.
  * @returns The path to the .d.ts.map file. It is absolute.
  */
-export function getSourceMapFilePath(rootDir: string, outDir: string | undefined, filePath: string): string {
-  return getDtsFilePath(rootDir, outDir, filePath) + '.map';
+export function getSourceMapFilePath(filePath: string, distOptions: DistOptions | undefined): string {
+  return getDtsFilePath(filePath, distOptions) + '.map';
 }
 
 export function generateSourceMappingURLComment(dtsFilePath: string, sourceMapFilePath: string): string {
@@ -162,15 +168,14 @@ export function generateDtsContentWithSourceMap(
 }
 
 export async function emitGeneratedFiles(
-  rootDir: string,
-  outDir: string | undefined,
   filePath: string,
   tokens: Token[],
+  distOptions: DistOptions | undefined,
   emitDeclarationMap: boolean | undefined,
   dtsFormatOptions: DtsFormatOptions,
 ): Promise<void> {
-  const dtsFilePath = getDtsFilePath(rootDir, outDir, filePath);
-  const sourceMapFilePath = getSourceMapFilePath(rootDir, outDir, filePath);
+  const dtsFilePath = getDtsFilePath(filePath, distOptions);
+  const sourceMapFilePath = getSourceMapFilePath(filePath, distOptions);
   const { dtsContent, sourceMap } = generateDtsContentWithSourceMap(
     filePath,
     dtsFilePath,

@@ -26,17 +26,22 @@ export interface RunnerOptions {
  */
 export async function run(options: RunnerOptions): Promise<void> {
   const loader = new Loader(options.transform);
+  const distOptions = options.outDir
+    ? {
+        rootDir: process.cwd(), // TODO: support `--rootDir` option
+        outDir: options.outDir,
+      }
+    : undefined;
 
   async function processFile(filePath: string) {
     try {
       const result = await loader.load(filePath);
-      const rootDir = process.cwd(); // TODO: support `--rootDir` option
-      await emitGeneratedFiles(rootDir, options.outDir, filePath, result.tokens, options.declarationMap, {
+      await emitGeneratedFiles(filePath, result.tokens, distOptions, options.declarationMap, {
         camelCase: options.camelCase,
         namedExport: options.namedExport,
       });
       if (!options.silent) {
-        const dtsFilePath = getDtsFilePath(rootDir, options.outDir, filePath);
+        const dtsFilePath = getDtsFilePath(filePath, distOptions);
         console.log('Wrote ' + chalk.green(relative(process.cwd(), dtsFilePath)));
       }
     } catch (error) {
