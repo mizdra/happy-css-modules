@@ -4,5 +4,6 @@ dist/
 __snapshots__/
 coverage/
 *.css.d.ts
-test/**/*.css
+*.scss.d.ts
+*.less.d.ts
 pnpm-lock.yaml
