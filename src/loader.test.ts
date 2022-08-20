@@ -276,7 +276,9 @@ describe('supports transpiler', () => {
         .a_1 { dummy: ''; }
         .a_2 {
           dummy: '';
-          .a_3 {} // sass feature test (nesting)
+          // sass feature test (nesting)
+          .a_2_1 { dummy: ''; }
+          &_2 { dummy: ''; }
           composes: a_1; // css module feature test (composes)
           composes: d from './4.scss'; // css module feature test (composes from other file)
         }
@@ -293,6 +295,12 @@ describe('supports transpiler', () => {
         `,
     });
     const result = await loader.load('/test/1.scss');
+
+    // NOTE: There should be only one originalLocations for 'a_2', but there are multiple.
+    // This is probably due to an incorrect sourcemap output by the sass compiler.
+    // FIXME: The sass compiler or Loader implementation needs to be fixed.
+
+    // FIXME: The end position of 'a_2_2' is incorrect.
     expect(result).toMatchInlineSnapshot(`
       {
         "dependencies": ["/test/2.scss", "/test/3.scss", "/test/4.scss"],
@@ -318,7 +326,20 @@ describe('supports transpiler', () => {
           {
             "name": "a_2",
             "originalLocations": [
-              { "filePath": "/test/1.scss", "start": { "line": 4, "column": 1 }, "end": { "line": 4, "column": 3 } }
+              { "filePath": "/test/1.scss", "start": { "line": 4, "column": 1 }, "end": { "line": 4, "column": 3 } },
+              { "filePath": "/test/1.scss", "start": { "line": 7, "column": 3 }, "end": { "line": 7, "column": 5 } }
+            ]
+          },
+          {
+            "name": "a_2_1",
+            "originalLocations": [
+              { "filePath": "/test/1.scss", "start": { "line": 7, "column": 3 }, "end": { "line": 7, "column": 7 } }
+            ]
+          },
+          {
+            "name": "a_2_2",
+            "originalLocations": [
+              { "filePath": "/test/1.scss", "start": { "line": 8, "column": 3 }, "end": { "line": 8, "column": 7 } }
             ]
           },
           {
@@ -338,7 +359,9 @@ describe('supports transpiler', () => {
         .a_1 { dummy: ''; }
         .a_2 {
           dummy: '';
-          .a_3 {} // less feature test (nesting)
+          // less feature test (nesting)
+          .a_2_1 { dummy: ''; }
+          &_2 { dummy: ''; }
           .b_1();
           .b_2();
           composes: a_1; // css module feature test (composes)
@@ -356,6 +379,8 @@ describe('supports transpiler', () => {
       'node_modules': mockfs.load(resolve(__dirname, '../node_modules')),
     });
     const result = await loader.load('/test/1.less');
+
+    // FIXME: The end position of 'a_2_2' is incorrect.
     expect(result).toMatchInlineSnapshot(`
       {
         "dependencies": ["/test/2.less", "/test/3.less"],
@@ -376,6 +401,18 @@ describe('supports transpiler', () => {
             "name": "a_2",
             "originalLocations": [
               { "filePath": "/test/1.less", "start": { "line": 3, "column": 1 }, "end": { "line": 3, "column": 3 } }
+            ]
+          },
+          {
+            "name": "a_2_1",
+            "originalLocations": [
+              { "filePath": "/test/1.less", "start": { "line": 6, "column": 3 }, "end": { "line": 6, "column": 7 } }
+            ]
+          },
+          {
+            "name": "a_2_2",
+            "originalLocations": [
+              { "filePath": "/test/1.less", "start": { "line": 7, "column": 3 }, "end": { "line": 7, "column": 7 } }
             ]
           },
           {

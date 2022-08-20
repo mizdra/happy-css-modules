@@ -1,0 +1,18 @@
+@import './2.less'; // less feature test (@use)
+.a_1 {
+  dummy: '';
+}
+.a_2 {
+  dummy: '';
+  // less feature test (nesting)
+  .a_2_1 {
+    dummy: '';
+  }
+  &_2 {
+    dummy: '';
+  }
+  .b_1();
+  .b_2();
+  composes: a_1; // css module feature test (composes)
+  composes: c from './3.less'; // css module feature test (composes from other file)
+}
