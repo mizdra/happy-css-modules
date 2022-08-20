@@ -1,0 +1,3 @@
+.b {
+  composes: c from './3.css';
+}
