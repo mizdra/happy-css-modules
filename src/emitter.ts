@@ -183,6 +183,7 @@ export async function emitGeneratedFiles(
     const sourceMappingURLComment = generateSourceMappingURLComment(dtsFilePath, sourceMapFilePath);
     await writeFileIfChanged(dtsFilePath, dtsContent + sourceMappingURLComment);
     // NOTE: tsserver does not support inline declaration maps. Therefore, sourcemap files must be output.
+    // blocked by: https://github.com/microsoft/TypeScript/issues/38966
     await writeFileIfChanged(sourceMapFilePath, sourceMap.toString());
   } else {
     await writeFileIfChanged(dtsFilePath, dtsContent);

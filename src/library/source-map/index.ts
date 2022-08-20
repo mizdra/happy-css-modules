@@ -1,5 +1,7 @@
 import { SourceNode as OriginalSourceNode, CodeWithSourceMap } from 'source-map';
 
+// TODO: Open PR to mozilla/source-map
+
 // The type definitions bundled in the source-map package are incorrect.
 // Therefore, the type definitions are overwritten here.
 
