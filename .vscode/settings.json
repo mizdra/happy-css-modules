@@ -5,8 +5,18 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
+  // Displays all files to be tested and test files combined on the explorer.
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "*.ts": "${capture}.ts, ${capture}.test.ts"
+  },
   "jest.jestCommandLine": "pnpm run test",
+  // It is expensive to run the test each time the file to be tested (e.g. `loader.ts`) is saved.
+  // So, run Jest only when the test file (e.g. `loader.test.ts`) is saved.
   "jest.autoRun": {
-    "watch": true
-  }
+    "watch": false,
+    "onSave": "test-file"
+  },
+  // Do not open vscode-jest's terminal on launch.
+  "jest.showTerminalOnLaunch": false
 }
