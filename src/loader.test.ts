@@ -295,6 +295,10 @@ describe('supports transpiler', () => {
         `,
     });
     const result = await loader.load('/test/1.scss');
+
+    // NOTE: There should be only one originalLocations for 'a_2', but there are multiple.
+    // This is probably due to an incorrect sourcemap output by the sass compiler.
+    // FIXME: The sass compiler or Loader implementation needs to be fixed.
     expect(result).toMatchInlineSnapshot(`
       {
         "dependencies": ["/test/2.scss", "/test/3.scss", "/test/4.scss"],
