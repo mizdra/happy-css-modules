@@ -2,7 +2,7 @@
 
 exports[`generateDtsContentWithSourceMap change export type by namedExport 2`] = `
 Object {
-  "file": "test.module.css.d.ts",
+  "file": "1.css.d.ts",
   "mappings": "AAAA;AAAA,E,SAAAA,K,SAAA;AAAA,E,SACAC,K,SADA;AAAA;AAAA",
   "names": Array [
     "foo",
@@ -10,7 +10,7 @@ Object {
   ],
   "sourceRoot": "",
   "sources": Array [
-    "test.module.css",
+    "1.css",
   ],
   "version": 3,
 }
@@ -18,7 +18,7 @@ Object {
 
 exports[`generateDtsContentWithSourceMap change export type by namedExport 4`] = `
 Object {
-  "file": "test.module.css.d.ts",
+  "file": "1.css.d.ts",
   "mappings": "AAAA;aAAAA,G,SAAA;aACAC,G,SADA",
   "names": Array [
     "foo",
@@ -26,7 +26,7 @@ Object {
   ],
   "sourceRoot": "",
   "sources": Array [
-    "test.module.css",
+    "1.css",
   ],
   "version": 3,
 }
@@ -34,7 +34,7 @@ Object {
 
 exports[`generateDtsContentWithSourceMap emit other directory 2`] = `
 Object {
-  "file": "test.module.css.d.ts",
+  "file": "1.css.d.ts",
   "mappings": "AAAA;AAAA,E,SAAAA,K,SAAA;AAAA,E,SACAC,K,SADA;AAAA;AAAA",
   "names": Array [
     "foo",
@@ -42,7 +42,7 @@ Object {
   ],
   "sourceRoot": "",
   "sources": Array [
-    "../src/test.module.css",
+    "../src/1.css",
   ],
   "version": 3,
 }
@@ -64,7 +64,7 @@ export = styles;
 
 exports[`generateDtsContentWithSourceMap generate dts content with source map 2`] = `
 Object {
-  "file": "test.module.css.d.ts",
+  "file": "1.css.d.ts",
   "mappings": "AAAA;AAAA,E,SAAAA,K,SAAA;AAAA,E,SACAC,K,SADA;AAAA,E,SAEAC,K,SAFA;AAAA,E,SAGAA,K,SAHA;AAAA,E,SCIAC,K,SDJA;AAAA,E,SCKAC,M,SDLA;AAAA,E,SCMAA,M,SDNA;AAAA;AAAA",
   "names": Array [
     "foo",
@@ -75,8 +75,8 @@ Object {
   ],
   "sourceRoot": "",
   "sources": Array [
-    "test.module.css",
-    "other.module.css",
+    "1.css",
+    "2.css",
   ],
   "version": 3,
 }

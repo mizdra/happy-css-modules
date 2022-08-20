@@ -1,5 +1,5 @@
 import { EOL } from 'os';
-import { basename, dirname, join, relative } from 'path';
+import { basename, dirname, isAbsolute, join, relative } from 'path';
 import camelcase from 'camelcase';
 import { writeFileIfChanged } from './file-system';
 import { CodeWithSourceMap, SourceNode } from './library/source-map';
@@ -11,23 +11,35 @@ function getRelativePath(fromFilePath: string, toFilePath: string): string {
   return relative(dirname(fromFilePath), toFilePath);
 }
 
+function isSubDirectoryFile(fromDirectory: string, toFilePath: string): boolean {
+  return isAbsolute(toFilePath) && toFilePath.startsWith(fromDirectory);
+}
+
 /**
  * Get .d.ts file path.
- * @param rootDir Root directory.
- * @param outDir The path to the output directory. It is relative to `rootDir`.
- * @param filePath The path to the source file. It is relative to `rootDir`.
- * @returns
+ * @param rootDir Root directory. It is absolute.
+ * @param outDir The path to the output directory. It is absolute.
+ * @param filePath The path to the source file. It is absolute.
+ * @returns The path to the .d.ts file. It is absolute.
  */
 export function getDtsFilePath(rootDir: string, outDir: string | undefined, filePath: string): string {
-  return outDir ? join(rootDir, outDir, filePath + '.d.ts') : join(rootDir, filePath + '.d.ts');
+  if (!isSubDirectoryFile(rootDir, filePath))
+    throw new Error(`The filePath(${filePath}) is not a subdirectory of rootDir(${rootDir}).`);
+  if (outDir) {
+    if (!isSubDirectoryFile(rootDir, outDir))
+      throw new Error(`The outDir(${outDir}) is not a subdirectory of rootDir(${rootDir}).`);
+    return join(outDir, relative(rootDir, filePath) + '.d.ts');
+  } else {
+    return join(rootDir, relative(rootDir, filePath) + '.d.ts');
+  }
 }
 
 /**
  * Get .d.ts.map file path.
- * @param rootDir Root directory.
- * @param outDir The path to the output directory. It is relative to `rootDir`.
- * @param filePath The path to the source file. It is relative to `rootDir`.
- * @returns
+ * @param rootDir Root directory. It is absolute.
+ * @param outDir The path to the output directory. It is absolute.
+ * @param filePath The path to the source file. It is absolute.
+ * @returns The path to the .d.ts.map file. It is absolute.
  */
 export function getSourceMapFilePath(rootDir: string, outDir: string | undefined, filePath: string): string {
   return getDtsFilePath(rootDir, outDir, filePath) + '.map';
