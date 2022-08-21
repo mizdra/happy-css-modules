@@ -83,6 +83,7 @@ function formatTokens(tokens: Token[], localsConvention: LocalsConvention): Toke
 }
 
 function generateTokenDeclarations(
+  filePath: string,
   sourceMapFilePath: string,
   tokens: Token[],
   dtsFormatOptions: DtsFormatOptions,
@@ -114,20 +115,34 @@ function generateTokenDeclarations(
           ]),
         );
       } else {
-        result.push(
-          new SourceNode(null, null, null, [
-            '& Readonly<{ ',
-            new SourceNode(
-              originalLocation.start.line ?? null,
-              // The SourceNode's column is 0-based, but the originalLocation's column is 1-based.
-              originalLocation.start.column - 1 ?? null,
-              getRelativePath(sourceMapFilePath, originalLocation.filePath),
+        if (originalLocation.filePath === filePath) {
+          result.push(
+            new SourceNode(null, null, null, [
+              '& Readonly<{ ',
+              new SourceNode(
+                originalLocation.start.line ?? null,
+                // The SourceNode's column is 0-based, but the originalLocation's column is 1-based.
+                originalLocation.start.column - 1 ?? null,
+                getRelativePath(sourceMapFilePath, originalLocation.filePath),
+                `"${token.name}"`,
+                token.name,
+              ),
+              ': string }>',
+            ]),
+          );
+        } else {
+          let importSpecifier = getRelativePath(filePath, originalLocation.filePath);
+          if (!importSpecifier.startsWith('..')) importSpecifier = './' + importSpecifier;
+          result.push(
+            new SourceNode(null, null, null, [
+              '& Readonly<Pick<typeof import(',
+              `"${importSpecifier}"`,
+              '), ',
               `"${token.name}"`,
-              token.name,
-            ),
-            ': string }>',
-          ]),
-        );
+              '>>',
+            ]),
+          );
+        }
       }
     }
   }
@@ -146,7 +161,7 @@ export function generateDtsContentWithSourceMap(
   tokens: Token[],
   dtsFormatOptions: DtsFormatOptions,
 ): { dtsContent: CodeWithSourceMap['code']; sourceMap: CodeWithSourceMap['map'] } {
-  const tokenDeclarations = generateTokenDeclarations(sourceMapFilePath, tokens, dtsFormatOptions);
+  const tokenDeclarations = generateTokenDeclarations(filePath, sourceMapFilePath, tokens, dtsFormatOptions);
 
   let sourceNode: typeof SourceNode;
   if (!tokenDeclarations || !tokenDeclarations.length) {
