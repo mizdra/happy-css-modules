@@ -121,6 +121,8 @@ export class Loader {
 
   /** Returns information about the tokens exported from the CSS Modules file. */
   async load(filePath: string): Promise<LoadResult> {
+    // NOTE: Loader does not support concurrent calls.
+    // TODO: Throw an error if called concurrently.
     if (!(await this.isCacheOutdated(filePath))) {
       const cacheEntry = this.cache.get(filePath)!;
       return cacheEntry.result;

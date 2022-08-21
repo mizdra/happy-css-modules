@@ -64,9 +64,9 @@ export async function run(options: RunnerOptions): Promise<void> {
       .map((file) => resolve(file));
 
     // TODO: Use `@file-cache/core` to process only files that have changed
-    filePaths.forEach((filePath) => {
-      void processFile(filePath);
-    });
+    for (const filePath of filePaths) {
+      await processFile(filePath);
+    }
   }
 }
 
