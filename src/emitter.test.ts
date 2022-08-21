@@ -58,7 +58,7 @@ describe('generateDtsContentWithSourceMap', () => {
   const dtsFilePath = '/test/1.css.d.ts';
   const sourceMapFilePath = '/test/1.css.map';
   const dtsFormatOptions: DtsFormatOptions = {
-    camelCase: false,
+    localsConvention: undefined,
     namedExport: false,
   };
   test('generate dts content with source map', () => {
@@ -92,47 +92,46 @@ describe('generateDtsContentWithSourceMap', () => {
     expect(dtsContent).toMatchSnapshot();
     expect(sourceMap).toMatchSnapshot(); // TODO: Make snapshot human-readable
   });
-  test('format case by camelCase', () => {
+  describe('format case', () => {
     const rawTokenList: Token[] = [
       fakeToken({ name: 'foo-bar', originalLocations: [{ start: { line: 1, column: 1 } }] }),
       fakeToken({ name: 'foo_bar', originalLocations: [{ start: { line: 2, column: 1 } }] }),
     ];
-    const { dtsContent: dtsContentWithoutCamelCase } = generateDtsContentWithSourceMap(
-      filePath,
-      dtsFilePath,
-      sourceMapFilePath,
-      rawTokenList,
-      {
+    test('undefined', () => {
+      const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, rawTokenList, {
         ...dtsFormatOptions,
-        camelCase: false,
-      },
-    );
-    expect(dtsContentWithoutCamelCase).toMatchInlineSnapshot(`
-      "declare const styles: {
-        readonly \\"foo-bar\\": string;
-        readonly \\"foo_bar\\": string;
-      };
-      export = styles;
-      "
-    `);
-    const { dtsContent: dtsContentWithCamelCase } = generateDtsContentWithSourceMap(
-      filePath,
-      dtsFilePath,
-      sourceMapFilePath,
-      rawTokenList,
-      {
+        localsConvention: undefined,
+      });
+      expect(dtsContent).toMatchSnapshot();
+    });
+    test('camelCaseOnly', () => {
+      const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, rawTokenList, {
         ...dtsFormatOptions,
-        camelCase: true,
-      },
-    );
-    expect(dtsContentWithCamelCase).toMatchInlineSnapshot(`
-      "declare const styles: {
-        readonly \\"fooBar\\": string;
-        readonly \\"fooBar\\": string;
-      };
-      export = styles;
-      "
-    `);
+        localsConvention: 'camelCaseOnly',
+      });
+      expect(dtsContent).toMatchSnapshot();
+    });
+    test('camelCase', () => {
+      const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, rawTokenList, {
+        ...dtsFormatOptions,
+        localsConvention: 'camelCase',
+      });
+      expect(dtsContent).toMatchSnapshot();
+    });
+    test('dashesOnly', () => {
+      const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, rawTokenList, {
+        ...dtsFormatOptions,
+        localsConvention: 'dashesOnly',
+      });
+      expect(dtsContent).toMatchSnapshot();
+    });
+    test('dashes', () => {
+      const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, rawTokenList, {
+        ...dtsFormatOptions,
+        localsConvention: 'dashes',
+      });
+      expect(dtsContent).toMatchSnapshot();
+    });
   });
 
   test('change export type by namedExport', () => {

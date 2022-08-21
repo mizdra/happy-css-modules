@@ -33,6 +33,13 @@ describe('parseArgv', () => {
     expect(parseArgv([...baseArgs, '--watch']).watch).toBe(true);
     expect(parseArgv([...baseArgs, '--no-watch']).watch).toBe(false);
   });
+  test('--localsConvention', () => {
+    expect(parseArgv([...baseArgs]).localsConvention).toBe(undefined);
+    expect(parseArgv([...baseArgs, '--localsConvention', 'camelCaseOnly']).localsConvention).toBe('camelCaseOnly');
+    expect(parseArgv([...baseArgs, '--localsConvention', 'camelCase']).localsConvention).toBe('camelCase');
+    expect(parseArgv([...baseArgs, '--localsConvention', 'dashesOnly']).localsConvention).toBe('dashesOnly');
+    expect(parseArgv([...baseArgs, '--localsConvention', 'dashes']).localsConvention).toBe('dashes');
+  });
   test('--namedExport', () => {
     expect(parseArgv([...baseArgs, '--namedExport']).namedExport).toBe(true);
     expect(parseArgv([...baseArgs, '--no-namedExport']).namedExport).toBe(false);
