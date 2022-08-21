@@ -116,7 +116,7 @@ function generateTokenDeclarations(
       } else {
         result.push(
           new SourceNode(null, null, null, [
-            'readonly ',
+            '& Readonly<{ ',
             new SourceNode(
               originalLocation.start.line ?? null,
               // The SourceNode's column is 0-based, but the originalLocation's column is 1-based.
@@ -125,7 +125,7 @@ function generateTokenDeclarations(
               `"${token.name}"`,
               token.name,
             ),
-            ': string;',
+            ': string }>',
           ]),
         );
       }
@@ -158,9 +158,9 @@ export function generateDtsContentWithSourceMap(
     ]);
   } else {
     sourceNode = new SourceNode(1, 0, getRelativePath(sourceMapFilePath, filePath), [
-      'declare const styles: {' + EOL,
+      'declare const styles:' + EOL,
       ...tokenDeclarations.map((tokenDeclaration) => ['  ', tokenDeclaration, EOL]),
-      '};' + EOL,
+      ';' + EOL,
       'export = styles;' + EOL,
     ]);
   }
