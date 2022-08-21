@@ -13,11 +13,13 @@ export type Watcher = {
   close: () => Promise<void>;
 };
 
+export type LocalsConvention = 'camelCase' | 'camelCaseOnly' | 'dashes' | 'dashesOnly' | undefined;
+
 export interface RunnerOptions {
   pattern: string;
   outDir?: string;
   watch?: boolean;
-  camelCase?: boolean;
+  localsConvention?: 'camelCase' | 'camelCaseOnly' | 'dashes' | 'dashesOnly';
   namedExport?: boolean;
   declarationMap?: boolean;
   transform?: Transformer;
@@ -46,7 +48,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
     try {
       const result = await loader.load(filePath);
       await emitGeneratedFiles(filePath, result.tokens, distOptions, options.declarationMap, {
-        camelCase: options.camelCase,
+        localsConvention: options.localsConvention,
         namedExport: options.namedExport,
       });
       if (!options.silent) {

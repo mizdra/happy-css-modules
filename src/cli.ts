@@ -28,10 +28,9 @@ const yargsInstance = yargs
     alias: 'w',
     describe: "Watch input directory's css files or pattern",
   })
-  .option('camelCase', {
-    type: 'boolean',
-    alias: 'c',
-    describe: 'Convert CSS class tokens to camelcase',
+  .option('localsConvention', {
+    choices: ['camelCase', 'camelCaseOnly', 'dashes', 'dashesOnly'] as const,
+    describe: 'Style of exported class names.',
   })
   .option('namedExport', {
     type: 'boolean',
@@ -68,7 +67,7 @@ export function parseArgv(argv: string[]): RunnerOptions {
     pattern: patterns[0],
     outDir: parsedArgv.outDir,
     watch: parsedArgv.watch,
-    camelCase: parsedArgv.camelCase,
+    localsConvention: parsedArgv.localsConvention,
     namedExport: parsedArgv.namedExport,
     declarationMap: parsedArgv.declarationMap,
     silent: parsedArgv.silent,

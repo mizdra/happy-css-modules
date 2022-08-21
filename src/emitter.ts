@@ -4,6 +4,7 @@ import camelcase from 'camelcase';
 import { writeFileIfChanged } from './file-system';
 import { CodeWithSourceMap, SourceNode } from './library/source-map';
 import { Token } from './loader';
+import { LocalsConvention } from './runner';
 
 export type CamelCaseOption = boolean | 'dashes' | undefined;
 
@@ -61,15 +62,24 @@ function dashesCamelCase(str: string): string {
   });
 }
 
-function getConvertKeyMethod(camelCaseOption: CamelCaseOption): (str: string) => string {
-  switch (camelCaseOption) {
-    case true:
-      return camelcase;
-    case 'dashes':
-      return (str: string) => dashesCamelCase(str);
-    default:
-      return (key) => key;
+function formatTokens(tokens: Token[], localsConvention: LocalsConvention): Token[] {
+  const result: Token[] = [];
+  for (const token of tokens) {
+    if (localsConvention === 'camelCaseOnly') {
+      result.push({ ...token, name: camelcase(token.name) });
+    } else if (localsConvention === 'camelCase') {
+      result.push(token);
+      result.push({ ...token, name: camelcase(token.name) });
+    } else if (localsConvention === 'dashesOnly') {
+      result.push({ ...token, name: dashesCamelCase(token.name) });
+    } else if (localsConvention === 'dashes') {
+      result.push(token);
+      result.push({ ...token, name: dashesCamelCase(token.name) });
+    } else {
+      result.push(token); // asIs
+    }
   }
+  return result;
 }
 
 function generateTokenDeclarations(
@@ -77,12 +87,10 @@ function generateTokenDeclarations(
   tokens: Token[],
   dtsFormatOptions: DtsFormatOptions,
 ): typeof SourceNode[] {
-  const convertKey = getConvertKeyMethod(dtsFormatOptions.camelCase);
+  const formattedTokens = formatTokens(tokens, dtsFormatOptions.localsConvention);
   const result: typeof SourceNode[] = [];
 
-  for (const token of tokens) {
-    const key = convertKey(token.name);
-
+  for (const token of formattedTokens) {
     // Only one original position can be associated with one generated position.
     // This is due to the sourcemap specification. Therefore, we output multiple type definitions
     // with the same name and assign a separate original position to each.
@@ -99,7 +107,7 @@ function generateTokenDeclarations(
               // The SourceNode's column is 0-based, but the originalLocation's column is 1-based.
               originalLocation.start.column - 1 ?? null,
               getRelativePath(sourceMapFilePath, originalLocation.filePath),
-              `${key}`,
+              `${token.name}`,
               token.name,
             ),
             ': string;',
@@ -114,7 +122,7 @@ function generateTokenDeclarations(
               // The SourceNode's column is 0-based, but the originalLocation's column is 1-based.
               originalLocation.start.column - 1 ?? null,
               getRelativePath(sourceMapFilePath, originalLocation.filePath),
-              `"${key}"`,
+              `"${token.name}"`,
               token.name,
             ),
             ': string;',
@@ -127,7 +135,7 @@ function generateTokenDeclarations(
 }
 
 export type DtsFormatOptions = {
-  camelCase: CamelCaseOption;
+  localsConvention?: LocalsConvention;
   namedExport?: boolean;
 };
 
