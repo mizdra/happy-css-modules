@@ -37,7 +37,7 @@ export type Token = {
 };
 
 type CacheEntry = {
-  mtime: number;
+  mtime: number; // TODO: `--cache-strategy` option will allow you to switch between `content` and `metadata` modes.
   result: LoadResult;
 };
 
@@ -71,6 +71,9 @@ export class Loader {
   private readonly transform: Transformer | undefined;
 
   constructor(transform?: Transformer) {
+    // TODO: support resolver
+    // TODO: support default transformer
+    // TODO: support default resolver
     this.transform = transform;
   }
 
@@ -118,6 +121,8 @@ export class Loader {
 
   /** Returns information about the tokens exported from the CSS Modules file. */
   async load(filePath: string): Promise<LoadResult> {
+    // NOTE: Loader does not support concurrent calls.
+    // TODO: Throw an error if called concurrently.
     if (!(await this.isCacheOutdated(filePath))) {
       const cacheEntry = this.cache.get(filePath)!;
       return cacheEntry.result;

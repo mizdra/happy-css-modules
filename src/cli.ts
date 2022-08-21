@@ -3,10 +3,11 @@
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import * as yargs from 'yargs';
-import { run, RunOptions } from './run';
+import { run, RunnerOptions } from './runner';
 
 const pkgJson = JSON.parse(readFileSync(resolve(__dirname, '../package.json'), 'utf-8'));
 
+// TODO: Change default value for options.
 const yargsInstance = yargs
   .parserConfiguration({
     // workaround for https://github.com/yargs/yargs/issues/1318
@@ -60,7 +61,7 @@ const yargsInstance = yargs
  * Parse command line arguments.
  * @returns Runner options.
  */
-export function parseArgv(argv: string[]): RunOptions {
+export function parseArgv(argv: string[]): RunnerOptions {
   const parsedArgv = yargsInstance.parseSync(argv.slice(2));
   const patterns: string[] = parsedArgv._.map((pattern) => pattern.toString());
   return {

@@ -5,18 +5,18 @@ import valueParser from 'postcss-value-parser';
 
 /** The pair of line number and column number. */
 export type Position = {
-  /** The line number in the source file. It is 1-based. */
+  /** The line number in the source file. It is 1-based (compatible with postcss). */
   line: number;
-  /** The column number in the source file. It is 1-based. */
+  /** The column number in the source file. It is 1-based (compatible with postcss). */
   column: number;
 };
 
 /** The location of class selector. */
 export type Location = {
   filePath: string;
-  /** The inclusive starting position of the node's source. */
+  /** The inclusive starting position of the node's source (compatible with postcss). */
   start: Position;
-  /** The inclusive ending position of the node's source. */
+  /** The inclusive ending position of the node's source (compatible with postcss). */
   end: Position;
 };
 
@@ -100,6 +100,7 @@ export function getOriginalLocation(rule: Rule, classSelector: ClassName): Locat
     const origin = rule.source.input.origin(
       location.start.line,
       // The column of `Input#origin` is 0-based. This behavior is undocumented and probably a postcss's bug.
+      // TODO: Open PR to postcss/postcss
       location.start.column - 1,
     );
     if (origin === false) throw new Error('`Input#origin` returned false');

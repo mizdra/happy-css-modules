@@ -10,19 +10,21 @@ import { Token } from '../src/loader';
 import { Location } from '../src/postcss';
 
 test('getDtsFilePath', () => {
-  expect(getDtsFilePath('/app', undefined, '/app/src/dir/1.css')).toBe('/app/src/dir/1.css.d.ts');
-  expect(() => getDtsFilePath('/app', undefined, '/tmp/src/dir/1.css')).toThrow();
-  expect(getDtsFilePath('/app', '/app/dist', '/app/src/dir/1.css')).toBe('/app/dist/src/dir/1.css.d.ts');
-  expect(() => getDtsFilePath('/app', '/app/dist', '/tmp/src/dir/1.css')).toThrow();
-  expect(() => getDtsFilePath('/app', '/tmp/dist', '/app/src/dir/1.css')).toThrow();
+  expect(getDtsFilePath('/app/src/dir/1.css', undefined)).toBe('/app/src/dir/1.css.d.ts');
+  expect(getDtsFilePath('/app/src/dir/1.css', { rootDir: '/app', outDir: '/app/dist' })).toBe(
+    '/app/dist/src/dir/1.css.d.ts',
+  );
+  expect(() => getDtsFilePath('/tmp/src/dir/1.css', { rootDir: '/app', outDir: '/app/dist' })).toThrow();
+  expect(() => getDtsFilePath('/app/src/dir/1.css', { rootDir: '/app', outDir: '/tmp/dist' })).toThrow();
 });
 
 test('getSourceMapFilePath', () => {
-  expect(getSourceMapFilePath('/app', undefined, '/app/src/dir/1.css')).toBe('/app/src/dir/1.css.d.ts.map');
-  expect(() => getSourceMapFilePath('/app', undefined, '/tmp/src/dir/1.css')).toThrow();
-  expect(getSourceMapFilePath('/app', '/app/dist', '/app/src/dir/1.css')).toBe('/app/dist/src/dir/1.css.d.ts.map');
-  expect(() => getSourceMapFilePath('/app', '/app/dist', '/tmp/src/dir/1.css')).toThrow();
-  expect(() => getSourceMapFilePath('/app', '/tmp/dist', '/app/src/dir/1.css')).toThrow();
+  expect(getSourceMapFilePath('/app/src/dir/1.css', undefined)).toBe('/app/src/dir/1.css.d.ts.map');
+  expect(getSourceMapFilePath('/app/src/dir/1.css', { rootDir: '/app', outDir: '/app/dist' })).toBe(
+    '/app/dist/src/dir/1.css.d.ts.map',
+  );
+  expect(() => getSourceMapFilePath('/tmp/src/dir/1.css', { rootDir: '/app', outDir: '/app/dist' })).toThrow();
+  expect(() => getSourceMapFilePath('/app/src/dir/1.css', { rootDir: '/app', outDir: '/tmp/dist' })).toThrow();
 });
 
 test('generateSourceMappingURLComment', () => {
@@ -194,3 +196,5 @@ describe('generateDtsContentWithSourceMap', () => {
     expect(sourceMap).toMatchSnapshot(); // TODO: Make snapshot human-readable
   });
 });
+
+test.todo('emitGeneratedFiles');
