@@ -1,26 +1,11 @@
 import fs from 'fs/promises';
 import { resolve } from 'path';
 import dedent from 'dedent';
-import less from 'less';
 import mockfs from 'mock-fs';
-import sass from 'sass';
-import { Loader, Transformer } from '../src/loader';
+import { Loader } from '../src/loader';
+import { transform } from './test/util';
 
 const readFileSpy = jest.spyOn(fs, 'readFile');
-
-const transform: Transformer = async (source: string, from: string) => {
-  if (from.endsWith('.scss')) {
-    const result = sass.compile(from, { sourceMap: true });
-    return { css: result.css, map: result.sourceMap!, dependencies: result.loadedUrls };
-  } else if (from.endsWith('.less')) {
-    const result = await less.render(source, {
-      filename: from,
-      sourceMap: {},
-    });
-    return { css: result.css, map: result.map, dependencies: result.imports };
-  }
-  return false;
-};
 
 const loader = new Loader(transform);
 
