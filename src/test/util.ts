@@ -34,3 +34,7 @@ export const transform: Transformer = async (source: string, from: string) => {
   }
   return false;
 };
+
+export async function waitForAsyncTask(): Promise<void> {
+  await new Promise((resolve) => setTimeout(resolve, 0));
+}

@@ -9,6 +9,10 @@ import { Loader, Transformer } from './loader';
 
 const glob = util.promisify(_glob);
 
+export type Watcher = {
+  close: () => Promise<void>;
+};
+
 export interface RunnerOptions {
   pattern: string;
   outDir?: string;
@@ -20,11 +24,16 @@ export interface RunnerOptions {
   silent?: boolean;
 }
 
+type OverrideProp<T, K extends keyof T, V extends T[K]> = Omit<T, K> & { [P in K]: V };
+
 /**
  * Run typed-css-module.
  * @param options Runner options.
+ * @returns Returns `Promise<Watcher>` if `options.watch` is `true`, `Promise<void>` if `false`.
  */
-export async function run(options: RunnerOptions): Promise<void> {
+export async function run(options: OverrideProp<RunnerOptions, 'watch', true>): Promise<Watcher>;
+export async function run(options: RunnerOptions): Promise<void>;
+export async function run(options: RunnerOptions): Promise<Watcher | void> {
   const loader = new Loader(options.transform);
   const distOptions = options.outDir
     ? {
@@ -51,13 +60,14 @@ export async function run(options: RunnerOptions): Promise<void> {
   }
 
   if (options.watch) {
-    console.log('Watch ' + options.pattern + '...');
+    if (!options.silent) console.log('Watch ' + options.pattern + '...');
     const watcher = chokidar.watch([options.pattern.replace(/\\/g, '/')]);
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    watcher.on('add', processFile);
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    watcher.on('change', processFile);
-    await waitForever();
+    watcher.on('all', (eventName, filePath) => {
+      if (eventName === 'add' || eventName === 'change') {
+        void processFile(filePath);
+      }
+    });
+    return { close: async () => watcher.close() };
   } else {
     const filePaths = (await glob(options.pattern, { dot: true }))
       // convert relative path to absolute path
@@ -68,10 +78,4 @@ export async function run(options: RunnerOptions): Promise<void> {
       await processFile(filePath);
     }
   }
-}
-
-async function waitForever(): Promise<void> {
-  return new Promise<void>(() => {
-    // noop
-  });
 }
