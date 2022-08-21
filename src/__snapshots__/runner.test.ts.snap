@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generates .d.ts and .d.ts.map 1`] = `
+"declare const styles: {
+  readonly \\"a\\": string;
+};
+export = styles;
+//# sourceMappingURL=1.css.d.ts.map
+"
+`;
+
+exports[`generates .d.ts and .d.ts.map 2`] = `"{\\"version\\":3,\\"sources\\":[\\"1.css\\"],\\"names\\":[\\"a\\"],\\"mappings\\":\\"AAAA;AAAA,E,SAAAA,G,SAAA;AAAA;AAAA\\",\\"file\\":\\"1.css.d.ts\\",\\"sourceRoot\\":\\"\\"}"`;
+
+exports[`generates .d.ts and .d.ts.map 3`] = `
+"declare const styles: {
+  readonly \\"b\\": string;
+};
+export = styles;
+//# sourceMappingURL=2.css.d.ts.map
+"
+`;
+
+exports[`generates .d.ts and .d.ts.map 4`] = `"{\\"version\\":3,\\"sources\\":[\\"2.css\\"],\\"names\\":[\\"b\\"],\\"mappings\\":\\"AAAA;AAAA,E,SAAAA,G,SAAA;AAAA;AAAA\\",\\"file\\":\\"2.css.d.ts\\",\\"sourceRoot\\":\\"\\"}"`;
