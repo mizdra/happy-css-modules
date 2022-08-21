@@ -13,19 +13,19 @@ import { format } from 'prettier';
 // TODO: open an issue on tschaub/mock-fs
 expect.extend({
   toMatchInlineSnapshot(...args: Parameters<typeof toMatchInlineSnapshot>) {
-    // @ts-ignore
+    // @ts-expect-error
     return mock.bypass(() => toMatchInlineSnapshot.call(this, ...args));
   },
   toMatchSnapshot(...args) {
-    // @ts-ignore
+    // @ts-expect-error
     return mock.bypass(() => toMatchSnapshot.call(this, ...args));
   },
   toThrowErrorMatchingInlineSnapshot(...args) {
-    // @ts-ignore
+    // @ts-expect-error
     return mock.bypass(() => toThrowErrorMatchingInlineSnapshot.call(this, ...args));
   },
   toThrowErrorMatchingSnapshot(...args) {
-    // @ts-ignore
+    // @ts-expect-error
     return mock.bypass(() => toThrowErrorMatchingSnapshot.call(this, ...args));
   },
 });
