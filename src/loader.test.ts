@@ -497,3 +497,5 @@ test('throws error the composition of non-existent file', async () => {
     await loader.load('/test/1.css');
   }).rejects.toThrowErrorMatchingInlineSnapshot(`"ENOENT, no such file or directory '/test/2.css'"`);
 });
+
+test.todo('supports sourcemap file and inline sourcemap');

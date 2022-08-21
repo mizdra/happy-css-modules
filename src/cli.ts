@@ -7,6 +7,7 @@ import { run, RunnerOptions } from './runner';
 
 const pkgJson = JSON.parse(readFileSync(resolve(__dirname, '../package.json'), 'utf-8'));
 
+// TODO: Change default value for options.
 const yargsInstance = yargs
   .parserConfiguration({
     // workaround for https://github.com/yargs/yargs/issues/1318
