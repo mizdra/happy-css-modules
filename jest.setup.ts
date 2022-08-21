@@ -4,7 +4,7 @@ import {
   toThrowErrorMatchingInlineSnapshot,
   toThrowErrorMatchingSnapshot,
 } from 'jest-snapshot';
-import mockfs from 'mock-fs';
+import mock from 'mock-fs';
 import { format } from 'prettier';
 
 // There is a problem that snapshots cannot be written when the filesystem is mocked with mock-fs.
@@ -14,21 +14,34 @@ import { format } from 'prettier';
 expect.extend({
   toMatchInlineSnapshot(...args: Parameters<typeof toMatchInlineSnapshot>) {
     // @ts-ignore
-    return mockfs.bypass(() => toMatchInlineSnapshot.call(this, ...args));
+    return mock.bypass(() => toMatchInlineSnapshot.call(this, ...args));
   },
   toMatchSnapshot(...args) {
     // @ts-ignore
-    return mockfs.bypass(() => toMatchSnapshot.call(this, ...args));
+    return mock.bypass(() => toMatchSnapshot.call(this, ...args));
   },
   toThrowErrorMatchingInlineSnapshot(...args) {
     // @ts-ignore
-    return mockfs.bypass(() => toThrowErrorMatchingInlineSnapshot.call(this, ...args));
+    return mock.bypass(() => toThrowErrorMatchingInlineSnapshot.call(this, ...args));
   },
   toThrowErrorMatchingSnapshot(...args) {
     // @ts-ignore
-    return mockfs.bypass(() => toThrowErrorMatchingSnapshot.call(this, ...args));
+    return mock.bypass(() => toThrowErrorMatchingSnapshot.call(this, ...args));
   },
 });
+const nativeConsoleLog = console.log;
+const nativeConsoleWarn = console.warn;
+const nativeConsoleError = console.error;
+const nativeConsoleInfo = console.error;
+const nativeConsoleDebug = console.error;
+console.log = (...args) => mock.bypass(() => nativeConsoleLog.call(console, ...args));
+console.warn = (...args) => mock.bypass(() => nativeConsoleWarn.call(console, ...args));
+console.error = (...args) => mock.bypass(() => nativeConsoleError.call(console, ...args));
+console.info = (...args) => mock.bypass(() => nativeConsoleInfo.call(console, ...args));
+console.debug = (...args) => mock.bypass(() => nativeConsoleDebug.call(console, ...args));
+
+// Mocking by mock-fs prevents jest from reporting test results. Therefore, un-mock before the test is finished.
+afterEach(() => mock.restore());
 
 const jsonSerializer: jest.SnapshotSerializerPlugin = {
   serialize(val) {
