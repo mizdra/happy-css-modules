@@ -9,10 +9,6 @@ import {
 } from '../src/postcss';
 import { createRoot, createClassSelectors, createAtImports, createComposesDeclarations } from './test/util';
 
-afterEach(() => {
-  mockfs.restore();
-});
-
 describe('generateLocalTokenNames', () => {
   test('basic', async () => {
     expect(

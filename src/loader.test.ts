@@ -25,7 +25,6 @@ const transform: Transformer = async (source: string, from: string) => {
 const loader = new Loader(transform);
 
 afterEach(() => {
-  mockfs.restore();
   readFileSpy.mockClear();
 });
 
