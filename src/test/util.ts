@@ -1,3 +1,5 @@
+import { constants } from 'fs';
+import { access } from 'fs/promises';
 import less from 'less';
 import postcss, { Root, Rule, AtRule, Declaration } from 'postcss';
 import { ClassName } from 'postcss-selector-parser';
@@ -37,4 +39,13 @@ export const transform: Transformer = async (source: string, from: string) => {
 
 export async function waitForAsyncTask(): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+export async function exists(path: string): Promise<boolean> {
+  try {
+    await access(path, constants.F_OK);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
