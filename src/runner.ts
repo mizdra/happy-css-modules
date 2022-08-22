@@ -23,7 +23,13 @@ export interface RunnerOptions {
   namedExport?: boolean;
   declarationMap?: boolean;
   transform?: Transformer;
+  /**
+   * Silent output. Do not show "files written" messages.
+   * @default false
+   */
   silent?: boolean;
+  /** Working directory path. */
+  cwd?: string;
 }
 
 type OverrideProp<T, K extends keyof T, V extends T[K]> = Omit<T, K> & { [P in K]: V };
@@ -56,11 +62,9 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
           localsConvention: options.localsConvention,
           namedExport: options.namedExport,
         },
+        silent: options.silent ?? false,
+        cwd: options.cwd ?? process.cwd(),
       });
-      if (!options.silent) {
-        const dtsFilePath = getDtsFilePath(filePath, distOptions);
-        console.log('Wrote ' + chalk.green(relative(process.cwd(), dtsFilePath)));
-      }
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       console.error(chalk.red('[Error] ' + error));

@@ -1,4 +1,5 @@
 import { dirname, isAbsolute, relative } from 'path';
+import chalk from 'chalk';
 import { writeFileIfChanged } from '../file-system';
 import { Token } from '../loader';
 import { LocalsConvention } from '../runner';
@@ -13,6 +14,10 @@ export function getRelativePath(fromFilePath: string, toFilePath: string): strin
 
 export function isSubDirectoryFile(fromDirectory: string, toFilePath: string): boolean {
   return isAbsolute(toFilePath) && toFilePath.startsWith(fromDirectory);
+}
+
+function outputWriteLog(cwd: string, filePath: string) {
+  console.log('Wrote ' + chalk.green(relative(cwd, filePath)));
 }
 
 /** The distribution option. */
@@ -40,6 +45,10 @@ export type EmitterOptions = {
   emitDeclarationMap: boolean | undefined;
   /** The options for formatting the type definition. */
   dtsFormatOptions: DtsFormatOptions | undefined;
+  /** Silent output. Do not show "files written" messages */
+  silent: boolean;
+  /** Working directory path. */
+  cwd: string;
 };
 
 export async function emitGeneratedFiles({
@@ -48,6 +57,8 @@ export async function emitGeneratedFiles({
   distOptions,
   emitDeclarationMap,
   dtsFormatOptions,
+  silent,
+  cwd,
 }: EmitterOptions): Promise<void> {
   const dtsFilePath = getDtsFilePath(filePath, distOptions);
   const sourceMapFilePath = getSourceMapFilePath(filePath, distOptions);
@@ -62,10 +73,14 @@ export async function emitGeneratedFiles({
   if (emitDeclarationMap) {
     const sourceMappingURLComment = generateSourceMappingURLComment(dtsFilePath, sourceMapFilePath);
     await writeFileIfChanged(dtsFilePath, dtsContent + sourceMappingURLComment);
+    if (!silent) outputWriteLog(cwd, dtsFilePath);
+
     // NOTE: tsserver does not support inline declaration maps. Therefore, sourcemap files must be output.
     // blocked by: https://github.com/microsoft/TypeScript/issues/38966
     await writeFileIfChanged(sourceMapFilePath, sourceMap.toString());
+    if (!silent) outputWriteLog(cwd, sourceMapFilePath);
   } else {
     await writeFileIfChanged(dtsFilePath, dtsContent);
+    if (!silent) outputWriteLog(cwd, dtsFilePath);
   }
 }
