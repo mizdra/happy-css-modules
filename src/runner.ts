@@ -19,7 +19,7 @@ export interface RunnerOptions {
   pattern: string;
   outDir?: string;
   watch?: boolean;
-  localsConvention?: 'camelCase' | 'camelCaseOnly' | 'dashes' | 'dashesOnly';
+  localsConvention?: LocalsConvention;
   namedExport?: boolean;
   declarationMap?: boolean;
   transform?: Transformer;
