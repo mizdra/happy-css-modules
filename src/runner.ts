@@ -47,9 +47,15 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
   async function processFile(filePath: string) {
     try {
       const result = await loader.load(filePath);
-      await emitGeneratedFiles(filePath, result.tokens, distOptions, options.declarationMap, {
-        localsConvention: options.localsConvention,
-        namedExport: options.namedExport,
+      await emitGeneratedFiles({
+        filePath,
+        tokens: result.tokens,
+        distOptions,
+        emitDeclarationMap: options.declarationMap,
+        dtsFormatOptions: {
+          localsConvention: options.localsConvention,
+          namedExport: options.namedExport,
+        },
       });
       if (!options.silent) {
         const dtsFilePath = getDtsFilePath(filePath, distOptions);

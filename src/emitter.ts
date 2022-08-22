@@ -26,7 +26,7 @@ type DistOptions = {
 
 /**
  * Get .d.ts file path.
- * @param filePath The path to the source file. It is absolute.
+ * @param filePath The path to the source file (i.e. `/dir/foo.css`). It is absolute.
  * @param distOptions The distribution option.
  * @returns The path to the .d.ts file. It is absolute.
  */
@@ -44,7 +44,7 @@ export function getDtsFilePath(filePath: string, distOptions: DistOptions | unde
 
 /**
  * Get .d.ts.map file path.
- * @param filePath The path to the source file. It is absolute.
+ * @param filePath The path to the source file (i.e. `foo.css`). It is absolute.
  * @param distOptions The distribution option.
  * @returns The path to the .d.ts.map file. It is absolute.
  */
@@ -85,9 +85,9 @@ function formatTokens(tokens: Token[], localsConvention: LocalsConvention): Toke
 function generateTokenDeclarations(
   sourceMapFilePath: string,
   tokens: Token[],
-  dtsFormatOptions: DtsFormatOptions,
+  dtsFormatOptions: DtsFormatOptions | undefined,
 ): typeof SourceNode[] {
-  const formattedTokens = formatTokens(tokens, dtsFormatOptions.localsConvention);
+  const formattedTokens = formatTokens(tokens, dtsFormatOptions?.localsConvention);
   const result: typeof SourceNode[] = [];
 
   for (const token of formattedTokens) {
@@ -98,7 +98,7 @@ function generateTokenDeclarations(
     // NOTE: `--namedExport` does not support multiple jump destinations
     // TODO: Support multiple jump destinations with `--namedExport`
     for (const originalLocation of token.originalLocations) {
-      if (dtsFormatOptions.namedExport) {
+      if (dtsFormatOptions?.namedExport) {
         result.push(
           new SourceNode(null, null, null, [
             'export const ',
@@ -144,14 +144,14 @@ export function generateDtsContentWithSourceMap(
   dtsFilePath: string,
   sourceMapFilePath: string,
   tokens: Token[],
-  dtsFormatOptions: DtsFormatOptions,
+  dtsFormatOptions: DtsFormatOptions | undefined,
 ): { dtsContent: CodeWithSourceMap['code']; sourceMap: CodeWithSourceMap['map'] } {
   const tokenDeclarations = generateTokenDeclarations(sourceMapFilePath, tokens, dtsFormatOptions);
 
   let sourceNode: typeof SourceNode;
   if (!tokenDeclarations || !tokenDeclarations.length) {
     sourceNode = new SourceNode(null, null, null, '');
-  } else if (dtsFormatOptions.namedExport) {
+  } else if (dtsFormatOptions?.namedExport) {
     sourceNode = new SourceNode(1, 0, getRelativePath(sourceMapFilePath, filePath), [
       'export const __esModule: true;' + EOL,
       ...tokenDeclarations.map((tokenDeclaration) => [tokenDeclaration, EOL]),
@@ -175,13 +175,27 @@ export function generateDtsContentWithSourceMap(
   };
 }
 
-export async function emitGeneratedFiles(
-  filePath: string,
-  tokens: Token[],
-  distOptions: DistOptions | undefined,
-  emitDeclarationMap: boolean | undefined,
-  dtsFormatOptions: DtsFormatOptions,
-): Promise<void> {
+/** The options for emitter. */
+export type EmitterOptions = {
+  /** The path to the source file (i.e. `/dir/foo.css`). It is absolute. */
+  filePath: string;
+  /** The tokens exported by the source file. */
+  tokens: Token[];
+  /** The distribution option. */
+  distOptions: DistOptions | undefined;
+  /** Whether to output declaration map (i.e. `/dir/foo.css.d.ts.map`) or not. */
+  emitDeclarationMap: boolean | undefined;
+  /** The options for formatting the type definition. */
+  dtsFormatOptions: DtsFormatOptions | undefined;
+};
+
+export async function emitGeneratedFiles({
+  filePath,
+  tokens,
+  distOptions,
+  emitDeclarationMap,
+  dtsFormatOptions,
+}: EmitterOptions): Promise<void> {
   const dtsFilePath = getDtsFilePath(filePath, distOptions);
   const sourceMapFilePath = getSourceMapFilePath(filePath, distOptions);
   const { dtsContent, sourceMap } = generateDtsContentWithSourceMap(
