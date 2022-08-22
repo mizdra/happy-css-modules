@@ -1,7 +1,14 @@
 import { readFile, stat } from 'fs/promises';
+import chalk from 'chalk';
 import mock from 'mock-fs';
 import { exists, fakeToken } from '../test/util';
 import { emitGeneratedFiles, getRelativePath, isSubDirectoryFile } from '.';
+
+const consoleLogSpy = jest.spyOn(console, 'log');
+
+beforeEach(() => {
+  consoleLogSpy.mockClear();
+});
 
 test('getRelativePath', () => {
   expect(getRelativePath('/test/1.css.d.ts', '/test/1.css')).toBe('1.css');
@@ -22,6 +29,8 @@ describe('emitGeneratedFiles', () => {
     distOptions: undefined,
     emitDeclarationMap: true,
     dtsFormatOptions: undefined,
+    silent: true,
+    cwd: '/test',
   };
   beforeEach(() => {
     mock({
@@ -64,5 +73,16 @@ describe('emitGeneratedFiles', () => {
     const mtimeForSourceMap3 = (await stat('/test/1.css.d.ts.map')).mtime;
     expect(mtimeForDts1).not.toEqual(mtimeForDts3); // not skipped
     expect(mtimeForSourceMap1).not.toEqual(mtimeForSourceMap3); // not skipped
+  });
+  test('outputs write log', async () => {
+    await emitGeneratedFiles({ ...defaultArgs, filePath: '/test/1.css', emitDeclarationMap: true, silent: false });
+    expect(consoleLogSpy).toHaveBeenCalledTimes(2);
+    expect(consoleLogSpy).toHaveBeenNthCalledWith(1, `Wrote ${chalk.green('1.css.d.ts')}`);
+    expect(consoleLogSpy).toHaveBeenNthCalledWith(2, `Wrote ${chalk.green('1.css.d.ts.map')}`);
+    consoleLogSpy.mockClear();
+
+    await emitGeneratedFiles({ ...defaultArgs, filePath: '/test/2.css', emitDeclarationMap: false, silent: false });
+    expect(consoleLogSpy).toHaveBeenCalledTimes(1);
+    expect(consoleLogSpy).toHaveBeenNthCalledWith(1, `Wrote ${chalk.green('2.css.d.ts')}`);
   });
 });
