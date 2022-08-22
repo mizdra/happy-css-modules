@@ -1,10 +1,10 @@
 import { EOL } from 'os';
 import { basename, dirname, isAbsolute, join, relative } from 'path';
 import camelcase from 'camelcase';
-import { writeFileIfChanged } from './file-system';
-import { CodeWithSourceMap, SourceNode } from './library/source-map';
-import { Token } from './loader';
-import { LocalsConvention } from './runner';
+import { writeFileIfChanged } from '../file-system';
+import { CodeWithSourceMap, SourceNode } from '../library/source-map';
+import { Token } from '../loader';
+import { LocalsConvention } from '../runner';
 
 export type CamelCaseOption = boolean | 'dashes' | undefined;
 

@@ -1,6 +1,9 @@
 import { readFile, stat } from 'fs/promises';
 import { EOL } from 'os';
 import mock from 'mock-fs';
+import { Token } from '../loader';
+import { Location } from '../postcss';
+import { exists } from '../test/util';
 import {
   getDtsFilePath,
   getSourceMapFilePath,
@@ -8,10 +11,7 @@ import {
   generateDtsContentWithSourceMap,
   DtsFormatOptions,
   emitGeneratedFiles,
-} from '../src/emitter';
-import { Token } from '../src/loader';
-import { Location } from '../src/postcss';
-import { exists } from './test/util';
+} from '.';
 
 test('getDtsFilePath', () => {
   expect(getDtsFilePath('/app/src/dir/1.css', undefined)).toBe('/app/src/dir/1.css.d.ts');
