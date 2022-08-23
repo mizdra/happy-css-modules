@@ -10,7 +10,6 @@ const config = {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
   testMatch: ['<rootDir>/src/**/*.test.ts?(x)'],
-  moduleFileExtensions: ['js', 'ts', 'json'],
   setupFilesAfterEnv: ['./jest.setup.ts'],
 };
 
