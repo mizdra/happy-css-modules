@@ -1,10 +1,10 @@
-import { relative, resolve } from 'path';
+import { resolve } from 'path';
 import * as process from 'process';
 import * as util from 'util';
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 import _glob from 'glob';
-import { emitGeneratedFiles, getDtsFilePath } from './emitter';
+import { emitGeneratedFiles } from './emitter';
 import { Loader, Transformer } from './loader';
 
 const glob = util.promisify(_glob);
