@@ -5,7 +5,7 @@ import {
   getOriginalLocation,
   generateLocalTokenNames,
   parseAtImport,
-  Location,
+  type Location,
   parseComposesDeclarationWithFromUrl,
   collectNodes,
 } from './postcss.js';

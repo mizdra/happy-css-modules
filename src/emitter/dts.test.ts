@@ -1,7 +1,7 @@
-import { Token } from '../loader.js';
+import { type Token } from '../loader.js';
 import { fakeToken } from '../test/util.js';
 import { generateDtsContentWithSourceMap, getDtsFilePath } from './dts.js';
-import { DtsFormatOptions } from './index.js';
+import { type DtsFormatOptions } from './index.js';
 
 test('getDtsFilePath', () => {
   expect(getDtsFilePath('/app/src/dir/1.css', undefined)).toBe('/app/src/dir/1.css.d.ts');

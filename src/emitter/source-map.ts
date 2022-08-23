@@ -1,6 +1,6 @@
 import { EOL } from 'os';
 import { getDtsFilePath } from './dts.js';
-import { DistOptions, getRelativePath } from './index.js';
+import { type DistOptions, getRelativePath } from './index.js';
 
 /**
  * Get .d.ts.map file path.

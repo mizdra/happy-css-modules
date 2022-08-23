@@ -1,11 +1,11 @@
 import { constants } from 'fs';
 import { access } from 'fs/promises';
 import less from 'less';
-import postcss, { Root, Rule, AtRule, Declaration } from 'postcss';
-import { ClassName } from 'postcss-selector-parser';
+import postcss, { type Root, type Rule, type AtRule, type Declaration } from 'postcss';
+import { type ClassName } from 'postcss-selector-parser';
 import sass from 'sass';
-import { collectNodes, Location } from '../../src/postcss.js';
-import { Transformer, Token } from '../loader.js';
+import { collectNodes, type Location } from '../../src/postcss.js';
+import { type Transformer, type Token } from '../loader.js';
 
 export function createRoot(code: string, from?: string): Root {
   return postcss.parse(code, { from: from || '/test/test.css' });

@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import yargs from 'yargs';
-import { run, RunnerOptions } from './runner.js';
+import { run, type RunnerOptions } from './runner.js';
 
 const pkgJson = JSON.parse(readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '../package.json'), 'utf-8'));
 

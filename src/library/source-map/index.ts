@@ -1,4 +1,4 @@
-import { SourceNode as OriginalSourceNode, CodeWithSourceMap } from 'source-map';
+import { SourceNode as OriginalSourceNode, type CodeWithSourceMap } from 'source-map';
 
 // TODO: Open PR to mozilla/source-map
 

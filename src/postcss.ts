@@ -1,6 +1,6 @@
-import postcss, { Rule, AtRule, Root, Node, Declaration, Plugin } from 'postcss';
+import postcss, { type Rule, type AtRule, type Root, type Node, type Declaration, type Plugin } from 'postcss';
 import modules from 'postcss-modules';
-import selectorParser, { ClassName } from 'postcss-selector-parser';
+import selectorParser, { type ClassName } from 'postcss-selector-parser';
 import valueParser from 'postcss-value-parser';
 
 /** The pair of line number and column number. */
