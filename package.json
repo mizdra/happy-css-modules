@@ -2,6 +2,7 @@
   "name": "checkable-css-modules",
   "version": "0.7.0",
   "description": "Creates .d.ts files from CSS Modules .css files",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -33,7 +34,7 @@
   "author": "mizdra",
   "license": "MIT",
   "engines": {
-    "node": ">=12.0.0"
+    "node": "^14.13.1 || >=16.0.0"
   },
   "dependencies": {
     "camelcase": "^6.3.0",
