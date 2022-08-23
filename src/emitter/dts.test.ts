@@ -1,13 +1,7 @@
-import { EOL } from 'os';
-import {
-  getDtsFilePath,
-  getSourceMapFilePath,
-  generateSourceMappingURLComment,
-  generateDtsContentWithSourceMap,
-  DtsFormatOptions,
-} from '../src/emitter';
-import { Token } from '../src/loader';
-import { Location } from '../src/postcss';
+import { DtsFormatOptions } from '../emitter';
+import { Token } from '../loader';
+import { fakeToken } from '../test/util';
+import { generateDtsContentWithSourceMap, getDtsFilePath } from './dts';
 
 test('getDtsFilePath', () => {
   expect(getDtsFilePath('/app/src/dir/1.css', undefined)).toBe('/app/src/dir/1.css.d.ts');
@@ -17,41 +11,6 @@ test('getDtsFilePath', () => {
   expect(() => getDtsFilePath('/tmp/src/dir/1.css', { rootDir: '/app', outDir: '/app/dist' })).toThrow();
   expect(() => getDtsFilePath('/app/src/dir/1.css', { rootDir: '/app', outDir: '/tmp/dist' })).toThrow();
 });
-
-test('getSourceMapFilePath', () => {
-  expect(getSourceMapFilePath('/app/src/dir/1.css', undefined)).toBe('/app/src/dir/1.css.d.ts.map');
-  expect(getSourceMapFilePath('/app/src/dir/1.css', { rootDir: '/app', outDir: '/app/dist' })).toBe(
-    '/app/dist/src/dir/1.css.d.ts.map',
-  );
-  expect(() => getSourceMapFilePath('/tmp/src/dir/1.css', { rootDir: '/app', outDir: '/app/dist' })).toThrow();
-  expect(() => getSourceMapFilePath('/app/src/dir/1.css', { rootDir: '/app', outDir: '/tmp/dist' })).toThrow();
-});
-
-test('generateSourceMappingURLComment', () => {
-  expect(generateSourceMappingURLComment('/app/src/dir/1.css.d.ts', '/app/src/dir/1.css.d.ts.map')).toBe(
-    '//# sourceMappingURL=1.css.d.ts.map' + EOL,
-  );
-  expect(generateSourceMappingURLComment('/app/src/dir1/1.css.d.ts', '/app/src/dir2/1.css.d.ts.map')).toBe(
-    '//# sourceMappingURL=../dir2/1.css.d.ts.map' + EOL,
-  );
-});
-
-function fakeToken(args: {
-  name: Token['name'];
-  originalLocations: { filePath?: Location['filePath']; start: Location['start'] }[];
-}): Token {
-  return {
-    name: args.name,
-    originalLocations: args.originalLocations.map((location) => ({
-      filePath: location.filePath ?? '/test/1.css',
-      start: location.start,
-      end: {
-        line: location.start.line,
-        column: location.start.column + args.name.length - 1,
-      },
-    })),
-  };
-}
 
 describe('generateDtsContentWithSourceMap', () => {
   const filePath = '/test/1.css';
@@ -195,5 +154,3 @@ describe('generateDtsContentWithSourceMap', () => {
     expect(sourceMap).toMatchSnapshot(); // TODO: Make snapshot human-readable
   });
 });
-
-test.todo('emitGeneratedFiles');

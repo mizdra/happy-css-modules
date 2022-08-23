@@ -1,10 +1,10 @@
-import { relative, resolve } from 'path';
+import { resolve } from 'path';
 import * as process from 'process';
 import * as util from 'util';
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 import _glob from 'glob';
-import { emitGeneratedFiles, getDtsFilePath } from './emitter';
+import { emitGeneratedFiles } from './emitter';
 import { Loader, Transformer } from './loader';
 
 const glob = util.promisify(_glob);
@@ -19,11 +19,17 @@ export interface RunnerOptions {
   pattern: string;
   outDir?: string;
   watch?: boolean;
-  localsConvention?: 'camelCase' | 'camelCaseOnly' | 'dashes' | 'dashesOnly';
+  localsConvention?: LocalsConvention;
   namedExport?: boolean;
   declarationMap?: boolean;
   transform?: Transformer;
+  /**
+   * Silent output. Do not show "files written" messages.
+   * @default false
+   */
   silent?: boolean;
+  /** Working directory path. */
+  cwd?: string;
 }
 
 type OverrideProp<T, K extends keyof T, V extends T[K]> = Omit<T, K> & { [P in K]: V };
@@ -47,14 +53,18 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
   async function processFile(filePath: string) {
     try {
       const result = await loader.load(filePath);
-      await emitGeneratedFiles(filePath, result.tokens, distOptions, options.declarationMap, {
-        localsConvention: options.localsConvention,
-        namedExport: options.namedExport,
+      await emitGeneratedFiles({
+        filePath,
+        tokens: result.tokens,
+        distOptions,
+        emitDeclarationMap: options.declarationMap,
+        dtsFormatOptions: {
+          localsConvention: options.localsConvention,
+          namedExport: options.namedExport,
+        },
+        silent: options.silent ?? false,
+        cwd: options.cwd ?? process.cwd(),
       });
-      if (!options.silent) {
-        const dtsFilePath = getDtsFilePath(filePath, distOptions);
-        console.log('Wrote ' + chalk.green(relative(process.cwd(), dtsFilePath)));
-      }
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       console.error(chalk.red('[Error] ' + error));

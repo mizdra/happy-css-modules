@@ -1,6 +1,6 @@
 import { mkdir, readFile, writeFile } from 'fs/promises';
 import { dirname } from 'path';
-import { isSystemError } from './util';
+import { isSystemError } from '../util';
 
 /**
  * Write a file if it doesn't exist or is changed.

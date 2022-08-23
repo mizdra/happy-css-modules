@@ -1,7 +1,7 @@
 import { readFile, rm, stat } from 'fs/promises';
 import { tmpdir } from 'os';
 import { join } from 'path';
-import { writeFileIfChanged } from '../src/file-system';
+import { writeFileIfChanged } from './file-system';
 
 const TMP_DIR = join(tmpdir(), 'typed-css-modules');
 

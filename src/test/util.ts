@@ -1,9 +1,11 @@
+import { constants } from 'fs';
+import { access } from 'fs/promises';
 import less from 'less';
 import postcss, { Root, Rule, AtRule, Declaration } from 'postcss';
 import { ClassName } from 'postcss-selector-parser';
 import sass from 'sass';
-import { collectNodes } from '../../src/postcss';
-import { Transformer } from '../loader';
+import { collectNodes, Location } from '../../src/postcss';
+import { Transformer, Token } from '../loader';
 
 export function createRoot(code: string, from?: string): Root {
   return postcss.parse(code, { from: from || '/test/test.css' });
@@ -19,6 +21,23 @@ export function createClassSelectors(root: Root): { rule: Rule; classSelector: C
 
 export function createComposesDeclarations(root: Root): Declaration[] {
   return collectNodes(root).composesDeclarations;
+}
+
+export function fakeToken(args: {
+  name: Token['name'];
+  originalLocations: { filePath?: Location['filePath']; start: Location['start'] }[];
+}): Token {
+  return {
+    name: args.name,
+    originalLocations: args.originalLocations.map((location) => ({
+      filePath: location.filePath ?? '/test/1.css',
+      start: location.start,
+      end: {
+        line: location.start.line,
+        column: location.start.column + args.name.length - 1,
+      },
+    })),
+  };
 }
 
 export const transform: Transformer = async (source: string, from: string) => {
@@ -37,4 +56,13 @@ export const transform: Transformer = async (source: string, from: string) => {
 
 export async function waitForAsyncTask(): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+export async function exists(path: string): Promise<boolean> {
+  try {
+    await access(path, constants.F_OK);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
