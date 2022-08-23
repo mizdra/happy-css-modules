@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import yargs from 'yargs';
