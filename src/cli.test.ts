@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 import { parseArgv } from '../src/cli.js';
 
 const baseArgs = ['node', 'tsm'];
@@ -6,10 +7,10 @@ let processExitSpy: jest.SpyInstance;
 let consoleErrorSpy: jest.SpyInstance;
 
 beforeEach(() => {
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  processExitSpy = jest.spyOn(process, 'exit').mockImplementation(() => ({} as unknown as never));
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+  // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-explicit-any
+  processExitSpy = jest.spyOn(process, 'exit').mockImplementation(() => ({} as unknown as never)) as any;
+  // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-explicit-any
+  consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {}) as any;
 });
 afterEach(() => {
   processExitSpy.mockRestore();

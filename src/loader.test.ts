@@ -1,6 +1,7 @@
 import fs from 'fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'path';
+import { jest } from '@jest/globals';
 import dedent from 'dedent';
 import mockfs from 'mock-fs';
 import { Loader } from '../src/loader.js';

@@ -1,4 +1,5 @@
 import { readFile, stat } from 'fs/promises';
+import { jest } from '@jest/globals';
 import chalk from 'chalk';
 import mock from 'mock-fs';
 import { exists, fakeToken } from '../test/util.js';
