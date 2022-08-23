@@ -12,7 +12,9 @@ module.exports = {
       },
       rules: {
         'import/no-extraneous-dependencies': 'error',
-        'import/extensions': ['error', 'always'],
+        // disable because this rule do not support ESM in TypeScript.
+        // ref: https://github.com/import-js/eslint-plugin-import/issues/2170
+        'import/no-unresolved': 'off',
       },
     },
     {
