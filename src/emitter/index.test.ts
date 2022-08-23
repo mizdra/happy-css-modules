@@ -84,5 +84,28 @@ describe('emitGeneratedFiles', () => {
     await emitGeneratedFiles({ ...defaultArgs, filePath: '/test/2.css', emitDeclarationMap: false, silent: false });
     expect(consoleLogSpy).toHaveBeenCalledTimes(1);
     expect(consoleLogSpy).toHaveBeenNthCalledWith(1, `Wrote ${chalk.green('2.css.d.ts')}`);
+    consoleLogSpy.mockClear();
+
+    await emitGeneratedFiles({ ...defaultArgs, filePath: '/test/3.css', emitDeclarationMap: false, silent: true });
+    expect(consoleLogSpy).toHaveBeenCalledTimes(0);
+  });
+  test('changes working directory by cwd', async () => {
+    await emitGeneratedFiles({
+      ...defaultArgs,
+      filePath: '/test/1.css',
+      emitDeclarationMap: false,
+      silent: false,
+      cwd: '/test',
+    });
+    await emitGeneratedFiles({
+      ...defaultArgs,
+      filePath: '/test/1.css',
+      emitDeclarationMap: false,
+      silent: false,
+      cwd: '/',
+    });
+    expect(consoleLogSpy).toHaveBeenCalledTimes(2);
+    expect(consoleLogSpy).toHaveBeenNthCalledWith(1, `Wrote ${chalk.green('1.css.d.ts')}`);
+    expect(consoleLogSpy).toHaveBeenNthCalledWith(2, `Wrote ${chalk.green('test/1.css.d.ts')}`);
   });
 });
