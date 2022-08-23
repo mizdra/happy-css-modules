@@ -1,8 +1,8 @@
 import { readFile, stat } from 'fs/promises';
 import chalk from 'chalk';
 import mock from 'mock-fs';
-import { exists, fakeToken } from '../test/util';
-import { emitGeneratedFiles, getRelativePath, isSubDirectoryFile } from '.';
+import { exists, fakeToken } from '../test/util.js';
+import { emitGeneratedFiles, getRelativePath, isSubDirectoryFile } from './index.js';
 
 const consoleLogSpy = jest.spyOn(console, 'log');
 

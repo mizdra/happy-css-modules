@@ -2,8 +2,8 @@ import fs from 'fs/promises';
 import { resolve } from 'path';
 import dedent from 'dedent';
 import mockfs from 'mock-fs';
-import { Loader } from '../src/loader';
-import { transform } from './test/util';
+import { Loader } from '../src/loader.js';
+import { transform } from './test/util.js';
 
 const readFileSpy = jest.spyOn(fs, 'readFile');
 

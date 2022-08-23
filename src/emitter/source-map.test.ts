@@ -1,5 +1,5 @@
 import { EOL } from 'os';
-import { getSourceMapFilePath, generateSourceMappingURLComment } from './source-map';
+import { getSourceMapFilePath, generateSourceMappingURLComment } from './source-map.js';
 
 test('getSourceMapFilePath', () => {
   expect(getSourceMapFilePath('/app/src/dir/1.css', undefined)).toBe('/app/src/dir/1.css.d.ts.map');

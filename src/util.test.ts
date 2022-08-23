@@ -1,4 +1,4 @@
-import { hasProp, isObject, isSystemError, unique, uniqueBy } from '../src/util';
+import { hasProp, isObject, isSystemError, unique, uniqueBy } from '../src/util.js';
 
 function fakeSystemError({ code }: { code: string }) {
   const error = new Error();

@@ -1,7 +1,7 @@
 import { readFile, writeFile } from 'fs/promises';
 import mock from 'mock-fs';
-import { run } from './runner';
-import { transform, waitForAsyncTask } from './test/util';
+import { run } from './runner.js';
+import { transform, waitForAsyncTask } from './test/util.js';
 
 const defaultOptions = {
   pattern: '/test/**/*.{css,scss}',

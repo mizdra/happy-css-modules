@@ -8,8 +8,8 @@ import {
   Location,
   parseComposesDeclarationWithFromUrl,
   collectNodes,
-} from './postcss';
-import { unique, uniqueBy } from './util';
+} from './postcss.js';
+import { unique, uniqueBy } from './util.js';
 
 /**
  * The value returned from the transformer.

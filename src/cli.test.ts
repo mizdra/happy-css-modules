@@ -1,4 +1,4 @@
-import { parseArgv } from '../src/cli';
+import { parseArgv } from '../src/cli.js';
 
 const baseArgs = ['node', 'tsm'];
 

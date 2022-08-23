@@ -1,2 +1,2 @@
-export { run } from './runner';
-export { type Transformer } from './loader';
+export { run } from './runner.js';
+export { type Transformer } from './loader.js';

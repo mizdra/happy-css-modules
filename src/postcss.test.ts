@@ -6,8 +6,8 @@ import {
   parseAtImport,
   parseComposesDeclarationWithFromUrl,
   collectNodes,
-} from '../src/postcss';
-import { createRoot, createClassSelectors, createAtImports, createComposesDeclarations } from './test/util';
+} from '../src/postcss.js';
+import { createRoot, createClassSelectors, createAtImports, createComposesDeclarations } from './test/util.js';
 
 describe('generateLocalTokenNames', () => {
   test('basic', async () => {
