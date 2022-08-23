@@ -1,5 +1,6 @@
 import fs from 'fs/promises';
-import { resolve } from 'path';
+import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'path';
 import dedent from 'dedent';
 import mockfs from 'mock-fs';
 import { Loader } from '../src/loader.js';
@@ -360,7 +361,7 @@ describe('supports transpiler', () => {
         .c { dummy: ''; }
         `,
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      'node_modules': mockfs.load(resolve(__dirname, '../node_modules')),
+      'node_modules': mockfs.load(resolve(dirname(fileURLToPath(import.meta.url)), '../node_modules')),
     });
     const result = await loader.load('/test/1.less');
 
