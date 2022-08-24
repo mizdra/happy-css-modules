@@ -1,9 +1,9 @@
 #!/usr/bin/env -S node
 // @ts-check
 
-const { run } = require('../dist');
-const less = require('less');
-const sass = require('sass');
+import { run } from '../dist/index.js';
+import less from 'less';
+import sass from 'sass';
 
 /** @type {import('../dist').Transformer} */
 const transform = async (source, from) => {

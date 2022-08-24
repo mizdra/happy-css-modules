@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-const { main } = require('../dist/cli');
+import { main } from '../dist/cli.js';
 
 main().catch(console.error);

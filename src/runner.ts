@@ -4,8 +4,8 @@ import * as util from 'util';
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 import _glob from 'glob';
-import { emitGeneratedFiles } from './emitter';
-import { Loader, Transformer } from './loader';
+import { emitGeneratedFiles } from './emitter/index.js';
+import { Loader, type Transformer } from './loader.js';
 
 const glob = util.promisify(_glob);
 

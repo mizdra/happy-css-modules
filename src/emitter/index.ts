@@ -1,10 +1,10 @@
 import { dirname, isAbsolute, relative } from 'path';
 import chalk from 'chalk';
-import { Token } from '../loader';
-import { LocalsConvention } from '../runner';
-import { generateDtsContentWithSourceMap, getDtsFilePath } from './dts';
-import { writeFileIfChanged } from './file-system';
-import { generateSourceMappingURLComment, getSourceMapFilePath } from './source-map';
+import { type Token } from '../loader.js';
+import { type LocalsConvention } from '../runner.js';
+import { generateDtsContentWithSourceMap, getDtsFilePath } from './dts.js';
+import { writeFileIfChanged } from './file-system.js';
+import { generateSourceMappingURLComment, getSourceMapFilePath } from './source-map.js';
 
 export function getRelativePath(fromFilePath: string, toFilePath: string): string {
   return relative(dirname(fromFilePath), toFilePath);

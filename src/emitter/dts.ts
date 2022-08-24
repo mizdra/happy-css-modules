@@ -1,10 +1,10 @@
 import { EOL } from 'os';
 import { join, relative, basename } from 'path';
 import camelcase from 'camelcase';
-import { SourceNode, CodeWithSourceMap } from '../library/source-map';
-import { Token } from '../loader';
-import { LocalsConvention } from '../runner';
-import { DistOptions, getRelativePath, isSubDirectoryFile, DtsFormatOptions } from '.';
+import { SourceNode, type CodeWithSourceMap } from '../library/source-map/index.js';
+import { type Token } from '../loader.js';
+import { type LocalsConvention } from '../runner.js';
+import { type DistOptions, getRelativePath, isSubDirectoryFile, type DtsFormatOptions } from './index.js';
 
 /**
  * Get .d.ts file path.

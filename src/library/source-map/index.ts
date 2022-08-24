@@ -1,4 +1,4 @@
-import { SourceNode as OriginalSourceNode, CodeWithSourceMap } from 'source-map';
+import { SourceNode as OriginalSourceNode, type CodeWithSourceMap } from 'source-map';
 
 // TODO: Open PR to mozilla/source-map
 
@@ -23,4 +23,4 @@ interface StrictlyTypedSourceNode extends OriginalSourceNode {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SourceNode: StrictlyTypedSourceNode = OriginalSourceNode as any;
 
-export { SourceNode, CodeWithSourceMap };
+export { SourceNode, type CodeWithSourceMap };

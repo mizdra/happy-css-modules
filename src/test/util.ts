@@ -1,11 +1,12 @@
 import { constants } from 'fs';
 import { access } from 'fs/promises';
+import { jest } from '@jest/globals';
 import less from 'less';
-import postcss, { Root, Rule, AtRule, Declaration } from 'postcss';
-import { ClassName } from 'postcss-selector-parser';
+import postcss, { type Root, type Rule, type AtRule, type Declaration } from 'postcss';
+import { type ClassName } from 'postcss-selector-parser';
 import sass from 'sass';
-import { collectNodes, Location } from '../../src/postcss';
-import { Transformer, Token } from '../loader';
+import { collectNodes, type Location } from '../../src/postcss.js';
+import { type Transformer, type Token } from '../loader.js';
 
 export function createRoot(code: string, from?: string): Root {
   return postcss.parse(code, { from: from || '/test/test.css' });
@@ -65,4 +66,32 @@ export async function exists(path: string): Promise<boolean> {
   } catch (e) {
     return false;
   }
+}
+
+// workaround for https://github.com/facebook/jest/issues/13135
+// eslint-disable-next-line @typescript-eslint/ban-types
+export function spyOnModuleItem<T extends {}, M extends jest.FunctionPropertyNames<Required<T>>>(
+  moduleName: string,
+  object: T,
+  method: M,
+): jest.FunctionProperties<Required<T>>[M] extends jest.Func
+  ? jest.SpyInstance<
+      ReturnType<jest.FunctionProperties<Required<T>>[M]>,
+      jest.ArgsType<jest.FunctionProperties<Required<T>>[M]>
+    >
+  : never {
+  const spy = jest.fn();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  spy.mockImplementation((...args): any => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (object[method] as any)(...args);
+  });
+
+  jest.unstable_mockModule(moduleName, () => ({
+    ...object,
+    [method]: spy,
+  }));
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return spy as any;
 }
