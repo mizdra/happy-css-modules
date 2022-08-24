@@ -5,7 +5,8 @@ import mock from 'mock-fs';
 import { exists, fakeToken } from '../test/util.js';
 import { emitGeneratedFiles, getRelativePath, isSubDirectoryFile } from './index.js';
 
-const consoleLogSpy = jest.spyOn(console, 'log');
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
 beforeEach(() => {
   consoleLogSpy.mockClear();
