@@ -11,6 +11,8 @@ import {
   collectNodes,
 } from './postcss.js';
 
+export { collectNodes, type Location } from './postcss.js';
+
 /**
  * The value returned from the transformer.
  * `false` means to skip transpiling on that file.

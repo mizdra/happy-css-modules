@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { parseArgv } from '../src/cli.js';
+import { parseArgv } from './cli.js';
 
 const baseArgs = ['node', 'tsm'];
 
