@@ -1,6 +1,7 @@
 import { readFile, stat } from 'fs/promises';
 import { dirname, resolve } from 'path';
 import postcss from 'postcss';
+import { unique, uniqueBy } from '../util.js';
 import {
   getOriginalLocation,
   generateLocalTokenNames,
@@ -8,8 +9,7 @@ import {
   type Location,
   parseComposesDeclarationWithFromUrl,
   collectNodes,
-} from '../postcss.js';
-import { unique, uniqueBy } from '../util.js';
+} from './postcss.js';
 
 /**
  * The value returned from the transformer.

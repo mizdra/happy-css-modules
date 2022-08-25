@@ -5,8 +5,8 @@ import less from 'less';
 import postcss, { type Root, type Rule, type AtRule, type Declaration } from 'postcss';
 import { type ClassName } from 'postcss-selector-parser';
 import sass from 'sass';
-import { collectNodes, type Location } from '../../src/postcss.js';
 import { type Transformer, type Token } from '../loader/index.js';
+import { collectNodes, type Location } from '../loader/postcss.js';
 
 export function createRoot(code: string, from?: string): Root {
   return postcss.parse(code, { from: from || '/test/test.css' });

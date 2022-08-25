@@ -1,13 +1,13 @@
 import dedent from 'dedent';
 import mockfs from 'mock-fs';
+import { createRoot, createClassSelectors, createAtImports, createComposesDeclarations } from '../test/util.js';
 import {
   generateLocalTokenNames,
   getOriginalLocation,
   parseAtImport,
   parseComposesDeclarationWithFromUrl,
   collectNodes,
-} from '../src/postcss.js';
-import { createRoot, createClassSelectors, createAtImports, createComposesDeclarations } from './test/util.js';
+} from './postcss.js';
 
 describe('generateLocalTokenNames', () => {
   test('basic', async () => {
