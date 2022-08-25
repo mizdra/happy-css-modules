@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import yargs from 'yargs';
-import { run, type RunnerOptions } from './runner.js';
+import { type RunnerOptions } from './runner.js';
 
 const pkgJson = JSON.parse(readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '../package.json'), 'utf-8'));
 
@@ -70,8 +70,4 @@ export function parseArgv(argv: string[]): RunnerOptions {
     declarationMap: parsedArgv.declarationMap,
     silent: parsedArgv.silent,
   };
-}
-
-export async function main(): Promise<void> {
-  await run(parseArgv(process.argv));
 }

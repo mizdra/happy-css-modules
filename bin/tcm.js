@@ -1,5 +1,6 @@
 #!/usr/bin/env node
+// @ts-check
 
-import { main } from '../dist/cli.js';
+import { run, parseArgv } from '../dist/index.js';
 
-main().catch(console.error);
+run(parseArgv(process.argv)).catch(console.error);
