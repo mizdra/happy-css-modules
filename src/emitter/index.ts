@@ -1,6 +1,6 @@
 import { dirname, isAbsolute, relative } from 'path';
 import chalk from 'chalk';
-import { type Token } from '../loader.js';
+import { type Token } from '../loader/index.js';
 import { type LocalsConvention } from '../runner.js';
 import { generateDtsContentWithSourceMap, getDtsFilePath } from './dts.js';
 import { writeFileIfChanged } from './file-system.js';

@@ -6,7 +6,7 @@ import postcss, { type Root, type Rule, type AtRule, type Declaration } from 'po
 import { type ClassName } from 'postcss-selector-parser';
 import sass from 'sass';
 import { collectNodes, type Location } from '../../src/postcss.js';
-import { type Transformer, type Token } from '../loader.js';
+import { type Transformer, type Token } from '../loader/index.js';
 
 export function createRoot(code: string, from?: string): Root {
   return postcss.parse(code, { from: from || '/test/test.css' });
