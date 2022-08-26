@@ -3,16 +3,6 @@
 /** @type import('eslint').Linter.BaseConfig */
 module.exports = {
   root: true,
-  settings: {
-    'import/parsers': {
-      '@typescript-eslint/parser': ['.ts', '.tsx'],
-    },
-    'import/resolver': {
-      typescript: {
-        project: ['./tsconfig.src.json', './tsconfig.test.json'],
-      },
-    },
-  },
   overrides: [
     {
       files: ['**/*.{js,jsx,cjs,mjs,ts,tsx,cts,mts}'],
@@ -21,16 +11,23 @@ module.exports = {
         node: true,
       },
       rules: {
-        'import/no-internal-modules': [
+        // disable because this rule do not support ESM in TypeScript.
+        // ref: https://github.com/import-js/eslint-plugin-import/issues/2170
+        'import/no-unresolved': 'off',
+        'no-restricted-imports': [
           'error',
           {
-            allow: [
-              '**/util.js',
-              '**/loader/index.js',
-              '**/emitter/index.js',
-              '**/library/*/index.js',
-              '**/dist/index.js',
-              'yargs/*',
+            patterns: [
+              './*/*',
+              '../*/*',
+              '!./*.js',
+              '!../*.js',
+              '!./*/index.js',
+              '!../*/index.js',
+              '!./*/util.js',
+              '!../*/util.js',
+              '!./library/*',
+              '!../library/*',
             ],
           },
         ],
