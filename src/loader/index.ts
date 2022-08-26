@@ -70,13 +70,13 @@ function normalizeTokens(tokens: Token[]): Token[] {
 /** This class collects information on tokens exported from CSS Modules files. */
 export class Loader {
   private readonly cache: Map<string, CacheEntry> = new Map();
-  private readonly transform: Transformer | undefined;
+  private readonly transformer: Transformer | undefined;
 
-  constructor(transform?: Transformer) {
+  constructor(transformer?: Transformer) {
     // TODO: support resolver
     // TODO: support default transformer
     // TODO: support default resolver
-    this.transform = transform;
+    this.transformer = transformer;
   }
 
   /** Returns `true` if the cache is outdated. */
@@ -98,7 +98,7 @@ export class Loader {
 
   /**
    * Reads the source file and returns the code.
-   * If transform is specified, the code is transformed before returning.
+   * If transformer is specified, the code is transformed before returning.
    */
   private async readCSS(
     filePath: string,
@@ -107,8 +107,8 @@ export class Loader {
     | { css: string; map: string | object | undefined; dependencies: string[] }
   > {
     const css = await readFile(filePath, 'utf-8');
-    if (!this.transform) return { css, map: undefined, dependencies: [] };
-    const result = await this.transform(css, filePath);
+    if (!this.transformer) return { css, map: undefined, dependencies: [] };
+    const result = await this.transformer(css, filePath);
     if (result === false) return { css, map: undefined, dependencies: [] };
     return {
       css: result.css,

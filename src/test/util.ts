@@ -39,7 +39,7 @@ export function fakeToken(args: {
   };
 }
 
-export const transform: Transformer = async (source: string, from: string) => {
+export const transformer: Transformer = async (source: string, from: string) => {
   if (from.endsWith('.scss')) {
     const result = sass.compile(from, { sourceMap: true });
     return { css: result.css, map: result.sourceMap!, dependencies: result.loadedUrls };

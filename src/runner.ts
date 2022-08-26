@@ -22,7 +22,7 @@ export interface RunnerOptions {
   localsConvention?: LocalsConvention;
   namedExport?: boolean;
   declarationMap?: boolean;
-  transform?: Transformer;
+  transformer?: Transformer;
   /**
    * Silent output. Do not show "files written" messages.
    * @default false
@@ -42,7 +42,7 @@ type OverrideProp<T, K extends keyof T, V extends T[K]> = Omit<T, K> & { [P in K
 export async function run(options: OverrideProp<RunnerOptions, 'watch', true>): Promise<Watcher>;
 export async function run(options: RunnerOptions): Promise<void>;
 export async function run(options: RunnerOptions): Promise<Watcher | void> {
-  const loader = new Loader(options.transform);
+  const loader = new Loader(options.transformer);
   const distOptions = options.outDir
     ? {
         rootDir: process.cwd(), // TODO: support `--rootDir` option

@@ -1,7 +1,7 @@
 import { readFile, writeFile } from 'fs/promises';
 import mock from 'mock-fs';
 import { run } from './runner.js';
-import { transform, waitForAsyncTask } from './test/util.js';
+import { transformer, waitForAsyncTask } from './test/util.js';
 
 const defaultOptions = {
   pattern: '/test/**/*.{css,scss}',
@@ -34,7 +34,7 @@ test('supports transformer', async () => {
   mock({
     '/test/1.scss': `.a { dummy: ''; }`,
   });
-  await run({ ...defaultOptions, transform });
+  await run({ ...defaultOptions, transformer });
   expect(await readFile('/test/1.scss.d.ts', 'utf8')).toMatchSnapshot();
   expect(await readFile('/test/1.scss.d.ts.map', 'utf8')).toMatchSnapshot();
 });
