@@ -1,6 +1,5 @@
 import { constants } from 'fs';
 import { access } from 'fs/promises';
-import { jest } from '@jest/globals';
 import less from 'less';
 import postcss, { type Root, type Rule, type AtRule, type Declaration } from 'postcss';
 import { type ClassName } from 'postcss-selector-parser';
