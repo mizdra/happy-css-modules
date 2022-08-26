@@ -16,9 +16,9 @@ jest.unstable_mockModule('fs/promises', () => ({
 // ref: https://www.coolcomputerclub.com/posts/jest-hoist-await/
 const { Loader } = await import('./index.js');
 // NOTE: ../test/util.js depends on . /index.js, so it must also be imported dynamically...
-const { transform } = await import('../test/util.js');
+const { transformer } = await import('../test/util.js');
 
-const loader = new Loader(transform);
+const loader = new Loader(transformer);
 
 afterEach(() => {
   readFileSpy.mockClear();

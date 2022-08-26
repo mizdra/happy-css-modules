@@ -6,7 +6,7 @@ import less from 'less';
 import sass from 'sass';
 
 /** @type {import('../dist').Transformer} */
-const transform = async (source, from) => {
+const transformer = async (source, from) => {
   if (from.endsWith('.scss')) {
     const result = sass.compile(from, { sourceMap: true });
     return { css: result.css, map: /** @type {object} */ (result.sourceMap), dependencies: result.loadedUrls };
@@ -24,5 +24,5 @@ run({
   pattern: '**/*.{css,scss,less}',
   watch: process.argv.includes('--watch'),
   declarationMap: true,
-  transform,
+  transformer,
 }).catch(console.error);
