@@ -1,20 +1,16 @@
-// Currently, `jest.spyOn` does not work with ESM. We have to spy manually using `jest.unstable_mockModule`.
-// workaround for https://github.com/facebook/jest/issues/13135
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const readFileSpy = jest.fn().mockImplementation(async (path: any, option: any): Promise<any> => {
-  return fs.readFile(path, option); // Bypass a native function
-});
-jest.unstable_mockModule('fs/promises', () => ({
-  ...fs, // Inherit native functions (e.g., fs.stat)
-  readFile: readFileSpy,
-}));
-
 import fs from 'fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'path';
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
 import mockfs from 'mock-fs';
+
+const readFileSpy = jest.spyOn(fs, 'readFile');
+// In ESM, for some reason, we need to explicitly mock module
+jest.unstable_mockModule('fs/promises', () => ({
+  ...fs, // Inherit native functions (e.g., fs.stat)
+  readFile: readFileSpy,
+}));
 
 // After the mock of fs/promises is complete, . /index.js after the mock of fs/promises is complete.
 // ref: https://www.coolcomputerclub.com/posts/jest-hoist-await/
