@@ -1,4 +1,4 @@
-import { type Token } from '../loader.js';
+import { type Token } from '../loader/index.js';
 import { fakeToken } from '../test/util.js';
 import { generateDtsContentWithSourceMap, getDtsFilePath } from './dts.js';
 import { type DtsFormatOptions } from './index.js';

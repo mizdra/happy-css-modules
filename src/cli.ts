@@ -2,7 +2,8 @@ import { readFileSync } from 'fs';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import yargs from 'yargs';
-import { run, type RunnerOptions } from './runner.js';
+import { hideBin } from 'yargs/helpers';
+import { type RunnerOptions } from './runner.js';
 
 const pkgJson = JSON.parse(readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '../package.json'), 'utf-8'));
 
@@ -12,7 +13,7 @@ const pkgJson = JSON.parse(readFileSync(resolve(dirname(fileURLToPath(import.met
  */
 export function parseArgv(argv: string[]): RunnerOptions {
   // TODO: Change default value for options.
-  const parsedArgv = yargs(argv.slice(2))
+  const parsedArgv = yargs(hideBin(argv))
     .parserConfiguration({
       // workaround for https://github.com/yargs/yargs/issues/1318
       'duplicate-arguments-array': false,
@@ -70,8 +71,4 @@ export function parseArgv(argv: string[]): RunnerOptions {
     declarationMap: parsedArgv.declarationMap,
     silent: parsedArgv.silent,
   };
-}
-
-export async function main(): Promise<void> {
-  await run(parseArgv(process.argv));
 }

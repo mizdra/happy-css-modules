@@ -1,13 +1,23 @@
 import fs from 'fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'path';
+import { jest } from '@jest/globals';
 import dedent from 'dedent';
 import mockfs from 'mock-fs';
-import { spyOnModuleItem, transform } from './test/util.js';
 
-const readFileSpy = spyOnModuleItem('fs/promises', fs, 'readFile');
+const readFileSpy = jest.spyOn(fs, 'readFile');
+// In ESM, for some reason, we need to explicitly mock module
+jest.unstable_mockModule('fs/promises', () => ({
+  ...fs, // Inherit native functions (e.g., fs.stat)
+  readFile: readFileSpy,
+}));
 
-const { Loader } = await import('../src/loader.js');
+// After the mock of fs/promises is complete, . /index.js after the mock of fs/promises is complete.
+// ref: https://www.coolcomputerclub.com/posts/jest-hoist-await/
+const { Loader } = await import('./index.js');
+// NOTE: ../test/util.js depends on . /index.js, so it must also be imported dynamically...
+const { transform } = await import('../test/util.js');
+
 const loader = new Loader(transform);
 
 afterEach(() => {
@@ -361,7 +371,7 @@ describe('supports transpiler', () => {
         .c { dummy: ''; }
         `,
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      'node_modules': mockfs.load(resolve(dirname(fileURLToPath(import.meta.url)), '../node_modules')),
+      'node_modules': mockfs.load(resolve(dirname(fileURLToPath(import.meta.url)), '../../node_modules')),
     });
     const result = await loader.load('/test/1.less');
 
