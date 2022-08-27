@@ -1,5 +1,5 @@
 import { type Token } from '../loader/index.js';
-import { fakeToken } from '../test/util.js';
+import { fakeToken, getFixturePath } from '../test/util.js';
 import { generateDtsContentWithSourceMap, getDtsFilePath } from './dts.js';
 import { type DtsFormatOptions } from './index.js';
 
@@ -13,31 +13,40 @@ test('getDtsFilePath', () => {
 });
 
 describe('generateDtsContentWithSourceMap', () => {
-  const filePath = '/test/1.css';
-  const dtsFilePath = '/test/1.css.d.ts';
-  const sourceMapFilePath = '/test/1.css.map';
+  const filePath = getFixturePath('/test/1.css');
+  const dtsFilePath = getFixturePath('/test/1.css.d.ts');
+  const sourceMapFilePath = getFixturePath('/test/1.css.map');
   const dtsFormatOptions: DtsFormatOptions = {
     localsConvention: undefined,
     namedExport: false,
   };
   test('generate dts content with source map', () => {
     const tokens: Token[] = [
-      fakeToken({ name: 'foo', originalLocations: [{ filePath: '/test/1.css', start: { line: 1, column: 1 } }] }),
-      fakeToken({ name: 'bar', originalLocations: [{ filePath: '/test/1.css', start: { line: 2, column: 1 } }] }),
+      fakeToken({
+        name: 'foo',
+        originalLocations: [{ filePath: getFixturePath('/test/1.css'), start: { line: 1, column: 1 } }],
+      }),
+      fakeToken({
+        name: 'bar',
+        originalLocations: [{ filePath: getFixturePath('/test/1.css'), start: { line: 2, column: 1 } }],
+      }),
 
       fakeToken({
         name: 'baz',
         originalLocations: [
-          { filePath: '/test/1.css', start: { line: 3, column: 1 } },
-          { filePath: '/test/1.css', start: { line: 4, column: 1 } },
+          { filePath: getFixturePath('/test/1.css'), start: { line: 3, column: 1 } },
+          { filePath: getFixturePath('/test/1.css'), start: { line: 4, column: 1 } },
         ],
       }),
-      fakeToken({ name: 'qux', originalLocations: [{ filePath: '/test/2.css', start: { line: 5, column: 1 } }] }),
+      fakeToken({
+        name: 'qux',
+        originalLocations: [{ filePath: getFixturePath('/test/2.css'), start: { line: 5, column: 1 } }],
+      }),
       fakeToken({
         name: 'quux',
         originalLocations: [
-          { filePath: '/test/2.css', start: { line: 6, column: 1 } },
-          { filePath: '/test/2.css', start: { line: 7, column: 1 } },
+          { filePath: getFixturePath('/test/2.css'), start: { line: 6, column: 1 } },
+          { filePath: getFixturePath('/test/2.css'), start: { line: 7, column: 1 } },
         ],
       }),
     ];
@@ -129,17 +138,17 @@ describe('generateDtsContentWithSourceMap', () => {
     const tokens: Token[] = [
       fakeToken({
         name: 'foo',
-        originalLocations: [{ filePath: '/test/src/1.css', start: { line: 1, column: 1 } }],
+        originalLocations: [{ filePath: getFixturePath('/test/src/1.css'), start: { line: 1, column: 1 } }],
       }),
       fakeToken({
         name: 'bar',
-        originalLocations: [{ filePath: '/test/src/1.css', start: { line: 2, column: 1 } }],
+        originalLocations: [{ filePath: getFixturePath('/test/src/1.css'), start: { line: 2, column: 1 } }],
       }),
     ];
     const { dtsContent, sourceMap } = generateDtsContentWithSourceMap(
-      '/test/src/1.css',
-      '/test/dist/1.css.d.ts',
-      '/test/dist/1.css.d.ts.map',
+      getFixturePath('/test/src/1.css'),
+      getFixturePath('/test/dist/1.css.d.ts'),
+      getFixturePath('/test/dist/1.css.d.ts.map'),
       tokens,
       dtsFormatOptions,
     );

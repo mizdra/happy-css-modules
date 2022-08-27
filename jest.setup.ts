@@ -1,51 +1,12 @@
-import {
-  toMatchInlineSnapshot,
-  toMatchSnapshot,
-  toThrowErrorMatchingInlineSnapshot,
-  toThrowErrorMatchingSnapshot,
-} from 'jest-snapshot';
-import mock from 'mock-fs';
 import { format } from 'prettier';
-
-// There is a problem that snapshots cannot be written when the filesystem is mocked with mock-fs.
-// Here is a workaround for that problem by overriding the default matcher.
-// ref: https://github.com/tschaub/mock-fs#using-with-jest-snapshot-testing
-// TODO: open an issue on tschaub/mock-fs
-expect.extend({
-  toMatchInlineSnapshot(...args: Parameters<typeof toMatchInlineSnapshot>) {
-    // @ts-expect-error
-    return mock.bypass(() => toMatchInlineSnapshot.call(this, ...args));
-  },
-  toMatchSnapshot(...args) {
-    // @ts-expect-error
-    return mock.bypass(() => toMatchSnapshot.call(this, ...args));
-  },
-  toThrowErrorMatchingInlineSnapshot(...args) {
-    // @ts-expect-error
-    return mock.bypass(() => toThrowErrorMatchingInlineSnapshot.call(this, ...args));
-  },
-  toThrowErrorMatchingSnapshot(...args) {
-    // @ts-expect-error
-    return mock.bypass(() => toThrowErrorMatchingSnapshot.call(this, ...args));
-  },
-});
-const nativeConsoleLog = console.log;
-const nativeConsoleWarn = console.warn;
-const nativeConsoleError = console.error;
-const nativeConsoleInfo = console.error;
-const nativeConsoleDebug = console.error;
-console.log = (...args) => mock.bypass(() => nativeConsoleLog.call(console, ...args));
-console.warn = (...args) => mock.bypass(() => nativeConsoleWarn.call(console, ...args));
-console.error = (...args) => mock.bypass(() => nativeConsoleError.call(console, ...args));
-console.info = (...args) => mock.bypass(() => nativeConsoleInfo.call(console, ...args));
-console.debug = (...args) => mock.bypass(() => nativeConsoleDebug.call(console, ...args));
-
-// Mocking by mock-fs prevents jest from reporting test results. Therefore, un-mock before the test is finished.
-afterEach(() => mock.restore());
+// eslint-disable-next-line no-restricted-imports
+import { FIXTURE_DIR_PATH } from './src/test/util.js';
 
 const jsonSerializer: jest.SnapshotSerializerPlugin = {
   serialize(val) {
-    return format(JSON.stringify(val), { parser: 'json', printWidth: 120 }).trimEnd();
+    const json = JSON.stringify(val);
+    const replacedJson = json.replace(new RegExp(FIXTURE_DIR_PATH, 'g'), '<fixtures>');
+    return format(replacedJson, { parser: 'json', printWidth: 120 }).trimEnd();
   },
 
   test(val) {
@@ -58,7 +19,15 @@ const jsonSerializer: jest.SnapshotSerializerPlugin = {
       Object.prototype.hasOwnProperty.call(val, 'filePath') &&
       Object.prototype.hasOwnProperty.call(val, 'start') &&
       Object.prototype.hasOwnProperty.call(val, 'end');
-    return isLoadResult || isLocation;
+    const isSourceMap =
+      val &&
+      Object.prototype.hasOwnProperty.call(val, 'file') &&
+      Object.prototype.hasOwnProperty.call(val, 'mappings') &&
+      Object.prototype.hasOwnProperty.call(val, 'names') &&
+      Object.prototype.hasOwnProperty.call(val, 'sourceRoot') &&
+      Object.prototype.hasOwnProperty.call(val, 'version') &&
+      Object.prototype.hasOwnProperty.call(val, 'sources');
+    return isLoadResult || isLocation || isSourceMap;
   },
 };
 

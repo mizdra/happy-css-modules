@@ -73,17 +73,17 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
 
   if (options.watch) {
     if (!options.silent) console.log('Watch ' + options.pattern + '...');
-    const watcher = chokidar.watch([options.pattern.replace(/\\/g, '/')]);
+    const watcher = chokidar.watch([options.pattern.replace(/\\/g, '/')], { cwd: options.cwd });
     watcher.on('all', (eventName, filePath) => {
       if (eventName === 'add' || eventName === 'change') {
-        void processFile(filePath);
+        void processFile(resolve(options.cwd ?? process.cwd(), filePath));
       }
     });
     return { close: async () => watcher.close() };
   } else {
-    const filePaths = (await glob(options.pattern, { dot: true }))
+    const filePaths = (await glob(options.pattern, { dot: true, cwd: options.cwd }))
       // convert relative path to absolute path
-      .map((file) => resolve(file));
+      .map((file) => resolve(options.cwd ?? process.cwd(), file));
 
     // TODO: Use `@file-cache/core` to process only files that have changed
     for (const filePath of filePaths) {

@@ -1,50 +1,35 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`generateDtsContentWithSourceMap change export type by namedExport 2`] = `
-Object {
-  "file": "1.css.d.ts",
-  "mappings": "AAAA;AAAA,E,SAAAA,K,SAAA;AAAA,E,SACAC,K,SADA;AAAA;AAAA",
-  "names": Array [
-    "foo",
-    "bar",
-  ],
-  "sourceRoot": "",
-  "sources": Array [
-    "1.css",
-  ],
+{
   "version": 3,
+  "sources": ["1.css"],
+  "names": ["foo", "bar"],
+  "mappings": "AAAA;AAAA,E,SAAAA,K,SAAA;AAAA,E,SACAC,K,SADA;AAAA;AAAA",
+  "file": "1.css.d.ts",
+  "sourceRoot": ""
 }
 `;
 
 exports[`generateDtsContentWithSourceMap change export type by namedExport 4`] = `
-Object {
-  "file": "1.css.d.ts",
-  "mappings": "AAAA;aAAAA,G,SAAA;aACAC,G,SADA",
-  "names": Array [
-    "foo",
-    "bar",
-  ],
-  "sourceRoot": "",
-  "sources": Array [
-    "1.css",
-  ],
+{
   "version": 3,
+  "sources": ["1.css"],
+  "names": ["foo", "bar"],
+  "mappings": "AAAA;aAAAA,G,SAAA;aACAC,G,SADA",
+  "file": "1.css.d.ts",
+  "sourceRoot": ""
 }
 `;
 
 exports[`generateDtsContentWithSourceMap emit other directory 2`] = `
-Object {
-  "file": "1.css.d.ts",
-  "mappings": "AAAA;AAAA,E,SAAAA,K,SAAA;AAAA,E,SACAC,K,SADA;AAAA;AAAA",
-  "names": Array [
-    "foo",
-    "bar",
-  ],
-  "sourceRoot": "",
-  "sources": Array [
-    "../src/1.css",
-  ],
+{
   "version": 3,
+  "sources": ["../src/1.css"],
+  "names": ["foo", "bar"],
+  "mappings": "AAAA;AAAA,E,SAAAA,K,SAAA;AAAA,E,SACAC,K,SADA;AAAA;AAAA",
+  "file": "1.css.d.ts",
+  "sourceRoot": ""
 }
 `;
 
@@ -112,21 +97,12 @@ export = styles;
 `;
 
 exports[`generateDtsContentWithSourceMap generate dts content with source map 2`] = `
-Object {
-  "file": "1.css.d.ts",
-  "mappings": "AAAA;AAAA,E,SAAAA,K,SAAA;AAAA,E,SACAC,K,SADA;AAAA,E,SAEAC,K,SAFA;AAAA,E,SAGAA,K,SAHA;AAAA,E,SCIAC,K,SDJA;AAAA,E,SCKAC,M,SDLA;AAAA,E,SCMAA,M,SDNA;AAAA;AAAA",
-  "names": Array [
-    "foo",
-    "bar",
-    "baz",
-    "qux",
-    "quux",
-  ],
-  "sourceRoot": "",
-  "sources": Array [
-    "1.css",
-    "2.css",
-  ],
+{
   "version": 3,
+  "sources": ["1.css", "2.css"],
+  "names": ["foo", "bar", "baz", "qux", "quux"],
+  "mappings": "AAAA;AAAA,E,SAAAA,K,SAAA;AAAA,E,SACAC,K,SADA;AAAA,E,SAEAC,K,SAFA;AAAA,E,SAGAA,K,SAHA;AAAA,E,SCIAC,K,SDJA;AAAA,E,SCKAC,M,SDLA;AAAA,E,SCMAA,M,SDNA;AAAA;AAAA",
+  "file": "1.css.d.ts",
+  "sourceRoot": ""
 }
 `;
