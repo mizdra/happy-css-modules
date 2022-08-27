@@ -6,6 +6,8 @@ import {
 } from 'jest-snapshot';
 import mock from 'mock-fs';
 import { format } from 'prettier';
+// eslint-disable-next-line no-restricted-imports
+import { removeFixtures } from './src/test/util.js';
 
 // There is a problem that snapshots cannot be written when the filesystem is mocked with mock-fs.
 // Here is a workaround for that problem by overriding the default matcher.
@@ -42,6 +44,7 @@ console.debug = (...args) => mock.bypass(() => nativeConsoleDebug.call(console, 
 
 // Mocking by mock-fs prevents jest from reporting test results. Therefore, un-mock before the test is finished.
 afterEach(() => mock.restore());
+afterEach(() => removeFixtures());
 
 const jsonSerializer: jest.SnapshotSerializerPlugin = {
   serialize(val) {

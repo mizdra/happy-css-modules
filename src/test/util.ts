@@ -1,10 +1,14 @@
-import { constants } from 'fs';
+import { constants, mkdirSync, rmSync, utimesSync, writeFileSync } from 'fs';
 import { access } from 'fs/promises';
+import { tmpdir } from 'os';
+import { dirname, join, resolve } from 'path';
 import less from 'less';
 import postcss, { type Root, type Rule, type AtRule, type Declaration } from 'postcss';
 import { type ClassName } from 'postcss-selector-parser';
 import sass from 'sass';
 import { type Transformer, type Token, collectNodes, type Location } from '../loader/index.js';
+
+export const FIXTURE_DIR_PATH = resolve(tmpdir(), 'checkable-css-modules/fixtures', process.env.JEST_WORKER_ID!);
 
 export function createRoot(code: string, from?: string): Root {
   return postcss.parse(code, { from: from || '/test/test.css' });
@@ -64,4 +68,42 @@ export async function exists(path: string): Promise<boolean> {
   } catch (e) {
     return false;
   }
+}
+
+type File = string | { content: string; mtime: Date };
+
+type DirectoryItem = File | DirectoryItems;
+
+type DirectoryItems = {
+  [name: string]: DirectoryItem;
+};
+
+function isFile(item: DirectoryItem): item is File {
+  return typeof item === 'string' || 'content' in item;
+}
+
+export function createFixtures(items: DirectoryItems): void {
+  function createFixturesImpl(items: DirectoryItems, baseDir: string): void {
+  for (const [name, item] of Object.entries(items)) {
+      const path = join(baseDir, name);
+    if (isFile(item)) {
+      mkdirSync(dirname(path), { recursive: true });
+      if (typeof item === 'string') {
+        writeFileSync(path, item);
+      } else {
+        writeFileSync(path, item.content);
+        utimesSync(path, item.mtime, item.mtime);
+      }
+    } else {
+      mkdirSync(path, { recursive: true });
+        createFixturesImpl(item, path);
+    }
+  }
+  }
+  removeFixtures();
+  createFixturesImpl(items, FIXTURE_DIR_PATH);
+}
+
+export function removeFixtures(): void {
+  rmSync(FIXTURE_DIR_PATH, { recursive: true, force: true });
 }
