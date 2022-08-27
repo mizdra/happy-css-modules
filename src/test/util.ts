@@ -1,7 +1,8 @@
-import { constants, mkdirSync, realpathSync, rmSync, utimesSync, writeFileSync } from 'fs';
+import { constants, mkdirSync, realpathSync, readFileSync, rmSync, utimesSync, writeFileSync } from 'fs';
 import { access } from 'fs/promises';
 import { tmpdir } from 'os';
 import { dirname, join, resolve } from 'path';
+import { fileURLToPath, pathToFileURL } from 'url';
 import less from 'less';
 import postcss, { type Root, type Rule, type AtRule, type Declaration } from 'postcss';
 import { type ClassName } from 'postcss-selector-parser';
@@ -49,7 +50,32 @@ export function fakeToken(args: {
 
 export const transformer: Transformer = async (source: string, from: string) => {
   if (from.endsWith('.scss')) {
-    const result = sass.compile(from, { sourceMap: true });
+    const result = await sass.compileStringAsync(source, {
+      url: pathToFileURL(from),
+      sourceMap: true,
+      // workaround for https://github.com/sass/dart-sass/issues/1692
+      importers: [
+        {
+          canonicalize(url) {
+            // NOTE: The format of `url` changes depending on the import source.
+            //
+            // - When `from === '/test/1.scss'` and `@import './2.scss'` in `/test/1.scss` is resolved, `url === '2.scss'`.
+            // - When `from === '/test/1.scss'` and `@import './3.scss'` in `/test/2.scss` is resolved, `url === 'file:///test/3.scss'`.
+            //
+            // That is, the paths of @import statements written to the `from` file is passed through unresolved,
+            // but paths written to other files is passed through resolved to absolute paths.
+            return new URL(url, pathToFileURL(from));
+          },
+          load(canonicalUrl) {
+            return {
+              contents: readFileSync(fileURLToPath(canonicalUrl.href), 'utf8'),
+              syntax: 'scss',
+              sourceMapUrl: canonicalUrl,
+            };
+          },
+        },
+      ],
+    });
     return { css: result.css, map: result.sourceMap!, dependencies: result.loadedUrls };
   } else if (from.endsWith('.less')) {
     const result = await less.render(source, {
