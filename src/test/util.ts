@@ -1,4 +1,4 @@
-import { constants, mkdirSync, rmSync, utimesSync, writeFileSync } from 'fs';
+import { constants, mkdirSync, realpathSync, rmSync, utimesSync, writeFileSync } from 'fs';
 import { access } from 'fs/promises';
 import { tmpdir } from 'os';
 import { dirname, join, resolve } from 'path';
@@ -8,7 +8,11 @@ import { type ClassName } from 'postcss-selector-parser';
 import sass from 'sass';
 import { type Transformer, type Token, collectNodes, type Location } from '../loader/index.js';
 
-export const FIXTURE_DIR_PATH = resolve(tmpdir(), 'checkable-css-modules/fixtures', process.env.JEST_WORKER_ID!);
+export const FIXTURE_DIR_PATH = resolve(
+  realpathSync(tmpdir()),
+  'checkable-css-modules/fixtures',
+  process.env.JEST_WORKER_ID!,
+);
 
 export function createRoot(code: string, from?: string): Root {
   return postcss.parse(code, { from: from || '/test/test.css' });
