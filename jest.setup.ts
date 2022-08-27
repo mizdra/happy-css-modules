@@ -1,12 +1,12 @@
 import { format } from 'prettier';
 // eslint-disable-next-line no-restricted-imports
-import { removeFixtures } from './src/test/util.js';
-
-afterEach(() => removeFixtures());
+import { FIXTURE_DIR_PATH } from './src/test/util.js';
 
 const jsonSerializer: jest.SnapshotSerializerPlugin = {
   serialize(val) {
-    return format(JSON.stringify(val), { parser: 'json', printWidth: 120 }).trimEnd();
+    const json = JSON.stringify(val);
+    const replacedJson = json.replace(new RegExp(FIXTURE_DIR_PATH, 'g'), '<fixtures>');
+    return format(replacedJson, { parser: 'json', printWidth: 120 }).trimEnd();
   },
 
   test(val) {
@@ -19,7 +19,15 @@ const jsonSerializer: jest.SnapshotSerializerPlugin = {
       Object.prototype.hasOwnProperty.call(val, 'filePath') &&
       Object.prototype.hasOwnProperty.call(val, 'start') &&
       Object.prototype.hasOwnProperty.call(val, 'end');
-    return isLoadResult || isLocation;
+    const isSourceMap =
+      val &&
+      Object.prototype.hasOwnProperty.call(val, 'file') &&
+      Object.prototype.hasOwnProperty.call(val, 'mappings') &&
+      Object.prototype.hasOwnProperty.call(val, 'names') &&
+      Object.prototype.hasOwnProperty.call(val, 'sourceRoot') &&
+      Object.prototype.hasOwnProperty.call(val, 'version') &&
+      Object.prototype.hasOwnProperty.call(val, 'sources');
+    return isLoadResult || isLocation || isSourceMap;
   },
 };
 
