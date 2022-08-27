@@ -33,7 +33,7 @@ export function fakeToken(args: {
   return {
     name: args.name,
     originalLocations: args.originalLocations.map((location) => ({
-      filePath: location.filePath ?? '/test/1.css',
+      filePath: location.filePath ?? getFixturePath('/test/1.css'),
       start: location.start,
       end: {
         line: location.start.line,
@@ -106,4 +106,8 @@ export function createFixtures(items: DirectoryItems): void {
 
 export function removeFixtures(): void {
   rmSync(FIXTURE_DIR_PATH, { recursive: true, force: true });
+}
+
+export function getFixturePath(path: string): string {
+  return join(FIXTURE_DIR_PATH, path);
 }

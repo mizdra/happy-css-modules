@@ -1,5 +1,11 @@
 import dedent from 'dedent';
-import { createRoot, createClassSelectors, createAtImports, createComposesDeclarations } from '../test/util.js';
+import {
+  createRoot,
+  createClassSelectors,
+  createAtImports,
+  createComposesDeclarations,
+  createFixtures,
+} from '../test/util.js';
 import {
   generateLocalTokenNames,
   getOriginalLocation,
