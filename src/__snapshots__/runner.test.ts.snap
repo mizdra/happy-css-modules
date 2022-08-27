@@ -21,3 +21,14 @@ export = styles;
 `;
 
 exports[`generates .d.ts and .d.ts.map 4`] = `"{\\"version\\":3,\\"sources\\":[\\"2.css\\"],\\"names\\":[\\"b\\"],\\"mappings\\":\\"AAAA;AAAA,E,SAAAA,G,SAAA;AAAA;AAAA\\",\\"file\\":\\"2.css.d.ts\\",\\"sourceRoot\\":\\"\\"}"`;
+
+exports[`supports transformer 1`] = `
+"declare const styles: {
+  readonly \\"a\\": string;
+};
+export = styles;
+//# sourceMappingURL=1.scss.d.ts.map
+"
+`;
+
+exports[`supports transformer 2`] = `"{\\"version\\":3,\\"sources\\":[\\"1.scss\\"],\\"names\\":[\\"a\\"],\\"mappings\\":\\"AAAA;AAAA,E,SAAAA,G,SAAA;AAAA;AAAA\\",\\"file\\":\\"1.scss.d.ts\\",\\"sourceRoot\\":\\"\\"}"`;

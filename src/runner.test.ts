@@ -1,6 +1,6 @@
 import { readFile, writeFile } from 'fs/promises';
 import { run } from './runner.js';
-import { createFixtures, getFixturePath, waitForAsyncTask } from './test/util.js';
+import { createFixtures, getFixturePath, transformer, waitForAsyncTask } from './test/util.js';
 
 const defaultOptions = {
   pattern: 'test/**/*.{css,scss}',
@@ -30,15 +30,14 @@ test('does not emit declaration map if declarationMap is false', async () => {
   await expect(readFile(getFixturePath('/test/1.css.d.ts'), 'utf8')).resolves.not.toThrow();
   await expect(readFile(getFixturePath('/test/1.css.d.ts.map'), 'utf8')).rejects.toThrow(/ENOENT/);
 });
-// FIXME: blocked by https://github.com/sass/dart-sass/issues/1692, https://github.com/kayahr/jest-environment-node-single-context/issues/10
-// test.failing('supports transformer', async () => {
-//   createFixtures({
-//     '/test/1.scss': `.a { dummy: ''; }`,
-//   });
-//   await run({ ...defaultOptions, transformer });
-//   expect(await readFile(getFixturePath('/test/1.scss.d.ts'), 'utf8')).toMatchSnapshot();
-//   expect(await readFile(getFixturePath('/test/1.scss.d.ts.map'), 'utf8')).toMatchSnapshot();
-// });
+test('supports transformer', async () => {
+  createFixtures({
+    '/test/1.scss': `.a { dummy: ''; }`,
+  });
+  await run({ ...defaultOptions, transformer });
+  expect(await readFile(getFixturePath('/test/1.scss.d.ts'), 'utf8')).toMatchSnapshot();
+  expect(await readFile(getFixturePath('/test/1.scss.d.ts.map'), 'utf8')).toMatchSnapshot();
+});
 test('watches for changes in files', async () => {
   createFixtures({
     '/test': {}, // empty directory
