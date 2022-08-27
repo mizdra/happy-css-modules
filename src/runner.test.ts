@@ -41,9 +41,7 @@ test('does not emit declaration map if declarationMap is false', async () => {
 // });
 test('watches for changes in files', async () => {
   createFixtures({
-    '/test': {
-      /* empty directory */
-    },
+    '/test': {}, // empty directory
   });
   const watcher = await run({ ...defaultOptions, watch: true });
 
@@ -51,11 +49,9 @@ test('watches for changes in files', async () => {
   await waitForAsyncTask(500); // Wait until the file is written
   expect(await readFile(getFixturePath('/test/1.css.d.ts'), 'utf8')).toMatch(/a-1/);
 
-  // For some reason, the second file change event does not fire, so I cannot test it.
-  // TODO: find out why it does not fire.
-  // await writeFile(getFixturePath('/test/1.css'), '.a-2 {}');
-  // await waitForAsyncTask();
-  // expect(await readFile(getFixturePath('/test/1.css.d.ts'), 'utf8')).toMatch(/a-2/);
+  await writeFile(getFixturePath('/test/1.css'), '.a-2 {}');
+  await waitForAsyncTask(500); // Wait until the file is written
+  expect(await readFile(getFixturePath('/test/1.css.d.ts'), 'utf8')).toMatch(/a-2/);
 
   await watcher.close();
 });
