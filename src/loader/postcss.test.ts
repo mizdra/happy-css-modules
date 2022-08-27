@@ -1,5 +1,4 @@
 import dedent from 'dedent';
-import mockfs from 'mock-fs';
 import { createRoot, createClassSelectors, createAtImports, createComposesDeclarations } from '../test/util.js';
 import {
   generateLocalTokenNames,
@@ -62,7 +61,7 @@ describe('generateLocalTokenNames', () => {
     ]);
   });
   test('does not track styles imported by @import in other file because it is not a local token', async () => {
-    mockfs({
+    createFixtures({
       '/test/1.css': dedent`
       .a {}
       `,
@@ -76,7 +75,7 @@ describe('generateLocalTokenNames', () => {
     ).toStrictEqual([]);
   });
   test('does not track styles imported by composes in other file because it is not a local token', async () => {
-    mockfs({
+    createFixtures({
       '/test/1.css': dedent`
       .b {}
       `,

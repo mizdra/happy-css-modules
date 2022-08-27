@@ -1,9 +1,7 @@
 import fs from 'fs/promises';
-import { fileURLToPath } from 'node:url';
-import { dirname, resolve } from 'path';
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
-import mockfs from 'mock-fs';
+import { createFixtures } from '../test/util.js';
 
 const readFileSpy = jest.spyOn(fs, 'readFile');
 // In ESM, for some reason, we need to explicitly mock module
@@ -25,7 +23,7 @@ afterEach(() => {
 });
 
 test('basic', async () => {
-  mockfs({
+  createFixtures({
     '/test/1.css': dedent`
     .a {}
     .b {}
@@ -54,7 +52,7 @@ test('basic', async () => {
 });
 
 test('tracks other files when `@import` is present', async () => {
-  mockfs({
+  createFixtures({
     '/test/1.css': dedent`
     @import './2.css';
     @import '3.css';
@@ -99,7 +97,7 @@ test('tracks other files when `@import` is present', async () => {
 });
 
 test('tracks other files when `composes` is present', async () => {
-  mockfs({
+  createFixtures({
     '/test/1.css': dedent`
     .a {
       composes: b from './2.css';
@@ -159,7 +157,7 @@ test('tracks other files when `composes` is present', async () => {
 });
 
 test('normalizes tokens', async () => {
-  mockfs({
+  createFixtures({
     '/test/1.css': dedent`
     /* duplicate import */
     @import './2.css';
@@ -229,10 +227,10 @@ test('returns the result from the cache when the file has not been modified', as
   .c {}
   .d {}
   `;
-  mockfs({
-    '/test/1.css': mockfs.file({ content: content1, mtime: new Date(0) }),
-    '/test/2.css': mockfs.file({ content: content2, mtime: new Date(0) }),
-    '/test/3.css': mockfs.file({ content: content3, mtime: new Date(0) }),
+  createFixtures({
+    '/test/1.css': { content: content1, mtime: new Date(0) },
+    '/test/2.css': { content: content2, mtime: new Date(0) },
+    '/test/3.css': { content: content3, mtime: new Date(0) },
   });
   await loader.load('/test/1.css');
   expect(readFileSpy).toHaveBeenCalledTimes(3);
@@ -242,10 +240,10 @@ test('returns the result from the cache when the file has not been modified', as
   readFileSpy.mockClear();
 
   // update `/test/2.css`
-  mockfs({
-    '/test/1.css': mockfs.file({ content: content1, mtime: new Date(0) }),
-    '/test/2.css': mockfs.file({ content: content2, mtime: new Date(1) }),
-    '/test/3.css': mockfs.file({ content: content3, mtime: new Date(0) }),
+  createFixtures({
+    '/test/1.css': { content: content1, mtime: new Date(0) },
+    '/test/2.css': { content: content2, mtime: new Date(1) },
+    '/test/3.css': { content: content3, mtime: new Date(0) },
   });
   // `3.css` is not updated, so the cache is used. Therefore, `readFile` is not called.
   await loader.load('/test/3.css');
@@ -264,7 +262,7 @@ test('returns the result from the cache when the file has not been modified', as
 
 describe('supports transpiler', () => {
   test('sass', async () => {
-    mockfs({
+    createFixtures({
       '/test/1.scss': dedent`
         @use './2.scss' as two; // sass feature test (@use)
         @import './3.scss'; // css feature test (@import)
@@ -348,7 +346,7 @@ describe('supports transpiler', () => {
     `);
   });
   test('less', async () => {
-    mockfs({
+    createFixtures({
       '/test/1.less': dedent`
         @import './2.less'; // less feature test (@use)
         .a_1 { dummy: ''; }
@@ -370,8 +368,6 @@ describe('supports transpiler', () => {
       '/test/3.less': dedent`
         .c { dummy: ''; }
         `,
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      'node_modules': mockfs.load(resolve(dirname(fileURLToPath(import.meta.url)), '../../node_modules')),
     });
     const result = await loader.load('/test/1.less');
 
@@ -424,7 +420,7 @@ describe('supports transpiler', () => {
 
 describe('tracks dependencies that have been pre-bundled by transpiler', () => {
   test('sass', async () => {
-    mockfs({
+    createFixtures({
       '/test/1.scss': dedent`
       @import './2.scss';
       @import './3.scss';
@@ -441,7 +437,7 @@ describe('tracks dependencies that have been pre-bundled by transpiler', () => {
     expect(result.dependencies).toStrictEqual(['/test/2.scss', '/test/3.scss', '/test/4.scss']);
   });
   test('less', async () => {
-    mockfs({
+    createFixtures({
       '/test/1.less': dedent`
       @import './2.less';
       @import './3.less';
@@ -464,7 +460,7 @@ test('ignores the composition of non-existent tokens', async () => {
   // Therefore, checkable-css-modules follows suit.
   // It may be preferable to warn rather than ignore, but for now, we will focus on compatibility.
   // ref: https://github.com/css-modules/css-modules/issues/356
-  mockfs({
+  createFixtures({
     '/test/1.css': dedent`
     .a {
       composes: b c from './2.css';
@@ -481,7 +477,7 @@ test('ignores the composition of non-existent tokens', async () => {
 test('throws error the composition of non-existent file', async () => {
   // In postcss-modules, compositions of non-existent file are causes an error.
   // Therefore, checkable-css-modules follows suit.
-  mockfs({
+  createFixtures({
     '/test/1.css': dedent`
     .a {
       composes: a from './2.css';
