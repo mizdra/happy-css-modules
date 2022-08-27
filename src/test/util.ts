@@ -57,8 +57,8 @@ export const transformer: Transformer = async (source: string, from: string) => 
   return false;
 };
 
-export async function waitForAsyncTask(): Promise<void> {
-  await new Promise((resolve) => setTimeout(resolve, 0));
+export async function waitForAsyncTask(ms?: number): Promise<void> {
+  await new Promise((resolve) => setTimeout(resolve, ms ?? 0));
 }
 
 export async function exists(path: string): Promise<boolean> {
@@ -84,21 +84,21 @@ function isFile(item: DirectoryItem): item is File {
 
 export function createFixtures(items: DirectoryItems): void {
   function createFixturesImpl(items: DirectoryItems, baseDir: string): void {
-  for (const [name, item] of Object.entries(items)) {
+    for (const [name, item] of Object.entries(items)) {
       const path = join(baseDir, name);
-    if (isFile(item)) {
-      mkdirSync(dirname(path), { recursive: true });
-      if (typeof item === 'string') {
-        writeFileSync(path, item);
+      if (isFile(item)) {
+        mkdirSync(dirname(path), { recursive: true });
+        if (typeof item === 'string') {
+          writeFileSync(path, item);
+        } else {
+          writeFileSync(path, item.content);
+          utimesSync(path, item.mtime, item.mtime);
+        }
       } else {
-        writeFileSync(path, item.content);
-        utimesSync(path, item.mtime, item.mtime);
-      }
-    } else {
-      mkdirSync(path, { recursive: true });
+        mkdirSync(path, { recursive: true });
         createFixturesImpl(item, path);
+      }
     }
-  }
   }
   removeFixtures();
   createFixturesImpl(items, FIXTURE_DIR_PATH);

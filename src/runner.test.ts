@@ -48,7 +48,7 @@ test('watches for changes in files', async () => {
   const watcher = await run({ ...defaultOptions, watch: true });
 
   await writeFile(getFixturePath('/test/1.css'), '.a-1 {}');
-  await waitForAsyncTask();
+  await waitForAsyncTask(500); // Wait until the file is written
   expect(await readFile(getFixturePath('/test/1.css.d.ts'), 'utf8')).toMatch(/a-1/);
 
   // For some reason, the second file change event does not fire, so I cannot test it.
