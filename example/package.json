@@ -5,7 +5,7 @@
   "type": "module",
   "main": "app.js",
   "scripts": {
-    "tcm": "./tcm.js"
+    "tcm": "../bin/tcm.js --declarationMap '**/*.{css,scss,less}'"
   },
   "author": "mizdra",
   "license": "MIT"
