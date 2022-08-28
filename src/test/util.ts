@@ -8,7 +8,7 @@ import { type Token, collectNodes, type Location } from '../loader/index.js';
 
 export const FIXTURE_DIR_PATH = resolve(
   realpathSync(tmpdir()),
-  'checkable-css-modules/fixtures',
+  'enhanced-typed-css-modules/fixtures',
   process.env.JEST_WORKER_ID!,
 );
 

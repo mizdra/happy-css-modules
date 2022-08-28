@@ -1,5 +1,5 @@
 {
-  "name": "checkable-css-modules",
+  "name": "enhanced-typed-css-modules",
   "version": "0.7.0",
   "description": "Creates .d.ts files from CSS Modules .css files",
   "type": "module",
@@ -7,7 +7,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc -p tsconfig.src.json",
-    "dev": "tsc-watch -p tsconfig.src.json --noClear --onSuccess 'pnpm run --dir example tcm'",
+    "dev": "tsc-watch -p tsconfig.src.json --noClear --onSuccess 'pnpm run --dir example etcm'",
     "lint": "run-s -c lint:*",
     "lint:prettier": "prettier --check .",
     "lint:eslint": "eslint .",
@@ -17,11 +17,11 @@
     "test": "NODE_OPTIONS=\"--experimental-vm-modules $NODE_OPTIONS\" jest"
   },
   "bin": {
-    "tcm": "bin/tcm.js"
+    "etcm": "bin/etcm.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mizdra/checkable-css-modules.git"
+    "url": "https://github.com/mizdra/enhanced-typed-css-modules.git"
   },
   "keywords": [
     "css-modules",

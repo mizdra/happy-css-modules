@@ -3,7 +3,7 @@ import { tmpdir } from 'os';
 import { join } from 'path';
 import { writeFileIfChanged } from './file-system.js';
 
-const TMP_DIR = join(tmpdir(), 'typed-css-modules');
+const TMP_DIR = join(tmpdir(), 'enhanced-typed-css-modules');
 
 const TEST_FILE_PATH = join(TMP_DIR, 'test.txt');
 const TEST_NESTED_FILE_PATH = join(TMP_DIR, 'dir', 'test.txt');
