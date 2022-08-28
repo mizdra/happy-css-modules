@@ -40,10 +40,14 @@ const config = {
      * This is a very dirty workaround, but we think it is a good one until https://github.com/dart-lang/sdk/issues/47670
      * resolves the issue. :)
      */
-    window: {},
-    location: {
-      href: 'http://localhost',
-    },
+    // NOTE: The workaround for using sass's modern API. enhanced-typed-css-modules used to use this API.
+    // However, due to the implementation of custom resolvers, we have switched to the legacy API.
+    // Therefore, the workaround is now disabled. See
+    // https://github.com/mizdra/enhanced-typed-css-modules/issues/65#issuecomment-1229471950 for more information.
+    // window: {},
+    // location: {
+    //   href: 'http://localhost',
+    // },
   },
   // for ESM
   resolver: join(dir, 'src/test/jest/resolver.cjs'),
