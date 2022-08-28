@@ -25,7 +25,6 @@ export function parseArgv(argv: string[]): RunnerOptions {
     .detectLocale(false)
     .option('outDir', {
       type: 'string',
-      alias: 'o',
       describe: 'Output directory',
     })
     .option('watch', {
@@ -39,17 +38,14 @@ export function parseArgv(argv: string[]): RunnerOptions {
     })
     .option('namedExport', {
       type: 'boolean',
-      alias: 'e',
       describe: 'Use named exports as opposed to default exports to enable tree shaking',
     })
     .option('declarationMap', {
       type: 'boolean',
-      alias: 'dm',
       describe: 'Create sourcemaps for d.ts files',
     })
     .option('silent', {
       type: 'boolean',
-      alias: 's',
       describe: 'Silent output. Do not show "files written" messages',
     })
     .alias('h', 'help')
