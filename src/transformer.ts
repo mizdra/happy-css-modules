@@ -67,5 +67,6 @@ export const defaultTransformer: Transformer = async (source, from) => {
     });
     return { css: result.css, map: result.map, dependencies: result.imports };
   }
+  // TODO: support postcss
   return false;
 };
