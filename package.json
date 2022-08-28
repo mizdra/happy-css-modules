@@ -7,7 +7,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc -p tsconfig.src.json",
-    "dev": "tsc-watch -p tsconfig.src.json --noClear --onSuccess 'pnpm run --dir example tcm'",
+    "dev": "tsc-watch -p tsconfig.src.json --noClear --onSuccess 'pnpm run --dir example etcm'",
     "lint": "run-s -c lint:*",
     "lint:prettier": "prettier --check .",
     "lint:eslint": "eslint .",
@@ -17,7 +17,7 @@
     "test": "NODE_OPTIONS=\"--experimental-vm-modules $NODE_OPTIONS\" jest"
   },
   "bin": {
-    "tcm": "bin/tcm.js"
+    "etcm": "bin/etcm.js"
   },
   "repository": {
     "type": "git",
