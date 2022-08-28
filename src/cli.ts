@@ -54,6 +54,7 @@ export function parseArgv(argv: string[]): RunnerOptions {
       describe: 'Silent output. Do not show "files written" messages',
     })
     .alias('h', 'help')
+    .alias('v', 'version')
     .version(pkgJson.version)
     .check((argv) => {
       const patterns = argv._;
