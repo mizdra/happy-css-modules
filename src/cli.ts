@@ -18,10 +18,11 @@ export function parseArgv(argv: string[]): RunnerOptions {
       // workaround for https://github.com/yargs/yargs/issues/1318
       'duplicate-arguments-array': false,
     })
-    .usage('Create .css.d.ts from CSS modules *.css files.\nUsage: $0 [options] [file|dir|glob]')
-    .example('$0 src/styles', '')
-    .example('$0 src -o dist', '')
-    .example("$0 'styles/**/*.icss' -w", '')
+    .scriptName('etcm')
+    .usage('Create .d.ts and .d.ts.map from CSS modules *.css files.\n\n$0 [options] <glob>')
+    .example("$0 'src/**/*.module.{css,scss,less}'", 'Generate .d.ts and .d.ts.map.')
+    .example("$0 'src/**/*.module.{css,scss,less}' --watch", 'Watch for changes and generate .d.ts and .d.ts.map.')
+    .example("$0 'src/**/*.module.css' --declarationMap=false", 'Generate .d.ts only.')
     .detectLocale(false)
     .option('outDir', {
       type: 'string',
