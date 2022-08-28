@@ -1,31 +1,14 @@
-import { jest } from '@jest/globals';
 import { parseArgv } from './cli.js';
 
-const baseArgs = ['node', 'tsm'];
-
-let processExitSpy: jest.SpyInstance;
-let consoleErrorSpy: jest.SpyInstance;
-
-beforeEach(() => {
-  // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-explicit-any
-  processExitSpy = jest.spyOn(process, 'exit').mockImplementation(() => ({} as unknown as never)) as any;
-  // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-explicit-any
-  consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {}) as any;
-});
-afterEach(() => {
-  processExitSpy.mockRestore();
-  consoleErrorSpy.mockRestore();
-});
+const baseArgs = ['node', 'etcm'];
 
 describe('parseArgv', () => {
   test('pattern', () => {
     expect(parseArgv([...baseArgs, 'foo']).pattern).toStrictEqual('foo');
     expect(parseArgv([...baseArgs, '1']).pattern).toStrictEqual('1');
 
-    // NOTE: Commented out because the test fails in ESM for some reason...
+    // TODO: Support multiple patterns
     // parseArgv([...baseArgs, 'foo', 'bar']);
-    // expect(processExitSpy).lastCalledWith(1);
-    // expect(consoleErrorSpy).lastCalledWith('Only one pattern is allowed.');
   });
   test('--outDir', () => {
     expect(parseArgv([...baseArgs, '1.css', '--outDir', 'foo']).outDir).toStrictEqual('foo');

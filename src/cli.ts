@@ -18,19 +18,21 @@ export function parseArgv(argv: string[]): RunnerOptions {
       // workaround for https://github.com/yargs/yargs/issues/1318
       'duplicate-arguments-array': false,
     })
-    .usage('Create .css.d.ts from CSS modules *.css files.\nUsage: $0 [options] [file|dir|glob]')
-    .example('$0 src/styles', '')
-    .example('$0 src -o dist', '')
-    .example("$0 'styles/**/*.icss' -w", '')
+    .scriptName('etcm')
+    .usage('Create .d.ts and .d.ts.map from CSS modules *.css files.\n\n$0 [options] <glob>')
+    .example("$0 'src/**/*.module.css'", 'Generate .d.ts and .d.ts.map.')
+    .example("$0 'src/**/*.module.{css,scss,less}'", 'Also generate files for sass and less.')
+    .example("$0 'src/**/*.module.css' --watch", 'Watch for changes and generate .d.ts and .d.ts.map.')
+    .example("$0 'src/**/*.module.css' --declarationMap=false", 'Generate .d.ts only.')
     .detectLocale(false)
     .option('outDir', {
       type: 'string',
-      alias: 'o',
       describe: 'Output directory',
     })
     .option('watch', {
       type: 'boolean',
       alias: 'w',
+      default: false,
       describe: "Watch input directory's css files or pattern",
     })
     .option('localsConvention', {
@@ -39,20 +41,21 @@ export function parseArgv(argv: string[]): RunnerOptions {
     })
     .option('namedExport', {
       type: 'boolean',
-      alias: 'e',
+      default: false,
       describe: 'Use named exports as opposed to default exports to enable tree shaking',
     })
     .option('declarationMap', {
       type: 'boolean',
-      alias: 'dm',
+      default: true,
       describe: 'Create sourcemaps for d.ts files',
     })
     .option('silent', {
       type: 'boolean',
-      alias: 's',
+      default: false,
       describe: 'Silent output. Do not show "files written" messages',
     })
     .alias('h', 'help')
+    .alias('v', 'version')
     .version(pkgJson.version)
     .check((argv) => {
       const patterns = argv._;
