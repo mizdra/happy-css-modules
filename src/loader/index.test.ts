@@ -468,7 +468,7 @@ describe('tracks dependencies that have been pre-bundled by transpiler', () => {
 
 test('ignores the composition of non-existent tokens', async () => {
   // In css-loader and postcss-modules, compositions of non-existent tokens are simply ignored.
-  // Therefore, checkable-css-modules follows suit.
+  // Therefore, enhanced-typed-css-modules follows suit.
   // It may be preferable to warn rather than ignore, but for now, we will focus on compatibility.
   // ref: https://github.com/css-modules/css-modules/issues/356
   createFixtures({
@@ -487,7 +487,7 @@ test('ignores the composition of non-existent tokens', async () => {
 
 test('throws error the composition of non-existent file', async () => {
   // In postcss-modules, compositions of non-existent file are causes an error.
-  // Therefore, checkable-css-modules follows suit.
+  // Therefore, enhanced-typed-css-modules follows suit.
   createFixtures({
     '/test/1.css': dedent`
     .a {

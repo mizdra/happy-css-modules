@@ -116,7 +116,7 @@ export function getOriginalLocation(rule: Rule, classSelector: ClassName): Locat
       },
       end: {
         line: origin.line,
-        // The column of `Input#origin` is 0-based. Also, the column of checkable-css-modules is inclusive.
+        // The column of `Input#origin` is 0-based. Also, the column of enhanced-typed-css-modules is inclusive.
         column: origin.column + 1 + (classSelector.value.length - 1),
       },
     };

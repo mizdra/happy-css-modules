@@ -1,4 +1,4 @@
-# checkable-css-modules
+# enhanced-typed-css-modules
 
 A collection of tools to make CSS Modules statically checkable.
 
