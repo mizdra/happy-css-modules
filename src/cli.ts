@@ -20,8 +20,9 @@ export function parseArgv(argv: string[]): RunnerOptions {
     })
     .scriptName('etcm')
     .usage('Create .d.ts and .d.ts.map from CSS modules *.css files.\n\n$0 [options] <glob>')
-    .example("$0 'src/**/*.module.{css,scss,less}'", 'Generate .d.ts and .d.ts.map.')
-    .example("$0 'src/**/*.module.{css,scss,less}' --watch", 'Watch for changes and generate .d.ts and .d.ts.map.')
+    .example("$0 'src/**/*.module.css'", 'Generate .d.ts and .d.ts.map.')
+    .example("$0 'src/**/*.module.{css,scss,less}'", 'Also generate files for sass and less.')
+    .example("$0 'src/**/*.module.css' --watch", 'Watch for changes and generate .d.ts and .d.ts.map.')
     .example("$0 'src/**/*.module.css' --declarationMap=false", 'Generate .d.ts only.')
     .detectLocale(false)
     .option('outDir', {
