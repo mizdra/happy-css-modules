@@ -25,4 +25,7 @@ run({
   watch: process.argv.includes('--watch'),
   declarationMap: true,
   transformer,
-}).catch(console.error);
+}).catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

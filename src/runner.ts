@@ -3,6 +3,7 @@ import * as process from 'process';
 import * as util from 'util';
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
+import AggregateError from 'es-aggregate-error';
 import _glob from 'glob';
 import { emitGeneratedFiles } from './emitter/index.js';
 import { Loader, type Transformer } from './loader/index.js';
@@ -68,6 +69,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       console.error(chalk.red('[Error] ' + error));
+      throw error;
     }
   }
 
@@ -76,7 +78,9 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
     const watcher = chokidar.watch([options.pattern.replace(/\\/g, '/')], { cwd: options.cwd });
     watcher.on('all', (eventName, filePath) => {
       if (eventName === 'add' || eventName === 'change') {
-        void processFile(resolve(options.cwd ?? process.cwd(), filePath));
+        processFile(resolve(options.cwd ?? process.cwd(), filePath)).catch(() => {
+          // TODO: Emit a error by `Watcher#onerror`
+        });
       }
     });
     return { close: async () => watcher.close() };
@@ -86,8 +90,10 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
       .map((file) => resolve(options.cwd ?? process.cwd(), file));
 
     // TODO: Use `@file-cache/core` to process only files that have changed
+    const errors: unknown[] = [];
     for (const filePath of filePaths) {
-      await processFile(filePath);
+      await processFile(filePath).catch((e: unknown) => errors.push(e));
     }
+    if (errors.length > 0) throw new AggregateError(errors, 'Failed to process files');
   }
 }
