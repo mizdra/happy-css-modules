@@ -3,7 +3,7 @@ import { jest } from '@jest/globals';
 import chalk from 'chalk';
 import AggregateError from 'es-aggregate-error';
 import { run } from './runner.js';
-import { createFixtures, exists, getFixturePath, transformer, waitForAsyncTask } from './test/util.js';
+import { createFixtures, exists, getFixturePath, waitForAsyncTask } from './test/util.js';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
@@ -40,7 +40,7 @@ test('supports transformer', async () => {
   createFixtures({
     '/test/1.scss': `.a { dummy: ''; }`,
   });
-  await run({ ...defaultOptions, transformer });
+  await run({ ...defaultOptions });
   expect(await readFile(getFixturePath('/test/1.scss.d.ts'), 'utf8')).toMatchSnapshot();
   expect(await readFile(getFixturePath('/test/1.scss.d.ts.map'), 'utf8')).toMatchSnapshot();
 });
