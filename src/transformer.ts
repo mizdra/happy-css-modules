@@ -44,9 +44,14 @@ const createImporterForJest: (from: string) => Importer<'async'> = (from) => ({
   },
 });
 
+const handleImportError = (packageName: string) => (e: unknown) => {
+  console.error(`${packageName} import failed. Did you forget to \`npm install -D ${packageName}\`?`);
+  throw e;
+};
+
 export const defaultTransformer: Transformer = async (source, from) => {
   if (from.endsWith('.scss')) {
-    const sass = await import('sass'); // TODO: improve error message
+    const sass = await import('sass').catch(handleImportError('sass'));
     if (IS_JEST_ENVIRONMENT) verifyJestEnvironment();
     const result = await sass.default.compileStringAsync(source, {
       url: pathToFileURL(from),
@@ -55,7 +60,7 @@ export const defaultTransformer: Transformer = async (source, from) => {
     });
     return { css: result.css, map: result.sourceMap!, dependencies: result.loadedUrls };
   } else if (from.endsWith('.less')) {
-    const less = await import('less');
+    const less = await import('less').catch(handleImportError('less'));
     const result = await less.default.render(source, {
       filename: from,
       sourceMap: {},
