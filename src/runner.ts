@@ -85,7 +85,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
     });
     return { close: async () => watcher.close() };
   } else {
-    const filePaths = (await glob(options.pattern, { dot: true, cwd: options.cwd }))
+    const filePaths = (await glob(options.pattern, { dot: true, cwd: options.cwd ?? process.cwd() }))
       // convert relative path to absolute path
       .map((file) => resolve(options.cwd ?? process.cwd(), file));
 
