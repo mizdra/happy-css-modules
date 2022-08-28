@@ -30,6 +30,7 @@ export function parseArgv(argv: string[]): RunnerOptions {
     .option('watch', {
       type: 'boolean',
       alias: 'w',
+      default: false,
       describe: "Watch input directory's css files or pattern",
     })
     .option('localsConvention', {
@@ -38,14 +39,17 @@ export function parseArgv(argv: string[]): RunnerOptions {
     })
     .option('namedExport', {
       type: 'boolean',
+      default: false,
       describe: 'Use named exports as opposed to default exports to enable tree shaking',
     })
     .option('declarationMap', {
       type: 'boolean',
+      default: true,
       describe: 'Create sourcemaps for d.ts files',
     })
     .option('silent', {
       type: 'boolean',
+      default: false,
       describe: 'Silent output. Do not show "files written" messages',
     })
     .alias('h', 'help')
