@@ -3,4 +3,7 @@
 
 import { run, parseArgv } from '../dist/index.js';
 
-run(parseArgv(process.argv)).catch(console.error);
+run(parseArgv(process.argv)).catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

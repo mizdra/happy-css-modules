@@ -1,7 +1,7 @@
 import { readFile, stat } from 'fs/promises';
 import { jest } from '@jest/globals';
 import chalk from 'chalk';
-import { createFixtures, exists, fakeToken, getFixturePath } from '../test/util.js';
+import { createFixtures, exists, fakeToken, getFixturePath, waitForAsyncTask } from '../test/util.js';
 import { emitGeneratedFiles, getRelativePath, isSubDirectoryFile } from './index.js';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -62,12 +62,14 @@ describe('emitGeneratedFiles', () => {
     const mtimeForDts1 = (await stat(getFixturePath('/test/1.css.d.ts'))).mtime;
     const mtimeForSourceMap1 = (await stat(getFixturePath('/test/1.css.d.ts.map'))).mtime;
 
+    await waitForAsyncTask(1); // so that mtime changes.
     await emitGeneratedFiles({ ...defaultArgs, tokens: tokens1 });
     const mtimeForDts2 = (await stat(getFixturePath('/test/1.css.d.ts'))).mtime;
     const mtimeForSourceMap2 = (await stat(getFixturePath('/test/1.css.d.ts.map'))).mtime;
     expect(mtimeForDts1).toEqual(mtimeForDts2); // skipped
     expect(mtimeForSourceMap1).toEqual(mtimeForSourceMap2); // skipped
 
+    await waitForAsyncTask(1); // so that mtime changes.
     const tokens2 = [fakeToken({ name: 'bar', originalLocations: [{ start: { line: 1, column: 1 } }] })];
     await emitGeneratedFiles({ ...defaultArgs, tokens: tokens2 });
     const mtimeForDts3 = (await stat(getFixturePath('/test/1.css.d.ts'))).mtime;

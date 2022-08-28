@@ -31,4 +31,16 @@ const jsonSerializer: jest.SnapshotSerializerPlugin = {
   },
 };
 
+const errorSerializer: jest.SnapshotSerializerPlugin = {
+  serialize(val) {
+    if (!(val instanceof Error)) throw new Error('unreachable');
+    return val.message.replace(new RegExp(FIXTURE_DIR_PATH, 'g'), '<fixtures>');
+  },
+
+  test(val) {
+    return val instanceof Error && val.message.includes(FIXTURE_DIR_PATH);
+  },
+};
+
 expect.addSnapshotSerializer(jsonSerializer);
+expect.addSnapshotSerializer(errorSerializer);
