@@ -5,6 +5,25 @@ import { type Transformer } from './loader/index.js';
 
 const IS_JEST_ENVIRONMENT = process.env.JEST_WORKER_ID !== undefined;
 
+function verifyJestEnvironment() {
+  if (
+    !(
+      'window' in global &&
+      'location' in global &&
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      'href' in (global as any).location &&
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      typeof (global as any).location.href === 'string' &&
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (global as any).location.href.startsWith('http://')
+    )
+  ) {
+    throw new Error(
+      'To use dart-sass with jest, dummy `global.window` and `global.location.href` must be set. See https://github.com/sass/dart-sass/issues/1692#issuecomment-1229219993 .',
+    );
+  }
+}
+
 const createImporterForJest: (from: string) => Importer<'async'> = (from) => ({
   canonicalize(url) {
     // NOTE: The format of `url` changes depending on the import source.
@@ -28,6 +47,7 @@ const createImporterForJest: (from: string) => Importer<'async'> = (from) => ({
 export const defaultTransformer: Transformer = async (source, from) => {
   if (from.endsWith('.scss')) {
     const sass = await import('sass'); // TODO: improve error message
+    if (IS_JEST_ENVIRONMENT) verifyJestEnvironment();
     const result = await sass.default.compileStringAsync(source, {
       url: pathToFileURL(from),
       sourceMap: true,
