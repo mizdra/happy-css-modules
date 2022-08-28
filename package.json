@@ -79,7 +79,17 @@
     "typescript": "^4.7.4"
   },
   "peerDependencies": {
-    "postcss": "^8.0.0"
+    "postcss": "^8.0.0",
+    "sass": "^1.0.0",
+    "less": "^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "sass": {
+      "optional": true
+    },
+    "less": {
+      "optional": true
+    }
   },
   "packageManager": "pnpm@7.5.2",
   "prettier": "@mizdra/prettier-config-mizdra"

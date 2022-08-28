@@ -1,6 +1,7 @@
 import { readFile, stat } from 'fs/promises';
 import { dirname, resolve } from 'path';
 import postcss from 'postcss';
+import { defaultTransformer } from '../transformer.js';
 import { unique, uniqueBy } from '../util.js';
 import {
   getOriginalLocation,
@@ -74,9 +75,8 @@ export class Loader {
 
   constructor(transformer?: Transformer) {
     // TODO: support resolver
-    // TODO: support default transformer
     // TODO: support default resolver
-    this.transformer = transformer;
+    this.transformer = transformer ?? defaultTransformer;
   }
 
   /** Returns `true` if the cache is outdated. */
