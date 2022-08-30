@@ -6,7 +6,7 @@ const jsonSerializer: jest.SnapshotSerializerPlugin = {
   serialize(val) {
     const json = JSON.stringify(val);
     const replacedJson = json.replace(new RegExp(FIXTURE_DIR_PATH, 'g'), '<fixtures>');
-    return format(replacedJson, { parser: 'json', printWidth: 120 }).trimEnd();
+    return format(replacedJson, { parser: 'json5', printWidth: 120 }).trimEnd();
   },
 
   test(val) {
