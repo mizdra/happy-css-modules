@@ -1,9 +1,15 @@
+import { jest } from '@jest/globals';
 import dedent from 'dedent';
 import { Loader } from '../loader/index.js';
 import { createFixtures, getFixturePath } from '../test/util.js';
 import { scssTransformer } from './scss.js';
 
 const loader = new Loader(scssTransformer);
+const loadSpy = jest.spyOn(loader, 'load');
+
+afterEach(() => {
+  loadSpy.mockClear();
+});
 
 test('handles sass features', async () => {
   createFixtures({
@@ -109,5 +115,12 @@ test('tracks dependencies that have been pre-bundled by sass compiler', async ()
     `,
   });
   const result = await loader.load(getFixturePath('/test/1.scss'));
+
+  // The files imported using @import are pre-bundled by the compiler.
+  // Therefore, `Loader#load` is not called to process other files.
+  expect(loadSpy).toBeCalledTimes(1);
+  expect(loadSpy).toHaveBeenNthCalledWith(1, getFixturePath('/test/1.scss'));
+
+  // The files pre-bundled by the compiler are also included in `result.dependencies`
   expect(result.dependencies).toStrictEqual(['/test/2.scss', '/test/3.scss', '/test/4.scss'].map(getFixturePath));
 });

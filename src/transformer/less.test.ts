@@ -1,9 +1,15 @@
+import { jest } from '@jest/globals';
 import dedent from 'dedent';
 import { Loader } from '../loader/index.js';
 import { createFixtures, getFixturePath } from '../test/util.js';
 import { lessTransformer } from './less.js';
 
 const loader = new Loader(lessTransformer);
+const loadSpy = jest.spyOn(loader, 'load');
+
+afterEach(() => {
+  loadSpy.mockClear();
+});
 
 test('handles less features', async () => {
   createFixtures({
@@ -92,6 +98,13 @@ test('tracks dependencies that have been pre-bundled by less compiler', async ()
     `,
   });
   const result = await loader.load(getFixturePath('/test/1.less'));
+
+  // The files imported using @import are pre-bundled by the compiler.
+  // Therefore, `Loader#load` is not called to process other files.
+  expect(loadSpy).toBeCalledTimes(1);
+  expect(loadSpy).toHaveBeenNthCalledWith(1, getFixturePath('/test/1.less'));
+
+  // The files pre-bundled by the compiler are also included in `result.dependencies`
   // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
   expect(result.dependencies.sort()).toStrictEqual(
     // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
