@@ -1,20 +1,15 @@
 import { readFile, rm, stat } from 'fs/promises';
-import { tmpdir } from 'os';
-import { join } from 'path';
+import { createFixtures, getFixturePath } from '../test/util.js';
 import { writeFileIfChanged } from './file-system.js';
 
-const TMP_DIR = join(tmpdir(), 'enhanced-typed-css-modules');
-
-const TEST_FILE_PATH = join(TMP_DIR, 'test.txt');
-const TEST_NESTED_FILE_PATH = join(TMP_DIR, 'dir', 'test.txt');
+const TEST_FILE_PATH = getFixturePath('/test.txt');
+const TEST_NESTED_FILE_PATH = getFixturePath('/dir/test.txt');
 const OLD_CONTENT = 'old';
 const NEW_CONTENT = 'new';
 
 beforeEach(async () => {
+  createFixtures({});
   await writeFileIfChanged(TEST_FILE_PATH, OLD_CONTENT);
-});
-afterEach(async () => {
-  await rm(TMP_DIR, { recursive: true });
 });
 
 describe('writeFileIfChanged', () => {
