@@ -1,5 +1,5 @@
 import type { LegacyResult } from 'sass';
-import { type Transformer } from './loader/index.js';
+import { type Transformer } from '../loader/index.js';
 
 // NOTE: The workaround for using sass's modern API. enhanced-typed-css-modules used to use this API.
 // However, due to the implementation of custom resolvers, we have switched to the legacy API.

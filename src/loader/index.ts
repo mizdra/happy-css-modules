@@ -1,7 +1,7 @@
 import { readFile, stat } from 'fs/promises';
 import { dirname, resolve } from 'path';
 import postcss from 'postcss';
-import { defaultTransformer } from '../transformer.js';
+import { defaultTransformer } from '../transformer/index.js';
 import { unique, uniqueBy } from '../util.js';
 import {
   getOriginalLocation,
