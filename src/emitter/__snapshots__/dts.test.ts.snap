@@ -2,34 +2,34 @@
 
 exports[`generateDtsContentWithSourceMap change export type by namedExport 2`] = `
 {
-  "version": 3,
-  "sources": ["1.css"],
-  "names": ["foo", "bar"],
-  "mappings": "AAAA;AAAA,E,SAAAA,K,SAAA;AAAA,E,SACAC,K,SADA;AAAA;AAAA",
-  "file": "1.css.d.ts",
-  "sourceRoot": ""
+  version: 3,
+  sources: ["1.css"],
+  names: ["foo", "bar"],
+  mappings: "AAAA;AAAA,E,SAAAA,K,SAAA;AAAA,E,SACAC,K,SADA;AAAA;AAAA",
+  file: "1.css.d.ts",
+  sourceRoot: "",
 }
 `;
 
 exports[`generateDtsContentWithSourceMap change export type by namedExport 4`] = `
 {
-  "version": 3,
-  "sources": ["1.css"],
-  "names": ["foo", "bar"],
-  "mappings": "AAAA;aAAAA,G,SAAA;aACAC,G,SADA",
-  "file": "1.css.d.ts",
-  "sourceRoot": ""
+  version: 3,
+  sources: ["1.css"],
+  names: ["foo", "bar"],
+  mappings: "AAAA;aAAAA,G,SAAA;aACAC,G,SADA",
+  file: "1.css.d.ts",
+  sourceRoot: "",
 }
 `;
 
 exports[`generateDtsContentWithSourceMap emit other directory 2`] = `
 {
-  "version": 3,
-  "sources": ["../src/1.css"],
-  "names": ["foo", "bar"],
-  "mappings": "AAAA;AAAA,E,SAAAA,K,SAAA;AAAA,E,SACAC,K,SADA;AAAA;AAAA",
-  "file": "1.css.d.ts",
-  "sourceRoot": ""
+  version: 3,
+  sources: ["../src/1.css"],
+  names: ["foo", "bar"],
+  mappings: "AAAA;AAAA,E,SAAAA,K,SAAA;AAAA,E,SACAC,K,SADA;AAAA;AAAA",
+  file: "1.css.d.ts",
+  sourceRoot: "",
 }
 `;
 
@@ -98,11 +98,11 @@ export = styles;
 
 exports[`generateDtsContentWithSourceMap generate dts content with source map 2`] = `
 {
-  "version": 3,
-  "sources": ["1.css", "2.css"],
-  "names": ["foo", "bar", "baz", "qux", "quux"],
-  "mappings": "AAAA;AAAA,E,SAAAA,K,SAAA;AAAA,E,SACAC,K,SADA;AAAA,E,SAEAC,K,SAFA;AAAA,E,SAGAA,K,SAHA;AAAA,E,SCIAC,K,SDJA;AAAA,E,SCKAC,M,SDLA;AAAA,E,SCMAA,M,SDNA;AAAA;AAAA",
-  "file": "1.css.d.ts",
-  "sourceRoot": ""
+  version: 3,
+  sources: ["1.css", "2.css"],
+  names: ["foo", "bar", "baz", "qux", "quux"],
+  mappings: "AAAA;AAAA,E,SAAAA,K,SAAA;AAAA,E,SACAC,K,SADA;AAAA,E,SAEAC,K,SAFA;AAAA,E,SAGAA,K,SAHA;AAAA,E,SCIAC,K,SDJA;AAAA,E,SCKAC,M,SDLA;AAAA,E,SCMAA,M,SDNA;AAAA;AAAA",
+  file: "1.css.d.ts",
+  sourceRoot: "",
 }
 `;
