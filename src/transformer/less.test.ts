@@ -40,45 +40,45 @@ test('handles less features', async () => {
   // FIXME: The end position of 'a_2_2' is incorrect.
   expect(result).toMatchInlineSnapshot(`
     {
-      "dependencies": ["<fixtures>/test/2.less", "<fixtures>/test/3.less"],
-      "tokens": [
+      dependencies: ["<fixtures>/test/2.less", "<fixtures>/test/3.less"],
+      tokens: [
         {
-          "name": "b_1",
-          "originalLocations": [
-            { "filePath": "<fixtures>/test/2.less", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 3 } }
-          ]
+          name: "b_1",
+          originalLocations: [
+            { filePath: "<fixtures>/test/2.less", start: { line: 1, column: 1 }, end: { line: 1, column: 3 } },
+          ],
         },
         {
-          "name": "a_1",
-          "originalLocations": [
-            { "filePath": "<fixtures>/test/1.less", "start": { "line": 2, "column": 1 }, "end": { "line": 2, "column": 3 } }
-          ]
+          name: "a_1",
+          originalLocations: [
+            { filePath: "<fixtures>/test/1.less", start: { line: 2, column: 1 }, end: { line: 2, column: 3 } },
+          ],
         },
         {
-          "name": "a_2",
-          "originalLocations": [
-            { "filePath": "<fixtures>/test/1.less", "start": { "line": 3, "column": 1 }, "end": { "line": 3, "column": 3 } }
-          ]
+          name: "a_2",
+          originalLocations: [
+            { filePath: "<fixtures>/test/1.less", start: { line: 3, column: 1 }, end: { line: 3, column: 3 } },
+          ],
         },
         {
-          "name": "a_2_1",
-          "originalLocations": [
-            { "filePath": "<fixtures>/test/1.less", "start": { "line": 6, "column": 3 }, "end": { "line": 6, "column": 7 } }
-          ]
+          name: "a_2_1",
+          originalLocations: [
+            { filePath: "<fixtures>/test/1.less", start: { line: 6, column: 3 }, end: { line: 6, column: 7 } },
+          ],
         },
         {
-          "name": "a_2_2",
-          "originalLocations": [
-            { "filePath": "<fixtures>/test/1.less", "start": { "line": 7, "column": 3 }, "end": { "line": 7, "column": 7 } }
-          ]
+          name: "a_2_2",
+          originalLocations: [
+            { filePath: "<fixtures>/test/1.less", start: { line: 7, column: 3 }, end: { line: 7, column: 7 } },
+          ],
         },
         {
-          "name": "c",
-          "originalLocations": [
-            { "filePath": "<fixtures>/test/3.less", "start": { "line": 1, "column": 1 }, "end": { "line": 1, "column": 1 } }
-          ]
-        }
-      ]
+          name: "c",
+          originalLocations: [
+            { filePath: "<fixtures>/test/3.less", start: { line: 1, column: 1 }, end: { line: 1, column: 1 } },
+          ],
+        },
+      ],
     }
   `);
 });
