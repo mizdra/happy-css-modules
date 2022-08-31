@@ -59,7 +59,7 @@
     "@types/dedent": "^0.7.0",
     "@types/es-aggregate-error": "^1.0.2",
     "@types/glob": "^7.2.0",
-    "@types/jest": "^28.1.7",
+    "@types/jest": "^28.1.8",
     "@types/less": "^3.0.3",
     "@types/node": "^18.0.6",
     "@types/yargs": "^17.0.10",
