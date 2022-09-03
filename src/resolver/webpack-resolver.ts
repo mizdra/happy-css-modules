@@ -33,6 +33,20 @@ const sassLoaderResolver = enhancedResolve.create.sync({
   preferRelative: true,
 });
 
+/**
+ * A resolver compatible with less-loader.
+ *
+ * @see https://github.com/webpack-contrib/less-loader/blob/d74f740c100c4006b00dfb3e02c6d5aaf8713519/src/utils.js#L35-L42
+ */
+const lessLoaderResolver = enhancedResolve.create.sync({
+  dependencyType: 'less',
+  conditionNames: ['less', 'style'],
+  mainFields: ['less', 'style', 'main', '...'],
+  mainFiles: ['index', '...'],
+  extensions: ['.less', '.css'],
+  preferRelative: true,
+});
+
 // TODO: Support `resolve.alias` for Node.js API
 export const webpackResolver: Resolver = async (specifier, options) => {
   // `~` prefix is optional.
@@ -41,8 +55,7 @@ export const webpackResolver: Resolver = async (specifier, options) => {
 
   // NOTE: In theory, `sassLoaderResolver` should only be used when the resolver is called from `sassTransformer`.
   // However, we do not implement such behavior because it is cumbersome. If someone wants it, we will implement it.
-  // TODO: support resolve algorithm of less-loader
-  const resolvers = [cssLoaderResolver, sassLoaderResolver];
+  const resolvers = [cssLoaderResolver, sassLoaderResolver, lessLoaderResolver];
   for (const resolver of resolvers) {
     try {
       const resolved = resolver(dirname(options.request), specifier);
