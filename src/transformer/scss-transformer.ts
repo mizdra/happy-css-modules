@@ -57,6 +57,12 @@ async function renderSass(sass: typeof import('sass'), source: string, options: 
         file: options.from,
         outFile: 'DUMMY', // Required for sourcemap output.
         sourceMap: true,
+        importer: (url, prev, done) => {
+          options
+            .resolver(url, { request: prev })
+            .then((resolved) => done({ file: resolved }))
+            .catch((e) => done(e));
+        },
       },
       (exception, result) => {
         if (exception) {
