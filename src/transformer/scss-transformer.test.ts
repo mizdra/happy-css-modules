@@ -131,13 +131,6 @@ test('resolves specifier using resolver', async () => {
     '/node_modules/package-2/index.scss': `.a {}`,
   });
   const result = await loader.load(getFixturePath('/test/1.scss'));
-
-  // The files imported using @import are pre-bundled by the compiler.
-  // Therefore, `Loader#load` is not called to process other files.
-  expect(loadSpy).toBeCalledTimes(1);
-  expect(loadSpy).toHaveBeenNthCalledWith(1, getFixturePath('/test/1.scss'));
-
-  // The files pre-bundled by the compiler are also included in `result.dependencies`
   expect(result.dependencies).toStrictEqual(
     ['/node_modules/package-1/index.css', '/node_modules/package-2/index.scss'].map(getFixturePath),
   );
