@@ -1,6 +1,7 @@
 import { readFile, stat } from 'fs/promises';
-import { dirname, resolve } from 'path';
 import postcss from 'postcss';
+import type { Resolver } from '../resolver/index.js';
+import { defaultResolver } from '../resolver/index.js';
 import { defaultTransformer } from '../transformer/index.js';
 import { unique, uniqueBy } from '../util.js';
 import {
@@ -29,6 +30,7 @@ export type TransformResult =
   | false;
 
 /** The function to transform source code. */
+// TODO: support resolver
 export type Transformer = (source: string, from: string) => TransformResult | Promise<TransformResult>;
 
 /** The exported token. */
@@ -68,15 +70,29 @@ function normalizeTokens(tokens: Token[]): Token[] {
   }));
 }
 
+export type LoaderOptions = {
+  /** The function to transform source code. */
+  transformer?: Transformer;
+  /** The function to resolve the path of the imported file. */
+  resolver?: Resolver;
+};
+
 /** This class collects information on tokens exported from CSS Modules files. */
 export class Loader {
   private readonly cache: Map<string, CacheEntry> = new Map();
   private readonly transformer: Transformer | undefined;
+  private readonly resolver: (...args: Parameters<Resolver>) => Promise<string>;
 
-  constructor(transformer?: Transformer) {
+  constructor(options?: LoaderOptions) {
     // TODO: support resolver
     // TODO: support default resolver
-    this.transformer = transformer ?? defaultTransformer;
+    this.transformer = options?.transformer ?? defaultTransformer;
+    this.resolver = async (specifier, resolverOptions) => {
+      const resolver = options?.resolver ?? defaultResolver;
+      const resolved = await resolver(specifier, resolverOptions);
+      if (resolved === false) throw new Error(`Could not resolve '${specifier}' in '${resolverOptions.request}'.`);
+      return resolved;
+    };
   }
 
   /** Returns `true` if the cache is outdated. */
@@ -148,7 +164,7 @@ export class Loader {
     for (const atImport of atImports) {
       const importedSheetPath = parseAtImport(atImport);
       if (!importedSheetPath) continue;
-      const from = resolve(dirname(filePath), importedSheetPath);
+      const from = await this.resolver(importedSheetPath, { request: filePath });
       const result = await this.load(from);
       const externalTokens = result.tokens;
       dependencies.push(from);
@@ -173,7 +189,7 @@ export class Loader {
     for (const composesDeclaration of composesDeclarations) {
       const declarationDetail = parseComposesDeclarationWithFromUrl(composesDeclaration);
       if (!declarationDetail) continue;
-      const from = resolve(dirname(filePath), declarationDetail.from);
+      const from = await this.resolver(declarationDetail.from, { request: filePath });
       const result = await this.load(from);
       const externalTokens = result.tokens.filter((token) => declarationDetail.tokenNames.includes(token.name));
       dependencies.push(from);

@@ -4,7 +4,7 @@ import { Loader } from '../loader/index.js';
 import { createFixtures, getFixturePath } from '../test/util.js';
 import { scssTransformer } from './scss.js';
 
-const loader = new Loader(scssTransformer);
+const loader = new Loader({ transformer: scssTransformer });
 const loadSpy = jest.spyOn(loader, 'load');
 
 afterEach(() => {

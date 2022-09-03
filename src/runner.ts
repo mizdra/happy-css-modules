@@ -7,6 +7,7 @@ import AggregateError from 'es-aggregate-error';
 import _glob from 'glob';
 import { emitGeneratedFiles } from './emitter/index.js';
 import { Loader, type Transformer } from './loader/index.js';
+import type { Resolver } from './resolver/index.js';
 
 const glob = util.promisify(_glob);
 
@@ -24,6 +25,7 @@ export interface RunnerOptions {
   namedExport?: boolean;
   declarationMap?: boolean;
   transformer?: Transformer;
+  resolver?: Resolver;
   /**
    * Silent output. Do not show "files written" messages.
    * @default false
@@ -43,7 +45,7 @@ type OverrideProp<T, K extends keyof T, V extends T[K]> = Omit<T, K> & { [P in K
 export async function run(options: OverrideProp<RunnerOptions, 'watch', true>): Promise<Watcher>;
 export async function run(options: RunnerOptions): Promise<void>;
 export async function run(options: RunnerOptions): Promise<Watcher | void> {
-  const loader = new Loader(options.transformer);
+  const loader = new Loader({ transformer: options.transformer, resolver: options.resolver });
   const distOptions = options.outDir
     ? {
         rootDir: process.cwd(), // TODO: support `--rootDir` option

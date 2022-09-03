@@ -1,4 +1,6 @@
 import { hasProp, isObject, isSystemError, unique, uniqueBy } from '../src/util.js';
+import { createFixtures, getFixturePath } from './test/util.js';
+import { exists } from './util.js';
 
 function fakeSystemError({ code }: { code: string }) {
   const error = new Error();
@@ -61,4 +63,12 @@ test('uniqueBy', () => {
     { key: 'b', value: 2 },
     { key: 'c', value: 4 },
   ]);
+});
+
+test('exists', async () => {
+  createFixtures({
+    '/test/1.css': `.a {}`,
+  });
+  expect(await exists(getFixturePath('/test/1.css'))).toBe(true);
+  expect(await exists(getFixturePath('/test/2.css'))).toBe(false);
 });

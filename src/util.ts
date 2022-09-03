@@ -1,3 +1,5 @@
+import { constants } from 'fs';
+import { access } from 'fs/promises';
 /**
  * The SystemError type of Node.js.
  * @see https://nodejs.org/api/errors.html#class-systemerror
@@ -41,4 +43,13 @@ export function uniqueBy<T, U>(arr: T[], fn: (el: T) => U): T[] {
     }
   }
   return result;
+}
+
+export async function exists(path: string): Promise<boolean> {
+  try {
+    await access(path, constants.F_OK);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }

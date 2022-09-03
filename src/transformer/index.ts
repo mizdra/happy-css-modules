@@ -7,6 +7,7 @@ export const handleImportError = (packageName: string) => (e: unknown) => {
   throw e;
 };
 
+// TODO: support resolver
 export const defaultTransformer: Transformer = async (source, from) => {
   if (from.endsWith('.scss')) {
     return scssTransformer(source, from);

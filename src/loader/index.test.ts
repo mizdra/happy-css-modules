@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
-import { createFixtures, getFixturePath } from '../test/util.js';
+import { createFixtures, FIXTURE_DIR_PATH, getFixturePath } from '../test/util.js';
 
 const readFileSpy = jest.spyOn(fs, 'readFile');
 // In ESM, for some reason, we need to explicitly mock module
@@ -288,10 +288,12 @@ test('throws error the composition of non-existent file', async () => {
     }
     `,
   });
-  // TODO: better error message
   await expect(async () => {
-    await loader.load(getFixturePath('/test/1.css'));
-  }).rejects.toThrowError(/ENOENT: no such file or directory/);
+    await loader.load(getFixturePath('/test/1.css')).catch((e) => {
+      e.message = e.message.replace(FIXTURE_DIR_PATH, '<fixtures>');
+      throw e;
+    });
+  }).rejects.toThrowError(`Could not resolve './2.css' in '<fixtures>/test/1.css'`);
 });
 
 test.todo('supports sourcemap file and inline sourcemap');
