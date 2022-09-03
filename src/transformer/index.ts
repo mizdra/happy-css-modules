@@ -1,3 +1,4 @@
+import type { StrictlyResolver } from '../loader/index.js';
 import { lessTransformer } from './less-transformer.js';
 import { scssTransformer } from './scss-transformer.js';
 
@@ -18,10 +19,11 @@ export type TransformResult =
 export type TransformerOptions = {
   /** The path of the file to transform. */
   from: string;
+  /** The function to resolve the path of the imported file. */
+  resolver: StrictlyResolver;
 };
 
 /** The function to transform source code. */
-// TODO: support resolver
 export type Transformer = (source: string, options: TransformerOptions) => TransformResult | Promise<TransformResult>;
 
 export const handleImportError = (packageName: string) => (e: unknown) => {
