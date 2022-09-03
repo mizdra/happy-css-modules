@@ -59,11 +59,14 @@ export type LoaderOptions = {
   resolver?: Resolver;
 };
 
+/** The resolver that throws an exception if resolving fails. */
+export type StrictlyResolver = (...args: Parameters<Resolver>) => Promise<string>;
+
 /** This class collects information on tokens exported from CSS Modules files. */
 export class Loader {
   private readonly cache: Map<string, CacheEntry> = new Map();
   private readonly transformer: Transformer | undefined;
-  private readonly resolver: (...args: Parameters<Resolver>) => Promise<string>;
+  private readonly resolver: StrictlyResolver;
 
   constructor(options?: LoaderOptions) {
     // TODO: support resolver
@@ -106,7 +109,7 @@ export class Loader {
   > {
     const css = await readFile(filePath, 'utf-8');
     if (!this.transformer) return { css, map: undefined, dependencies: [] };
-    const result = await this.transformer(css, filePath);
+    const result = await this.transformer(css, { from: filePath, resolver: this.resolver });
     if (result === false) return { css, map: undefined, dependencies: [] };
     return {
       css: result.css,
