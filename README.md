@@ -7,7 +7,7 @@ This is an experimental project aimed at PoC for https://github.com/Quramy/typed
 ## Installation
 
 ```console
-$ npm i -D @mizdra/enhanced-typed-css-modules
+$ npm i -D enhanced-typed-css-modules
 ```
 
 ## Usage
@@ -59,13 +59,13 @@ With the `transformer` option, you can use AltCSS, which is not supported by `en
 ```javascript
 // @ts-check
 
-import { run } from '@mizdra/enhanced-typed-css-modules';
+import { run } from 'enhanced-typed-css-modules';
 import { readFile } from 'fs/promises';
 import { fileURLToPath, pathToFileURL } from 'url';
 import sass from 'sass';
 
 // The custom transpiler supporting sass indented syntax
-/** @type {import('@mizdra/enhanced-typed-css-modules').Transformer} */
+/** @type {import('enhanced-typed-css-modules').Transformer} */
 const transformer = async (source, from) => {
   if (from.endsWith('.sass')) {
     const result = await sass.compileStringAsync(source, {
@@ -97,7 +97,7 @@ You can also create your own customized `etcm` commands. We also provide a `pars
 // scripts/etcm.js
 // @ts-check
 
-import { run, parseArgv } from '@mizdra/enhanced-typed-css-modules';
+import { run, parseArgv } from 'enhanced-typed-css-modules';
 
 // ...
 
