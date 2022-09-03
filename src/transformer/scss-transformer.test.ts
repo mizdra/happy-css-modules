@@ -120,3 +120,25 @@ test('tracks dependencies that have been pre-bundled by sass compiler', async ()
   // The files pre-bundled by the compiler are also included in `result.dependencies`
   expect(result.dependencies).toStrictEqual(['/test/2.scss', '/test/3.scss', '/test/4.scss'].map(getFixturePath));
 });
+
+test('resolves specifier using resolver', async () => {
+  createFixtures({
+    '/test/1.scss': dedent`
+    @import 'package-1';
+    @import 'package-2';
+    `,
+    '/node_modules/package-1/index.css': `.a {}`,
+    '/node_modules/package-2/index.scss': `.a {}`,
+  });
+  const result = await loader.load(getFixturePath('/test/1.scss'));
+
+  // The files imported using @import are pre-bundled by the compiler.
+  // Therefore, `Loader#load` is not called to process other files.
+  expect(loadSpy).toBeCalledTimes(1);
+  expect(loadSpy).toHaveBeenNthCalledWith(1, getFixturePath('/test/1.scss'));
+
+  // The files pre-bundled by the compiler are also included in `result.dependencies`
+  expect(result.dependencies).toStrictEqual(
+    ['/node_modules/package-1/index.css', '/node_modules/package-2/index.scss'].map(getFixturePath),
+  );
+});
