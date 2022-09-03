@@ -2,7 +2,7 @@ import { jest } from '@jest/globals';
 import dedent from 'dedent';
 import { Loader } from '../loader/index.js';
 import { createFixtures, getFixturePath } from '../test/util.js';
-import { lessTransformer } from './less.js';
+import { lessTransformer } from './less-transformer.js';
 
 const loader = new Loader({ transformer: lessTransformer });
 const loadSpy = jest.spyOn(loader, 'load');

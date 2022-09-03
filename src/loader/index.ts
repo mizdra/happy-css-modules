@@ -2,7 +2,7 @@ import { readFile, stat } from 'fs/promises';
 import postcss from 'postcss';
 import type { Resolver } from '../resolver/index.js';
 import { defaultResolver } from '../resolver/index.js';
-import { defaultTransformer } from '../transformer/index.js';
+import { defaultTransformer, type Transformer } from '../transformer/index.js';
 import { unique, uniqueBy } from '../util.js';
 import {
   getOriginalLocation,
@@ -14,24 +14,6 @@ import {
 } from './postcss.js';
 
 export { collectNodes, type Location } from './postcss.js';
-
-/**
- * The value returned from the transformer.
- * `false` means to skip transpiling on that file.
- * */
-export type TransformResult =
-  | {
-      /** The transformed code. */
-      css: string;
-      /** The source map from the transformed code to the original code. */
-      map: string | object;
-      dependencies: (string | URL)[];
-    }
-  | false;
-
-/** The function to transform source code. */
-// TODO: support resolver
-export type Transformer = (source: string, from: string) => TransformResult | Promise<TransformResult>;
 
 /** The exported token. */
 export type Token = {
