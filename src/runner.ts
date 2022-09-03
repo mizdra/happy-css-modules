@@ -6,8 +6,9 @@ import * as chokidar from 'chokidar';
 import AggregateError from 'es-aggregate-error';
 import _glob from 'glob';
 import { emitGeneratedFiles } from './emitter/index.js';
-import { Loader, type Transformer } from './loader/index.js';
+import { Loader } from './loader/index.js';
 import type { Resolver } from './resolver/index.js';
+import { type Transformer } from './transformer/index.js';
 
 const glob = util.promisify(_glob);
 
