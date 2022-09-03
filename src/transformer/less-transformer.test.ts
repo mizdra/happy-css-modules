@@ -111,3 +111,18 @@ test('tracks dependencies that have been pre-bundled by less compiler', async ()
     ['/test/2.less', '/test/3.less', '/test/4.less'].map(getFixturePath).sort(),
   );
 });
+
+test('resolves specifier using resolver', async () => {
+  createFixtures({
+    '/test/1.less': dedent`
+    @import 'package-1';
+    @import 'package-2';
+    `,
+    '/node_modules/package-1/index.css': `.a {}`,
+    '/node_modules/package-2/index.less': `.a {}`,
+  });
+  const result = await loader.load(getFixturePath('/test/1.less'));
+  expect(result.dependencies).toStrictEqual(
+    ['/node_modules/package-1/index.css', '/node_modules/package-2/index.less'].map(getFixturePath),
+  );
+});
