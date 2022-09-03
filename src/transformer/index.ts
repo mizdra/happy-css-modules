@@ -1,6 +1,6 @@
 import { type Transformer } from '../loader/index.js';
-import { lessTransformer } from './less.js';
-import { scssTransformer } from './scss.js';
+import { lessTransformer } from './less-transformer.js';
+import { scssTransformer } from './scss-transformer.js';
 
 export const handleImportError = (packageName: string) => (e: unknown) => {
   console.error(`${packageName} import failed. Did you forget to \`npm install -D ${packageName}\`?`);
