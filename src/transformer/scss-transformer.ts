@@ -4,7 +4,7 @@
 // https://github.com/mizdra/enhanced-typed-css-modules/issues/65#issuecomment-1229471950 for more information.
 
 import type { LegacyResult } from 'sass';
-import type { Transformer } from '../index.js';
+import type { Transformer, TransformerOptions } from './index.js';
 import { handleImportError } from './index.js';
 
 // const IS_JEST_ENVIRONMENT = process.env.JEST_WORKER_ID !== undefined;
@@ -49,12 +49,12 @@ import { handleImportError } from './index.js';
 // });
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-async function renderSass(sass: typeof import('sass'), source: string, from: string) {
+async function renderSass(sass: typeof import('sass'), source: string, options: TransformerOptions) {
   return new Promise<LegacyResult>((resolve, reject) => {
     sass.render(
       {
         data: source,
-        file: from,
+        file: options.from,
         outFile: 'DUMMY', // Required for sourcemap output.
         sourceMap: true,
       },
@@ -69,9 +69,9 @@ async function renderSass(sass: typeof import('sass'), source: string, from: str
   });
 }
 
-export const scssTransformer: Transformer = async (source, from) => {
+export const scssTransformer: Transformer = async (source, options) => {
   const sass = await import('sass').catch(handleImportError('sass'));
-  const result = await renderSass(sass.default, source, from);
+  const result = await renderSass(sass.default, source, options);
   return { css: result.css.toString(), map: result.map!.toString(), dependencies: result.stats.includedFiles };
 
   // if (IS_JEST_ENVIRONMENT) verifyJestEnvironment();
