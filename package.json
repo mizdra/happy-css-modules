@@ -1,6 +1,6 @@
 {
   "name": "enhanced-typed-css-modules",
-  "version": "0.7.0",
+  "version": "0.1.0",
   "description": "Creates .d.ts files from CSS Modules .css files",
   "type": "module",
   "main": "dist/index.js",
