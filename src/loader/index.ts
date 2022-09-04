@@ -2,7 +2,7 @@ import { readFile, stat } from 'fs/promises';
 import postcss from 'postcss';
 import type { Resolver } from '../resolver/index.js';
 import { defaultResolver } from '../resolver/index.js';
-import { defaultTransformer, type Transformer } from '../transformer/index.js';
+import { createDefaultTransformer, type Transformer } from '../transformer/index.js';
 import { unique, uniqueBy } from '../util.js';
 import {
   getOriginalLocation,
@@ -71,7 +71,7 @@ export class Loader {
   constructor(options?: LoaderOptions) {
     // TODO: support resolver
     // TODO: support default resolver
-    this.transformer = options?.transformer ?? defaultTransformer;
+    this.transformer = options?.transformer ?? createDefaultTransformer();
     this.resolver = async (specifier, resolverOptions) => {
       const resolver = options?.resolver ?? defaultResolver;
       const resolved = await resolver(specifier, resolverOptions);

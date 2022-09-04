@@ -75,16 +75,20 @@ async function renderSass(sass: typeof import('sass'), source: string, options: 
   });
 }
 
-export const scssTransformer: Transformer = async (source, options) => {
-  const sass = await import('sass').catch(handleImportError('sass'));
-  const result = await renderSass(sass.default, source, options);
-  return { css: result.css.toString(), map: result.map!.toString(), dependencies: result.stats.includedFiles };
+export const createScssTransformer: () => Transformer = () => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  let sass: typeof import('sass');
+  return async (source, options) => {
+    sass ??= (await import('sass').catch(handleImportError('sass'))).default;
+    const result = await renderSass(sass, source, options);
+    return { css: result.css.toString(), map: result.map!.toString(), dependencies: result.stats.includedFiles };
 
-  // if (IS_JEST_ENVIRONMENT) verifyJestEnvironment();
-  // const result = await sass.default.compileStringAsync(source, {
-  //   url: pathToFileURL(from),
-  //   sourceMap: true,
-  //   importers: IS_JEST_ENVIRONMENT ? [createImporterForJest(from)] : [],
-  // });
-  // return { css: result.css, map: result.sourceMap!, dependencies: result.loadedUrls };
+    // if (IS_JEST_ENVIRONMENT) verifyJestEnvironment();
+    // const result = await sass.default.compileStringAsync(source, {
+    //   url: pathToFileURL(from),
+    //   sourceMap: true,
+    //   importers: IS_JEST_ENVIRONMENT ? [createImporterForJest(from)] : [],
+    // });
+    // return { css: result.css, map: result.sourceMap!, dependencies: result.loadedUrls };
+  };
 };
