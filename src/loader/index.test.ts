@@ -1,7 +1,9 @@
 import fs from 'fs/promises';
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
+import { createDefaultResolver } from '../resolver/index.js';
 import { createFixtures, FIXTURE_DIR_PATH, getFixturePath } from '../test/util.js';
+import { createDefaultTransformer } from '../transformer/index.js';
 
 const readFileSpy = jest.spyOn(fs, 'readFile');
 // In ESM, for some reason, we need to explicitly mock module
@@ -15,7 +17,7 @@ jest.unstable_mockModule('fs/promises', () => ({
 const { Loader } = await import('./index.js');
 // NOTE: ../test/util.js depends on . /index.js, so it must also be imported dynamically...
 
-const loader = new Loader();
+const loader = new Loader({ resolver: createDefaultResolver(), transformer: createDefaultTransformer() });
 
 afterEach(() => {
   readFileSpy.mockClear();

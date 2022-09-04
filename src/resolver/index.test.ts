@@ -1,9 +1,10 @@
 import dedent from 'dedent';
 import { Loader } from '../loader/index.js';
 import { createFixtures, getFixturePath } from '../test/util.js';
+import { createDefaultTransformer } from '../transformer/index.js';
 import { createDefaultResolver } from './index.js';
 
-const loader = new Loader({ resolver: createDefaultResolver() });
+const loader = new Loader({ resolver: createDefaultResolver(), transformer: createDefaultTransformer() });
 
 test('resolve with webpackResolver when other resolvers fail to resolve', async () => {
   createFixtures({
