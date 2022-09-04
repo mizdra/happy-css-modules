@@ -14,6 +14,7 @@
     "lint:tsc": "run-s -c lint:tsc:*",
     "lint:tsc:src": "tsc -p tsconfig.src.json --noEmit",
     "lint:tsc:test": "tsc -p tsconfig.test.json --noEmit",
+    "lint:tsc:example": "tsc -p tsconfig.example.json --noEmit",
     "test": "NODE_OPTIONS=\"--experimental-vm-modules $NODE_OPTIONS\" jest"
   },
   "bin": {
