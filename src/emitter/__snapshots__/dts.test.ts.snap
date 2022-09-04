@@ -1,27 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`generateDtsContentWithSourceMap change export type by namedExport 2`] = `
-{
-  version: 3,
-  sources: ["1.css"],
-  names: ["a", "b"],
-  mappings: "AAAA;AAAA,E,SAAAA,G,SAAA;AAAA,E,SACAC,G,SADA;AAAA;AAAA",
-  file: "1.css.d.ts",
-  sourceRoot: "",
-}
-`;
-
-exports[`generateDtsContentWithSourceMap change export type by namedExport 4`] = `
-{
-  version: 3,
-  sources: ["1.css"],
-  names: ["a", "b"],
-  mappings: "AAAA;aAAAA,C,SAAA;aACAC,C,SADA",
-  file: "1.css.d.ts",
-  sourceRoot: "",
-}
-`;
-
 exports[`generateDtsContentWithSourceMap emit other directory 2`] = `
 {
   version: 3,

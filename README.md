@@ -24,8 +24,6 @@ Options:
                                                       [boolean] [default: false]
       --localsConvention  Style of exported class names.
                  [choices: "camelCase", "camelCaseOnly", "dashes", "dashesOnly"]
-      --namedExport       Use named exports as opposed to default exports to ena
-                          ble tree shaking            [boolean] [default: false]
       --declarationMap    Create sourcemaps for d.ts files
                                                        [boolean] [default: true]
       --silent            Silent output. Do not show "files written" messages
@@ -102,7 +100,7 @@ import { run, parseArgv } from 'enhanced-typed-css-modules';
 // ...
 
 run({
-  ...parseArgv(process.argv), // Inherit default CLI options (e.g. --watch, --namedExport)
+  ...parseArgv(process.argv), // Inherit default CLI options (e.g. --watch)
   transformer,
 }).catch((e) => {
   console.error(e);

@@ -23,7 +23,6 @@ export interface RunnerOptions {
   outDir?: string;
   watch?: boolean;
   localsConvention?: LocalsConvention;
-  namedExport?: boolean;
   declarationMap?: boolean;
   transformer?: Transformer;
   resolver?: Resolver;
@@ -64,7 +63,6 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
         emitDeclarationMap: options.declarationMap,
         dtsFormatOptions: {
           localsConvention: options.localsConvention,
-          namedExport: options.namedExport,
         },
         silent: options.silent ?? false,
         cwd: options.cwd ?? process.cwd(),

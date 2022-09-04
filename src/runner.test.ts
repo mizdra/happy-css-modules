@@ -27,7 +27,7 @@ test('generates .d.ts and .d.ts.map', async () => {
   expect(await readFile(getFixturePath('/test/2.css.d.ts.map'), 'utf8')).toMatchSnapshot();
 });
 
-test.todo('changes dts format with camelCase and namedExport options');
+test.todo('changes dts format with localsConvention options');
 test('does not emit declaration map if declarationMap is false', async () => {
   createFixtures({
     '/test/1.css': '.a {}',
