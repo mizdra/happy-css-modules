@@ -1,10 +1,9 @@
 import dedent from 'dedent';
 import { Loader } from '../loader/index.js';
 import { createFixtures, getFixturePath } from '../test/util.js';
-import { createDefaultTransformer } from '../transformer/index.js';
 import { createResolveResolver } from './resolve-resolver.js';
 
-const loader = new Loader({ resolver: createResolveResolver(), transformer: createDefaultTransformer() });
+const loader = new Loader({ resolver: createResolveResolver() });
 
 test('resolves specifier with resolve mechanism', async () => {
   createFixtures({

@@ -8,8 +8,7 @@ import _glob from 'glob';
 import { emitGeneratedFiles } from './emitter/index.js';
 import { Loader } from './loader/index.js';
 import type { Resolver } from './resolver/index.js';
-import { createDefaultResolver } from './resolver/index.js';
-import { createDefaultTransformer, type Transformer } from './transformer/index.js';
+import { type Transformer } from './transformer/index.js';
 
 const glob = util.promisify(_glob);
 
@@ -47,9 +46,7 @@ type OverrideProp<T, K extends keyof T, V extends T[K]> = Omit<T, K> & { [P in K
 export async function run(options: OverrideProp<RunnerOptions, 'watch', true>): Promise<Watcher>;
 export async function run(options: RunnerOptions): Promise<void>;
 export async function run(options: RunnerOptions): Promise<Watcher | void> {
-  const transformer = options.transformer ?? createDefaultTransformer();
-  const resolver = options.resolver ?? createDefaultResolver();
-  const loader = new Loader({ transformer, resolver });
+  const loader = new Loader({ transformer: options.transformer, resolver: options.resolver });
   const distOptions = options.outDir
     ? {
         rootDir: process.cwd(), // TODO: support `--rootDir` option
