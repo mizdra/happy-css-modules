@@ -4,7 +4,7 @@ exports[`generates .d.ts and .d.ts.map 1`] = `
 "declare const styles: {
   readonly "a": string;
 };
-export = styles;
+export default styles;
 //# sourceMappingURL=1.css.d.ts.map
 "
 `;
@@ -15,7 +15,7 @@ exports[`generates .d.ts and .d.ts.map 3`] = `
 "declare const styles: {
   readonly "b": string;
 };
-export = styles;
+export default styles;
 //# sourceMappingURL=2.css.d.ts.map
 "
 `;
@@ -26,7 +26,7 @@ exports[`supports transformer 1`] = `
 "declare const styles: {
   readonly "a": string;
 };
-export = styles;
+export default styles;
 //# sourceMappingURL=1.scss.d.ts.map
 "
 `;

@@ -54,7 +54,7 @@ describe('generateDtsContentWithSourceMap', () => {
         readonly "b": string;
         readonly "b": string;
       };
-      export = styles;
+      export default styles;
       "
     `);
     expect(sourceMap).toMatchSnapshot(); // TODO: Make snapshot human-readable
@@ -79,7 +79,7 @@ describe('generateDtsContentWithSourceMap', () => {
           readonly "foo-bar": string;
           readonly "foo_bar": string;
         };
-        export = styles;
+        export default styles;
         "
       `);
     });
@@ -94,7 +94,7 @@ describe('generateDtsContentWithSourceMap', () => {
           readonly "fooBar": string;
           readonly "fooBar": string;
         };
-        export = styles;
+        export default styles;
         "
       `);
     });
@@ -111,7 +111,7 @@ describe('generateDtsContentWithSourceMap', () => {
           readonly "foo_bar": string;
           readonly "fooBar": string;
         };
-        export = styles;
+        export default styles;
         "
       `);
     });
@@ -126,7 +126,7 @@ describe('generateDtsContentWithSourceMap', () => {
           readonly "fooBar": string;
           readonly "foo_bar": string;
         };
-        export = styles;
+        export default styles;
         "
       `);
     });
@@ -143,7 +143,7 @@ describe('generateDtsContentWithSourceMap', () => {
           readonly "foo_bar": string;
           readonly "foo_bar": string;
         };
-        export = styles;
+        export default styles;
         "
       `);
     });
@@ -164,7 +164,7 @@ describe('generateDtsContentWithSourceMap', () => {
       "declare const styles: {
         readonly "a": string;
       };
-      export = styles;
+      export default styles;
       "
     `);
     expect(sourceMap).toMatchSnapshot(); // TODO: Make snapshot human-readable

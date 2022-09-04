@@ -19,5 +19,5 @@ declare const styles: {
   readonly "composes_target": string;
   readonly "composes": string;
 };
-export = styles;
+export default styles;
 //# sourceMappingURL=1.css.d.ts.map
