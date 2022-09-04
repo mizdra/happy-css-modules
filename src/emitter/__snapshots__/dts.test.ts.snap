@@ -11,18 +11,6 @@ exports[`generateDtsContentWithSourceMap emit other directory 2`] = `
 }
 `;
 
-exports[`generateDtsContentWithSourceMap generate dts content with source map 1`] = `
-"declare const styles: {
-  readonly "d": string;
-  readonly "c": string;
-  readonly "a": string;
-  readonly "b": string;
-  readonly "b": string;
-};
-export = styles;
-"
-`;
-
 exports[`generateDtsContentWithSourceMap generate dts content with source map 2`] = `
 {
   version: 3,

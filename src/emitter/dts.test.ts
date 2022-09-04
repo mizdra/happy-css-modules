@@ -46,7 +46,17 @@ describe('generateDtsContentWithSourceMap', () => {
       result.tokens,
       dtsFormatOptions,
     );
-    expect(dtsContent).toMatchSnapshot();
+    expect(dtsContent).toMatchInlineSnapshot(`
+      "declare const styles: {
+        readonly "d": string;
+        readonly "c": string;
+        readonly "a": string;
+        readonly "b": string;
+        readonly "b": string;
+      };
+      export = styles;
+      "
+    `);
     expect(sourceMap).toMatchSnapshot(); // TODO: Make snapshot human-readable
   });
   describe('format case', () => {
