@@ -69,8 +69,6 @@ export class Loader {
   private readonly resolver: StrictlyResolver;
 
   constructor(options?: LoaderOptions) {
-    // TODO: support resolver
-    // TODO: support default resolver
     this.transformer = options?.transformer ?? createDefaultTransformer();
     this.resolver = async (specifier, resolverOptions) => {
       const resolver = options?.resolver ?? createDefaultResolver();

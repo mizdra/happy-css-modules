@@ -12,7 +12,6 @@ const pkgJson = JSON.parse(readFileSync(resolve(dirname(fileURLToPath(import.met
  * @returns Runner options.
  */
 export function parseArgv(argv: string[]): RunnerOptions {
-  // TODO: Change default value for options.
   const parsedArgv = yargs(hideBin(argv))
     .parserConfiguration({
       // workaround for https://github.com/yargs/yargs/issues/1318
