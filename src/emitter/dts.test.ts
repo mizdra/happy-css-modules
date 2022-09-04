@@ -116,8 +116,8 @@ describe('generateDtsContentWithSourceMap', () => {
       });
     expect(dtsContentWithoutNamedExport).toMatchInlineSnapshot(`
       "declare const styles: {
-        readonly "foo": string;
-        readonly "bar": string;
+        readonly "a": string;
+        readonly "b": string;
       };
       export = styles;
       "
@@ -130,8 +130,8 @@ describe('generateDtsContentWithSourceMap', () => {
       });
     expect(dtsContentWithNamedExport).toMatchInlineSnapshot(`
       "export const __esModule: true;
-      export const foo: string;
-      export const bar: string;
+      export const a: string;
+      export const b: string;
       "
     `);
     expect(sourceMapWithNamedExport).toMatchSnapshot(); // TODO: Make snapshot human-readable
@@ -150,8 +150,7 @@ describe('generateDtsContentWithSourceMap', () => {
     );
     expect(dtsContent).toMatchInlineSnapshot(`
       "declare const styles: {
-        readonly "foo": string;
-        readonly "bar": string;
+        readonly "a": string;
       };
       export = styles;
       "

@@ -4,8 +4,8 @@ exports[`generateDtsContentWithSourceMap change export type by namedExport 2`] =
 {
   version: 3,
   sources: ["1.css"],
-  names: ["foo", "bar"],
-  mappings: "AAAA;AAAA,E,SAAAA,K,SAAA;AAAA,E,SACAC,K,SADA;AAAA;AAAA",
+  names: ["a", "b"],
+  mappings: "AAAA;AAAA,E,SAAAA,G,SAAA;AAAA,E,SACAC,G,SADA;AAAA;AAAA",
   file: "1.css.d.ts",
   sourceRoot: "",
 }
@@ -15,8 +15,8 @@ exports[`generateDtsContentWithSourceMap change export type by namedExport 4`] =
 {
   version: 3,
   sources: ["1.css"],
-  names: ["foo", "bar"],
-  mappings: "AAAA;aAAAA,G,SAAA;aACAC,G,SADA",
+  names: ["a", "b"],
+  mappings: "AAAA;aAAAA,C,SAAA;aACAC,C,SADA",
   file: "1.css.d.ts",
   sourceRoot: "",
 }
@@ -25,9 +25,9 @@ exports[`generateDtsContentWithSourceMap change export type by namedExport 4`] =
 exports[`generateDtsContentWithSourceMap emit other directory 2`] = `
 {
   version: 3,
-  sources: ["../src/1.css"],
-  names: ["foo", "bar"],
-  mappings: "AAAA;AAAA,E,SAAAA,K,SAAA;AAAA,E,SACAC,K,SADA;AAAA;AAAA",
+  sources: ["../src/1.css", "../1.css"],
+  names: ["a"],
+  mappings: "AAAA;AAAA,E,SCAAA,G,SDAA;AAAA;AAAA",
   file: "1.css.d.ts",
   sourceRoot: "",
 }
@@ -84,13 +84,11 @@ export = styles;
 
 exports[`generateDtsContentWithSourceMap generate dts content with source map 1`] = `
 "declare const styles: {
-  readonly "foo": string;
-  readonly "bar": string;
-  readonly "baz": string;
-  readonly "baz": string;
-  readonly "qux": string;
-  readonly "quux": string;
-  readonly "quux": string;
+  readonly "d": string;
+  readonly "c": string;
+  readonly "a": string;
+  readonly "b": string;
+  readonly "b": string;
 };
 export = styles;
 "
@@ -99,9 +97,9 @@ export = styles;
 exports[`generateDtsContentWithSourceMap generate dts content with source map 2`] = `
 {
   version: 3,
-  sources: ["1.css", "2.css"],
-  names: ["foo", "bar", "baz", "qux", "quux"],
-  mappings: "AAAA;AAAA,E,SAAAA,K,SAAA;AAAA,E,SACAC,K,SADA;AAAA,E,SAEAC,K,SAFA;AAAA,E,SAGAA,K,SAHA;AAAA,E,SCIAC,K,SDJA;AAAA,E,SCKAC,M,SDLA;AAAA,E,SCMAA,M,SDNA;AAAA;AAAA",
+  sources: ["1.css", "3.css", "2.css"],
+  names: ["d", "c", "a", "b"],
+  mappings: "AAAA;AAAA,E,SCAAA,G,SDAA;AAAA,E,SECAC,G,SFDA;AAAA,E,SACAC,G,SADA;AAAA,E,SAEAC,G,SAFA;AAAA,E,SAGAA,G,SAHA;AAAA;AAAA",
   file: "1.css.d.ts",
   sourceRoot: "",
 }
