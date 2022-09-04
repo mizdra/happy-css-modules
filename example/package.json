@@ -2,7 +2,7 @@
   "name": "example",
   "version": "1.0.0",
   "description": "",
-  "type": "module",
+  "type": "commonjs",
   "main": "app.js",
   "scripts": {
     "etcm": "../bin/etcm.js '**/*.{css,scss,less}'"
