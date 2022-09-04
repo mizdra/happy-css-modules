@@ -114,8 +114,8 @@ describe('generateDtsContentWithSourceMap', () => {
       });
     expect(dtsContentWithoutNamedExport).toMatchInlineSnapshot(`
       "declare const styles: {
-        readonly \\"foo\\": string;
-        readonly \\"bar\\": string;
+        readonly "foo": string;
+        readonly "bar": string;
       };
       export = styles;
       "
@@ -154,8 +154,8 @@ describe('generateDtsContentWithSourceMap', () => {
     );
     expect(dtsContent).toMatchInlineSnapshot(`
       "declare const styles: {
-        readonly \\"foo\\": string;
-        readonly \\"bar\\": string;
+        readonly "foo": string;
+        readonly "bar": string;
       };
       export = styles;
       "

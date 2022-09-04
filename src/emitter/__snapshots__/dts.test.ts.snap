@@ -35,10 +35,10 @@ exports[`generateDtsContentWithSourceMap emit other directory 2`] = `
 
 exports[`generateDtsContentWithSourceMap format case camelCase 1`] = `
 "declare const styles: {
-  readonly \\"foo-bar\\": string;
-  readonly \\"fooBar\\": string;
-  readonly \\"foo_bar\\": string;
-  readonly \\"fooBar\\": string;
+  readonly "foo-bar": string;
+  readonly "fooBar": string;
+  readonly "foo_bar": string;
+  readonly "fooBar": string;
 };
 export = styles;
 "
@@ -46,8 +46,8 @@ export = styles;
 
 exports[`generateDtsContentWithSourceMap format case camelCaseOnly 1`] = `
 "declare const styles: {
-  readonly \\"fooBar\\": string;
-  readonly \\"fooBar\\": string;
+  readonly "fooBar": string;
+  readonly "fooBar": string;
 };
 export = styles;
 "
@@ -55,10 +55,10 @@ export = styles;
 
 exports[`generateDtsContentWithSourceMap format case dashes 1`] = `
 "declare const styles: {
-  readonly \\"foo-bar\\": string;
-  readonly \\"fooBar\\": string;
-  readonly \\"foo_bar\\": string;
-  readonly \\"foo_bar\\": string;
+  readonly "foo-bar": string;
+  readonly "fooBar": string;
+  readonly "foo_bar": string;
+  readonly "foo_bar": string;
 };
 export = styles;
 "
@@ -66,8 +66,8 @@ export = styles;
 
 exports[`generateDtsContentWithSourceMap format case dashesOnly 1`] = `
 "declare const styles: {
-  readonly \\"fooBar\\": string;
-  readonly \\"foo_bar\\": string;
+  readonly "fooBar": string;
+  readonly "foo_bar": string;
 };
 export = styles;
 "
@@ -75,8 +75,8 @@ export = styles;
 
 exports[`generateDtsContentWithSourceMap format case undefined 1`] = `
 "declare const styles: {
-  readonly \\"foo-bar\\": string;
-  readonly \\"foo_bar\\": string;
+  readonly "foo-bar": string;
+  readonly "foo_bar": string;
 };
 export = styles;
 "
@@ -84,13 +84,13 @@ export = styles;
 
 exports[`generateDtsContentWithSourceMap generate dts content with source map 1`] = `
 "declare const styles: {
-  readonly \\"foo\\": string;
-  readonly \\"bar\\": string;
-  readonly \\"baz\\": string;
-  readonly \\"baz\\": string;
-  readonly \\"qux\\": string;
-  readonly \\"quux\\": string;
-  readonly \\"quux\\": string;
+  readonly "foo": string;
+  readonly "bar": string;
+  readonly "baz": string;
+  readonly "baz": string;
+  readonly "qux": string;
+  readonly "quux": string;
+  readonly "quux": string;
 };
 export = styles;
 "
