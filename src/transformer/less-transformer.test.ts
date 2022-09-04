@@ -123,7 +123,9 @@ test('resolves specifier using resolver', async () => {
     '/node_modules/package-2/index.less': `.a {}`,
   });
   const result = await loader.load(getFixturePath('/test/1.less'));
-  expect(result.dependencies).toStrictEqual(
-    ['/node_modules/package-1/index.css', '/node_modules/package-2/index.less'].map(getFixturePath),
+  // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
+  expect(result.dependencies.sort()).toStrictEqual(
+    // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
+    ['/node_modules/package-1/index.css', '/node_modules/package-2/index.less'].map(getFixturePath).sort(),
   );
 });
