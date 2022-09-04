@@ -28,7 +28,6 @@ export type DistOptions = {
 
 export type DtsFormatOptions = {
   localsConvention?: LocalsConvention;
-  namedExport?: boolean;
 };
 
 /** The options for emitter. */

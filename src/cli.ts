@@ -38,11 +38,6 @@ export function parseArgv(argv: string[]): RunnerOptions {
       choices: ['camelCase', 'camelCaseOnly', 'dashes', 'dashesOnly'] as const,
       describe: 'Style of exported class names.',
     })
-    .option('namedExport', {
-      type: 'boolean',
-      default: false,
-      describe: 'Use named exports as opposed to default exports to enable tree shaking',
-    })
     .option('declarationMap', {
       type: 'boolean',
       default: true,
@@ -69,7 +64,6 @@ export function parseArgv(argv: string[]): RunnerOptions {
     outDir: parsedArgv.outDir,
     watch: parsedArgv.watch,
     localsConvention: parsedArgv.localsConvention,
-    namedExport: parsedArgv.namedExport,
     declarationMap: parsedArgv.declarationMap,
     silent: parsedArgv.silent,
   };

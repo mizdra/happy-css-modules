@@ -21,7 +21,6 @@ describe('generateDtsContentWithSourceMap', () => {
   const sourceMapFilePath = getFixturePath('/test/1.css.map');
   const dtsFormatOptions: DtsFormatOptions = {
     localsConvention: undefined,
-    namedExport: false,
   };
   test('generate dts content with source map', async () => {
     createFixtures({
@@ -138,42 +137,6 @@ describe('generateDtsContentWithSourceMap', () => {
         "
       `);
     });
-  });
-
-  test('change export type by namedExport', async () => {
-    createFixtures({
-      '/test/1.css': dedent`
-      .a {}
-      .b {}
-      `,
-    });
-    const result = await loader.load(filePath);
-    const { dtsContent: dtsContentWithoutNamedExport, sourceMap: sourceMapWithoutNamedExport } =
-      generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, result.tokens, {
-        ...dtsFormatOptions,
-        namedExport: false,
-      });
-    expect(dtsContentWithoutNamedExport).toMatchInlineSnapshot(`
-      "declare const styles: {
-        readonly "a": string;
-        readonly "b": string;
-      };
-      export = styles;
-      "
-    `);
-    expect(sourceMapWithoutNamedExport).toMatchSnapshot(); // TODO: Make snapshot human-readable
-    const { dtsContent: dtsContentWithNamedExport, sourceMap: sourceMapWithNamedExport } =
-      generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, result.tokens, {
-        ...dtsFormatOptions,
-        namedExport: true,
-      });
-    expect(dtsContentWithNamedExport).toMatchInlineSnapshot(`
-      "export const __esModule: true;
-      export const a: string;
-      export const b: string;
-      "
-    `);
-    expect(sourceMapWithNamedExport).toMatchSnapshot(); // TODO: Make snapshot human-readable
   });
   test('emit other directory', async () => {
     createFixtures({

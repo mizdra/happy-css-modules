@@ -63,40 +63,21 @@ function generateTokenDeclarations(
     // This is due to the sourcemap specification. Therefore, we output multiple type definitions
     // with the same name and assign a separate original position to each.
 
-    // NOTE: `--namedExport` does not support multiple jump destinations
-    // TODO: Support multiple jump destinations with `--namedExport`
     for (const originalLocation of token.originalLocations) {
-      if (dtsFormatOptions?.namedExport) {
-        result.push(
-          new SourceNode(null, null, null, [
-            'export const ',
-            new SourceNode(
-              originalLocation.start.line ?? null,
-              // The SourceNode's column is 0-based, but the originalLocation's column is 1-based.
-              originalLocation.start.column - 1 ?? null,
-              getRelativePath(sourceMapFilePath, originalLocation.filePath),
-              `${token.name}`,
-              token.name,
-            ),
-            ': string;',
-          ]),
-        );
-      } else {
-        result.push(
-          new SourceNode(null, null, null, [
-            'readonly ',
-            new SourceNode(
-              originalLocation.start.line ?? null,
-              // The SourceNode's column is 0-based, but the originalLocation's column is 1-based.
-              originalLocation.start.column - 1 ?? null,
-              getRelativePath(sourceMapFilePath, originalLocation.filePath),
-              `"${token.name}"`,
-              token.name,
-            ),
-            ': string;',
-          ]),
-        );
-      }
+      result.push(
+        new SourceNode(null, null, null, [
+          'readonly ',
+          new SourceNode(
+            originalLocation.start.line ?? null,
+            // The SourceNode's column is 0-based, but the originalLocation's column is 1-based.
+            originalLocation.start.column - 1 ?? null,
+            getRelativePath(sourceMapFilePath, originalLocation.filePath),
+            `"${token.name}"`,
+            token.name,
+          ),
+          ': string;',
+        ]),
+      );
     }
   }
   return result;
@@ -114,11 +95,6 @@ export function generateDtsContentWithSourceMap(
   let sourceNode: typeof SourceNode;
   if (!tokenDeclarations || !tokenDeclarations.length) {
     sourceNode = new SourceNode(null, null, null, '');
-  } else if (dtsFormatOptions?.namedExport) {
-    sourceNode = new SourceNode(1, 0, getRelativePath(sourceMapFilePath, filePath), [
-      'export const __esModule: true;' + EOL,
-      ...tokenDeclarations.map((tokenDeclaration) => [tokenDeclaration, EOL]),
-    ]);
   } else {
     sourceNode = new SourceNode(1, 0, getRelativePath(sourceMapFilePath, filePath), [
       'declare const styles: {' + EOL,

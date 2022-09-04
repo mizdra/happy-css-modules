@@ -27,10 +27,6 @@ describe('parseArgv', () => {
     expect(parseArgv([...baseArgs, '1.css', '--localsConvention', 'dashesOnly']).localsConvention).toBe('dashesOnly');
     expect(parseArgv([...baseArgs, '1.css', '--localsConvention', 'dashes']).localsConvention).toBe('dashes');
   });
-  test('--namedExport', () => {
-    expect(parseArgv([...baseArgs, '1.css', '--namedExport']).namedExport).toBe(true);
-    expect(parseArgv([...baseArgs, '1.css', '--no-namedExport']).namedExport).toBe(false);
-  });
   test('--declarationMap', () => {
     expect(parseArgv([...baseArgs, '1.css', '--declarationMap']).declarationMap).toBe(true);
     expect(parseArgv([...baseArgs, '1.css', '--no-declarationMap']).declarationMap).toBe(false);
