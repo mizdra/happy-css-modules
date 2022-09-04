@@ -1,9 +1,9 @@
 import dedent from 'dedent';
 import { Loader } from '../loader/index.js';
 import { createFixtures, getFixturePath } from '../test/util.js';
-import { webpackResolver } from './webpack-resolver.js';
+import { createWebpackResolver } from './webpack-resolver.js';
 
-const loader = new Loader({ resolver: webpackResolver });
+const loader = new Loader({ resolver: createWebpackResolver() });
 
 test('resolves specifier with webpack mechanism', async () => {
   createFixtures({

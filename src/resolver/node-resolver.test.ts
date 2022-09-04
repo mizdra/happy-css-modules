@@ -1,9 +1,9 @@
 import dedent from 'dedent';
 import { Loader } from '../loader/index.js';
 import { createFixtures, getFixturePath } from '../test/util.js';
-import { nodeResolver } from './node-resolver.js';
+import { createNodeResolver } from './node-resolver.js';
 
-const loader = new Loader({ resolver: nodeResolver });
+const loader = new Loader({ resolver: createNodeResolver() });
 
 test('resolves specifier with node mechanism', async () => {
   createFixtures({

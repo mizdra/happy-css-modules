@@ -1,9 +1,9 @@
 import dedent from 'dedent';
 import { Loader } from '../loader/index.js';
 import { createFixtures, getFixturePath } from '../test/util.js';
-import { defaultResolver } from './index.js';
+import { createDefaultResolver } from './index.js';
 
-const loader = new Loader({ resolver: defaultResolver });
+const loader = new Loader({ resolver: createDefaultResolver() });
 
 test('resolve with webpackResolver when other resolvers fail to resolve', async () => {
   createFixtures({
