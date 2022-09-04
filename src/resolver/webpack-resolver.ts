@@ -48,7 +48,7 @@ const lessLoaderResolver = enhancedResolve.create.sync({
 });
 
 // TODO: Support `resolve.alias` for Node.js API
-export const webpackResolver: Resolver = async (specifier, options) => {
+export const createWebpackResolver: () => Resolver = () => async (specifier, options) => {
   // `~` prefix is optional.
   // ref: https://github.com/webpack-contrib/less-loader/tree/454e187f58046356c3d383d67fda763db8bfc528#webpack-resolver
   if (specifier.startsWith('~')) specifier = specifier.slice(1);

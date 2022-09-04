@@ -39,13 +39,17 @@ function createLessPluginResolver(Less: typeof import('less'), options: Transfor
   return new LessPluginResolver(options);
 }
 
-export const lessTransformer: Transformer = async (source, options) => {
-  const less = (await import('less').catch(handleImportError('less'))).default;
-  const result = await less.render(source, {
-    filename: options.from,
-    sourceMap: {},
-    plugins: [createLessPluginResolver(less, options)],
-    syncImport: false, // Don't use `Less.FileManager#loadFileSync`.
-  });
-  return { css: result.css, map: result.map, dependencies: result.imports };
+export const createLessTransformer: () => Transformer = () => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  let less: typeof import('less');
+  return async (source, options) => {
+    less ??= (await import('less').catch(handleImportError('less'))).default;
+    const result = await less.render(source, {
+      filename: options.from,
+      sourceMap: {},
+      plugins: [createLessPluginResolver(less, options)],
+      syncImport: false, // Don't use `Less.FileManager#loadFileSync`.
+    });
+    return { css: result.css, map: result.map, dependencies: result.imports };
+  };
 };

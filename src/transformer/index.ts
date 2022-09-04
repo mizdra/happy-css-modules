@@ -1,6 +1,6 @@
 import type { StrictlyResolver } from '../loader/index.js';
-import { lessTransformer } from './less-transformer.js';
-import { scssTransformer } from './scss-transformer.js';
+import { createLessTransformer } from './less-transformer.js';
+import { createScssTransformer } from './scss-transformer.js';
 
 /**
  * The value returned from the transformer.
@@ -31,8 +31,9 @@ export const handleImportError = (packageName: string) => (e: unknown) => {
   throw e;
 };
 
-// TODO: support resolver
-export const defaultTransformer: Transformer = async (source, options) => {
+export const createDefaultTransformer: () => Transformer = () => async (source, options) => {
+  const scssTransformer = createScssTransformer();
+  const lessTransformer = createLessTransformer();
   if (options.from.endsWith('.scss')) {
     return scssTransformer(source, options);
   } else if (options.from.endsWith('.less')) {

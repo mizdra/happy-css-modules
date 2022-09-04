@@ -1,8 +1,7 @@
 import { readFile, stat } from 'fs/promises';
 import postcss from 'postcss';
 import type { Resolver } from '../resolver/index.js';
-import { defaultResolver } from '../resolver/index.js';
-import { defaultTransformer, type Transformer } from '../transformer/index.js';
+import { type Transformer } from '../transformer/index.js';
 import { unique, uniqueBy } from '../util.js';
 import {
   getOriginalLocation,
@@ -54,9 +53,9 @@ function normalizeTokens(tokens: Token[]): Token[] {
 
 export type LoaderOptions = {
   /** The function to transform source code. */
-  transformer?: Transformer;
+  transformer: Transformer;
   /** The function to resolve the path of the imported file. */
-  resolver?: Resolver;
+  resolver: Resolver;
 };
 
 /** The resolver that throws an exception if resolving fails. */
@@ -68,12 +67,10 @@ export class Loader {
   private readonly transformer: Transformer | undefined;
   private readonly resolver: StrictlyResolver;
 
-  constructor(options?: LoaderOptions) {
-    // TODO: support resolver
-    // TODO: support default resolver
-    this.transformer = options?.transformer ?? defaultTransformer;
+  constructor(options: LoaderOptions) {
+    this.transformer = options.transformer;
     this.resolver = async (specifier, resolverOptions) => {
-      const resolver = options?.resolver ?? defaultResolver;
+      const resolver = options.resolver;
       const resolved = await resolver(specifier, resolverOptions);
       if (resolved === false) throw new Error(`Could not resolve '${specifier}' in '${resolverOptions.request}'.`);
       return resolved;

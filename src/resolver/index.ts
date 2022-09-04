@@ -1,7 +1,7 @@
 import { exists } from '../util.js';
-import { nodeResolver } from './node-resolver.js';
-import { resolveResolver } from './resolve-resolver.js';
-import { webpackResolver } from './webpack-resolver.js';
+import { createNodeResolver } from './node-resolver.js';
+import { createResolveResolver } from './resolve-resolver.js';
+import { createWebpackResolver } from './webpack-resolver.js';
 
 export type ResolverOptions = {
   request: string;
@@ -24,7 +24,11 @@ export type Resolver = (specifier: string, options: ResolverOptions) => string |
  * @param options The options to resolve
  * @returns The resolved path (absolute). `false` means to skip resolving.
  */
-export const defaultResolver: Resolver = async (specifier, options) => {
+export const createDefaultResolver: () => Resolver = () => async (specifier, options) => {
+  const resolveResolver = createResolveResolver();
+  const nodeResolver = createNodeResolver();
+  const webpackResolver = createWebpackResolver();
+
   // In less-loader, `resolveResolver` has priority over `webpackResolver`.
   // enhanced-typed-css-modules follows suit.
   // ref: https://github.com/webpack-contrib/less-loader/tree/454e187f58046356c3d383d67fda763db8bfc528#webpack-resolver
