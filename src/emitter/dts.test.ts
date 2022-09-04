@@ -1,7 +1,10 @@
-import { type Token } from '../loader/index.js';
-import { fakeToken, getFixturePath } from '../test/util.js';
+import dedent from 'dedent';
+import { Loader } from '../loader/index.js';
+import { getFixturePath, createFixtures } from '../test/util.js';
 import { generateDtsContentWithSourceMap, getDtsFilePath } from './dts.js';
 import { type DtsFormatOptions } from './index.js';
+
+const loader = new Loader();
 
 test('getDtsFilePath', () => {
   expect(getDtsFilePath('/app/src/dir/1.css', undefined)).toBe('/app/src/dir/1.css.d.ts');
@@ -20,81 +23,77 @@ describe('generateDtsContentWithSourceMap', () => {
     localsConvention: undefined,
     namedExport: false,
   };
-  test('generate dts content with source map', () => {
-    const tokens: Token[] = [
-      fakeToken({
-        name: 'foo',
-        originalLocations: [{ filePath: getFixturePath('/test/1.css'), start: { line: 1, column: 1 } }],
-      }),
-      fakeToken({
-        name: 'bar',
-        originalLocations: [{ filePath: getFixturePath('/test/1.css'), start: { line: 2, column: 1 } }],
-      }),
-
-      fakeToken({
-        name: 'baz',
-        originalLocations: [
-          { filePath: getFixturePath('/test/1.css'), start: { line: 3, column: 1 } },
-          { filePath: getFixturePath('/test/1.css'), start: { line: 4, column: 1 } },
-        ],
-      }),
-      fakeToken({
-        name: 'qux',
-        originalLocations: [{ filePath: getFixturePath('/test/2.css'), start: { line: 5, column: 1 } }],
-      }),
-      fakeToken({
-        name: 'quux',
-        originalLocations: [
-          { filePath: getFixturePath('/test/2.css'), start: { line: 6, column: 1 } },
-          { filePath: getFixturePath('/test/2.css'), start: { line: 7, column: 1 } },
-        ],
-      }),
-    ];
+  test('generate dts content with source map', async () => {
+    createFixtures({
+      '/test/1.css': dedent`
+      @import './2.css';
+      .a {}
+      .b {}
+      .b {}
+      `,
+      '/test/2.css': dedent`
+      @import './3.css';
+      .c {}
+      `,
+      '/test/3.css': dedent`
+      .d {}
+      `,
+    });
+    const result = await loader.load(filePath);
     const { dtsContent, sourceMap } = generateDtsContentWithSourceMap(
       filePath,
       dtsFilePath,
       sourceMapFilePath,
-      tokens,
+      result.tokens,
       dtsFormatOptions,
     );
     expect(dtsContent).toMatchSnapshot();
     expect(sourceMap).toMatchSnapshot(); // TODO: Make snapshot human-readable
   });
   describe('format case', () => {
-    const rawTokenList: Token[] = [
-      fakeToken({ name: 'foo-bar', originalLocations: [{ start: { line: 1, column: 1 } }] }),
-      fakeToken({ name: 'foo_bar', originalLocations: [{ start: { line: 2, column: 1 } }] }),
-    ];
-    test('undefined', () => {
-      const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, rawTokenList, {
+    beforeEach(() => {
+      createFixtures({
+        '/test/1.css': dedent`
+        .foo-bar {}
+        .foo_bar {}
+        `,
+      });
+    });
+    test('undefined', async () => {
+      const result = await loader.load(filePath);
+      const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, result.tokens, {
         ...dtsFormatOptions,
         localsConvention: undefined,
       });
       expect(dtsContent).toMatchSnapshot();
     });
-    test('camelCaseOnly', () => {
-      const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, rawTokenList, {
+    test('camelCaseOnly', async () => {
+      const result = await loader.load(filePath);
+      const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, result.tokens, {
         ...dtsFormatOptions,
         localsConvention: 'camelCaseOnly',
       });
       expect(dtsContent).toMatchSnapshot();
     });
-    test('camelCase', () => {
-      const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, rawTokenList, {
+    test('camelCase', async () => {
+      const result = await loader.load(filePath);
+      const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, result.tokens, {
         ...dtsFormatOptions,
         localsConvention: 'camelCase',
       });
       expect(dtsContent).toMatchSnapshot();
     });
-    test('dashesOnly', () => {
-      const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, rawTokenList, {
+    test('dashesOnly', async () => {
+      const result = await loader.load(filePath);
+      const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, result.tokens, {
         ...dtsFormatOptions,
         localsConvention: 'dashesOnly',
       });
       expect(dtsContent).toMatchSnapshot();
     });
-    test('dashes', () => {
-      const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, rawTokenList, {
+    test('dashes', async () => {
+      const result = await loader.load(filePath);
+      const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, result.tokens, {
         ...dtsFormatOptions,
         localsConvention: 'dashes',
       });
@@ -102,13 +101,16 @@ describe('generateDtsContentWithSourceMap', () => {
     });
   });
 
-  test('change export type by namedExport', () => {
-    const tokens: Token[] = [
-      fakeToken({ name: 'foo', originalLocations: [{ start: { line: 1, column: 1 } }] }),
-      fakeToken({ name: 'bar', originalLocations: [{ start: { line: 2, column: 1 } }] }),
-    ];
+  test('change export type by namedExport', async () => {
+    createFixtures({
+      '/test/1.css': dedent`
+      .a {}
+      .b {}
+      `,
+    });
+    const result = await loader.load(filePath);
     const { dtsContent: dtsContentWithoutNamedExport, sourceMap: sourceMapWithoutNamedExport } =
-      generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, tokens, {
+      generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, result.tokens, {
         ...dtsFormatOptions,
         namedExport: false,
       });
@@ -122,7 +124,7 @@ describe('generateDtsContentWithSourceMap', () => {
     `);
     expect(sourceMapWithoutNamedExport).toMatchSnapshot(); // TODO: Make snapshot human-readable
     const { dtsContent: dtsContentWithNamedExport, sourceMap: sourceMapWithNamedExport } =
-      generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, tokens, {
+      generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, result.tokens, {
         ...dtsFormatOptions,
         namedExport: true,
       });
@@ -134,22 +136,16 @@ describe('generateDtsContentWithSourceMap', () => {
     `);
     expect(sourceMapWithNamedExport).toMatchSnapshot(); // TODO: Make snapshot human-readable
   });
-  test('emit other directory', () => {
-    const tokens: Token[] = [
-      fakeToken({
-        name: 'foo',
-        originalLocations: [{ filePath: getFixturePath('/test/src/1.css'), start: { line: 1, column: 1 } }],
-      }),
-      fakeToken({
-        name: 'bar',
-        originalLocations: [{ filePath: getFixturePath('/test/src/1.css'), start: { line: 2, column: 1 } }],
-      }),
-    ];
+  test('emit other directory', async () => {
+    createFixtures({
+      '/test/1.css': `.a {}`,
+    });
+    const result = await loader.load(filePath);
     const { dtsContent, sourceMap } = generateDtsContentWithSourceMap(
       getFixturePath('/test/src/1.css'),
       getFixturePath('/test/dist/1.css.d.ts'),
       getFixturePath('/test/dist/1.css.d.ts.map'),
-      tokens,
+      result.tokens,
       dtsFormatOptions,
     );
     expect(dtsContent).toMatchInlineSnapshot(`
