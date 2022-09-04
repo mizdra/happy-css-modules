@@ -65,7 +65,14 @@ describe('generateDtsContentWithSourceMap', () => {
         ...dtsFormatOptions,
         localsConvention: undefined,
       });
-      expect(dtsContent).toMatchSnapshot();
+      expect(dtsContent).toMatchInlineSnapshot(`
+        "declare const styles: {
+          readonly "foo-bar": string;
+          readonly "foo_bar": string;
+        };
+        export = styles;
+        "
+      `);
     });
     test('camelCaseOnly', async () => {
       const result = await loader.load(filePath);
@@ -73,7 +80,14 @@ describe('generateDtsContentWithSourceMap', () => {
         ...dtsFormatOptions,
         localsConvention: 'camelCaseOnly',
       });
-      expect(dtsContent).toMatchSnapshot();
+      expect(dtsContent).toMatchInlineSnapshot(`
+        "declare const styles: {
+          readonly "fooBar": string;
+          readonly "fooBar": string;
+        };
+        export = styles;
+        "
+      `);
     });
     test('camelCase', async () => {
       const result = await loader.load(filePath);
@@ -81,7 +95,16 @@ describe('generateDtsContentWithSourceMap', () => {
         ...dtsFormatOptions,
         localsConvention: 'camelCase',
       });
-      expect(dtsContent).toMatchSnapshot();
+      expect(dtsContent).toMatchInlineSnapshot(`
+        "declare const styles: {
+          readonly "foo-bar": string;
+          readonly "fooBar": string;
+          readonly "foo_bar": string;
+          readonly "fooBar": string;
+        };
+        export = styles;
+        "
+      `);
     });
     test('dashesOnly', async () => {
       const result = await loader.load(filePath);
@@ -89,7 +112,14 @@ describe('generateDtsContentWithSourceMap', () => {
         ...dtsFormatOptions,
         localsConvention: 'dashesOnly',
       });
-      expect(dtsContent).toMatchSnapshot();
+      expect(dtsContent).toMatchInlineSnapshot(`
+        "declare const styles: {
+          readonly "fooBar": string;
+          readonly "foo_bar": string;
+        };
+        export = styles;
+        "
+      `);
     });
     test('dashes', async () => {
       const result = await loader.load(filePath);
@@ -97,7 +127,16 @@ describe('generateDtsContentWithSourceMap', () => {
         ...dtsFormatOptions,
         localsConvention: 'dashes',
       });
-      expect(dtsContent).toMatchSnapshot();
+      expect(dtsContent).toMatchInlineSnapshot(`
+        "declare const styles: {
+          readonly "foo-bar": string;
+          readonly "fooBar": string;
+          readonly "foo_bar": string;
+          readonly "foo_bar": string;
+        };
+        export = styles;
+        "
+      `);
     });
   });
 
