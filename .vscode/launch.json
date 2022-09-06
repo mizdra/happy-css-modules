@@ -13,6 +13,7 @@
         "test",
         "--runInBand",
         "--watchAll=false",
+        "--testTimeout=300000",
         "--testNamePattern",
         "${jest.testNamePattern}",
         "--runTestsByPath",
