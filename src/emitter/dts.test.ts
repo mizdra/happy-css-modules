@@ -1,4 +1,5 @@
 import dedent from 'dedent';
+import { SourceMapConsumer } from 'source-map';
 import { Loader } from '../loader/index.js';
 import { getFixturePath, createFixtures } from '../test/util.js';
 import { generateDtsContentWithSourceMap, getDtsFilePath } from './dts.js';
@@ -57,7 +58,47 @@ describe('generateDtsContentWithSourceMap', () => {
       export default styles;
       "
     `);
-    expect(sourceMap).toMatchSnapshot(); // TODO: Make snapshot human-readable
+    const smc = await new SourceMapConsumer(sourceMap.toJSON());
+    expect(smc.originalPositionFor({ line: 2, column: 11 })).toMatchInlineSnapshot(`
+      {
+        "column": 0,
+        "line": 1,
+        "name": "d",
+        "source": "3.css",
+      }
+    `);
+    expect(smc.originalPositionFor({ line: 3, column: 11 })).toMatchInlineSnapshot(`
+      {
+        "column": 0,
+        "line": 2,
+        "name": "c",
+        "source": "2.css",
+      }
+    `);
+    expect(smc.originalPositionFor({ line: 4, column: 11 })).toMatchInlineSnapshot(`
+      {
+        "column": 0,
+        "line": 2,
+        "name": "a",
+        "source": "1.css",
+      }
+    `);
+    expect(smc.originalPositionFor({ line: 5, column: 11 })).toMatchInlineSnapshot(`
+      {
+        "column": 0,
+        "line": 3,
+        "name": "b",
+        "source": "1.css",
+      }
+    `);
+    expect(smc.originalPositionFor({ line: 6, column: 11 })).toMatchInlineSnapshot(`
+      {
+        "column": 0,
+        "line": 4,
+        "name": "b",
+        "source": "1.css",
+      }
+    `);
   });
   describe('format case', () => {
     beforeEach(() => {
@@ -167,6 +208,15 @@ describe('generateDtsContentWithSourceMap', () => {
       export default styles;
       "
     `);
-    expect(sourceMap).toMatchSnapshot(); // TODO: Make snapshot human-readable
+    const smc = await new SourceMapConsumer(sourceMap.toJSON());
+    // FIXME: `source` should be `../src/1.css`
+    expect(smc.originalPositionFor({ line: 2, column: 11 })).toMatchInlineSnapshot(`
+      {
+        "column": 0,
+        "line": 1,
+        "name": "a",
+        "source": "../1.css",
+      }
+    `);
   });
 });
