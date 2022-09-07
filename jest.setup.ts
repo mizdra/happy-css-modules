@@ -27,7 +27,14 @@ const jsonSerializer: jest.SnapshotSerializerPlugin = {
       Object.prototype.hasOwnProperty.call(val, 'sourceRoot') &&
       Object.prototype.hasOwnProperty.call(val, 'version') &&
       Object.prototype.hasOwnProperty.call(val, 'sources');
-    return isLoadResult || isLocation || isSourceMap;
+
+    const isDefinition =
+      val &&
+      Object.prototype.hasOwnProperty.call(val, 'file') &&
+      Object.prototype.hasOwnProperty.call(val, 'text') &&
+      Object.prototype.hasOwnProperty.call(val, 'start') &&
+      Object.prototype.hasOwnProperty.call(val, 'end');
+    return isLoadResult || isLocation || isSourceMap || isDefinition;
   },
 };
 
