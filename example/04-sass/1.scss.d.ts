@@ -8,5 +8,5 @@ declare const styles: {
   readonly "a_2_2": string;
   readonly "d": string;
 };
-export = styles;
+export default styles;
 //# sourceMappingURL=1.scss.d.ts.map

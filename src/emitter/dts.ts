@@ -100,7 +100,7 @@ export function generateDtsContentWithSourceMap(
       'declare const styles: {' + EOL,
       ...tokenDeclarations.map((tokenDeclaration) => ['  ', tokenDeclaration, EOL]),
       '};' + EOL,
-      'export = styles;' + EOL,
+      'export default styles;' + EOL,
     ]);
   }
   const codeWithSourceMap = sourceNode.toStringWithSourceMap({

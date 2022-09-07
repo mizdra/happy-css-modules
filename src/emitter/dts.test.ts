@@ -1,4 +1,5 @@
 import dedent from 'dedent';
+import { SourceMapConsumer } from 'source-map';
 import { Loader } from '../loader/index.js';
 import { getFixturePath, createFixtures } from '../test/util.js';
 import { generateDtsContentWithSourceMap, getDtsFilePath } from './dts.js';
@@ -46,8 +47,58 @@ describe('generateDtsContentWithSourceMap', () => {
       result.tokens,
       dtsFormatOptions,
     );
-    expect(dtsContent).toMatchSnapshot();
-    expect(sourceMap).toMatchSnapshot(); // TODO: Make snapshot human-readable
+    expect(dtsContent).toMatchInlineSnapshot(`
+      "declare const styles: {
+        readonly "d": string;
+        readonly "c": string;
+        readonly "a": string;
+        readonly "b": string;
+        readonly "b": string;
+      };
+      export default styles;
+      "
+    `);
+    const smc = await new SourceMapConsumer(sourceMap.toJSON());
+    expect(smc.originalPositionFor({ line: 2, column: 11 })).toMatchInlineSnapshot(`
+      {
+        "column": 0,
+        "line": 1,
+        "name": "d",
+        "source": "3.css",
+      }
+    `);
+    expect(smc.originalPositionFor({ line: 3, column: 11 })).toMatchInlineSnapshot(`
+      {
+        "column": 0,
+        "line": 2,
+        "name": "c",
+        "source": "2.css",
+      }
+    `);
+    expect(smc.originalPositionFor({ line: 4, column: 11 })).toMatchInlineSnapshot(`
+      {
+        "column": 0,
+        "line": 2,
+        "name": "a",
+        "source": "1.css",
+      }
+    `);
+    expect(smc.originalPositionFor({ line: 5, column: 11 })).toMatchInlineSnapshot(`
+      {
+        "column": 0,
+        "line": 3,
+        "name": "b",
+        "source": "1.css",
+      }
+    `);
+    expect(smc.originalPositionFor({ line: 6, column: 11 })).toMatchInlineSnapshot(`
+      {
+        "column": 0,
+        "line": 4,
+        "name": "b",
+        "source": "1.css",
+      }
+    `);
   });
   describe('format case', () => {
     beforeEach(() => {
@@ -69,7 +120,7 @@ describe('generateDtsContentWithSourceMap', () => {
           readonly "foo-bar": string;
           readonly "foo_bar": string;
         };
-        export = styles;
+        export default styles;
         "
       `);
     });
@@ -84,7 +135,7 @@ describe('generateDtsContentWithSourceMap', () => {
           readonly "fooBar": string;
           readonly "fooBar": string;
         };
-        export = styles;
+        export default styles;
         "
       `);
     });
@@ -101,7 +152,7 @@ describe('generateDtsContentWithSourceMap', () => {
           readonly "foo_bar": string;
           readonly "fooBar": string;
         };
-        export = styles;
+        export default styles;
         "
       `);
     });
@@ -116,7 +167,7 @@ describe('generateDtsContentWithSourceMap', () => {
           readonly "fooBar": string;
           readonly "foo_bar": string;
         };
-        export = styles;
+        export default styles;
         "
       `);
     });
@@ -133,7 +184,7 @@ describe('generateDtsContentWithSourceMap', () => {
           readonly "foo_bar": string;
           readonly "foo_bar": string;
         };
-        export = styles;
+        export default styles;
         "
       `);
     });
@@ -154,9 +205,18 @@ describe('generateDtsContentWithSourceMap', () => {
       "declare const styles: {
         readonly "a": string;
       };
-      export = styles;
+      export default styles;
       "
     `);
-    expect(sourceMap).toMatchSnapshot(); // TODO: Make snapshot human-readable
+    const smc = await new SourceMapConsumer(sourceMap.toJSON());
+    // FIXME: `source` should be `../src/1.css`
+    expect(smc.originalPositionFor({ line: 2, column: 11 })).toMatchInlineSnapshot(`
+      {
+        "column": 0,
+        "line": 1,
+        "name": "a",
+        "source": "../1.css",
+      }
+    `);
   });
 });

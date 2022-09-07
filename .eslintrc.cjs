@@ -28,6 +28,8 @@ module.exports = {
               '!../*/util.js',
               '!./library/*',
               '!../library/*',
+              '!./test/*',
+              '!../test/*',
             ],
           },
         ],
