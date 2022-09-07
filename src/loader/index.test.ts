@@ -36,13 +36,13 @@ test('basic', async () => {
         {
           name: "a",
           originalLocations: [
-            { filePath: "<fixtures>/test/1.css", start: { line: 1, column: 1 }, end: { line: 1, column: 1 } },
+            { filePath: "<fixtures>/test/1.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
         {
           name: "b",
           originalLocations: [
-            { filePath: "<fixtures>/test/1.css", start: { line: 2, column: 1 }, end: { line: 2, column: 1 } },
+            { filePath: "<fixtures>/test/1.css", start: { line: 2, column: 1 }, end: { line: 2, column: 2 } },
           ],
         },
       ],
@@ -75,19 +75,19 @@ test('tracks other files when `@import` is present', async () => {
         {
           name: "a",
           originalLocations: [
-            { filePath: "<fixtures>/test/2.css", start: { line: 1, column: 1 }, end: { line: 1, column: 1 } },
+            { filePath: "<fixtures>/test/2.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
         {
           name: "b",
           originalLocations: [
-            { filePath: "<fixtures>/test/3.css", start: { line: 1, column: 1 }, end: { line: 1, column: 1 } },
+            { filePath: "<fixtures>/test/3.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
         {
           name: "c",
           originalLocations: [
-            { filePath: "<fixtures>/test/4.css", start: { line: 1, column: 1 }, end: { line: 1, column: 1 } },
+            { filePath: "<fixtures>/test/4.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
       ],
@@ -123,31 +123,31 @@ test('tracks other files when `composes` is present', async () => {
         {
           name: "a",
           originalLocations: [
-            { filePath: "<fixtures>/test/1.css", start: { line: 1, column: 1 }, end: { line: 1, column: 1 } },
+            { filePath: "<fixtures>/test/1.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
         {
           name: "b",
           originalLocations: [
-            { filePath: "<fixtures>/test/2.css", start: { line: 1, column: 1 }, end: { line: 1, column: 1 } },
+            { filePath: "<fixtures>/test/2.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
         {
           name: "c",
           originalLocations: [
-            { filePath: "<fixtures>/test/3.css", start: { line: 1, column: 1 }, end: { line: 1, column: 1 } },
+            { filePath: "<fixtures>/test/3.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
         {
           name: "d",
           originalLocations: [
-            { filePath: "<fixtures>/test/3.css", start: { line: 2, column: 1 }, end: { line: 2, column: 1 } },
+            { filePath: "<fixtures>/test/3.css", start: { line: 2, column: 1 }, end: { line: 2, column: 2 } },
           ],
         },
         {
           name: "e",
           originalLocations: [
-            { filePath: "<fixtures>/test/4.css", start: { line: 1, column: 1 }, end: { line: 1, column: 1 } },
+            { filePath: "<fixtures>/test/4.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
       ],
@@ -187,21 +187,21 @@ test('normalizes tokens', async () => {
         {
           name: "a",
           originalLocations: [
-            { filePath: "<fixtures>/test/2.css", start: { line: 1, column: 1 }, end: { line: 1, column: 1 } },
-            { filePath: "<fixtures>/test/1.css", start: { line: 4, column: 1 }, end: { line: 4, column: 1 } },
-            { filePath: "<fixtures>/test/1.css", start: { line: 12, column: 1 }, end: { line: 12, column: 1 } },
+            { filePath: "<fixtures>/test/2.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
+            { filePath: "<fixtures>/test/1.css", start: { line: 4, column: 1 }, end: { line: 4, column: 2 } },
+            { filePath: "<fixtures>/test/1.css", start: { line: 12, column: 1 }, end: { line: 12, column: 2 } },
           ],
         },
         {
           name: "b",
           originalLocations: [
-            { filePath: "<fixtures>/test/2.css", start: { line: 2, column: 1 }, end: { line: 2, column: 1 } },
+            { filePath: "<fixtures>/test/2.css", start: { line: 2, column: 1 }, end: { line: 2, column: 2 } },
           ],
         },
         {
           name: "c",
           originalLocations: [
-            { filePath: "<fixtures>/test/3.css", start: { line: 1, column: 1 }, end: { line: 1, column: 1 } },
+            { filePath: "<fixtures>/test/3.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
       ],
