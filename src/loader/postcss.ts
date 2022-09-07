@@ -89,7 +89,7 @@ export function getOriginalLocation(rule: Rule, classSelector: ClassName): Locat
   const end = {
     line: start.line,
     // The column is inclusive.
-    column: start.column + (classSelector.value.length - 1),
+    column: start.column + classSelector.value.length,
   };
   let location = {
     filePath: rule.source.input.file,
