@@ -101,16 +101,17 @@ describe('generateDtsContentWithSourceMap', () => {
     `);
   });
   describe('format case', () => {
-    beforeEach(() => {
+    async function getResult(filePath: string) {
       createFixtures({
         '/test/1.css': dedent`
         .foo-bar {}
         .foo_bar {}
         `,
       });
-    });
+      return await loader.load(filePath);
+    }
     test('undefined', async () => {
-      const result = await loader.load(filePath);
+      const result = await getResult(filePath);
       const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, result.tokens, {
         ...dtsFormatOptions,
         localsConvention: undefined,
@@ -125,7 +126,7 @@ describe('generateDtsContentWithSourceMap', () => {
       `);
     });
     test('camelCaseOnly', async () => {
-      const result = await loader.load(filePath);
+      const result = await getResult(filePath);
       const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, result.tokens, {
         ...dtsFormatOptions,
         localsConvention: 'camelCaseOnly',
@@ -140,7 +141,7 @@ describe('generateDtsContentWithSourceMap', () => {
       `);
     });
     test('camelCase', async () => {
-      const result = await loader.load(filePath);
+      const result = await getResult(filePath);
       const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, result.tokens, {
         ...dtsFormatOptions,
         localsConvention: 'camelCase',
@@ -157,7 +158,7 @@ describe('generateDtsContentWithSourceMap', () => {
       `);
     });
     test('dashesOnly', async () => {
-      const result = await loader.load(filePath);
+      const result = await getResult(filePath);
       const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, result.tokens, {
         ...dtsFormatOptions,
         localsConvention: 'dashesOnly',
@@ -172,7 +173,7 @@ describe('generateDtsContentWithSourceMap', () => {
       `);
     });
     test('dashes', async () => {
-      const result = await loader.load(filePath);
+      const result = await getResult(filePath);
       const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, result.tokens, {
         ...dtsFormatOptions,
         localsConvention: 'dashes',
