@@ -10,6 +10,8 @@ jest.unstable_mockModule('fs/promises', () => ({
   readFile: readFileSpy,
 }));
 
+const consoleWarnSpy = jest.spyOn(global.console, 'warn').mockImplementation(() => {});
+
 // After the mock of fs/promises is complete, . /index.js after the mock of fs/promises is complete.
 // ref: https://www.coolcomputerclub.com/posts/jest-hoist-await/
 const { Loader } = await import('./index.js');
@@ -19,6 +21,7 @@ const loader = new Loader();
 
 afterEach(() => {
   readFileSpy.mockClear();
+  consoleWarnSpy.mockClear();
 });
 
 test('basic', async () => {
@@ -297,3 +300,23 @@ test('throws error the composition of non-existent file', async () => {
 });
 
 test.todo('supports sourcemap file and inline sourcemap');
+
+test('ignores http(s) protocol file', async () => {
+  createFixtures({
+    '/test/1.css': dedent`
+    @import 'http://example.com/path/1.css';
+    @import 'https://example.com/path/1.css';
+    `,
+  });
+  const result = await loader.load(getFixturePath('/test/1.css'));
+  expect(result).toMatchInlineSnapshot(`{ dependencies: [], tokens: [] }`);
+  expect(consoleWarnSpy).toHaveBeenCalledTimes(2);
+  expect(consoleWarnSpy).toHaveBeenNthCalledWith(
+    1,
+    'http://example.com/path/1.css is not a file protocol URL. Non-file protocol URLs are ignored.',
+  );
+  expect(consoleWarnSpy).toHaveBeenNthCalledWith(
+    2,
+    'https://example.com/path/1.css is not a file protocol URL. Non-file protocol URLs are ignored.',
+  );
+});
