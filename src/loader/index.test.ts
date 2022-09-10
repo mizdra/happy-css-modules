@@ -293,7 +293,7 @@ test('throws error the composition of non-existent file', async () => {
       e.message = e.message.replace(FIXTURE_DIR_PATH, '<fixtures>');
       throw e;
     });
-  }).rejects.toThrowError(`Could not resolve './2.css' in '<fixtures>/test/1.css'`);
+  }).rejects.toThrowError(`Could not resolve './2.css' in 'file://<fixtures>/test/1.css'`);
 });
 
 test.todo('supports sourcemap file and inline sourcemap');

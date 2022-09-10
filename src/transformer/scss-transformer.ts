@@ -3,6 +3,7 @@
 // Therefore, the workaround is now disabled. See
 // https://github.com/mizdra/enhanced-typed-css-modules/issues/65#issuecomment-1229471950 for more information.
 
+import { pathToFileURL, fileURLToPath } from 'url';
 import type { LegacyResult } from 'sass';
 import type { Transformer, TransformerOptions } from './index.js';
 import { handleImportError } from './index.js';
@@ -59,8 +60,8 @@ async function renderSass(sass: typeof import('sass'), source: string, options: 
         sourceMap: true,
         importer: (url, prev, done) => {
           options
-            .resolver(url, { request: prev })
-            .then((resolved) => done({ file: resolved }))
+            .resolver(url, { request: pathToFileURL(prev).href })
+            .then((resolvedFileURL) => done({ file: fileURLToPath(resolvedFileURL) }))
             .catch((e) => done(e));
         },
       },
