@@ -1,31 +1,13 @@
-import dedent from 'dedent';
-import { Loader } from '../loader/index.js';
-import { createFixtures, getFixturePath } from '../test/util.js';
+import { getFixturePath } from '../test/util.js';
 import { createResolveResolver } from './resolve-resolver.js';
 
-const loader = new Loader({ resolver: createResolveResolver() });
+const resolveResolver = createResolveResolver();
+const request = getFixturePath('/test/1.css');
 
 test('resolves specifier with resolve mechanism', async () => {
-  createFixtures({
-    '/test/1.css': dedent`
-    @import '2.css';
-    @import './3.css';
-    @import 'dir/4.css';
-    @import '../5.css';
-    @import '${getFixturePath('/test/6.css')}';
-    `,
-    '/test/2.css': `.a {}`,
-    '/test/3.css': `.a {}`,
-    '/test/dir/4.css': `.a {}`,
-    '/5.css': `.a {}`,
-    '/test/6.css': `.a {}`,
-  });
-  const result = await loader.load(getFixturePath('/test/1.css'));
-  expect(result.dependencies).toStrictEqual([
-    getFixturePath('/test/2.css'),
-    getFixturePath('/test/3.css'),
-    getFixturePath('/test/dir/4.css'),
-    getFixturePath('/5.css'),
-    getFixturePath('/test/6.css'),
-  ]);
+  expect(await resolveResolver('2.css', { request })).toBe(getFixturePath('/test/2.css'));
+  expect(await resolveResolver('./3.css', { request })).toBe(getFixturePath('/test/3.css'));
+  expect(await resolveResolver('dir/4.css', { request })).toBe(getFixturePath('/test/dir/4.css'));
+  expect(await resolveResolver('../5.css', { request })).toBe(getFixturePath('/5.css'));
+  expect(await resolveResolver(getFixturePath('/test/6.css'), { request })).toBe(getFixturePath('/test/6.css'));
 });
