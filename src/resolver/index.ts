@@ -1,5 +1,5 @@
 import { createNodeResolver } from './node-resolver.js';
-import { createResolveResolver } from './resolve-resolver.js';
+import { createRelativeResolver } from './relative-resolver.js';
 import { createWebpackResolver } from './webpack-resolver.js';
 
 export type ResolverOptions = {
@@ -27,14 +27,14 @@ export type Resolver = (specifier: string, options: ResolverOptions) => string |
  * mimic the behavior of the toolchain, so the behavior may differ in some cases.
  */
 export const createDefaultResolver: () => Resolver = () => async (specifier, options) => {
-  const resolveResolver = createResolveResolver();
+  const relativeResolver = createRelativeResolver();
   const nodeResolver = createNodeResolver();
   const webpackResolver = createWebpackResolver();
 
-  // In less-loader, `resolveResolver` has priority over `webpackResolver`.
+  // In less-loader, `relativeResolver` has priority over `webpackResolver`.
   // enhanced-typed-css-modules follows suit.
   // ref: https://github.com/webpack-contrib/less-loader/tree/454e187f58046356c3d383d67fda763db8bfc528#webpack-resolver
-  const resolvers = [resolveResolver, nodeResolver, webpackResolver];
+  const resolvers = [relativeResolver, nodeResolver, webpackResolver];
   for (const resolver of resolvers) {
     const resolved = await resolver(specifier, options);
     if (resolved !== false) return resolved;
