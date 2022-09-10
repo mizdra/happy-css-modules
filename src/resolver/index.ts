@@ -1,15 +1,22 @@
-import { exists } from '../util.js';
+import { createHTTPResolver } from './http-resolver.js';
 import { createNodeResolver } from './node-resolver.js';
-import { createResolveResolver } from './resolve-resolver.js';
+import { createRelativeResolver } from './relative-resolver.js';
 import { createWebpackResolver } from './webpack-resolver.js';
 
 export type ResolverOptions = {
+  /**
+   * The absolute URL of importing file.
+   * @example 'file:///path/to/file.css'
+   * @example 'https://example.com/path/to/file.css'
+   * */
   request: string;
 };
 
 /**
- * The function to resolve the path of the imported file.
- * @returns The resolved path of the imported file. `false` means to skip resolving.
+ * The function to resolve the specifier of import statement.
+ * @param specifier The specifier to resolve (i.e. './foo.css', '~bootstrap', etc.)
+ * @param options The options to resolve
+ * @returns The absolute URL. `false` means to skip resolving.
  * */
 export type Resolver = (specifier: string, options: ResolverOptions) => string | false | Promise<string | false>;
 
@@ -18,31 +25,21 @@ export type Resolver = (specifier: string, options: ResolverOptions) => string |
  *
  * This resolver implements a resolve algorithm that is as compatible as possible with the major toolchains,
  * including Node.js, webpack (css-loader, sass-loader, less-loader) and vite. It is difficult to completely
- * mimic the behavior of these toolchains, so the behavior may differ in some cases.
- *
- * @param specifier The specifier to resolve (i.e. './foo.css', '~bootstrap', etc.)
- * @param options The options to resolve
- * @returns The resolved path (absolute). `false` means to skip resolving.
+ * mimic the behavior of the toolchain, so the behavior may differ in some cases.
  */
 export const createDefaultResolver: () => Resolver = () => async (specifier, options) => {
-  const resolveResolver = createResolveResolver();
+  const relativeResolver = createRelativeResolver();
   const nodeResolver = createNodeResolver();
   const webpackResolver = createWebpackResolver();
+  const httpResolver = createHTTPResolver();
 
-  // In less-loader, `resolveResolver` has priority over `webpackResolver`.
+  // In less-loader, `relativeResolver` has priority over `webpackResolver`.
   // enhanced-typed-css-modules follows suit.
   // ref: https://github.com/webpack-contrib/less-loader/tree/454e187f58046356c3d383d67fda763db8bfc528#webpack-resolver
-  const resolvers = [resolveResolver, nodeResolver, webpackResolver];
+  const resolvers = [relativeResolver, nodeResolver, webpackResolver, httpResolver];
   for (const resolver of resolvers) {
-    try {
-      const resolved = await resolver(specifier, options);
-      if (resolved !== false) {
-        const isExists = await exists(resolved);
-        if (isExists) return resolved;
-      }
-    } catch (e) {
-      // noop
-    }
+    const resolved = await resolver(specifier, options);
+    if (resolved !== false) return resolved;
   }
   return false;
 };

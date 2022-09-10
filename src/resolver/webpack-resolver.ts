@@ -1,4 +1,5 @@
 import { dirname } from 'path';
+import { fileURLToPath, pathToFileURL } from 'url';
 import enhancedResolve from 'enhanced-resolve';
 import { exists } from '../util.js';
 import type { Resolver } from './index.js';
@@ -49,6 +50,9 @@ const lessLoaderResolver = enhancedResolve.create.sync({
 
 // TODO: Support `resolve.alias` for Node.js API
 export const createWebpackResolver: () => Resolver = () => async (specifier, options) => {
+  // ignore `http(s)://`
+  if (!options.request.startsWith('file://')) return false;
+
   // `~` prefix is optional.
   // ref: https://github.com/webpack-contrib/less-loader/tree/454e187f58046356c3d383d67fda763db8bfc528#webpack-resolver
   if (specifier.startsWith('~')) specifier = specifier.slice(1);
@@ -58,11 +62,12 @@ export const createWebpackResolver: () => Resolver = () => async (specifier, opt
   const resolvers = [cssLoaderResolver, sassLoaderResolver, lessLoaderResolver];
   for (const resolver of resolvers) {
     try {
-      const resolved = resolver(dirname(options.request), specifier);
-      if (resolved !== false) {
-        const isExists = await exists(resolved);
-        if (isExists) return resolved;
-      }
+      const resolvedPath = resolver(dirname(fileURLToPath(options.request)), specifier);
+      if (resolvedPath === false) continue;
+      const isExists = await exists(resolvedPath);
+      if (!isExists) continue;
+      const resolvedFileURL = pathToFileURL(resolvedPath).href;
+      return resolvedFileURL;
     } catch (e) {
       // noop
     }
