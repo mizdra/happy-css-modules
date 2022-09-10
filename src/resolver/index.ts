@@ -1,3 +1,4 @@
+import { createHTTPResolver } from './http-resolver.js';
 import { createNodeResolver } from './node-resolver.js';
 import { createRelativeResolver } from './relative-resolver.js';
 import { createWebpackResolver } from './webpack-resolver.js';
@@ -30,11 +31,12 @@ export const createDefaultResolver: () => Resolver = () => async (specifier, opt
   const relativeResolver = createRelativeResolver();
   const nodeResolver = createNodeResolver();
   const webpackResolver = createWebpackResolver();
+  const httpResolver = createHTTPResolver();
 
   // In less-loader, `relativeResolver` has priority over `webpackResolver`.
   // enhanced-typed-css-modules follows suit.
   // ref: https://github.com/webpack-contrib/less-loader/tree/454e187f58046356c3d383d67fda763db8bfc528#webpack-resolver
-  const resolvers = [relativeResolver, nodeResolver, webpackResolver];
+  const resolvers = [relativeResolver, nodeResolver, webpackResolver, httpResolver];
   for (const resolver of resolvers) {
     const resolved = await resolver(specifier, options);
     if (resolved !== false) return resolved;

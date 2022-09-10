@@ -17,4 +17,6 @@ test('resolve with webpackResolver when other resolvers fail to resolve', async 
   expect(await defaultResolver('~4.css', { request })).toBe(
     pathToFileURL(getFixturePath('/node_modules/4.css/index.css')).href,
   );
+  expect(await defaultResolver('http://example.com/path/1.css', { request })).toBe('http://example.com/path/1.css');
+  expect(await defaultResolver('https://example.com/path/1.css', { request })).toBe('https://example.com/path/1.css');
 });
