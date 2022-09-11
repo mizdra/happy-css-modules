@@ -7,7 +7,12 @@ import { writeFileIfChanged } from './file-system.js';
 import { generateSourceMappingURLComment, getSourceMapFilePath } from './source-map.js';
 
 export function getRelativePath(fromFilePath: string, toFilePath: string): string {
-  return relative(dirname(fromFilePath), toFilePath);
+  const resolved = relative(dirname(fromFilePath), toFilePath);
+  if (resolved.startsWith('..')) {
+    return resolved;
+  } else {
+    return './' + resolved;
+  }
 }
 
 export function isSubDirectoryFile(fromDirectory: string, toFilePath: string): boolean {
