@@ -1,6 +1,7 @@
+// for jest.setup.ts, etc.
 {
   "extends": "./tsconfig.base.json",
-  "include": ["src/**/*", "test/**/*", "jest.setup.ts"],
+  "include": ["./*"],
   "exclude": ["node_modules"],
   "compilerOptions": {
     // "outDir": "./dist/",

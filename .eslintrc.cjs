@@ -40,7 +40,7 @@ module.exports = {
       files: ['*.{ts,tsx,cts,mts}'],
       extends: ['@mizdra/mizdra/+typescript', '@mizdra/mizdra/+prettier'],
       parserOptions: {
-        project: ['./tsconfig.src.json', './tsconfig.test.json'],
+        project: ['./tsconfig.src.json', './tsconfig.config.json', './tsconfig.example.json'],
       },
       rules: {
         '@typescript-eslint/no-unused-vars': 2,
