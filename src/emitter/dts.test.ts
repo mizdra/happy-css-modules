@@ -48,34 +48,18 @@ describe('generateDtsContentWithSourceMap', () => {
       dtsFormatOptions,
     );
     expect(dtsContent).toMatchInlineSnapshot(`
-      "declare const styles: {
-        readonly "d": string;
-        readonly "c": string;
-        readonly "a": string;
-        readonly "b": string;
-        readonly "b": string;
-      };
+      "declare const styles:
+        & Readonly<Pick<(typeof import("./3.css"))["default"], "d">>
+        & Readonly<Pick<(typeof import("./2.css"))["default"], "c">>
+        & Readonly<{ "a": string }>
+        & Readonly<{ "b": string }>
+        & Readonly<{ "b": string }>
+      ;
       export default styles;
       "
     `);
     const smc = await new SourceMapConsumer(sourceMap.toJSON());
-    expect(smc.originalPositionFor({ line: 2, column: 11 })).toMatchInlineSnapshot(`
-      {
-        "column": 0,
-        "line": 1,
-        "name": "d",
-        "source": "3.css",
-      }
-    `);
-    expect(smc.originalPositionFor({ line: 3, column: 11 })).toMatchInlineSnapshot(`
-      {
-        "column": 0,
-        "line": 2,
-        "name": "c",
-        "source": "2.css",
-      }
-    `);
-    expect(smc.originalPositionFor({ line: 4, column: 11 })).toMatchInlineSnapshot(`
+    expect(smc.originalPositionFor({ line: 4, column: 15 })).toMatchInlineSnapshot(`
       {
         "column": 0,
         "line": 2,
@@ -83,7 +67,7 @@ describe('generateDtsContentWithSourceMap', () => {
         "source": "1.css",
       }
     `);
-    expect(smc.originalPositionFor({ line: 5, column: 11 })).toMatchInlineSnapshot(`
+    expect(smc.originalPositionFor({ line: 5, column: 15 })).toMatchInlineSnapshot(`
       {
         "column": 0,
         "line": 3,
@@ -91,7 +75,7 @@ describe('generateDtsContentWithSourceMap', () => {
         "source": "1.css",
       }
     `);
-    expect(smc.originalPositionFor({ line: 6, column: 11 })).toMatchInlineSnapshot(`
+    expect(smc.originalPositionFor({ line: 6, column: 15 })).toMatchInlineSnapshot(`
       {
         "column": 0,
         "line": 4,
@@ -117,10 +101,10 @@ describe('generateDtsContentWithSourceMap', () => {
         localsConvention: undefined,
       });
       expect(dtsContent).toMatchInlineSnapshot(`
-        "declare const styles: {
-          readonly "foo-bar": string;
-          readonly "foo_bar": string;
-        };
+        "declare const styles:
+          & Readonly<{ "foo-bar": string }>
+          & Readonly<{ "foo_bar": string }>
+        ;
         export default styles;
         "
       `);
@@ -132,10 +116,10 @@ describe('generateDtsContentWithSourceMap', () => {
         localsConvention: 'camelCaseOnly',
       });
       expect(dtsContent).toMatchInlineSnapshot(`
-        "declare const styles: {
-          readonly "fooBar": string;
-          readonly "fooBar": string;
-        };
+        "declare const styles:
+          & Readonly<{ "fooBar": string }>
+          & Readonly<{ "fooBar": string }>
+        ;
         export default styles;
         "
       `);
@@ -147,12 +131,12 @@ describe('generateDtsContentWithSourceMap', () => {
         localsConvention: 'camelCase',
       });
       expect(dtsContent).toMatchInlineSnapshot(`
-        "declare const styles: {
-          readonly "foo-bar": string;
-          readonly "fooBar": string;
-          readonly "foo_bar": string;
-          readonly "fooBar": string;
-        };
+        "declare const styles:
+          & Readonly<{ "foo-bar": string }>
+          & Readonly<{ "fooBar": string }>
+          & Readonly<{ "foo_bar": string }>
+          & Readonly<{ "fooBar": string }>
+        ;
         export default styles;
         "
       `);
@@ -164,10 +148,10 @@ describe('generateDtsContentWithSourceMap', () => {
         localsConvention: 'dashesOnly',
       });
       expect(dtsContent).toMatchInlineSnapshot(`
-        "declare const styles: {
-          readonly "fooBar": string;
-          readonly "foo_bar": string;
-        };
+        "declare const styles:
+          & Readonly<{ "fooBar": string }>
+          & Readonly<{ "foo_bar": string }>
+        ;
         export default styles;
         "
       `);
@@ -179,12 +163,12 @@ describe('generateDtsContentWithSourceMap', () => {
         localsConvention: 'dashes',
       });
       expect(dtsContent).toMatchInlineSnapshot(`
-        "declare const styles: {
-          readonly "foo-bar": string;
-          readonly "fooBar": string;
-          readonly "foo_bar": string;
-          readonly "foo_bar": string;
-        };
+        "declare const styles:
+          & Readonly<{ "foo-bar": string }>
+          & Readonly<{ "fooBar": string }>
+          & Readonly<{ "foo_bar": string }>
+          & Readonly<{ "foo_bar": string }>
+        ;
         export default styles;
         "
       `);
@@ -203,21 +187,13 @@ describe('generateDtsContentWithSourceMap', () => {
       dtsFormatOptions,
     );
     expect(dtsContent).toMatchInlineSnapshot(`
-      "declare const styles: {
-        readonly "a": string;
-      };
+      "declare const styles:
+        & Readonly<Pick<(typeof import("../1.css"))["default"], "a">>
+      ;
       export default styles;
       "
     `);
-    const smc = await new SourceMapConsumer(sourceMap.toJSON());
-    // FIXME: `source` should be `../src/1.css`
-    expect(smc.originalPositionFor({ line: 2, column: 11 })).toMatchInlineSnapshot(`
-      {
-        "column": 0,
-        "line": 1,
-        "name": "a",
-        "source": "../1.css",
-      }
-    `);
+    expect(sourceMap.toJSON().sources).toStrictEqual(['../src/1.css']);
+    expect(sourceMap.toJSON().file).toStrictEqual('1.css.d.ts');
   });
 });
