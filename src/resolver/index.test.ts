@@ -1,22 +1,26 @@
-import { pathToFileURL } from 'url';
+import dedent from 'dedent';
+import { Loader } from '../loader/index.js';
 import { createFixtures, getFixturePath } from '../test/util.js';
 import { createDefaultResolver } from './index.js';
 
-const defaultResolver = createDefaultResolver();
-const request = pathToFileURL(getFixturePath('/test/1.css')).href;
+const loader = new Loader({ resolver: createDefaultResolver() });
 
 test('resolve with webpackResolver when other resolvers fail to resolve', async () => {
   createFixtures({
+    '/test/1.css': dedent`
+    @import '2.css';
+    @import '3.css';
+    @import '~4.css';
+    `,
     '/test/2.css': `.a {}`,
     '/test/3.css': `.a {}`,
     '/node_modules/3.css/index.css': `.a {}`,
     '/node_modules/4.css/index.css': `.a {}`,
   });
-  expect(await defaultResolver('2.css', { request })).toBe(pathToFileURL(getFixturePath('/test/2.css')).href);
-  expect(await defaultResolver('3.css', { request })).toBe(pathToFileURL(getFixturePath('/test/3.css')).href);
-  expect(await defaultResolver('~4.css', { request })).toBe(
-    pathToFileURL(getFixturePath('/node_modules/4.css/index.css')).href,
-  );
-  expect(await defaultResolver('http://example.com/path/1.css', { request })).toBe('http://example.com/path/1.css');
-  expect(await defaultResolver('https://example.com/path/1.css', { request })).toBe('https://example.com/path/1.css');
+  const result = await loader.load(getFixturePath('/test/1.css'));
+  expect(result.dependencies).toStrictEqual([
+    getFixturePath('/test/2.css'),
+    getFixturePath('/test/3.css'),
+    getFixturePath('/node_modules/4.css/index.css'),
+  ]);
 });

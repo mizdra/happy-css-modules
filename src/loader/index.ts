@@ -1,5 +1,4 @@
 import { readFile, stat } from 'fs/promises';
-import { fileURLToPath, pathToFileURL } from 'url';
 import postcss from 'postcss';
 import type { Resolver } from '../resolver/index.js';
 import { createDefaultResolver } from '../resolver/index.js';
@@ -148,12 +147,7 @@ export class Loader {
     for (const atImport of atImports) {
       const importedSheetPath = parseAtImport(atImport);
       if (!importedSheetPath) continue;
-      const fromURL = await this.resolver(importedSheetPath, { request: pathToFileURL(filePath).href });
-      if (!fromURL.startsWith('file://')) {
-        console.warn(`${fromURL} is not a file protocol URL. Non-file protocol URLs are ignored.`);
-        continue;
-      }
-      const from = fileURLToPath(fromURL);
+      const from = await this.resolver(importedSheetPath, { request: filePath });
       const result = await this.load(from);
       const externalTokens = result.tokens;
       dependencies.push(from);
@@ -178,12 +172,7 @@ export class Loader {
     for (const composesDeclaration of composesDeclarations) {
       const declarationDetail = parseComposesDeclarationWithFromUrl(composesDeclaration);
       if (!declarationDetail) continue;
-      const fromURL = await this.resolver(declarationDetail.from, { request: pathToFileURL(filePath).href });
-      if (!fromURL.startsWith('file://')) {
-        console.warn(`${fromURL} is not a file protocol URL. Non-file protocol URLs are ignored.`);
-        continue;
-      }
-      const from = fileURLToPath(fromURL);
+      const from = await this.resolver(declarationDetail.from, { request: filePath });
       const result = await this.load(from);
       const externalTokens = result.tokens.filter((token) => declarationDetail.tokenNames.includes(token.name));
       dependencies.push(from);
