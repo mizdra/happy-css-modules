@@ -51,6 +51,7 @@ function formatTokens(tokens: Token[], localsConvention: LocalsConvention): Toke
 }
 
 function generateTokenDeclarations(
+  filePath: string,
   sourceMapFilePath: string,
   tokens: Token[],
   dtsFormatOptions: DtsFormatOptions | undefined,
@@ -65,18 +66,26 @@ function generateTokenDeclarations(
 
     for (const originalLocation of token.originalLocations) {
       result.push(
-        new SourceNode(null, null, null, [
-          'readonly ',
-          new SourceNode(
-            originalLocation.start.line ?? null,
-            // The SourceNode's column is 0-based, but the originalLocation's column is 1-based.
-            originalLocation.start.column - 1 ?? null,
-            getRelativePath(sourceMapFilePath, originalLocation.filePath),
-            `"${token.name}"`,
-            token.name,
-          ),
-          ': string;',
-        ]),
+        originalLocation.filePath === filePath
+          ? new SourceNode(null, null, null, [
+              '& Readonly<{ ',
+              new SourceNode(
+                originalLocation.start.line ?? null,
+                // The SourceNode's column is 0-based, but the originalLocation's column is 1-based.
+                originalLocation.start.column - 1 ?? null,
+                getRelativePath(sourceMapFilePath, originalLocation.filePath),
+                `"${token.name}"`,
+                token.name,
+              ),
+              ': string }>',
+            ])
+          : new SourceNode(null, null, null, [
+              '& Readonly<Pick<(typeof import(',
+              `"${getRelativePath(filePath, originalLocation.filePath)}"`,
+              '))["default"], ',
+              `"${token.name}"`,
+              '>>',
+            ]),
       );
     }
   }
@@ -90,16 +99,16 @@ export function generateDtsContentWithSourceMap(
   tokens: Token[],
   dtsFormatOptions: DtsFormatOptions | undefined,
 ): { dtsContent: CodeWithSourceMap['code']; sourceMap: CodeWithSourceMap['map'] } {
-  const tokenDeclarations = generateTokenDeclarations(sourceMapFilePath, tokens, dtsFormatOptions);
+  const tokenDeclarations = generateTokenDeclarations(filePath, sourceMapFilePath, tokens, dtsFormatOptions);
 
   let sourceNode: typeof SourceNode;
   if (!tokenDeclarations || !tokenDeclarations.length) {
     sourceNode = new SourceNode(null, null, null, '');
   } else {
     sourceNode = new SourceNode(1, 0, getRelativePath(sourceMapFilePath, filePath), [
-      'declare const styles: {' + EOL,
+      'declare const styles:' + EOL,
       ...tokenDeclarations.map((tokenDeclaration) => ['  ', tokenDeclaration, EOL]),
-      '};' + EOL,
+      ';' + EOL,
       'export default styles;' + EOL,
     ]);
   }
