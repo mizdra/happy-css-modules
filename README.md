@@ -1,6 +1,12 @@
-# happy-css-modules
+<p align="center">
+  <img alt="Cover image" src="./docs/cover.svg" />
+</p>
 
-A collection of tools to make CSS Modules statically checkable.
+<h2 align="center">The Collection of tools to make CSS Modules happy :)</h2>
+
+<p align="center">
+  <em>Typed, definition jumps, and unused variable detection!</em>
+</p>
 
 This is an experimental project aimed at PoC for https://github.com/Quramy/typed-css-modules/issues/177.
 
