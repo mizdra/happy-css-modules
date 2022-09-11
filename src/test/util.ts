@@ -78,7 +78,6 @@ export function createFixtures(items: DirectoryItems): void {
       if (isFile(item)) {
         mkdirSync(dirname(path), { recursive: true });
         if (typeof item === 'string') {
-          sleepSync(1); // Wait 1 ms for mtime to change from the previous fixture.
           writeFileSync(path, item);
         }
       } else {
@@ -88,6 +87,7 @@ export function createFixtures(items: DirectoryItems): void {
     }
   }
   removeFixtures();
+  sleepSync(2); // Wait 2 ms for mtime to change from the previous fixture.
   createFixturesImpl(items, FIXTURE_DIR_PATH);
 }
 
