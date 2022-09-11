@@ -1,4 +1,3 @@
-import { fileURLToPath, pathToFileURL } from 'url';
 import type { Transformer } from '../index.js';
 import type { TransformerOptions } from './index.js';
 import { handleImportError } from './index.js';
@@ -21,8 +20,8 @@ function createLessPluginResolver(Less: typeof import('less'), options: Transfor
       options: Less.LoadFileOptions,
       environment: Less.Environment,
     ): Promise<Less.FileLoadResult> {
-      const resolvedFileURL = await this.options.resolver(filename, { request: pathToFileURL(currentDirectory).href });
-      return super.loadFile(fileURLToPath(resolvedFileURL), currentDirectory, options, environment);
+      const resolved = await this.options.resolver(filename, { request: currentDirectory });
+      return super.loadFile(resolved, currentDirectory, options, environment);
     }
   }
 

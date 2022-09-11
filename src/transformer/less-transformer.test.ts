@@ -4,14 +4,11 @@ import { Loader } from '../loader/index.js';
 import { createFixtures, getFixturePath } from '../test/util.js';
 import { createLessTransformer } from './less-transformer.js';
 
-const consoleWarnSpy = jest.spyOn(global.console, 'warn').mockImplementation(() => {});
-
 const loader = new Loader({ transformer: createLessTransformer() });
 const loadSpy = jest.spyOn(loader, 'load');
 
 afterEach(() => {
   loadSpy.mockClear();
-  consoleWarnSpy.mockClear();
 });
 
 test('handles less features', async () => {
@@ -120,11 +117,6 @@ test('resolves specifier using resolver', async () => {
     '/test/1.less': dedent`
     @import 'package-1';
     @import 'package-2';
-    // NOTE: less does not resolve files that are http(s) protocol.
-    // Therefore, the resolver will not be called for those files,
-    // and they will not be included in result.dependencies.
-    @import 'http://example.com/path/1.css';
-    @import 'https://example.com/path/1.css';
     `,
     '/node_modules/package-1/index.css': `.a {}`,
     '/node_modules/package-2/index.less': `.a {}`,
@@ -134,14 +126,5 @@ test('resolves specifier using resolver', async () => {
   expect(result.dependencies.sort()).toStrictEqual(
     // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
     ['/node_modules/package-1/index.css', '/node_modules/package-2/index.less'].map(getFixturePath).sort(),
-  );
-  expect(consoleWarnSpy).toHaveBeenCalledTimes(2);
-  expect(consoleWarnSpy).toHaveBeenNthCalledWith(
-    1,
-    'http://example.com/path/1.css is not a file protocol URL. Non-file protocol URLs are ignored.',
-  );
-  expect(consoleWarnSpy).toHaveBeenNthCalledWith(
-    2,
-    'https://example.com/path/1.css is not a file protocol URL. Non-file protocol URLs are ignored.',
   );
 });

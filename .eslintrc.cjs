@@ -47,12 +47,9 @@ module.exports = {
       },
     },
     {
-      files: ['*.test.{ts,tsx,cts,mts}'],
+      files: ['test/**/*.{ts,tsx,cts,mts}'],
       env: {
         jest: true,
-      },
-      rules: {
-        '@typescript-eslint/no-empty-function': 'off',
       },
     },
   ],
