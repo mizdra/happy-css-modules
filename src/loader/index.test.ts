@@ -1,7 +1,8 @@
-import fs from 'fs/promises';
+import fs, { readFile, writeFile } from 'fs/promises';
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
 import { createFixtures, FIXTURE_DIR_PATH, getFixturePath } from '../test/util.js';
+import { sleepSync } from '../util.js';
 
 const readFileSpy = jest.spyOn(fs, 'readFile');
 // In ESM, for some reason, we need to explicitly mock module
@@ -210,26 +211,23 @@ test('normalizes tokens', async () => {
 });
 
 test.failing('returns the result from the cache when the file has not been modified', async () => {
-  const content1 = dedent`
-  @import './2.css';
-  @import './2.css';
-  .a {
-    composes: b from './2.css';
-    composes: c from './3.css';
-    composes: d from './3.css';
-  }
-  `;
-  const content2 = dedent`
-  .b {}
-  `;
-  const content3 = dedent`
-  .c {}
-  .d {}
-  `;
   createFixtures({
-    '/test/1.css': { content: content1, mtime: new Date(0) },
-    '/test/2.css': { content: content2, mtime: new Date(0) },
-    '/test/3.css': { content: content3, mtime: new Date(0) },
+    '/test/1.css': dedent`
+    @import './2.css';
+    @import './2.css';
+    .a {
+      composes: b from './2.css';
+      composes: c from './3.css';
+      composes: d from './3.css';
+    }
+    `,
+    '/test/2.css': dedent`
+    .b {}
+    `,
+    '/test/3.css': dedent`
+    .c {}
+    .d {}
+    `,
   });
   await loader.load(getFixturePath('/test/1.css'));
   expect(readFileSpy).toHaveBeenCalledTimes(3);
@@ -239,11 +237,9 @@ test.failing('returns the result from the cache when the file has not been modif
   readFileSpy.mockClear();
 
   // update `/test/2.css`
-  createFixtures({
-    '/test/1.css': { content: content1, mtime: new Date(0) },
-    '/test/2.css': { content: content2, mtime: new Date(1) },
-    '/test/3.css': { content: content3, mtime: new Date(0) },
-  });
+  sleepSync(1); // wait for the file system to update the mtime
+  await writeFile(getFixturePath('/test/2.css'), await readFile(getFixturePath('/test/2.css'), 'utf-8'));
+
   // `3.css` is not updated, so the cache is used. Therefore, `readFile` is not called.
   await loader.load(getFixturePath('/test/3.css'));
   expect(readFileSpy).toHaveBeenCalledTimes(0);

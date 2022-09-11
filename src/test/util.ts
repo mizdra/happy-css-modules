@@ -1,10 +1,11 @@
-import { constants, mkdirSync, realpathSync, rmSync, utimesSync, writeFileSync } from 'fs';
+import { constants, mkdirSync, realpathSync, rmSync, writeFileSync } from 'fs';
 import { access } from 'fs/promises';
 import { tmpdir } from 'os';
 import { dirname, join, resolve } from 'path';
 import postcss, { type Root, type Rule, type AtRule, type Declaration } from 'postcss';
 import { type ClassName } from 'postcss-selector-parser';
 import { type Token, collectNodes, type Location } from '../loader/index.js';
+import { sleepSync } from '../util.js';
 
 export const FIXTURE_DIR_PATH = resolve(
   realpathSync(tmpdir()),
@@ -58,7 +59,7 @@ export async function exists(path: string): Promise<boolean> {
   }
 }
 
-type File = string | { content: string; mtime: Date };
+type File = string;
 
 type DirectoryItem = File | DirectoryItems;
 
@@ -67,13 +68,7 @@ type DirectoryItems = {
 };
 
 function isFile(item: DirectoryItem): item is File {
-  return typeof item === 'string' || 'content' in item;
-}
-
-function sleepSync(ms: number) {
-  const start = Date.now();
-  // eslint-disable-next-line no-empty
-  while (Date.now() - start < ms) {}
+  return typeof item === 'string';
 }
 
 export function createFixtures(items: DirectoryItems): void {
@@ -85,10 +80,6 @@ export function createFixtures(items: DirectoryItems): void {
         if (typeof item === 'string') {
           sleepSync(1); // Wait 1 ms for mtime to change from the previous fixture.
           writeFileSync(path, item);
-        } else {
-          sleepSync(1); // Wait 1 ms for mtime to change from the previous fixture.
-          writeFileSync(path, item.content);
-          utimesSync(path, item.mtime, item.mtime);
         }
       } else {
         mkdirSync(path, { recursive: true });
