@@ -8,6 +8,8 @@
   <em>Typed, definition jumps, and unused variable detection!</em>
 </p>
 
+https://user-images.githubusercontent.com/9639995/189538880-872ad38d-2c9d-4c19-b257-521018963eec.mov
+
 This is an experimental project aimed at PoC for https://github.com/Quramy/typed-css-modules/issues/177.
 
 ## Installation
