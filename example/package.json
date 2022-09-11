@@ -5,7 +5,7 @@
   "type": "commonjs",
   "main": "app.js",
   "scripts": {
-    "etcm": "../bin/etcm.js '**/*.{css,scss,less}'"
+    "hcm": "../bin/hcm.js '**/*.{css,scss,less}'"
   },
   "author": "mizdra",
   "license": "MIT"

@@ -21,10 +21,10 @@ $ npm i -D happy-css-modules
 ## Usage
 
 ```console
-$ etcm --help
+$ hcm --help
 Create .d.ts and .d.ts.map from CSS modules *.css files.
 
-etcm [options] <glob>
+hcm [options] <glob>
 
 Options:
       --outDir            Output directory                              [string]
@@ -40,12 +40,12 @@ Options:
   -v, --version           Show version number                          [boolean]
 
 Examples:
-  etcm 'src/**/*.module.css'                Generate .d.ts and .d.ts.map.
-  etcm 'src/**/*.module.{css,scss,less}'    Also generate files for sass and les
-                                            s.
-  etcm 'src/**/*.module.css' --watch        Watch for changes and generate .d.ts
-                                             and .d.ts.map.
-  etcm 'src/**/*.module.css' --declaration  Generate .d.ts only.
+  hcm 'src/**/*.module.css'                Generate .d.ts and .d.ts.map.
+  hcm 'src/**/*.module.{css,scss,less}'    Also generate files for sass and les
+                                           s.
+  hcm 'src/**/*.module.css' --watch        Watch for changes and generate .d.ts
+                                            and .d.ts.map.
+  hcm 'src/**/*.module.css' --declaration  Generate .d.ts only.
   Map=false
 ```
 
@@ -96,11 +96,11 @@ run({
 });
 ```
 
-You can also create your own customized `etcm` commands. We also provide a `parseArgv` utility that parses `process.argv` and extracts options.
+You can also create your own customized `hcm` commands. We also provide a `parseArgv` utility that parses `process.argv` and extracts options.
 
 ```javascript
 #!/usr/bin/env node
-// scripts/etcm.js
+// scripts/hcm.js
 // @ts-check
 
 import { run, parseArgv } from 'happy-css-modules';
