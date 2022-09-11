@@ -20,19 +20,19 @@ export type LocalsConvention = 'camelCase' | 'camelCaseOnly' | 'dashes' | 'dashe
 
 export interface RunnerOptions {
   pattern: string;
-  outDir?: string;
-  watch?: boolean;
-  localsConvention?: LocalsConvention;
-  declarationMap?: boolean;
-  transformer?: Transformer;
-  resolver?: Resolver;
+  outDir?: string | undefined;
+  watch?: boolean | undefined;
+  localsConvention?: LocalsConvention | undefined;
+  declarationMap?: boolean | undefined;
+  transformer?: Transformer | undefined;
+  resolver?: Resolver | undefined;
   /**
    * Silent output. Do not show "files written" messages.
    * @default false
    */
-  silent?: boolean;
+  silent?: boolean | undefined;
   /** Working directory path. */
-  cwd?: string;
+  cwd?: string | undefined;
 }
 
 type OverrideProp<T, K extends keyof T, V extends T[K]> = Omit<T, K> & { [P in K]: V };
@@ -76,7 +76,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
 
   if (options.watch) {
     if (!options.silent) console.log('Watch ' + options.pattern + '...');
-    const watcher = chokidar.watch([options.pattern.replace(/\\/g, '/')], { cwd: options.cwd });
+    const watcher = chokidar.watch([options.pattern.replace(/\\/g, '/')], options.cwd ? { cwd: options.cwd } : {});
     watcher.on('all', (eventName, filePath) => {
       if (eventName === 'add' || eventName === 'change') {
         processFile(resolve(options.cwd ?? process.cwd(), filePath)).catch(() => {

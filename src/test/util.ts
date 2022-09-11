@@ -9,7 +9,7 @@ import { type Token, collectNodes, type Location } from '../loader/index.js';
 export const FIXTURE_DIR_PATH = resolve(
   realpathSync(tmpdir()),
   'enhanced-typed-css-modules/fixtures',
-  process.env.JEST_WORKER_ID!,
+  process.env['JEST_WORKER_ID']!,
 );
 
 export function createRoot(code: string, from?: string): Root {

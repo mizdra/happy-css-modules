@@ -11,10 +11,10 @@ function createLessPluginResolver(Less: typeof import('less'), options: Transfor
       this.options = options;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public supports(filename: string): boolean {
+    public override supports(filename: string): boolean {
       return true;
     }
-    public async loadFile(
+    public override async loadFile(
       filename: string,
       currentDirectory: string,
       options: Less.LoadFileOptions,
