@@ -234,4 +234,33 @@ describe('generateDtsContentWithSourceMap', () => {
     expect(sourceMap.toJSON().sources).toStrictEqual(['../src/1.css']);
     expect(sourceMap.toJSON().file).toStrictEqual('1.css.d.ts');
   });
+  test('treats imported tokens from external files the same as local tokens', async () => {
+    createFixtures({
+      '/test/1.css': dedent`
+      @import './2.css';
+      @import './3.css';
+      .a {}
+      `,
+      '/test/2.css': `.b {}`,
+      '/test/3.css': `.c {}`,
+    });
+    const result = await loader.load(filePath);
+    const { dtsContent } = generateDtsContentWithSourceMap(
+      filePath,
+      dtsFilePath,
+      sourceMapFilePath,
+      result.tokens,
+      dtsFormatOptions,
+      (filePath) => filePath.endsWith('3.css'),
+    );
+    expect(dtsContent).toMatchInlineSnapshot(`
+      "declare const styles:
+        & Readonly<Pick<(typeof import("./2.css"))["default"], "b">>
+        & Readonly<{ "c": string }>
+        & Readonly<{ "a": string }>
+      ;
+      export default styles;
+      "
+    `);
+  });
 });
