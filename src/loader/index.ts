@@ -15,6 +15,14 @@ import {
 
 export { collectNodes, type Location } from './postcss.js';
 
+/**
+ * Whether the specifier should be ignored.
+ * For example, specifiers starting with `http://` or `https://` should be ignored.
+ */
+function isIgnoredSpecifier(specifier: string): boolean {
+  return specifier.startsWith('http://') || specifier.startsWith('https://');
+}
+
 /** The exported token. */
 export type Token = {
   /** The token name. */
@@ -147,6 +155,7 @@ export class Loader {
     for (const atImport of atImports) {
       const importedSheetPath = parseAtImport(atImport);
       if (!importedSheetPath) continue;
+      if (isIgnoredSpecifier(importedSheetPath)) continue;
       const from = await this.resolver(importedSheetPath, { request: filePath });
       const result = await this.load(from);
       const externalTokens = result.tokens;
@@ -172,6 +181,7 @@ export class Loader {
     for (const composesDeclaration of composesDeclarations) {
       const declarationDetail = parseComposesDeclarationWithFromUrl(composesDeclaration);
       if (!declarationDetail) continue;
+      if (isIgnoredSpecifier(declarationDetail.from)) continue;
       const from = await this.resolver(declarationDetail.from, { request: filePath });
       const result = await this.load(from);
       const externalTokens = result.tokens.filter((token) => declarationDetail.tokenNames.includes(token.name));
