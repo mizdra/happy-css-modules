@@ -30,7 +30,7 @@ export const createDefaultResolver: () => Resolver = () => async (specifier, opt
   const webpackResolver = createWebpackResolver();
 
   // In less-loader, `relativeResolver` has priority over `webpackResolver`.
-  // enhanced-typed-css-modules follows suit.
+  // happy-css-modules follows suit.
   // ref: https://github.com/webpack-contrib/less-loader/tree/454e187f58046356c3d383d67fda763db8bfc528#webpack-resolver
   const resolvers = [relativeResolver, nodeResolver, webpackResolver];
   for (const resolver of resolvers) {

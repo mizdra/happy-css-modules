@@ -9,7 +9,7 @@ import { sleepSync } from '../util.js';
 
 export const FIXTURE_DIR_PATH = resolve(
   realpathSync(tmpdir()),
-  'enhanced-typed-css-modules/fixtures',
+  'happy-css-modules/fixtures',
   process.env['JEST_WORKER_ID']!,
 );
 

@@ -81,7 +81,7 @@ function generateTokenDeclarations(
               ': string }>',
             ])
           : // Imported tokens in non-external files are typed by dynamic import.
-            // See https://github.com/mizdra/enhanced-typed-css-modules/issues/106.
+            // See https://github.com/mizdra/happy-css-modules/issues/106.
             new SourceNode(null, null, null, [
               '& Readonly<Pick<(typeof import(',
               `"${getRelativePath(filePath, originalLocation.filePath)}"`,
