@@ -44,7 +44,7 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install
       - run: pnpm run build
-      - run: pnpm run etcm
+      - run: pnpm run hcm
         working-directory: example
       - name: Verify if there is a difference in example
         run: |

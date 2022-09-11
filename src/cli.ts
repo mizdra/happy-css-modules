@@ -17,7 +17,7 @@ export function parseArgv(argv: string[]): RunnerOptions {
       // workaround for https://github.com/yargs/yargs/issues/1318
       'duplicate-arguments-array': false,
     })
-    .scriptName('etcm')
+    .scriptName('hcm')
     .usage('Create .d.ts and .d.ts.map from CSS modules *.css files.\n\n$0 [options] <glob>')
     .example("$0 'src/**/*.module.css'", 'Generate .d.ts and .d.ts.map.')
     .example("$0 'src/**/*.module.{css,scss,less}'", 'Also generate files for sass and less.')

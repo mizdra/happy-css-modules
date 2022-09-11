@@ -1,6 +1,6 @@
 import { parseArgv } from './cli.js';
 
-const baseArgs = ['node', 'etcm'];
+const baseArgs = ['node', 'hcm'];
 
 describe('parseArgv', () => {
   test('pattern', () => {
