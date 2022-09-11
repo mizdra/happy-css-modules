@@ -51,6 +51,8 @@ export type EmitterOptions = {
   silent: boolean;
   /** Working directory path. */
   cwd: string;
+  /** Whether the file is from an external library or not. */
+  isExternalFile: (filePath: string) => boolean;
 };
 
 export async function emitGeneratedFiles({
@@ -61,6 +63,7 @@ export async function emitGeneratedFiles({
   dtsFormatOptions,
   silent,
   cwd,
+  isExternalFile,
 }: EmitterOptions): Promise<void> {
   const dtsFilePath = getDtsFilePath(filePath, distOptions);
   const sourceMapFilePath = getSourceMapFilePath(filePath, distOptions);
@@ -70,6 +73,7 @@ export async function emitGeneratedFiles({
     sourceMapFilePath,
     tokens,
     dtsFormatOptions,
+    isExternalFile,
   );
 
   if (emitDeclarationMap) {

@@ -9,6 +9,7 @@ import { emitGeneratedFiles } from './emitter/index.js';
 import { Loader } from './loader/index.js';
 import type { Resolver } from './resolver/index.js';
 import { type Transformer } from './transformer/index.js';
+import { isMatchByGlob } from './util.js';
 
 const glob = util.promisify(_glob);
 
@@ -52,6 +53,9 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
         outDir: options.outDir,
       }
     : undefined;
+  const isExternalFile = (filePath: string) => {
+    return !isMatchByGlob(filePath, options.pattern, { cwd: options.cwd ?? process.cwd() });
+  };
 
   async function processFile(filePath: string) {
     try {
@@ -66,6 +70,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
         },
         silent: options.silent ?? false,
         cwd: options.cwd ?? process.cwd(),
+        isExternalFile,
       });
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands

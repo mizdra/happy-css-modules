@@ -55,6 +55,7 @@ function generateTokenDeclarations(
   sourceMapFilePath: string,
   tokens: Token[],
   dtsFormatOptions: DtsFormatOptions | undefined,
+  isExternalFile: (filePath: string) => boolean,
 ): typeof SourceNode[] {
   const formattedTokens = formatTokens(tokens, dtsFormatOptions?.localsConvention);
   const result: typeof SourceNode[] = [];
@@ -66,7 +67,7 @@ function generateTokenDeclarations(
 
     for (const originalLocation of token.originalLocations) {
       result.push(
-        originalLocation.filePath === filePath
+        originalLocation.filePath === filePath || isExternalFile(originalLocation.filePath)
           ? new SourceNode(null, null, null, [
               '& Readonly<{ ',
               new SourceNode(
@@ -79,7 +80,9 @@ function generateTokenDeclarations(
               ),
               ': string }>',
             ])
-          : new SourceNode(null, null, null, [
+          : // Imported tokens in non-external files are typed by dynamic import.
+            // See https://github.com/mizdra/enhanced-typed-css-modules/issues/106.
+            new SourceNode(null, null, null, [
               '& Readonly<Pick<(typeof import(',
               `"${getRelativePath(filePath, originalLocation.filePath)}"`,
               '))["default"], ',
@@ -98,8 +101,15 @@ export function generateDtsContentWithSourceMap(
   sourceMapFilePath: string,
   tokens: Token[],
   dtsFormatOptions: DtsFormatOptions | undefined,
+  isExternalFile: (filePath: string) => boolean,
 ): { dtsContent: CodeWithSourceMap['code']; sourceMap: CodeWithSourceMap['map'] } {
-  const tokenDeclarations = generateTokenDeclarations(filePath, sourceMapFilePath, tokens, dtsFormatOptions);
+  const tokenDeclarations = generateTokenDeclarations(
+    filePath,
+    sourceMapFilePath,
+    tokens,
+    dtsFormatOptions,
+    isExternalFile,
+  );
 
   let sourceNode: typeof SourceNode;
   if (!tokenDeclarations || !tokenDeclarations.length) {

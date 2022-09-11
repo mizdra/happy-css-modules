@@ -1,6 +1,7 @@
+import { join } from 'path';
 import { hasProp, isObject, isSystemError, unique, uniqueBy } from '../src/util.js';
 import { createFixtures, getFixturePath } from './test/util.js';
-import { exists } from './util.js';
+import { isMatchByGlob, exists } from './util.js';
 
 function fakeSystemError({ code }: { code: string }) {
   const error = new Error();
@@ -71,4 +72,18 @@ test('exists', async () => {
   });
   expect(await exists(getFixturePath('/test/1.css'))).toBe(true);
   expect(await exists(getFixturePath('/test/2.css'))).toBe(false);
+});
+
+test('isMatchByGlob', () => {
+  const cwd = process.cwd();
+  expect(isMatchByGlob(join(cwd, '1.css'), '*.css', { cwd })).toBe(true);
+  expect(isMatchByGlob(join(cwd, '1.scss'), '*.css', { cwd })).toBe(false);
+  expect(isMatchByGlob(join(cwd, 'dir/1.css'), '**/*.css', { cwd })).toBe(true);
+  expect(isMatchByGlob(join(cwd, 'dir/dir/1.css'), '**/*.css', { cwd })).toBe(true);
+  expect(isMatchByGlob(join(cwd, '1.css'), '*.{css,scss}', { cwd })).toBe(true);
+  expect(isMatchByGlob(join(cwd, '1.scss'), '*.{css,scss}', { cwd })).toBe(true);
+  expect(isMatchByGlob(join(cwd, '1.less'), '*.{css,scss}', { cwd })).toBe(false);
+  expect(isMatchByGlob(join(cwd, '1.css'), '!(*.css)', { cwd })).toBe(false);
+  expect(isMatchByGlob(join(cwd, '1.scss'), '!(*.css)', { cwd })).toBe(true);
+  expect(isMatchByGlob(join(cwd, '1.less'), '!(*.css)', { cwd })).toBe(true);
 });
