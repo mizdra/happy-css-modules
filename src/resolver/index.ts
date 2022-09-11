@@ -1,6 +1,6 @@
 import { exists } from '../util.js';
 import { createNodeResolver } from './node-resolver.js';
-import { createRelativeResolver } from './resolve-resolver.js';
+import { createRelativeResolver } from './relative-resolver.js';
 import { createWebpackResolver } from './webpack-resolver.js';
 
 export type ResolverOptions = {

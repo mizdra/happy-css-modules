@@ -1,5 +1,5 @@
 import { getFixturePath } from '../test/util.js';
-import { createRelativeResolver } from './resolve-resolver.js';
+import { createRelativeResolver } from './relative-resolver.js';
 
 const relativeResolver = createRelativeResolver();
 const request = getFixturePath('/test/1.css');
