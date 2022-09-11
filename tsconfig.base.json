@@ -2,14 +2,36 @@
   // "include": ["src/**/*"], // Override by inheritance
   // "exclude": ["node_modules"], // Override by inheritance
   "compilerOptions": {
+    /* Distribution Options */
     // "target": "ES2019", // Override by inheritance
-    "module": "Node16",
     "sourceMap": true,
-    "strict": true,
+
+    /* Module Options */
+    "module": "Node16",
     "resolveJsonModule": true,
-    "esModuleInterop": true,
     "isolatedModules": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Additional Language Features */
+
+    /* Strict Type-Checking Options */
+    "strict": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
     "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true
+    "checkJs": true
+
+    /* Lint Options */
+    // "importsNotUsedAsValues": "error"
+
+    /* Debug Options */
   }
 }
