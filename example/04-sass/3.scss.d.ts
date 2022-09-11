@@ -1,5 +1,5 @@
-declare const styles: {
-  readonly "c": string;
-};
+declare const styles:
+  & Readonly<{ "c": string }>
+;
 export default styles;
-//# sourceMappingURL=3.scss.d.ts.map
+//# sourceMappingURL=./3.scss.d.ts.map
