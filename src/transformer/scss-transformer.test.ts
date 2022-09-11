@@ -126,6 +126,11 @@ test('resolves specifier using resolver', async () => {
     '/test/1.scss': dedent`
     @import 'package-1';
     @import 'package-2';
+    // NOTE: sass does not resolve files that are http(s) protocol.
+    // Therefore, the resolver will not be called for those files,
+    // and they will not be included in result.dependencies.
+    @import 'http://example.com/path/1.css';
+    @import 'https://example.com/path/1.css';
     `,
     '/node_modules/package-1/index.css': `.a {}`,
     '/node_modules/package-2/index.scss': `.a {}`,
