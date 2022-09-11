@@ -257,7 +257,7 @@ test.failing('returns the result from the cache when the file has not been modif
 
 test('ignores the composition of non-existent tokens', async () => {
   // In css-loader and postcss-modules, compositions of non-existent tokens are simply ignored.
-  // Therefore, enhanced-typed-css-modules follows suit.
+  // Therefore, happy-css-modules follows suit.
   // It may be preferable to warn rather than ignore, but for now, we will focus on compatibility.
   // ref: https://github.com/css-modules/css-modules/issues/356
   createFixtures({
@@ -276,7 +276,7 @@ test('ignores the composition of non-existent tokens', async () => {
 
 test('throws error the composition of non-existent file', async () => {
   // In postcss-modules, compositions of non-existent file are causes an error.
-  // Therefore, enhanced-typed-css-modules follows suit.
+  // Therefore, happy-css-modules follows suit.
   createFixtures({
     '/test/1.css': dedent`
     .a {

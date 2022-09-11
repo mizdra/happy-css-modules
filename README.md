@@ -1,4 +1,4 @@
-# enhanced-typed-css-modules
+# happy-css-modules
 
 A collection of tools to make CSS Modules statically checkable.
 
@@ -7,7 +7,7 @@ This is an experimental project aimed at PoC for https://github.com/Quramy/typed
 ## Installation
 
 ```console
-$ npm i -D enhanced-typed-css-modules
+$ npm i -D happy-css-modules
 ```
 
 ## Usage
@@ -46,24 +46,24 @@ Examples:
 > **Warning**
 > This feature is experimental and may change significantly. The API is not stable and may have breaking changes even in minor or patch version updates.
 
-`enhanced-typed-css-modules` provides Node.js API for programmatically generating .d.ts and .d.ts.map.
+`happy-css-modules` provides Node.js API for programmatically generating .d.ts and .d.ts.map.
 
-See [src/index.ts](https://github.com/mizdra/enhanced-typed-css-modules/blob/main/src/index.ts) for available API.
+See [src/index.ts](https://github.com/mizdra/happy-css-modules/blob/main/src/index.ts) for available API.
 
 ### Example
 
-With the `transformer` option, you can use AltCSS, which is not supported by `enhanced-typed-css-modules`.
+With the `transformer` option, you can use AltCSS, which is not supported by `happy-css-modules`.
 
 ```javascript
 // @ts-check
 
-import { run } from 'enhanced-typed-css-modules';
+import { run } from 'happy-css-modules';
 import { readFile } from 'fs/promises';
 import { fileURLToPath, pathToFileURL } from 'url';
 import sass from 'sass';
 
 // The custom transpiler supporting sass indented syntax
-/** @type {import('enhanced-typed-css-modules').Transformer} */
+/** @type {import('happy-css-modules').Transformer} */
 const transformer = async (source, from) => {
   if (from.endsWith('.sass')) {
     const result = await sass.compileStringAsync(source, {
@@ -95,7 +95,7 @@ You can also create your own customized `etcm` commands. We also provide a `pars
 // scripts/etcm.js
 // @ts-check
 
-import { run, parseArgv } from 'enhanced-typed-css-modules';
+import { run, parseArgv } from 'happy-css-modules';
 
 // ...
 
