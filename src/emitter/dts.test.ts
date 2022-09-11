@@ -6,6 +6,7 @@ import { generateDtsContentWithSourceMap, getDtsFilePath } from './dts.js';
 import { type DtsFormatOptions } from './index.js';
 
 const loader = new Loader();
+const isExternalFile = () => false;
 
 test('getDtsFilePath', () => {
   expect(getDtsFilePath('/app/src/dir/1.css', undefined)).toBe('/app/src/dir/1.css.d.ts');
@@ -46,6 +47,7 @@ describe('generateDtsContentWithSourceMap', () => {
       sourceMapFilePath,
       result.tokens,
       dtsFormatOptions,
+      isExternalFile,
     );
     expect(dtsContent).toMatchInlineSnapshot(`
       "declare const styles:
@@ -96,10 +98,17 @@ describe('generateDtsContentWithSourceMap', () => {
     }
     test('undefined', async () => {
       const result = await getResult(filePath);
-      const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, result.tokens, {
-        ...dtsFormatOptions,
-        localsConvention: undefined,
-      });
+      const { dtsContent } = generateDtsContentWithSourceMap(
+        filePath,
+        dtsFilePath,
+        sourceMapFilePath,
+        result.tokens,
+        {
+          ...dtsFormatOptions,
+          localsConvention: undefined,
+        },
+        isExternalFile,
+      );
       expect(dtsContent).toMatchInlineSnapshot(`
         "declare const styles:
           & Readonly<{ "foo-bar": string }>
@@ -111,10 +120,17 @@ describe('generateDtsContentWithSourceMap', () => {
     });
     test('camelCaseOnly', async () => {
       const result = await getResult(filePath);
-      const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, result.tokens, {
-        ...dtsFormatOptions,
-        localsConvention: 'camelCaseOnly',
-      });
+      const { dtsContent } = generateDtsContentWithSourceMap(
+        filePath,
+        dtsFilePath,
+        sourceMapFilePath,
+        result.tokens,
+        {
+          ...dtsFormatOptions,
+          localsConvention: 'camelCaseOnly',
+        },
+        isExternalFile,
+      );
       expect(dtsContent).toMatchInlineSnapshot(`
         "declare const styles:
           & Readonly<{ "fooBar": string }>
@@ -126,10 +142,17 @@ describe('generateDtsContentWithSourceMap', () => {
     });
     test('camelCase', async () => {
       const result = await getResult(filePath);
-      const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, result.tokens, {
-        ...dtsFormatOptions,
-        localsConvention: 'camelCase',
-      });
+      const { dtsContent } = generateDtsContentWithSourceMap(
+        filePath,
+        dtsFilePath,
+        sourceMapFilePath,
+        result.tokens,
+        {
+          ...dtsFormatOptions,
+          localsConvention: 'camelCase',
+        },
+        isExternalFile,
+      );
       expect(dtsContent).toMatchInlineSnapshot(`
         "declare const styles:
           & Readonly<{ "foo-bar": string }>
@@ -143,10 +166,17 @@ describe('generateDtsContentWithSourceMap', () => {
     });
     test('dashesOnly', async () => {
       const result = await getResult(filePath);
-      const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, result.tokens, {
-        ...dtsFormatOptions,
-        localsConvention: 'dashesOnly',
-      });
+      const { dtsContent } = generateDtsContentWithSourceMap(
+        filePath,
+        dtsFilePath,
+        sourceMapFilePath,
+        result.tokens,
+        {
+          ...dtsFormatOptions,
+          localsConvention: 'dashesOnly',
+        },
+        isExternalFile,
+      );
       expect(dtsContent).toMatchInlineSnapshot(`
         "declare const styles:
           & Readonly<{ "fooBar": string }>
@@ -158,10 +188,17 @@ describe('generateDtsContentWithSourceMap', () => {
     });
     test('dashes', async () => {
       const result = await getResult(filePath);
-      const { dtsContent } = generateDtsContentWithSourceMap(filePath, dtsFilePath, sourceMapFilePath, result.tokens, {
-        ...dtsFormatOptions,
-        localsConvention: 'dashes',
-      });
+      const { dtsContent } = generateDtsContentWithSourceMap(
+        filePath,
+        dtsFilePath,
+        sourceMapFilePath,
+        result.tokens,
+        {
+          ...dtsFormatOptions,
+          localsConvention: 'dashes',
+        },
+        isExternalFile,
+      );
       expect(dtsContent).toMatchInlineSnapshot(`
         "declare const styles:
           & Readonly<{ "foo-bar": string }>
@@ -185,6 +222,7 @@ describe('generateDtsContentWithSourceMap', () => {
       getFixturePath('/test/dist/1.css.d.ts.map'),
       result.tokens,
       dtsFormatOptions,
+      isExternalFile,
     );
     expect(dtsContent).toMatchInlineSnapshot(`
       "declare const styles:
