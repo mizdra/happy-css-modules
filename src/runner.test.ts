@@ -1,6 +1,7 @@
 import { readFile, writeFile } from 'fs/promises';
 import { jest } from '@jest/globals';
 import chalk from 'chalk';
+import dedent from 'dedent';
 import AggregateError from 'es-aggregate-error';
 import { run } from './runner.js';
 import { createFixtures, exists, getFixturePath, waitForAsyncTask } from './test/util.js';
@@ -86,4 +87,36 @@ test('returns an error if the file fails to process in non-watch mode', async ()
   // The valid files are emitted.
   expect(await exists(getFixturePath('/test/1.css.d.ts'))).toBe(true);
   expect(await exists(getFixturePath('/test/1.css.d.ts.map'))).toBe(true);
+});
+describe('handles external files', () => {
+  beforeEach(() => {
+    createFixtures({
+      '/test/1.css': dedent`
+      @import './2.css';
+      @import 'external-library';
+      .a {}
+      `,
+      '/test/2.css': `.b {}`,
+      '/node_modules/external-library/index.css': `.c {}`,
+    });
+  });
+  test('do not emit .dts for external files', async () => {
+    await run({ ...defaultOptions });
+    expect(await exists(getFixturePath('/test/1.css.d.ts'))).toBe(true);
+    expect(await exists(getFixturePath('/test/2.css.d.ts'))).toBe(true);
+    expect(await exists(getFixturePath('/node_modules/external-library/index.css.d.ts'))).toBe(false);
+  });
+  test('treats imported tokens from external files the same as local tokens', async () => {
+    await run({ ...defaultOptions });
+    expect(await readFile(getFixturePath('/test/1.css.d.ts'), 'utf8')).toMatchInlineSnapshot(`
+    "declare const styles:
+      & Readonly<Pick<(typeof import("./2.css"))["default"], "b">>
+      & Readonly<{ "c": string }>
+      & Readonly<{ "a": string }>
+    ;
+    export default styles;
+    //# sourceMappingURL=./1.css.d.ts.map
+    "
+  `);
+  });
 });

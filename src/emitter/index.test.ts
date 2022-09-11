@@ -12,8 +12,8 @@ beforeEach(() => {
 });
 
 test('getRelativePath', () => {
-  expect(getRelativePath('/test/1.css.d.ts', '/test/1.css')).toBe('1.css');
-  expect(getRelativePath('/test/1.css.d.ts', '/test/dir/1.css')).toBe('dir/1.css');
+  expect(getRelativePath('/test/1.css.d.ts', '/test/1.css')).toBe('./1.css');
+  expect(getRelativePath('/test/1.css.d.ts', '/test/dir/1.css')).toBe('./dir/1.css');
   expect(getRelativePath('/test/1.css.d.ts', '/1.css')).toBe('../1.css');
 });
 
@@ -32,6 +32,7 @@ describe('emitGeneratedFiles', () => {
     dtsFormatOptions: undefined,
     silent: true,
     cwd: getFixturePath('/test'),
+    isExternalFile: () => false,
   };
   beforeEach(() => {
     createFixtures({
@@ -43,7 +44,7 @@ describe('emitGeneratedFiles', () => {
     expect(await exists(getFixturePath('/test/1.css.d.ts'))).toBeTruthy();
     // A link to the source map is embedded.
     expect(await readFile(getFixturePath('/test/1.css.d.ts'), 'utf8')).toEqual(
-      expect.stringContaining('//# sourceMappingURL=1.css.d.ts.map'),
+      expect.stringContaining('//# sourceMappingURL=./1.css.d.ts.map'),
     );
     expect(await exists(getFixturePath('/test/1.css.d.ts.map'))).toBeTruthy();
   });
