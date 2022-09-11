@@ -70,6 +70,12 @@ function isFile(item: DirectoryItem): item is File {
   return typeof item === 'string' || 'content' in item;
 }
 
+function sleepSync(ms: number) {
+  const start = Date.now();
+  // eslint-disable-next-line no-empty
+  while (Date.now() - start < ms) {}
+}
+
 export function createFixtures(items: DirectoryItems): void {
   function createFixturesImpl(items: DirectoryItems, baseDir: string): void {
     for (const [name, item] of Object.entries(items)) {
@@ -77,8 +83,10 @@ export function createFixtures(items: DirectoryItems): void {
       if (isFile(item)) {
         mkdirSync(dirname(path), { recursive: true });
         if (typeof item === 'string') {
+          sleepSync(1); // Wait 1 ms for mtime to change from the previous fixture.
           writeFileSync(path, item);
         } else {
+          sleepSync(1); // Wait 1 ms for mtime to change from the previous fixture.
           writeFileSync(path, item.content);
           utimesSync(path, item.mtime, item.mtime);
         }
