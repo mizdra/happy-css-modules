@@ -1,10 +1,11 @@
-import { constants, mkdirSync, realpathSync, rmSync, utimesSync, writeFileSync } from 'fs';
+import { constants, mkdirSync, realpathSync, rmSync, writeFileSync } from 'fs';
 import { access } from 'fs/promises';
 import { tmpdir } from 'os';
 import { dirname, join, resolve } from 'path';
 import postcss, { type Root, type Rule, type AtRule, type Declaration } from 'postcss';
 import { type ClassName } from 'postcss-selector-parser';
 import { type Token, collectNodes, type Location } from '../loader/index.js';
+import { sleepSync } from '../util.js';
 
 export const FIXTURE_DIR_PATH = resolve(
   realpathSync(tmpdir()),
@@ -58,7 +59,7 @@ export async function exists(path: string): Promise<boolean> {
   }
 }
 
-type File = string | { content: string; mtime: Date };
+type File = string;
 
 type DirectoryItem = File | DirectoryItems;
 
@@ -67,7 +68,7 @@ type DirectoryItems = {
 };
 
 function isFile(item: DirectoryItem): item is File {
-  return typeof item === 'string' || 'content' in item;
+  return typeof item === 'string';
 }
 
 export function createFixtures(items: DirectoryItems): void {
@@ -78,9 +79,6 @@ export function createFixtures(items: DirectoryItems): void {
         mkdirSync(dirname(path), { recursive: true });
         if (typeof item === 'string') {
           writeFileSync(path, item);
-        } else {
-          writeFileSync(path, item.content);
-          utimesSync(path, item.mtime, item.mtime);
         }
       } else {
         mkdirSync(path, { recursive: true });
@@ -89,6 +87,7 @@ export function createFixtures(items: DirectoryItems): void {
     }
   }
   removeFixtures();
+  sleepSync(2); // Wait 2 ms for mtime to change from the previous fixture.
   createFixturesImpl(items, FIXTURE_DIR_PATH);
 }
 

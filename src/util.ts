@@ -45,6 +45,12 @@ export function uniqueBy<T, U>(arr: T[], fn: (el: T) => U): T[] {
   return result;
 }
 
+export function sleepSync(ms: number) {
+  const start = Date.now();
+  // eslint-disable-next-line no-empty
+  while (Date.now() - start < ms) {}
+}
+
 export async function exists(path: string): Promise<boolean> {
   try {
     await access(path, constants.F_OK);
