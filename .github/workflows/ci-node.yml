@@ -29,27 +29,7 @@ jobs:
           node-version: 18
           cache: 'pnpm'
       - run: pnpm install
-      - run: |
-          pnpm run test -- dts.test.ts
-          pnpm run test -- dts.test.ts
-          pnpm run test -- dts.test.ts
-          pnpm run test -- dts.test.ts
-          pnpm run test -- dts.test.ts
-          pnpm run test -- dts.test.ts
-          pnpm run test -- dts.test.ts
-          pnpm run test -- dts.test.ts
-          pnpm run test -- dts.test.ts
-          pnpm run test -- dts.test.ts
-          pnpm run test -- dts.test.ts
-          pnpm run test -- dts.test.ts
-          pnpm run test -- dts.test.ts
-          pnpm run test -- dts.test.ts
-          pnpm run test -- dts.test.ts
-          pnpm run test -- dts.test.ts
-          pnpm run test -- dts.test.ts
-          pnpm run test -- dts.test.ts
-          pnpm run test -- dts.test.ts
-          pnpm run test -- dts.test.ts
+      - run: pnpm run test
         env:
           CI: true
 
