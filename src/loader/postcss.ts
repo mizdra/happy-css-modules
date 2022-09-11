@@ -194,9 +194,11 @@ export function parseAtImport(atImport: AtRule): string | undefined {
   if (firstNode === undefined) return undefined;
   if (firstNode.type === 'string') return firstNode.value;
   if (firstNode.type === 'function' && firstNode.value === 'url') {
+    if (firstNode.nodes[0] === undefined) return undefined;
     if (firstNode.nodes[0].type === 'string') return firstNode.nodes[0].value;
     if (firstNode.nodes[0].type === 'word') return firstNode.nodes[0].value;
   }
+  return undefined;
 }
 
 /**
@@ -227,7 +229,9 @@ export function parseComposesDeclarationWithFromUrl(
   const classNames = classNamesOrSpaces.filter((node) => node.type === 'word');
 
   // validate nodes
+  if (from === undefined) return undefined;
   if (from.type !== 'word' || from.value !== 'from') return undefined;
+  if (url === undefined) return undefined;
   if (url.type !== 'string') return undefined;
   if (classNames.length === 0) return undefined;
 

@@ -57,7 +57,7 @@ type DefinitionResponse = {
 
 export async function getIdentifierDefinitions(filePath: string, identifier: string): Promise<Definition[]> {
   const results = await getMultipleIdentifierDefinitions(filePath, [identifier]);
-  return results[0].definitions;
+  return results[0]!.definitions;
 }
 
 export async function getMultipleIdentifierDefinitions(
@@ -115,7 +115,7 @@ export async function getMultipleIdentifierDefinitions(
       const text = fileContent.slice(startIndex, endIndex);
       return { file, text, start, end };
     });
-    results.push({ identifier: identifiers[i], definitions });
+    results.push({ identifier: identifiers[i]!, definitions });
   }
 
   await server.message({ command: 'exit' });

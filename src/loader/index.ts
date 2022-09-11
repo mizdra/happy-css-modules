@@ -62,9 +62,9 @@ function normalizeTokens(tokens: Token[]): Token[] {
 
 export type LoaderOptions = {
   /** The function to transform source code. */
-  transformer?: Transformer;
+  transformer?: Transformer | undefined;
   /** The function to resolve the path of the imported file. */
-  resolver?: Resolver;
+  resolver?: Resolver | undefined;
 };
 
 /** The resolver that throws an exception if resolving fails. */
@@ -141,7 +141,7 @@ export class Loader {
 
     const { css, map, dependencies } = await this.readCSS(filePath);
 
-    const ast = postcss.parse(css, { from: filePath, map: { inline: false, prev: map } });
+    const ast = postcss.parse(css, { from: filePath, map: map ? { inline: false, prev: map } : { inline: false } });
 
     // Get the local tokens exported by the source file.
     // The tokens are fetched using `postcss-modules` plugin.

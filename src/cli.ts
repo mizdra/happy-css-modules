@@ -60,7 +60,7 @@ export function parseArgv(argv: string[]): RunnerOptions {
     .parseSync();
   const patterns: string[] = parsedArgv._.map((pattern) => pattern.toString());
   return {
-    pattern: patterns[0],
+    pattern: patterns[0]!,
     outDir: parsedArgv.outDir,
     watch: parsedArgv.watch,
     localsConvention: parsedArgv.localsConvention,

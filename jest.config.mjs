@@ -10,7 +10,6 @@ const config = {
   testMatch: ['<rootDir>/src/**/*.test.ts?(x)'],
   setupFilesAfterEnv: ['./jest.setup.ts'],
   // for ESM
-  // @ts-expect-error
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
     // Map `./**/xxx.js` to `./**/xxx` (for ESM)
