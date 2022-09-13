@@ -115,7 +115,7 @@ export class Loader {
   > {
     const css = await readFile(filePath, 'utf-8');
     if (!this.transformer) return { css, map: undefined, dependencies: [] };
-    const result = await this.transformer(css, { from: filePath, resolver: this.resolver });
+    const result = await this.transformer(css, { from: filePath, resolver: this.resolver, isIgnoredSpecifier });
     if (result === false) return { css, map: undefined, dependencies: [] };
     return {
       css: result.css,
