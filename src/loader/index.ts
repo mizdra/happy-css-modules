@@ -115,16 +115,24 @@ export class Loader {
   > {
     const css = await readFile(filePath, 'utf-8');
     if (!this.transformer) return { css, map: undefined, dependencies: [] };
-    const result = await this.transformer(css, { from: filePath, resolver: this.resolver });
+    const result = await this.transformer(css, { from: filePath, resolver: this.resolver, isIgnoredSpecifier });
     if (result === false) return { css, map: undefined, dependencies: [] };
     return {
       css: result.css,
       map: result.map,
-      dependencies: result.dependencies.map((dep) => {
-        if (typeof dep === 'string') return dep;
-        if (dep.protocol !== 'file:') throw new Error('Unsupported protocol: ' + dep.protocol);
-        return dep.pathname;
-      }),
+      dependencies: result.dependencies
+        .map((dep) => {
+          if (typeof dep === 'string') return dep;
+          if (dep.protocol !== 'file:') throw new Error('Unsupported protocol: ' + dep.protocol);
+          return dep.pathname;
+        })
+        .filter((dep) => {
+          // less makes a remote module inline, so it may be included in dependencies.
+          // However, the dependencies field of happy-css-modules is not yet designed to store http protocol URLs.
+          // Therefore, we exclude them from the dependencies field for now.
+          // TODO: Support to store http protocol URLs in the dependencies field.
+          return !(dep.startsWith('http://') || dep.startsWith('https://'));
+        }),
     };
   }
 
