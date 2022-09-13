@@ -131,11 +131,6 @@ test('resolves specifier using resolver', async () => {
   // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
   expect(result.dependencies.sort()).toStrictEqual(
     // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
-    [
-      getFixturePath('/node_modules/package-1/index.css'),
-      getFixturePath('/node_modules/package-2/index.less'),
-      // less makes a remote module with Content-Type inline, so it is included in the dependencies.
-      'https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,900;1,900&display=swap',
-    ].sort(),
+    [getFixturePath('/node_modules/package-1/index.css'), getFixturePath('/node_modules/package-2/index.less')].sort(),
   );
 });
