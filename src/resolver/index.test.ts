@@ -5,6 +5,16 @@ import { createDefaultResolver } from './index.js';
 const defaultResolver = createDefaultResolver();
 const request = pathToFileURL(getFixturePath('/test/1.css')).href;
 
+test('resolve absolute URL', async () => {
+  expect(await defaultResolver('file:///path/to/file.css', { request })).toBe('file:///path/to/file.css');
+  expect(await defaultResolver('http://example.com/path/to/file.css', { request })).toBe(
+    'http://example.com/path/to/file.css',
+  );
+  expect(await defaultResolver('https://example.com/path/to/file.css', { request })).toBe(
+    'https://example.com/path/to/file.css',
+  );
+});
+
 test('resolve with webpackResolver when other resolvers fail to resolve', async () => {
   createFixtures({
     '/test/2.css': `.a {}`,

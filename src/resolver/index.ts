@@ -1,5 +1,6 @@
 import { createNodeResolver } from './node-resolver.js';
 import { createRelativeResolver } from './relative-resolver.js';
+import { isAbsoluteURL } from './util.js';
 import { createWebpackResolver } from './webpack-resolver.js';
 
 export type ResolverOptions = {
@@ -27,6 +28,8 @@ export type Resolver = (specifier: string, options: ResolverOptions) => string |
  * mimic the behavior of the toolchain, so the behavior may differ in some cases.
  */
 export const createDefaultResolver: () => Resolver = () => async (specifier, options) => {
+  if (isAbsoluteURL(specifier)) return specifier;
+
   const relativeResolver = createRelativeResolver();
   const nodeResolver = createNodeResolver();
   const webpackResolver = createWebpackResolver();
