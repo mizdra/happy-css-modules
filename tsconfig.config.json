@@ -7,6 +7,8 @@
     // "outDir": "./dist/",
     // Compatible for Node.js v12 (ref: https://github.com/microsoft/TypeScript/wiki/Node-Target-Mapping)
     "target": "ES2019",
-    "lib": ["ES2019"]
+    "lib": ["ES2019"],
+    // If you do not add this, you will get a warning that babel.config.mjs will be overwritten.
+    "noEmit": true
   }
 }
