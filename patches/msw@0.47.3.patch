@@ -1,0 +1,12 @@
+diff --git a/package.json b/package.json
+index 89136d298d5619b20c4272b5e2aa850a0f6e5c0d..7146cb182616530b5c6e766e253bc1fa4ae5c84d 100644
+--- a/package.json
++++ b/package.json
+@@ -12,6 +12,7 @@
+       "default": "./lib/native/index.js"
+     },
+     "./node": {
++      "types": "./lib/node/index.d.ts",
+       "require": "./lib/node/index.js",
+       "default": "./lib/node/index.mjs"
+     }

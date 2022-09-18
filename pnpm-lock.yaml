@@ -1,5 +1,10 @@
 lockfileVersion: 5.4
 
+patchedDependencies:
+  msw@0.47.3:
+    hash: lo2w3sbxteaozm5fuk5lzvuujy
+    path: patches/msw@0.47.3.patch
+
 specifiers:
   '@babel/core': ^7.18.13
   '@babel/preset-typescript': ^7.18.6
@@ -95,7 +100,7 @@ devDependencies:
   jest: 29.0.3_@types+node@18.0.6
   less: 4.1.3
   line-column: 1.0.2
-  msw: 0.47.3_typescript@4.7.4
+  msw: 0.47.3_lo2w3sbxteaozm5fuk5lzvuujy_typescript@4.7.4
   npm-run-all: 4.1.5
   prettier: 2.7.1
   sass: 1.54.3
@@ -3528,7 +3533,7 @@ packages:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
     dev: true
 
-  /msw/0.47.3_typescript@4.7.4:
+  /msw/0.47.3_lo2w3sbxteaozm5fuk5lzvuujy_typescript@4.7.4:
     resolution: {integrity: sha512-X3w/1fi29mEqoCajgFV59hrmns+mdD/FPegYMRwW7CK0vi//yX9NVy07/XspdBm6W1TNtb8Giv79SmS2BAb0Wg==}
     engines: {node: '>=14'}
     hasBin: true
@@ -3564,6 +3569,7 @@ packages:
       - encoding
       - supports-color
     dev: true
+    patched: true
 
   /mute-stream/0.0.8:
     resolution: {integrity: sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==}

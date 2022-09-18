@@ -104,5 +104,10 @@
     }
   },
   "packageManager": "pnpm@7.9.5",
-  "prettier": "@mizdra/prettier-config-mizdra"
+  "prettier": "@mizdra/prettier-config-mizdra",
+  "pnpm": {
+    "patchedDependencies": {
+      "msw@0.47.3": "patches/msw@0.47.3.patch"
+    }
+  }
 }
