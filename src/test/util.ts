@@ -1,5 +1,6 @@
 import { constants, mkdirSync, realpathSync, rmSync, writeFileSync } from 'fs';
 import { access } from 'fs/promises';
+import { randomInt } from 'node:crypto';
 import { tmpdir } from 'os';
 import { dirname, join, resolve } from 'path';
 import postcss, { type Root, type Rule, type AtRule, type Declaration } from 'postcss';
@@ -97,4 +98,8 @@ export function removeFixtures(): void {
 
 export function getFixturePath(path: string): string {
   return join(FIXTURE_DIR_PATH, path);
+}
+
+export function oneOf<T>(array: T[]): T {
+  return array[randomInt(array.length)]!;
 }
