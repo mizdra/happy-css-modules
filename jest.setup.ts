@@ -1,5 +1,7 @@
 import { format } from 'prettier';
 // eslint-disable-next-line no-restricted-imports
+import { server } from './src/test/msw.js';
+// eslint-disable-next-line no-restricted-imports
 import { FIXTURE_DIR_PATH } from './src/test/util.js';
 
 const jsonSerializer: jest.SnapshotSerializerPlugin = {
@@ -51,3 +53,8 @@ const errorSerializer: jest.SnapshotSerializerPlugin = {
 
 expect.addSnapshotSerializer(jsonSerializer);
 expect.addSnapshotSerializer(errorSerializer);
+
+// setup msw
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
