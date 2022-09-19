@@ -3,6 +3,7 @@
 // Therefore, the workaround is now disabled. See
 // https://github.com/mizdra/happy-css-modules/issues/65#issuecomment-1229471950 for more information.
 
+import { pathToFileURL, fileURLToPath } from 'url';
 import type { LegacyResult } from 'sass';
 import type { Transformer, TransformerOptions } from './index.js';
 import { handleImportError } from './index.js';
@@ -59,8 +60,10 @@ async function renderSass(sass: typeof import('sass'), source: string, options: 
         sourceMap: true,
         importer: (url, prev, done) => {
           options
-            .resolver(url, { request: prev })
-            .then((resolved) => done({ file: resolved }))
+            // TODO: Support http(s) protocol.
+            .resolver(url, { request: pathToFileURL(prev).href })
+            // TODO: Support http(s) protocol.
+            .then((resolvedURL) => done({ file: fileURLToPath(resolvedURL) }))
             .catch((e) => done(e));
         },
       },

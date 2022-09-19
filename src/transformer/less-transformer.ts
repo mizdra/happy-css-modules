@@ -1,3 +1,4 @@
+import { pathToFileURL, fileURLToPath } from 'url';
 import type { Transformer } from '../index.js';
 import type { TransformerOptions } from './index.js';
 import { handleImportError } from './index.js';
@@ -19,7 +20,9 @@ function createLessPluginResolver(Less: typeof import('less'), options: Transfor
       options: Less.LoadFileOptions,
       environment: Less.Environment,
     ): Promise<Less.FileLoadResult> {
-      const resolved = await this.options.resolver(filename, { request: currentDirectory });
+      // TODO: Support http(s) protocol.
+      const resolvedURL = await this.options.resolver(filename, { request: pathToFileURL(currentDirectory).href });
+      const resolved = fileURLToPath(resolvedURL);
       return super.loadFile(resolved, currentDirectory, options, environment);
     }
   }

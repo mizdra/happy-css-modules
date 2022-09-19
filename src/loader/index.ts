@@ -1,4 +1,5 @@
 import { readFile, stat } from 'fs/promises';
+import { fileURLToPath, pathToFileURL } from 'url';
 import postcss from 'postcss';
 import type { Resolver } from '../resolver/index.js';
 import { createDefaultResolver } from '../resolver/index.js';
@@ -81,7 +82,9 @@ export class Loader {
     this.resolver = async (specifier, resolverOptions) => {
       const resolver = options?.resolver ?? createDefaultResolver();
       const resolved = await resolver(specifier, resolverOptions);
-      if (resolved === false) throw new Error(`Could not resolve '${specifier}' in '${resolverOptions.request}'.`);
+      // TODO: Support http(s) protocol.
+      if (resolved === false)
+        throw new Error(`Could not resolve '${specifier}' in '${fileURLToPath(resolverOptions.request)}'.`);
       return resolved;
     };
   }
@@ -164,7 +167,9 @@ export class Loader {
       const importedSheetPath = parseAtImport(atImport);
       if (!importedSheetPath) continue;
       if (isIgnoredSpecifier(importedSheetPath)) continue;
-      const from = await this.resolver(importedSheetPath, { request: filePath });
+      // TODO: Support http(s) protocol.
+      const fromURL = await this.resolver(importedSheetPath, { request: pathToFileURL(filePath).href });
+      const from = fileURLToPath(fromURL);
       const result = await this.load(from);
       const externalTokens = result.tokens;
       dependencies.push(from);
@@ -190,7 +195,9 @@ export class Loader {
       const declarationDetail = parseComposesDeclarationWithFromUrl(composesDeclaration);
       if (!declarationDetail) continue;
       if (isIgnoredSpecifier(declarationDetail.from)) continue;
-      const from = await this.resolver(declarationDetail.from, { request: filePath });
+      const fromURL = await this.resolver(declarationDetail.from, { request: pathToFileURL(filePath).href });
+      // TODO: Support http(s) protocol.
+      const from = fileURLToPath(fromURL);
       const result = await this.load(from);
       const externalTokens = result.tokens.filter((token) => declarationDetail.tokenNames.includes(token.name));
       dependencies.push(from);
