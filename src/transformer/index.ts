@@ -17,7 +17,7 @@ export type TransformResult =
   | false;
 
 export type TransformerOptions = {
-  /** The path of the file to transform. */
+  /** The URL of the file to transform. */
   from: string;
   /** The function to resolve the path of the imported file. */
   resolver: StrictlyResolver;

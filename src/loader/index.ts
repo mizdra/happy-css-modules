@@ -120,8 +120,7 @@ export class Loader {
     const css = await fetchContent(fileURL);
     if (!this.transformer) return { css, map: undefined, dependencies: [] };
     const result = await this.transformer(css, {
-      // TODO: Support http/https protocol in Transformer.
-      from: fileURLToPath(fileURL),
+      from: fileURL,
       resolver: this.resolver,
       isIgnoredSpecifier,
     });

@@ -1,5 +1,7 @@
+import { isAbsolute } from 'path';
 import { pathToFileURL, fileURLToPath } from 'url';
 import type { Transformer } from '../index.js';
+import { fetchContent } from '../loader/util.js'; // FIXME: Move the definition location of fetchContent
 import type { TransformerOptions } from './index.js';
 import { handleImportError } from './index.js';
 
@@ -20,10 +22,18 @@ function createLessPluginResolver(Less: typeof import('less'), options: Transfor
       options: Less.LoadFileOptions,
       environment: Less.Environment,
     ): Promise<Less.FileLoadResult> {
-      // TODO: Support http(s) protocol.
-      const resolvedURL = await this.options.resolver(filename, { request: pathToFileURL(currentDirectory).href });
-      const resolved = fileURLToPath(resolvedURL);
-      return super.loadFile(resolved, currentDirectory, options, environment);
+      const resolvedURL = await this.options.resolver(filename, {
+        request: isAbsolute(currentDirectory) ? pathToFileURL(currentDirectory).href : currentDirectory,
+      });
+      if (resolvedURL.startsWith('file://')) {
+        // Use the default loading logic whenever possible.
+        return super.loadFile(fileURLToPath(resolvedURL), currentDirectory, options, environment);
+      } else {
+        // FileManager does not support loading file by http/https format.
+        // So we read files without using FileManager.
+        const content = await fetchContent(resolvedURL);
+        return { filename: resolvedURL, contents: content };
+      }
     }
   }
 

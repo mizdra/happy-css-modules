@@ -52,10 +52,16 @@ import { handleImportError } from './index.js';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 async function renderSass(sass: typeof import('sass'), source: string, options: TransformerOptions) {
   return new Promise<LegacyResult>((resolve, reject) => {
+    if (options.from.startsWith('http://') || options.from.startsWith('https://')) {
+      // NOTE: The `file` option of `sass.render` do not accept URLs (i.e. 'file://...', 'http://...', 'https://...').
+      // Therefore, only file:// is allowed.
+      throw new Error('http/https import is not supported in .scss.');
+    }
     sass.render(
       {
         data: source,
-        file: options.from,
+        // TODO: Support http(s) protocol.
+        file: fileURLToPath(options.from),
         outFile: 'DUMMY', // Required for sourcemap output.
         sourceMap: true,
         importer: (url, prev, done) => {
