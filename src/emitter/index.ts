@@ -52,6 +52,7 @@ export type EmitterOptions = {
   /** Working directory path. */
   cwd: string;
   /** Whether the file is from an external library or not. */
+  // TODO: Support http/https protocol.
   isExternalFile: (filePath: string) => boolean;
 };
 

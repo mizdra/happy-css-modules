@@ -18,7 +18,7 @@ const jsonSerializer: jest.SnapshotSerializerPlugin = {
       Object.prototype.hasOwnProperty.call(val, 'dependencies');
     const isLocation =
       val &&
-      Object.prototype.hasOwnProperty.call(val, 'filePath') &&
+      Object.prototype.hasOwnProperty.call(val, 'fileURL') &&
       Object.prototype.hasOwnProperty.call(val, 'start') &&
       Object.prototype.hasOwnProperty.call(val, 'end');
     const isSourceMap =

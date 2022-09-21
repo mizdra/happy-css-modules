@@ -3,6 +3,7 @@ import { access } from 'fs/promises';
 import { randomInt } from 'node:crypto';
 import { tmpdir } from 'os';
 import { dirname, join, resolve } from 'path';
+import { pathToFileURL } from 'url';
 import postcss, { type Root, type Rule, type AtRule, type Declaration } from 'postcss';
 import { type ClassName } from 'postcss-selector-parser';
 import { type Token, collectNodes, type Location } from '../loader/index.js';
@@ -32,12 +33,12 @@ export function createComposesDeclarations(root: Root): Declaration[] {
 
 export function fakeToken(args: {
   name: Token['name'];
-  originalLocations: { filePath?: Location['filePath']; start: Location['start'] }[];
+  originalLocations: { fileURL?: Location['fileURL']; start: Location['start'] }[];
 }): Token {
   return {
     name: args.name,
     originalLocations: args.originalLocations.map((location) => ({
-      filePath: location.filePath ?? getFixturePath('/test/1.css'),
+      fileURL: location.fileURL ?? pathToFileURL(getFixturePath('/test/1.css')).href,
       start: location.start,
       end: {
         line: location.start.line,

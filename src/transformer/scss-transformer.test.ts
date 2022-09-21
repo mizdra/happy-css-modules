@@ -1,3 +1,4 @@
+import { pathToFileURL } from 'url';
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
 import { Loader } from '../loader/index.js';
@@ -37,7 +38,7 @@ test('handles sass features', async () => {
       .d { dummy: ''; }
       `,
   });
-  const result = await loader.load(getFixturePath('/test/1.scss'));
+  const result = await loader.load(pathToFileURL(getFixturePath('/test/1.scss')).href);
 
   // NOTE: There should be only one originalLocations for 'a_2', but there are multiple.
   // This is probably due to an incorrect sourcemap output by the sass compiler.
@@ -110,15 +111,17 @@ test('tracks dependencies that have been pre-bundled by sass compiler', async ()
     '/test/4.scss': dedent`
     `,
   });
-  const result = await loader.load(getFixturePath('/test/1.scss'));
+  const result = await loader.load(pathToFileURL(getFixturePath('/test/1.scss')).href);
 
   // The files imported using @import are pre-bundled by the compiler.
   // Therefore, `Loader#load` is not called to process other files.
   expect(loadSpy).toBeCalledTimes(1);
-  expect(loadSpy).toHaveBeenNthCalledWith(1, getFixturePath('/test/1.scss'));
+  expect(loadSpy).toHaveBeenNthCalledWith(1, pathToFileURL(getFixturePath('/test/1.scss')).href);
 
   // The files pre-bundled by the compiler are also included in `result.dependencies`
-  expect(result.dependencies).toStrictEqual(['/test/2.scss', '/test/3.scss', '/test/4.scss'].map(getFixturePath));
+  expect(result.dependencies).toStrictEqual(
+    ['/test/2.scss', '/test/3.scss', '/test/4.scss'].map((path) => pathToFileURL(getFixturePath(path)).href),
+  );
 });
 
 test('resolves specifier using resolver', async () => {
@@ -135,8 +138,10 @@ test('resolves specifier using resolver', async () => {
     '/node_modules/package-1/index.css': `.a {}`,
     '/node_modules/package-2/index.scss': `.a {}`,
   });
-  const result = await loader.load(getFixturePath('/test/1.scss'));
+  const result = await loader.load(pathToFileURL(getFixturePath('/test/1.scss')).href);
   expect(result.dependencies).toStrictEqual(
-    ['/node_modules/package-1/index.css', '/node_modules/package-2/index.scss'].map(getFixturePath),
+    ['/node_modules/package-1/index.css', '/node_modules/package-2/index.scss'].map(
+      (path) => pathToFileURL(getFixturePath(path)).href,
+    ),
   );
 });

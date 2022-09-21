@@ -1,4 +1,5 @@
 import fs, { readFile, writeFile } from 'fs/promises';
+import { pathToFileURL } from 'url';
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
 import { createFixtures, FIXTURE_DIR_PATH, getFixturePath } from '../test/util.js';
@@ -29,7 +30,7 @@ test('basic', async () => {
     .b {}
     `,
   });
-  const result = await loader.load(getFixturePath('/test/1.css'));
+  const result = await loader.load(pathToFileURL(getFixturePath('/test/1.css')).href);
   expect(result).toMatchInlineSnapshot(`
     {
       dependencies: [],
@@ -68,7 +69,7 @@ test('tracks other files when `@import` is present', async () => {
     .c {}
     `,
   });
-  const result = await loader.load(getFixturePath('/test/1.css'));
+  const result = await loader.load(pathToFileURL(getFixturePath('/test/1.css')).href);
   expect(result).toMatchInlineSnapshot(`
     {
       dependencies: ["<fixtures>/test/2.css", "<fixtures>/test/3.css", "<fixtures>/test/4.css"],
@@ -116,7 +117,7 @@ test('tracks other files when `composes` is present', async () => {
     .e {}
     `,
   });
-  const result = await loader.load(getFixturePath('/test/1.css'));
+  const result = await loader.load(pathToFileURL(getFixturePath('/test/1.css')).href);
   expect(result).toMatchInlineSnapshot(`
     {
       dependencies: ["<fixtures>/test/2.css", "<fixtures>/test/3.css", "<fixtures>/test/4.css"],
@@ -180,7 +181,7 @@ test('normalizes tokens', async () => {
     .c {}
     `,
   });
-  const result = await loader.load(getFixturePath('/test/1.css'));
+  const result = await loader.load(pathToFileURL(getFixturePath('/test/1.css')).href);
   expect(result).toMatchInlineSnapshot(`
     {
       dependencies: ["<fixtures>/test/2.css", "<fixtures>/test/3.css"],
@@ -229,7 +230,7 @@ test.failing('returns the result from the cache when the file has not been modif
     .d {}
     `,
   });
-  await loader.load(getFixturePath('/test/1.css'));
+  await loader.load(pathToFileURL(getFixturePath('/test/1.css')).href);
   expect(readFileSpy).toHaveBeenCalledTimes(3);
   expect(readFileSpy).toHaveBeenNthCalledWith(1, '/test/1.css', 'utf-8');
   expect(readFileSpy).toHaveBeenNthCalledWith(2, '/test/2.css', 'utf-8');
@@ -241,17 +242,17 @@ test.failing('returns the result from the cache when the file has not been modif
   await writeFile(getFixturePath('/test/2.css'), await readFile(getFixturePath('/test/2.css'), 'utf-8'));
 
   // `3.css` is not updated, so the cache is used. Therefore, `readFile` is not called.
-  await loader.load(getFixturePath('/test/3.css'));
+  await loader.load(pathToFileURL(getFixturePath('/test/3.css')).href);
   expect(readFileSpy).toHaveBeenCalledTimes(0);
 
   // `1.css` is not updated, but dependencies are updated, so the cache is used. Therefore, `readFile` is called.
-  await loader.load(getFixturePath('/test/1.css'));
+  await loader.load(pathToFileURL(getFixturePath('/test/1.css')).href);
   expect(readFileSpy).toHaveBeenCalledTimes(2);
   expect(readFileSpy).toHaveBeenNthCalledWith(1, '/test/1.css', 'utf-8');
   expect(readFileSpy).toHaveBeenNthCalledWith(2, '/test/2.css', 'utf-8');
 
   // ``2.css` is updated, but the cache is already available because it was updated in the previous step. Therefore, `readFile` is not called.
-  await loader.load(getFixturePath('/test/2.css'));
+  await loader.load(pathToFileURL(getFixturePath('/test/2.css')).href);
   expect(readFileSpy).toHaveBeenCalledTimes(2);
 });
 
@@ -270,7 +271,7 @@ test('ignores the composition of non-existent tokens', async () => {
     .b {}
     `,
   });
-  const result = await loader.load(getFixturePath('/test/1.css'));
+  const result = await loader.load(pathToFileURL(getFixturePath('/test/1.css')).href);
   expect(result.tokens.map((t) => t.name)).toStrictEqual(['a', 'b']);
 });
 
@@ -285,11 +286,11 @@ test('throws error the composition of non-existent file', async () => {
     `,
   });
   await expect(async () => {
-    await loader.load(getFixturePath('/test/1.css')).catch((e) => {
+    await loader.load(pathToFileURL(getFixturePath('/test/1.css')).href).catch((e) => {
       e.message = e.message.replace(FIXTURE_DIR_PATH, '<fixtures>');
       throw e;
     });
-  }).rejects.toThrowError(`Could not resolve './2.css' in '<fixtures>/test/1.css'`);
+  }).rejects.toThrowError(`Could not resolve './2.css' in 'file://<fixtures>/test/1.css'`);
 });
 
 test.todo('supports sourcemap file and inline sourcemap');
@@ -301,6 +302,6 @@ test('ignores http(s) protocol file', async () => {
     @import 'https://example.com/path/1.css';
     `,
   });
-  const result = await loader.load(getFixturePath('/test/1.css'));
+  const result = await loader.load(pathToFileURL(getFixturePath('/test/1.css')).href);
   expect(result.dependencies).toStrictEqual([]);
 });

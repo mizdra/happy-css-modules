@@ -1,5 +1,6 @@
 import { resolve } from 'path';
 import * as process from 'process';
+import { pathToFileURL } from 'url';
 import * as util from 'util';
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
@@ -59,7 +60,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
 
   async function processFile(filePath: string) {
     try {
-      const result = await loader.load(filePath);
+      const result = await loader.load(pathToFileURL(filePath).href);
       await emitGeneratedFiles({
         filePath,
         tokens: result.tokens,

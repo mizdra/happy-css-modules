@@ -1,5 +1,6 @@
 import { EOL } from 'os';
 import { join, relative, basename } from 'path';
+import { fileURLToPath } from 'url';
 import camelcase from 'camelcase';
 import { SourceNode, type CodeWithSourceMap } from '../library/source-map/index.js';
 import { type Token } from '../loader/index.js';
@@ -67,14 +68,16 @@ function generateTokenDeclarations(
 
     for (const originalLocation of token.originalLocations) {
       result.push(
-        originalLocation.filePath === filePath || isExternalFile(originalLocation.filePath)
+        // TODO: Support http/https protocol.
+        fileURLToPath(originalLocation.fileURL) === filePath || isExternalFile(fileURLToPath(originalLocation.fileURL))
           ? new SourceNode(null, null, null, [
               '& Readonly<{ ',
               new SourceNode(
                 originalLocation.start.line ?? null,
                 // The SourceNode's column is 0-based, but the originalLocation's column is 1-based.
                 originalLocation.start.column - 1 ?? null,
-                getRelativePath(sourceMapFilePath, originalLocation.filePath),
+                // TODO: Support http/https protocol.
+                getRelativePath(sourceMapFilePath, fileURLToPath(originalLocation.fileURL)),
                 `"${token.name}"`,
                 token.name,
               ),
@@ -84,7 +87,8 @@ function generateTokenDeclarations(
             // See https://github.com/mizdra/happy-css-modules/issues/106.
             new SourceNode(null, null, null, [
               '& Readonly<Pick<(typeof import(',
-              `"${getRelativePath(filePath, originalLocation.filePath)}"`,
+              // TODO: Support http/https protocol.
+              `"${getRelativePath(filePath, fileURLToPath(originalLocation.fileURL))}"`,
               '))["default"], ',
               `"${token.name}"`,
               '>>',

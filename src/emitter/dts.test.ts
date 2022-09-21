@@ -1,3 +1,4 @@
+import { pathToFileURL } from 'url';
 import dedent from 'dedent';
 import { SourceMapConsumer } from 'source-map';
 import { Loader } from '../loader/index.js';
@@ -40,7 +41,7 @@ describe('generateDtsContentWithSourceMap', () => {
       .d {}
       `,
     });
-    const result = await loader.load(filePath);
+    const result = await loader.load(pathToFileURL(filePath).href);
     const { dtsContent, sourceMap } = generateDtsContentWithSourceMap(
       filePath,
       dtsFilePath,
@@ -94,7 +95,7 @@ describe('generateDtsContentWithSourceMap', () => {
         .foo_bar {}
         `,
       });
-      return await loader.load(filePath);
+      return await loader.load(pathToFileURL(filePath).href);
     }
     test('undefined', async () => {
       const result = await getResult(filePath);
@@ -215,7 +216,7 @@ describe('generateDtsContentWithSourceMap', () => {
     createFixtures({
       '/test/1.css': `.a {}`,
     });
-    const result = await loader.load(filePath);
+    const result = await loader.load(pathToFileURL(filePath).href);
     const { dtsContent, sourceMap } = generateDtsContentWithSourceMap(
       getFixturePath('/test/src/1.css'),
       getFixturePath('/test/dist/1.css.d.ts'),
@@ -244,7 +245,7 @@ describe('generateDtsContentWithSourceMap', () => {
       '/test/2.css': `.b {}`,
       '/test/3.css': `.c {}`,
     });
-    const result = await loader.load(filePath);
+    const result = await loader.load(pathToFileURL(filePath).href);
     const { dtsContent } = generateDtsContentWithSourceMap(
       filePath,
       dtsFilePath,
