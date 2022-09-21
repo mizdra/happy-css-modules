@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-array-sort-compare */
 import { pathToFileURL } from 'url';
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
@@ -116,25 +117,39 @@ test('tracks dependencies that have been pre-bundled by less compiler', async ()
 });
 
 test('resolves specifier using resolver', async () => {
-  server.use(rest.all(`http://example.com/path/1.css`, (_req, res, ctx) => res(ctx.text('.a {}'))));
-  server.use(rest.all(`https://example.com/path/1.css`, (_req, res, ctx) => res(ctx.text('.a {}'))));
   createFixtures({
     '/test/1.less': dedent`
     @import 'package-1';
     @import 'package-2';
-    @import 'http://example.com/path/1.css';
-    @import 'https://example.com/path/1.css';
+    @import './recursive.less';
+    @import 'http://example.com/path/http.less';
+    @import 'https://example.com/path/https.less';
+    @import 'https://example.com/path/recursive.less';
     `,
     '/node_modules/package-1/index.css': `.a {}`,
     '/node_modules/package-2/index.less': `.a {}`,
+    '/test/recursive.less': `@import './recursive-imported.less';`,
+    '/test/recursive-imported.less': `.a {}`,
   });
+  server.use(rest.all(`http://example.com/path/http.less`, (_req, res, ctx) => res(ctx.text('.a {}'))));
+  server.use(rest.all(`https://example.com/path/https.less`, (_req, res, ctx) => res(ctx.text('.a {}'))));
+  server.use(
+    rest.all(`https://example.com/path/recursive.less`, (_req, res, ctx) =>
+      res(ctx.text('@import "./recursive-imported.less";')),
+    ),
+  );
+  server.use(rest.all(`https://example.com/path/recursive-imported.less`, (_req, res, ctx) => res(ctx.text('.a {}'))));
   const result = await loader.load(pathToFileURL(getFixturePath('/test/1.less')).href);
-  // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
   expect(result.dependencies.sort()).toStrictEqual(
-    // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
     [
       pathToFileURL(getFixturePath('/node_modules/package-1/index.css')).href,
       pathToFileURL(getFixturePath('/node_modules/package-2/index.less')).href,
+      pathToFileURL(getFixturePath('/test/recursive.less')).href,
+      pathToFileURL(getFixturePath('/test/recursive-imported.less')).href,
+      'http://example.com/path/http.less',
+      'https://example.com/path/https.less',
+      'https://example.com/path/recursive.less',
+      'https://example.com/path/recursive-imported.less',
     ].sort(),
   );
 });

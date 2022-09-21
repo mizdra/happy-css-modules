@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-array-sort-compare */
 import { pathToFileURL } from 'url';
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
@@ -127,22 +128,32 @@ test('tracks dependencies that have been pre-bundled by sass compiler', async ()
 });
 
 test('resolves specifier using resolver', async () => {
-  server.use(rest.all(`http://example.com/path/1.css`, (_req, res, ctx) => res(ctx.text('.a {}'))));
-  server.use(rest.all(`https://example.com/path/1.css`, (_req, res, ctx) => res(ctx.text('.a {}'))));
   createFixtures({
     '/test/1.scss': dedent`
     @import 'package-1';
     @import 'package-2';
-    @import 'http://example.com/path/1.css';
-    @import 'https://example.com/path/1.css';
+    @import './recursive.scss';
+    // FIXME
+    // @import 'http://example.com/path/1.scss';
+    // @import 'https://example.com/path/1.scss';
     `,
     '/node_modules/package-1/index.css': `.a {}`,
     '/node_modules/package-2/index.scss': `.a {}`,
+    '/test/recursive.scss': `@import './recursive-imported.scss';`,
+    '/test/recursive-imported.scss': `.a {}`,
   });
+  server.use(rest.all(`http://example.com/path/1.scss`, (_req, res, ctx) => res(ctx.text('.a {}'))));
+  server.use(rest.all(`https://example.com/path/1.scss`, (_req, res, ctx) => res(ctx.text('.a {}'))));
   const result = await loader.load(pathToFileURL(getFixturePath('/test/1.scss')).href);
-  expect(result.dependencies).toStrictEqual(
-    ['/node_modules/package-1/index.css', '/node_modules/package-2/index.scss'].map(
-      (path) => pathToFileURL(getFixturePath(path)).href,
-    ),
+  expect(result.dependencies.sort()).toStrictEqual(
+    [
+      pathToFileURL(getFixturePath('/node_modules/package-1/index.css')).href,
+      pathToFileURL(getFixturePath('/node_modules/package-2/index.scss')).href,
+      pathToFileURL(getFixturePath('/test/recursive.scss')).href,
+      pathToFileURL(getFixturePath('/test/recursive-imported.scss')).href,
+      // FIXME
+      // 'http://example.com/path/1.scss',
+      // 'https://example.com/path/1.scss',
+    ].sort(),
   );
 });
