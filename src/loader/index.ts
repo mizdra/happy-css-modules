@@ -1,4 +1,4 @@
-import { fileURLToPath, pathToFileURL } from 'url';
+import { pathToFileURL } from 'url';
 import postcss from 'postcss';
 import type { Resolver } from '../resolver/index.js';
 import { createDefaultResolver } from '../resolver/index.js';
@@ -15,14 +15,6 @@ import {
 import { fetchContent, fetchRevision, isURL } from './util.js';
 
 export { collectNodes, type Location } from './postcss.js';
-
-/**
- * Whether the specifier should be ignored.
- * For example, specifiers starting with `http://` or `https://` should be ignored.
- */
-function isIgnoredSpecifier(specifier: string): boolean {
-  return specifier.startsWith('http://') || specifier.startsWith('https://');
-}
 
 /** The exported token. */
 export type Token = {
@@ -122,7 +114,6 @@ export class Loader {
     const result = await this.transformer(css, {
       from: fileURL,
       resolver: this.resolver,
-      isIgnoredSpecifier,
     });
     if (result === false) return { css, map: undefined, dependencies: [] };
     return {

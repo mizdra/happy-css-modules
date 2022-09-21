@@ -21,11 +21,6 @@ export type TransformerOptions = {
   from: string;
   /** The function to resolve the path of the imported file. */
   resolver: StrictlyResolver;
-  /**
-   * Whether the specifier should be ignored.
-   * For example, specifiers starting with `http://` or `https://` should be ignored.
-   */
-  isIgnoredSpecifier: (specifier: string) => boolean;
 };
 
 /** The function to transform source code. */
