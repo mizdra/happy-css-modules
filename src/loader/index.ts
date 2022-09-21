@@ -173,7 +173,7 @@ export class Loader {
       const importedFileURL = await this.resolver(importedSheetPath, { request: fileURL });
       const result = await this.load(importedFileURL);
       const externalTokens = result.tokens;
-      dependencies.push(importedFileURL);
+      dependencies.push(importedFileURL, ...result.dependencies);
       tokens.push(...externalTokens);
     }
 
@@ -198,7 +198,7 @@ export class Loader {
       const importedFileURL = await this.resolver(declarationDetail.from, { request: fileURL });
       const result = await this.load(importedFileURL);
       const externalTokens = result.tokens.filter((token) => declarationDetail.tokenNames.includes(token.name));
-      dependencies.push(importedFileURL);
+      dependencies.push(importedFileURL, ...result.dependencies);
       tokens.push(...externalTokens);
     }
 
