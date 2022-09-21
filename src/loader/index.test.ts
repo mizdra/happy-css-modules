@@ -2,6 +2,8 @@ import fs, { readFile, writeFile } from 'fs/promises';
 import { pathToFileURL } from 'url';
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
+import { rest } from 'msw';
+import { server } from '../test/msw.js';
 import { createFixtures, FIXTURE_DIR_PATH, getFixturePath } from '../test/util.js';
 import { sleepSync } from '../util.js';
 
@@ -295,13 +297,27 @@ test('throws error the composition of non-existent file', async () => {
 
 test.todo('supports sourcemap file and inline sourcemap');
 
-test('ignores http(s) protocol file', async () => {
+test('support http(s) protocol import', async () => {
   createFixtures({
     '/test/1.css': dedent`
-    @import 'http://example.com/path/1.css';
-    @import 'https://example.com/path/1.css';
+    @import 'http://example.com/path/http.css';
+    @import 'https://example.com/path/https.css';
+    @import 'https://example.com/path/recursive.css';
     `,
   });
+  server.use(rest.all(`http://example.com/path/http.css`, (_req, res, ctx) => res(ctx.text('.a {}'))));
+  server.use(rest.all(`https://example.com/path/https.css`, (_req, res, ctx) => res(ctx.text('.a {}'))));
+  server.use(
+    rest.all(`https://example.com/path/recursive.css`, (_req, res, ctx) =>
+      res(ctx.text('@import "./recursive-imported.css";')),
+    ),
+  );
+  server.use(rest.all(`https://example.com/path/recursive-imported.css`, (_req, res, ctx) => res(ctx.text('.a {}'))));
   const result = await loader.load(pathToFileURL(getFixturePath('/test/1.css')).href);
-  expect(result.dependencies).toStrictEqual([]);
+  expect(result.dependencies).toStrictEqual([
+    'http://example.com/path/http.css',
+    'https://example.com/path/https.css',
+    'https://example.com/path/recursive.css',
+    'https://example.com/path/recursive-imported.css',
+  ]);
 });

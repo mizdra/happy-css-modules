@@ -1,7 +1,9 @@
 import { pathToFileURL } from 'url';
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
+import { rest } from 'msw';
 import { Loader } from '../loader/index.js';
+import { server } from '../test/msw.js';
 import { createFixtures, getFixturePath } from '../test/util.js';
 import { createLessTransformer } from './less-transformer.js';
 
@@ -114,13 +116,14 @@ test('tracks dependencies that have been pre-bundled by less compiler', async ()
 });
 
 test('resolves specifier using resolver', async () => {
+  server.use(rest.all(`http://example.com/path/1.css`, (_req, res, ctx) => res(ctx.text('.a {}'))));
+  server.use(rest.all(`https://example.com/path/1.css`, (_req, res, ctx) => res(ctx.text('.a {}'))));
   createFixtures({
     '/test/1.less': dedent`
     @import 'package-1';
     @import 'package-2';
-    // FIXME
-    // @import url('https://mizdra.net/css/index.css');
-    // @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,900;1,900&display=swap');
+    @import 'http://example.com/path/1.css';
+    @import 'https://example.com/path/1.css';
     `,
     '/node_modules/package-1/index.css': `.a {}`,
     '/node_modules/package-2/index.less': `.a {}`,

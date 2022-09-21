@@ -1,7 +1,9 @@
 import { pathToFileURL } from 'url';
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
+import { rest } from 'msw';
 import { Loader } from '../loader/index.js';
+import { server } from '../test/msw.js';
 import { createFixtures, getFixturePath } from '../test/util.js';
 import { createScssTransformer } from './scss-transformer.js';
 
@@ -125,13 +127,12 @@ test('tracks dependencies that have been pre-bundled by sass compiler', async ()
 });
 
 test('resolves specifier using resolver', async () => {
+  server.use(rest.all(`http://example.com/path/1.css`, (_req, res, ctx) => res(ctx.text('.a {}'))));
+  server.use(rest.all(`https://example.com/path/1.css`, (_req, res, ctx) => res(ctx.text('.a {}'))));
   createFixtures({
     '/test/1.scss': dedent`
     @import 'package-1';
     @import 'package-2';
-    // NOTE: sass does not resolve files that are http(s) protocol.
-    // Therefore, the resolver will not be called for those files,
-    // and they will not be included in result.dependencies.
     @import 'http://example.com/path/1.css';
     @import 'https://example.com/path/1.css';
     `,
