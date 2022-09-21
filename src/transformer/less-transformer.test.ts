@@ -109,9 +109,7 @@ test('tracks dependencies that have been pre-bundled by less compiler', async ()
   expect(loadSpy).toHaveBeenNthCalledWith(1, pathToFileURL(getFixturePath('/test/1.less')).href);
 
   // The files pre-bundled by the compiler are also included in `result.dependencies`
-  // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
   expect(result.dependencies.sort()).toStrictEqual(
-    // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
     ['/test/2.less', '/test/3.less', '/test/4.less'].map((path) => pathToFileURL(getFixturePath(path)).href).sort(),
   );
 });
