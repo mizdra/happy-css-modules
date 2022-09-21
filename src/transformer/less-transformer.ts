@@ -1,7 +1,7 @@
 import { isAbsolute } from 'path';
 import { pathToFileURL, fileURLToPath } from 'url';
 import type { Transformer } from '../index.js';
-import { fetchContent } from '../loader/util.js'; // FIXME: Move the definition location of fetchContent
+import { fetchContent } from '../util.js';
 import type { TransformerOptions } from './index.js';
 import { handleImportError } from './index.js';
 

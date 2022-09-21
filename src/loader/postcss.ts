@@ -3,7 +3,7 @@ import postcss, { type Rule, type AtRule, type Root, type Node, type Declaration
 import modules from 'postcss-modules';
 import selectorParser, { type ClassName } from 'postcss-selector-parser';
 import valueParser from 'postcss-value-parser';
-import { isURL } from './util.js';
+import { isURL } from '../util.js';
 
 /** The pair of line number and column number. */
 export type Position = {

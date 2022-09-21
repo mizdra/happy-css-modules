@@ -3,7 +3,7 @@ import postcss from 'postcss';
 import type { Resolver } from '../resolver/index.js';
 import { createDefaultResolver } from '../resolver/index.js';
 import { createDefaultTransformer, type Transformer } from '../transformer/index.js';
-import { unique, uniqueBy } from '../util.js';
+import { unique, uniqueBy, fetchContent, fetchRevision, isURL } from '../util.js';
 import {
   getOriginalLocation,
   generateLocalTokenNames,
@@ -12,7 +12,6 @@ import {
   parseComposesDeclarationWithFromUrl,
   collectNodes,
 } from './postcss.js';
-import { fetchContent, fetchRevision, isURL } from './util.js';
 
 export { collectNodes, type Location } from './postcss.js';
 
