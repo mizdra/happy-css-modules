@@ -1,7 +1,9 @@
+import { pathToFileURL } from 'url';
 import postcss, { type Rule, type AtRule, type Root, type Node, type Declaration, type Plugin } from 'postcss';
 import modules from 'postcss-modules';
 import selectorParser, { type ClassName } from 'postcss-selector-parser';
 import valueParser from 'postcss-value-parser';
+import { isURL } from './util.js';
 
 /** The pair of line number and column number. */
 export type Position = {
@@ -13,7 +15,8 @@ export type Position = {
 
 /** The location of class selector. */
 export type Location = {
-  filePath: string;
+  /** The URL of the source file. */
+  fileURL: string;
   /** The inclusive starting position of the node's source (compatible with postcss). */
   start: Position;
   /** The inclusive ending position of the node's source (compatible with postcss). */
@@ -65,6 +68,14 @@ export async function generateLocalTokenNames(ast: Root): Promise<string[]> {
   });
 }
 
+function convertURL(pathOrFileUrl: string): string {
+  if (isURL(pathOrFileUrl)) {
+    return pathOrFileUrl;
+  } else {
+    return pathToFileURL(pathOrFileUrl).href;
+  }
+}
+
 /**
  * Get the token's location on the source file.
  * @param rule The rule node that contains the token.
@@ -91,8 +102,8 @@ export function getOriginalLocation(rule: Rule, classSelector: ClassName): Locat
     // The column is inclusive.
     column: start.column + classSelector.value.length,
   };
-  let location = {
-    filePath: rule.source.input.file,
+  let location: Location = {
+    fileURL: convertURL(rule.source.input.file),
     start,
     end,
   };
@@ -108,7 +119,7 @@ export function getOriginalLocation(rule: Rule, classSelector: ClassName): Locat
     if (origin.file === undefined) throw new Error('`FilePosition#file` is undefined');
 
     location = {
-      filePath: origin.file,
+      fileURL: convertURL(origin.file),
       start: {
         line: origin.line,
         // The column of `Input#origin` is 0-based.

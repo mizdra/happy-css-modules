@@ -1,4 +1,3 @@
-import { readFile, stat } from 'fs/promises';
 import { fileURLToPath, pathToFileURL } from 'url';
 import postcss from 'postcss';
 import type { Resolver } from '../resolver/index.js';
@@ -13,6 +12,7 @@ import {
   parseComposesDeclarationWithFromUrl,
   collectNodes,
 } from './postcss.js';
+import { fetchContent, fetchRevision, isURL } from './util.js';
 
 export { collectNodes, type Location } from './postcss.js';
 
@@ -33,13 +33,16 @@ export type Token = {
 };
 
 type CacheEntry = {
-  mtime: number; // TODO: `--cache-strategy` option will allow you to switch between `content` and `metadata` modes.
+  revision: string;
   result: LoadResult;
 };
 
 /** The result of `Loader#load`. */
 export type LoadResult = {
-  /** The path of the file imported from the source file with `@import` or `composes`. */
+  /**
+   * The URL of the file imported from the source file with `@import` or `composes`.
+   * This includes both direct imports and indirect imports by the file.
+   * */
   dependencies: string[];
   /** The tokens exported by the source file. */
   tokens: Token[];
@@ -82,26 +85,24 @@ export class Loader {
     this.resolver = async (specifier, resolverOptions) => {
       const resolver = options?.resolver ?? createDefaultResolver();
       const resolved = await resolver(specifier, resolverOptions);
-      // TODO: Support http(s) protocol.
-      if (resolved === false)
-        throw new Error(`Could not resolve '${specifier}' in '${fileURLToPath(resolverOptions.request)}'.`);
+      if (resolved === false) throw new Error(`Could not resolve '${specifier}' in '${resolverOptions.request}'.`);
       return resolved;
     };
   }
 
   /** Returns `true` if the cache is outdated. */
-  private async isCacheOutdated(filePath: string): Promise<boolean> {
-    const entry = this.cache.get(filePath);
+  private async isCacheOutdated(fileURL: string): Promise<boolean> {
+    const entry = this.cache.get(fileURL);
     if (!entry) return true;
-    const mtime = (await stat(filePath)).mtime.getTime();
-    if (entry.mtime !== mtime) return true;
+    const revision = await fetchRevision(fileURL);
+    if (entry.revision !== revision) return true;
 
     const { dependencies } = entry.result;
     for (const dependency of dependencies) {
       const entry = this.cache.get(dependency);
       if (!entry) return true;
-      const mtime = (await stat(dependency)).mtime.getTime();
-      if (entry.mtime !== mtime) return true;
+      const revision = await fetchRevision(dependency);
+      if (entry.revision !== revision) return true;
     }
     return false;
   }
@@ -110,49 +111,52 @@ export class Loader {
    * Reads the source file and returns the code.
    * If transformer is specified, the code is transformed before returning.
    */
-  private async readCSS(
-    filePath: string,
+  private async fetchCSS(
+    fileURL: string,
   ): Promise<
     | { css: string; map: undefined; dependencies: string[] }
     | { css: string; map: string | object | undefined; dependencies: string[] }
   > {
-    const css = await readFile(filePath, 'utf-8');
+    const css = await fetchContent(fileURL);
     if (!this.transformer) return { css, map: undefined, dependencies: [] };
-    const result = await this.transformer(css, { from: filePath, resolver: this.resolver, isIgnoredSpecifier });
+    const result = await this.transformer(css, {
+      // TODO: Support http/https protocol in Transformer.
+      from: fileURLToPath(fileURL),
+      resolver: this.resolver,
+      isIgnoredSpecifier,
+    });
     if (result === false) return { css, map: undefined, dependencies: [] };
     return {
       css: result.css,
       map: result.map,
-      dependencies: result.dependencies
-        .map((dep) => {
-          if (typeof dep === 'string') return dep;
-          if (dep.protocol !== 'file:') throw new Error('Unsupported protocol: ' + dep.protocol);
-          return dep.pathname;
-        })
-        .filter((dep) => {
-          // less makes a remote module inline, so it may be included in dependencies.
-          // However, the dependencies field of happy-css-modules is not yet designed to store http protocol URLs.
-          // Therefore, we exclude them from the dependencies field for now.
-          // TODO: Support to store http protocol URLs in the dependencies field.
-          return !(dep.startsWith('http://') || dep.startsWith('https://'));
-        }),
+      dependencies: result.dependencies.map((dep) => {
+        if (typeof dep === 'string') {
+          if (isURL(dep)) {
+            return dep;
+          } else {
+            return pathToFileURL(dep).href;
+          }
+        } else {
+          return dep.href;
+        }
+      }),
     };
   }
 
   /** Returns information about the tokens exported from the CSS Modules file. */
-  async load(filePath: string): Promise<LoadResult> {
+  async load(fileURL: string): Promise<LoadResult> {
     // NOTE: Loader does not support concurrent calls.
     // TODO: Throw an error if called concurrently.
-    if (!(await this.isCacheOutdated(filePath))) {
-      const cacheEntry = this.cache.get(filePath)!;
+    if (!(await this.isCacheOutdated(fileURL))) {
+      const cacheEntry = this.cache.get(fileURL)!;
       return cacheEntry.result;
     }
 
-    const mtime = (await stat(filePath)).mtime.getTime();
+    const revision = await fetchRevision(fileURL);
 
-    const { css, map, dependencies } = await this.readCSS(filePath);
+    const { css, map, dependencies } = await this.fetchCSS(fileURL);
 
-    const ast = postcss.parse(css, { from: filePath, map: map ? { inline: false, prev: map } : { inline: false } });
+    const ast = postcss.parse(css, { from: fileURL, map: map ? { inline: false, prev: map } : { inline: false } });
 
     // Get the local tokens exported by the source file.
     // The tokens are fetched using `postcss-modules` plugin.
@@ -166,13 +170,10 @@ export class Loader {
     for (const atImport of atImports) {
       const importedSheetPath = parseAtImport(atImport);
       if (!importedSheetPath) continue;
-      if (isIgnoredSpecifier(importedSheetPath)) continue;
-      // TODO: Support http(s) protocol.
-      const fromURL = await this.resolver(importedSheetPath, { request: pathToFileURL(filePath).href });
-      const from = fileURLToPath(fromURL);
-      const result = await this.load(from);
+      const importedFileURL = await this.resolver(importedSheetPath, { request: fileURL });
+      const result = await this.load(importedFileURL);
       const externalTokens = result.tokens;
-      dependencies.push(from);
+      dependencies.push(importedFileURL);
       tokens.push(...externalTokens);
     }
 
@@ -194,21 +195,18 @@ export class Loader {
     for (const composesDeclaration of composesDeclarations) {
       const declarationDetail = parseComposesDeclarationWithFromUrl(composesDeclaration);
       if (!declarationDetail) continue;
-      if (isIgnoredSpecifier(declarationDetail.from)) continue;
-      const fromURL = await this.resolver(declarationDetail.from, { request: pathToFileURL(filePath).href });
-      // TODO: Support http(s) protocol.
-      const from = fileURLToPath(fromURL);
-      const result = await this.load(from);
+      const importedFileURL = await this.resolver(declarationDetail.from, { request: fileURL });
+      const result = await this.load(importedFileURL);
       const externalTokens = result.tokens.filter((token) => declarationDetail.tokenNames.includes(token.name));
-      dependencies.push(from);
+      dependencies.push(importedFileURL);
       tokens.push(...externalTokens);
     }
 
     const result: LoadResult = {
-      dependencies: unique(dependencies).filter((dep) => dep !== filePath),
+      dependencies: unique(dependencies).filter((dep) => dep !== fileURL),
       tokens: normalizeTokens(tokens),
     };
-    this.cache.set(filePath, { mtime, result });
+    this.cache.set(fileURL, { revision, result });
     return result;
   }
 }
