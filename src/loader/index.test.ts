@@ -38,13 +38,13 @@ test('basic', async () => {
         {
           name: "a",
           originalLocations: [
-            { filePath: "<fixtures>/test/1.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
+            { fileURL: "file://<fixtures>/test/1.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
         {
           name: "b",
           originalLocations: [
-            { filePath: "<fixtures>/test/1.css", start: { line: 2, column: 1 }, end: { line: 2, column: 2 } },
+            { fileURL: "file://<fixtures>/test/1.css", start: { line: 2, column: 1 }, end: { line: 2, column: 2 } },
           ],
         },
       ],
@@ -72,24 +72,24 @@ test('tracks other files when `@import` is present', async () => {
   const result = await loader.load(pathToFileURL(getFixturePath('/test/1.css')).href);
   expect(result).toMatchInlineSnapshot(`
     {
-      dependencies: ["<fixtures>/test/2.css", "<fixtures>/test/3.css", "<fixtures>/test/4.css"],
+      dependencies: ["file://<fixtures>/test/2.css", "file://<fixtures>/test/3.css", "file://<fixtures>/test/4.css"],
       tokens: [
         {
           name: "a",
           originalLocations: [
-            { filePath: "<fixtures>/test/2.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
+            { fileURL: "file://<fixtures>/test/2.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
         {
           name: "b",
           originalLocations: [
-            { filePath: "<fixtures>/test/3.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
+            { fileURL: "file://<fixtures>/test/3.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
         {
           name: "c",
           originalLocations: [
-            { filePath: "<fixtures>/test/4.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
+            { fileURL: "file://<fixtures>/test/4.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
       ],
@@ -120,36 +120,36 @@ test('tracks other files when `composes` is present', async () => {
   const result = await loader.load(pathToFileURL(getFixturePath('/test/1.css')).href);
   expect(result).toMatchInlineSnapshot(`
     {
-      dependencies: ["<fixtures>/test/2.css", "<fixtures>/test/3.css", "<fixtures>/test/4.css"],
+      dependencies: ["file://<fixtures>/test/2.css", "file://<fixtures>/test/3.css", "file://<fixtures>/test/4.css"],
       tokens: [
         {
           name: "a",
           originalLocations: [
-            { filePath: "<fixtures>/test/1.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
+            { fileURL: "file://<fixtures>/test/1.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
         {
           name: "b",
           originalLocations: [
-            { filePath: "<fixtures>/test/2.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
+            { fileURL: "file://<fixtures>/test/2.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
         {
           name: "c",
           originalLocations: [
-            { filePath: "<fixtures>/test/3.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
+            { fileURL: "file://<fixtures>/test/3.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
         {
           name: "d",
           originalLocations: [
-            { filePath: "<fixtures>/test/3.css", start: { line: 2, column: 1 }, end: { line: 2, column: 2 } },
+            { fileURL: "file://<fixtures>/test/3.css", start: { line: 2, column: 1 }, end: { line: 2, column: 2 } },
           ],
         },
         {
           name: "e",
           originalLocations: [
-            { filePath: "<fixtures>/test/4.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
+            { fileURL: "file://<fixtures>/test/4.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
       ],
@@ -184,26 +184,26 @@ test('normalizes tokens', async () => {
   const result = await loader.load(pathToFileURL(getFixturePath('/test/1.css')).href);
   expect(result).toMatchInlineSnapshot(`
     {
-      dependencies: ["<fixtures>/test/2.css", "<fixtures>/test/3.css"],
+      dependencies: ["file://<fixtures>/test/2.css", "file://<fixtures>/test/3.css"],
       tokens: [
         {
           name: "a",
           originalLocations: [
-            { filePath: "<fixtures>/test/2.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
-            { filePath: "<fixtures>/test/1.css", start: { line: 4, column: 1 }, end: { line: 4, column: 2 } },
-            { filePath: "<fixtures>/test/1.css", start: { line: 12, column: 1 }, end: { line: 12, column: 2 } },
+            { fileURL: "file://<fixtures>/test/2.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
+            { fileURL: "file://<fixtures>/test/1.css", start: { line: 4, column: 1 }, end: { line: 4, column: 2 } },
+            { fileURL: "file://<fixtures>/test/1.css", start: { line: 12, column: 1 }, end: { line: 12, column: 2 } },
           ],
         },
         {
           name: "b",
           originalLocations: [
-            { filePath: "<fixtures>/test/2.css", start: { line: 2, column: 1 }, end: { line: 2, column: 2 } },
+            { fileURL: "file://<fixtures>/test/2.css", start: { line: 2, column: 1 }, end: { line: 2, column: 2 } },
           ],
         },
         {
           name: "c",
           originalLocations: [
-            { filePath: "<fixtures>/test/3.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
+            { fileURL: "file://<fixtures>/test/3.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
       ],

@@ -74,8 +74,8 @@ test('returns an error if the file fails to process in non-watch mode', async ()
   const error = maybeError as AggregateError;
   expect(error.message).toMatchInlineSnapshot(`"Failed to process files"`);
   expect(error.errors).toHaveLength(2);
-  expect(error.errors[0]).toMatchInlineSnapshot(`<fixtures>/test/2.css:1:1: Unknown word`);
-  expect(error.errors[1]).toMatchInlineSnapshot(`<fixtures>/test/3.css:1:1: Unknown word`);
+  expect(error.errors[0]).toMatchInlineSnapshot(`file://<fixtures>/test/2.css:1:1: Unknown word`);
+  expect(error.errors[1]).toMatchInlineSnapshot(`file://<fixtures>/test/3.css:1:1: Unknown word`);
 
   // The error is logged to console.error.
   expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
@@ -109,14 +109,14 @@ describe('handles external files', () => {
   test('treats imported tokens from external files the same as local tokens', async () => {
     await run({ ...defaultOptions });
     expect(await readFile(getFixturePath('/test/1.css.d.ts'), 'utf8')).toMatchInlineSnapshot(`
-    "declare const styles:
-      & Readonly<Pick<(typeof import("./2.css"))["default"], "b">>
-      & Readonly<{ "c": string }>
-      & Readonly<{ "a": string }>
-    ;
-    export default styles;
-    //# sourceMappingURL=./1.css.d.ts.map
-    "
-  `);
+          "declare const styles:
+            & Readonly<Pick<(typeof import("./2.css"))["default"], "b">>
+            & Readonly<{ "c": string }>
+            & Readonly<{ "a": string }>
+          ;
+          export default styles;
+          //# sourceMappingURL=./1.css.d.ts.map
+          "
+      `);
   });
 });
