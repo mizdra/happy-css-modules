@@ -1,5 +1,6 @@
 @use './2.scss' as two; // sass feature test (@use)
 @import './3.scss'; // css feature test (@import)
+@import 'https://raw.githubusercontent.com/mizdra/happy-css-modules/main/example/04-sass/3.scss';
 .a_1 {
   dummy: '';
 }

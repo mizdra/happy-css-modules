@@ -1,1 +1,1 @@
-{"version":3,"sources":["./1.css"],"names":[],"mappings":"AAAA;AAAA,E,4DAAA;AAAA,E,4DAAA;AAAA;AAAA","file":"1.css.d.ts","sourceRoot":""}
+{"version":3,"sources":["./1.css","https://raw.githubusercontent.com/mizdra/happy-css-modules/main/example/02-import/3.css","https://raw.githubusercontent.com/mizdra/happy-css-modules/main/example/02-import/2.css"],"names":["b","a"],"mappings":"AAAA;AAAA,E,4DAAA;AAAA,E,aCAAA,G,WDAA;AAAA,E,4DAAA;AAAA,E,aEEAC,G,WFFA;AAAA;AAAA","file":"1.css.d.ts","sourceRoot":""}
