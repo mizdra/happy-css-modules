@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 import * as process from 'process';
-import { pathToFileURL } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import * as util from 'util';
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
@@ -54,8 +54,9 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
         outDir: options.outDir,
       }
     : undefined;
-  const isExternalFile = (filePath: string) => {
-    return !isMatchByGlob(filePath, options.pattern, { cwd: options.cwd ?? process.cwd() });
+  const isExternalFile = (fileURL: string) => {
+    if (!fileURL.startsWith('file://')) return true;
+    return !isMatchByGlob(fileURLToPath(fileURL), options.pattern, { cwd: options.cwd ?? process.cwd() });
   };
 
   async function processFile(filePath: string) {
