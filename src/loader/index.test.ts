@@ -297,8 +297,8 @@ test.todo('supports sourcemap file and inline sourcemap');
 test('ignores http(s) protocol file', async () => {
   createFixtures({
     '/test/1.css': dedent`
-    @import 'http://example.com/path/1.css';
-    @import 'https://example.com/path/1.css';
+    @import 'http://example.com/path/http.css';
+    @import 'https://example.com/path/https.css';
     `,
   });
   const result = await loader.load(getFixturePath('/test/1.css'));

@@ -117,12 +117,6 @@ test('resolves specifier using resolver', async () => {
     '/test/1.less': dedent`
     @import 'package-1';
     @import 'package-2';
-    // NOTE: less does not resolve files that are http(s) protocol.
-    // Therefore, the resolver will not be called for those files,
-    // and they will not be included in result.dependencies.
-    @import url('https://mizdra.net/css/index.css');
-    // However, if Content-Type is set to text/css, less will try to resolve it and inline it.
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,900;1,900&display=swap');
     `,
     '/node_modules/package-1/index.css': `.a {}`,
     '/node_modules/package-2/index.less': `.a {}`,
@@ -133,4 +127,16 @@ test('resolves specifier using resolver', async () => {
     // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
     [getFixturePath('/node_modules/package-1/index.css'), getFixturePath('/node_modules/package-2/index.less')].sort(),
   );
+});
+
+test('ignores http(s) protocol file', async () => {
+  createFixtures({
+    '/test/1.less': dedent`
+    @import 'http://example.com/path/http.css';
+    @import 'https://example.com/path/https.css';
+    @import 'https://example.com/path/less.less';
+    `,
+  });
+  const result = await loader.load(getFixturePath('/test/1.less'));
+  expect(result.dependencies).toStrictEqual([]);
 });
