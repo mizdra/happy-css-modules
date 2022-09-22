@@ -45,7 +45,7 @@ export const createLessTransformer: () => Transformer = () => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   let less: typeof import('less');
   return async (source, options) => {
-    less ??= (await import('less').catch(handleImportError('less'))).default;
+    less = less ?? (await import('less').catch(handleImportError('less'))).default;
     const result = await less.render(source, {
       filename: options.from,
       sourceMap: {},

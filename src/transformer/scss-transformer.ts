@@ -79,7 +79,7 @@ export const createScssTransformer: () => Transformer = () => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   let sass: typeof import('sass');
   return async (source, options) => {
-    sass ??= (await import('sass').catch(handleImportError('sass'))).default;
+    sass = sass ?? (await import('sass').catch(handleImportError('sass'))).default;
     const result = await renderSass(sass, source, options);
     return { css: result.css.toString(), map: result.map!.toString(), dependencies: result.stats.includedFiles };
 
