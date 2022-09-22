@@ -57,6 +57,7 @@ test('tracks other files when `@import` is present', async () => {
     @import './2.css';
     @import '3.css';
     @import '${getFixturePath('/test/4.css')}';
+    @import './5.css';
     `,
     '/test/2.css': dedent`
     .a {}
@@ -67,11 +68,17 @@ test('tracks other files when `@import` is present', async () => {
     '/test/4.css': dedent`
     .c {}
     `,
+    '/test/5.css': dedent`
+    @import './5-recursive.css';
+    `,
+    '/test/5-recursive.css': dedent`
+    .d {}
+    `,
   });
   const result = await loader.load(getFixturePath('/test/1.css'));
   expect(result).toMatchInlineSnapshot(`
     {
-      dependencies: ["<fixtures>/test/2.css", "<fixtures>/test/3.css", "<fixtures>/test/4.css"],
+      dependencies: ["<fixtures>/test/2.css", "<fixtures>/test/3.css", "<fixtures>/test/4.css", "<fixtures>/test/5.css"],
       tokens: [
         {
           name: "a",
@@ -89,6 +96,12 @@ test('tracks other files when `@import` is present', async () => {
           name: "c",
           originalLocations: [
             { filePath: "<fixtures>/test/4.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
+          ],
+        },
+        {
+          name: "d",
+          originalLocations: [
+            { filePath: "<fixtures>/test/5-recursive.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
       ],
