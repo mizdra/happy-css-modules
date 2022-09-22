@@ -1,4 +1,12 @@
-import postcss, { type Rule, type AtRule, type Root, type Node, type Declaration, type Plugin } from 'postcss';
+import {
+  default as postcss,
+  type Rule,
+  type AtRule,
+  type Root,
+  type Node,
+  type Declaration,
+  type Plugin,
+} from 'postcss';
 import modules from 'postcss-modules';
 import selectorParser, { type ClassName } from 'postcss-selector-parser';
 import valueParser from 'postcss-value-parser';
@@ -45,8 +53,7 @@ function removeDependenciesPlugin(): Plugin {
  */
 export async function generateLocalTokenNames(ast: Root): Promise<string[]> {
   return new Promise((resolve, reject) => {
-    postcss
-      .default()
+    postcss()
       // postcss-modules collects tokens (i.e., includes external tokens) by following
       // the dependencies specified in the @import and composes properties.
       // However, we do not want `generateLocalTokenNames` to return external tokens.
