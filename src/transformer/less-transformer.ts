@@ -10,8 +10,8 @@ function createLessPluginResolver(Less: typeof import('less'), options: Transfor
       super();
       this.options = options;
     }
-    public override supports(filename: string): boolean {
-      return !this.options.isIgnoredSpecifier(filename);
+    public override supports(): boolean {
+      return true;
     }
     public override async loadFile(
       filename: string,
@@ -19,6 +19,9 @@ function createLessPluginResolver(Less: typeof import('less'), options: Transfor
       options: Less.LoadFileOptions,
       environment: Less.Environment,
     ): Promise<Less.FileLoadResult> {
+      // The http/https file is treated as an empty file.
+      if (this.options.isIgnoredSpecifier(filename)) return { contents: '', filename };
+
       const resolved = await this.options.resolver(filename, { request: currentDirectory });
       return super.loadFile(resolved, currentDirectory, options, environment);
     }

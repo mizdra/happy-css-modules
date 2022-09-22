@@ -130,8 +130,7 @@ export class Loader {
           // less makes a remote module inline, so it may be included in dependencies.
           // However, the dependencies field of happy-css-modules is not yet designed to store http protocol URLs.
           // Therefore, we exclude them from the dependencies field for now.
-          // TODO: Support to store http protocol URLs in the dependencies field.
-          return !(dep.startsWith('http://') || dep.startsWith('https://'));
+          return !isIgnoredSpecifier(dep);
         }),
     };
   }
