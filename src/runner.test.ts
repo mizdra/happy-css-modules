@@ -3,6 +3,7 @@ import { jest } from '@jest/globals';
 import chalk from 'chalk';
 import dedent from 'dedent';
 import AggregateError from 'es-aggregate-error';
+import type { Watcher } from './runner.js';
 import { run } from './runner.js';
 import { createFixtures, exists, getFixturePath, waitForAsyncTask } from './test/util.js';
 
@@ -15,6 +16,14 @@ const defaultOptions = {
   silent: true,
   cwd: getFixturePath('/'),
 };
+
+// Exit the watcher even if the test fails
+let watcher: Watcher | undefined;
+afterEach(async () => {
+  if (watcher) {
+    await watcher.close();
+  }
+});
 
 test('generates .d.ts and .d.ts.map', async () => {
   createFixtures({
@@ -49,7 +58,7 @@ test('watches for changes in files', async () => {
   createFixtures({
     '/test': {}, // empty directory
   });
-  const watcher = await run({ ...defaultOptions, watch: true });
+  watcher = await run({ ...defaultOptions, watch: true });
 
   await writeFile(getFixturePath('/test/1.css'), '.a-1 {}');
   await waitForAsyncTask(500); // Wait until the file is written
@@ -58,8 +67,6 @@ test('watches for changes in files', async () => {
   await writeFile(getFixturePath('/test/1.css'), '.a-2 {}');
   await waitForAsyncTask(500); // Wait until the file is written
   expect(await readFile(getFixturePath('/test/1.css.d.ts'), 'utf8')).toMatch(/a-2/);
-
-  await watcher.close();
 });
 test('returns an error if the file fails to process in non-watch mode', async () => {
   createFixtures({
