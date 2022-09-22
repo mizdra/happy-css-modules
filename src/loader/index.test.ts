@@ -78,7 +78,13 @@ test('tracks other files when `@import` is present', async () => {
   const result = await loader.load(getFixturePath('/test/1.css'));
   expect(result).toMatchInlineSnapshot(`
     {
-      dependencies: ["<fixtures>/test/2.css", "<fixtures>/test/3.css", "<fixtures>/test/4.css", "<fixtures>/test/5.css"],
+      dependencies: [
+        "<fixtures>/test/2.css",
+        "<fixtures>/test/3.css",
+        "<fixtures>/test/4.css",
+        "<fixtures>/test/5.css",
+        "<fixtures>/test/5-recursive.css",
+      ],
       tokens: [
         {
           name: "a",
