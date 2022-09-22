@@ -27,15 +27,6 @@ jobs:
           # Node.js
           - node: '16.x'
           - node: '18.x'
-          # postcss
-          - node: '16.x'
-            postcss: '^6.0.0'
-          - node: '18.x'
-            postcss: '^6.0.0'
-          - node: '16.x'
-            postcss: '^7.0.0'
-          - node: '18.x'
-            postcss: '^7.0.0'
           # less
           - node: '16.x'
             less: '^3.0.0'
@@ -51,8 +42,6 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install
 
-      - run: pnpm add -D postcss@${{ matrix.postcss }}
-        if: ${{ matrix.postcss }}
       - run: pnpm add -D less@${{ matrix.less }}
         if: ${{ matrix.less }}
 
