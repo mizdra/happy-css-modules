@@ -20,15 +20,54 @@ jobs:
       - run: pnpm run lint
 
   test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # postcss
+          - node: '14.x'
+            postcss: '^8.0.0'
+          - node: '16.x'
+            postcss: '^8.0.0'
+          - node: '18.x'
+            postcss: '^8.0.0'
+          # less
+          - node: '14.x'
+            less: '^3.0.0'
+          - node: '16.x'
+            less: '^3.0.0'
+          - node: '18.x'
+            less: '^3.0.0'
+          - node: '14.x'
+            less: '^4.0.0'
+          - node: '16.x'
+            less: '^4.0.0'
+          - node: '18.x'
+            less: '^4.0.0'
+          # sass
+          - node: '14.x'
+            sass: '^1.0.0'
+          - node: '16.x'
+            sass: '^1.0.0'
+          - node: '18.x'
+            sass: '^1.0.0'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2
       - uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: ${{ matrix.node }}
           cache: 'pnpm'
       - run: pnpm install
+
+      - run: pnpm add -D postcss@${{ matrix.postcss }}
+        if: ${{ matrix.postcss }}
+      - run: pnpm add -D less@${{ matrix.less }}
+        if: ${{ matrix.less }}
+      - run: pnpm add -D sass@${{ matrix.sass }}
+        if: ${{ matrix.sass }}
+
       - run: pnpm run test
         env:
           CI: true
