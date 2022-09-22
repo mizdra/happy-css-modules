@@ -36,7 +36,7 @@
   "author": "mizdra",
   "license": "MIT",
   "engines": {
-    "node": "^14.13.1 || >=16.0.0"
+    "node": ">=16.0.0"
   },
   "dependencies": {
     "camelcase": "^7.0.0",
