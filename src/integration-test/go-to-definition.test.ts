@@ -1,6 +1,8 @@
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
+import { rest } from 'msw';
 import { run } from '../runner.js';
+import { server } from '../test/msw.js';
 import { getModuleDefinitions, getMultipleIdentifierDefinitions } from '../test/tsserver.js';
 import { createFixtures, getFixturePath } from '../test/util.js';
 
@@ -235,6 +237,8 @@ test('imported tokens', async () => {
   createFixtures({
     '/test/1.css': dedent`
     @import './2.css';
+    @import 'http://example.com/path/http.css';
+    @import 'https://example.com/path/https.css';
     .a {}
     .b {}
     .b {}
@@ -247,20 +251,24 @@ test('imported tokens', async () => {
     .d {}
     `,
   });
+  server.use(rest.all(`http://example.com/path/http.css`, (_req, res, ctx) => res(ctx.text('.e {}'))));
+  server.use(rest.all(`https://example.com/path/https.css`, (_req, res, ctx) => res(ctx.text('.f {}'))));
   await run({ ...defaultOptions });
-  const results = await getMultipleIdentifierDefinitions(getFixturePath(`/test/1.css`), ['a', 'b', 'c', 'd']);
+  const results = await getMultipleIdentifierDefinitions(getFixturePath(`/test/1.css`), ['a', 'b', 'c', 'd', 'e', 'f']);
+
+  // NOTE: Currently, tsserver does not support definition jumps to http/https files.
   expect(results).toMatchInlineSnapshot(`
     [
       {
         "definitions": [
-          { file: "<fixtures>/test/1.css", text: ".a ", start: { line: 2, offset: 1 }, end: { line: 2, offset: 4 } },
+          { file: "<fixtures>/test/1.css", text: ".a ", start: { line: 4, offset: 1 }, end: { line: 4, offset: 4 } },
         ],
         "identifier": "a",
       },
       {
         "definitions": [
-          { file: "<fixtures>/test/1.css", text: ".b ", start: { line: 3, offset: 1 }, end: { line: 3, offset: 4 } },
-          { file: "<fixtures>/test/1.css", text: ".b ", start: { line: 4, offset: 1 }, end: { line: 4, offset: 4 } },
+          { file: "<fixtures>/test/1.css", text: ".b ", start: { line: 5, offset: 1 }, end: { line: 5, offset: 4 } },
+          { file: "<fixtures>/test/1.css", text: ".b ", start: { line: 6, offset: 1 }, end: { line: 6, offset: 4 } },
         ],
         "identifier": "b",
       },
@@ -275,6 +283,18 @@ test('imported tokens', async () => {
           { file: "<fixtures>/test/3.css", text: ".d ", start: { line: 1, offset: 1 }, end: { line: 1, offset: 4 } },
         ],
         "identifier": "d",
+      },
+      {
+        "definitions": [
+          { file: "<fixtures>/test/1.css.d.ts", text: '"e"', start: { line: 4, offset: 16 }, end: { line: 4, offset: 19 } },
+        ],
+        "identifier": "e",
+      },
+      {
+        "definitions": [
+          { file: "<fixtures>/test/1.css.d.ts", text: '"f"', start: { line: 5, offset: 16 }, end: { line: 5, offset: 19 } },
+        ],
+        "identifier": "f",
       },
     ]
   `);

@@ -104,3 +104,8 @@ export function getFixturePath(path: string): string {
 export function oneOf<T>(array: T[]): T {
   return array[randomInt(array.length)]!;
 }
+
+export function isExternalFile(fileURL: string): boolean {
+  if (!fileURL.startsWith('file://')) return true;
+  return false;
+}

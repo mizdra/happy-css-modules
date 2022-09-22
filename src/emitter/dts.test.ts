@@ -1,13 +1,14 @@
 import { pathToFileURL } from 'url';
 import dedent from 'dedent';
+import { rest } from 'msw';
 import { SourceMapConsumer } from 'source-map';
 import { Loader } from '../loader/index.js';
-import { getFixturePath, createFixtures } from '../test/util.js';
+import { server } from '../test/msw.js';
+import { getFixturePath, createFixtures, isExternalFile } from '../test/util.js';
 import { generateDtsContentWithSourceMap, getDtsFilePath } from './dts.js';
 import { type DtsFormatOptions } from './index.js';
 
 const loader = new Loader();
-const isExternalFile = () => false;
 
 test('getDtsFilePath', () => {
   expect(getDtsFilePath('/app/src/dir/1.css', undefined)).toBe('/app/src/dir/1.css.d.ts');
@@ -262,6 +263,60 @@ describe('generateDtsContentWithSourceMap', () => {
       ;
       export default styles;
       "
+    `);
+  });
+  test('treats http/https files as external files', async () => {
+    createFixtures({
+      '/test/1.css': dedent`
+      @import 'http://example.com/path/http.css';
+      @import 'https://example.com/path/https.css';
+      .a {}
+      `,
+    });
+    server.use(rest.all(`http://example.com/path/http.css`, (_req, res, ctx) => res(ctx.text('.a {}'))));
+    server.use(rest.all(`https://example.com/path/https.css`, (_req, res, ctx) => res(ctx.text('.a {}'))));
+    const result = await loader.load(pathToFileURL(filePath).href);
+    const { dtsContent, sourceMap } = generateDtsContentWithSourceMap(
+      filePath,
+      dtsFilePath,
+      sourceMapFilePath,
+      result.tokens,
+      dtsFormatOptions,
+      isExternalFile,
+    );
+    expect(dtsContent).toMatchInlineSnapshot(`
+      "declare const styles:
+        & Readonly<{ "a": string }>
+        & Readonly<{ "a": string }>
+        & Readonly<{ "a": string }>
+      ;
+      export default styles;
+      "
+    `);
+    const smc = await new SourceMapConsumer(sourceMap.toJSON());
+    expect(smc.originalPositionFor({ line: 2, column: 15 })).toMatchInlineSnapshot(`
+      {
+        "column": 0,
+        "line": 1,
+        "name": "a",
+        "source": "http://example.com/path/http.css",
+      }
+    `);
+    expect(smc.originalPositionFor({ line: 3, column: 15 })).toMatchInlineSnapshot(`
+      {
+        "column": 0,
+        "line": 1,
+        "name": "a",
+        "source": "https://example.com/path/https.css",
+      }
+    `);
+    expect(smc.originalPositionFor({ line: 4, column: 15 })).toMatchInlineSnapshot(`
+      {
+        "column": 0,
+        "line": 3,
+        "name": "a",
+        "source": "1.css",
+      }
     `);
   });
 });

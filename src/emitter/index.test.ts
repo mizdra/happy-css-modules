@@ -1,7 +1,7 @@
 import { readFile, stat } from 'fs/promises';
 import { jest } from '@jest/globals';
 import chalk from 'chalk';
-import { createFixtures, exists, fakeToken, getFixturePath, waitForAsyncTask } from '../test/util.js';
+import { createFixtures, exists, fakeToken, getFixturePath, isExternalFile, waitForAsyncTask } from '../test/util.js';
 import { emitGeneratedFiles, getRelativePath, isSubDirectoryFile } from './index.js';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -32,7 +32,7 @@ describe('emitGeneratedFiles', () => {
     dtsFormatOptions: undefined,
     silent: true,
     cwd: getFixturePath('/test'),
-    isExternalFile: () => false,
+    isExternalFile,
   };
   beforeEach(() => {
     createFixtures({
