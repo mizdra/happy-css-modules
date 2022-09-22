@@ -133,17 +133,23 @@ test('resolves specifier using resolver', async () => {
     @import 'package-1';
     @import 'package-2';
     @import './recursive.scss';
-    // FIXME
-    // @import 'http://example.com/path/1.scss';
-    // @import 'https://example.com/path/1.scss';
+    @import 'http://example.com/path/http.scss';
+    @import 'https://example.com/path/https.scss';
+    @import 'https://example.com/path/recursive.scss';
     `,
     '/node_modules/package-1/index.css': `.a {}`,
     '/node_modules/package-2/index.scss': `.a {}`,
     '/test/recursive.scss': `@import './recursive-imported.scss';`,
     '/test/recursive-imported.scss': `.a {}`,
   });
-  server.use(rest.all(`http://example.com/path/1.scss`, (_req, res, ctx) => res(ctx.text('.a {}'))));
-  server.use(rest.all(`https://example.com/path/1.scss`, (_req, res, ctx) => res(ctx.text('.a {}'))));
+  server.use(rest.all(`http://example.com/path/http.scss`, (_req, res, ctx) => res(ctx.text('.a {}'))));
+  server.use(rest.all(`https://example.com/path/https.scss`, (_req, res, ctx) => res(ctx.text('.a {}'))));
+  server.use(
+    rest.all(`https://example.com/path/recursive.scss`, (_req, res, ctx) =>
+      res(ctx.text('@import "./recursive-imported.scss";')),
+    ),
+  );
+  server.use(rest.all(`https://example.com/path/recursive-imported.scss`, (_req, res, ctx) => res(ctx.text('.a {}'))));
   const result = await loader.load(pathToFileURL(getFixturePath('/test/1.scss')).href);
   expect(result.dependencies.sort()).toStrictEqual(
     [
@@ -151,9 +157,12 @@ test('resolves specifier using resolver', async () => {
       pathToFileURL(getFixturePath('/node_modules/package-2/index.scss')).href,
       pathToFileURL(getFixturePath('/test/recursive.scss')).href,
       pathToFileURL(getFixturePath('/test/recursive-imported.scss')).href,
-      // FIXME
-      // 'http://example.com/path/1.scss',
-      // 'https://example.com/path/1.scss',
+      'http://example.com/path/http.scss',
+      'https://example.com/path/https.scss',
+      'https://example.com/path/recursive.scss',
+      // FIXME: Since dart-scss cannot compile http/https files, happy-css-modules treats such files as empty sass files.
+      // Therefore, files imported from http/https files are not included in `result.dependencies`.
+      // 'https://example.com/path/recursive-imported.scss',
     ].sort(),
   );
 });

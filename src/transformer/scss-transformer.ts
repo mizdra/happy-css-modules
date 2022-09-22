@@ -54,33 +54,43 @@ async function renderSass(sass: typeof import('sass'), source: string, options: 
   return new Promise<LegacyResult>((resolve, reject) => {
     if (options.from.startsWith('http://') || options.from.startsWith('https://')) {
       // NOTE: The `file` option of `sass.render` do not accept URLs (i.e. 'file://...', 'http://...', 'https://...').
-      // Therefore, only file:// is allowed.
-      throw new Error('http/https import is not supported in .scss.');
-    }
-    sass.render(
-      {
-        data: source,
-        // TODO: Support http(s) protocol.
-        file: fileURLToPath(options.from),
-        outFile: 'DUMMY', // Required for sourcemap output.
-        sourceMap: true,
-        importer: (url, prev, done) => {
-          options
-            // TODO: Support http(s) protocol.
-            .resolver(url, { request: pathToFileURL(prev).href })
-            // TODO: Support http(s) protocol.
-            .then((resolvedURL) => done({ file: fileURLToPath(resolvedURL) }))
-            .catch((e) => done(e));
+      // Therefore, http/https files are treated as empty files.
+      return resolve({
+        css: Buffer.from(''),
+        map: Buffer.from('{"version":3,"sourceRoot":"","sources":[],"names":[],"mappings":"","file":"DUMMY"}'),
+        stats: {
+          entry: options.from,
+          start: Date.now(),
+          end: Date.now(),
+          duration: 0,
+          includedFiles: [],
         },
-      },
-      (exception, result) => {
-        if (exception) {
-          reject(exception);
-        } else {
-          resolve(result!);
-        }
-      },
-    );
+      });
+    } else if (options.from.startsWith('file://')) {
+      sass.render(
+        {
+          data: source,
+          file: fileURLToPath(options.from),
+          outFile: 'DUMMY', // Required for sourcemap output.
+          sourceMap: true,
+          importer: (url, prev, done) => {
+            options
+              .resolver(url, { request: pathToFileURL(prev).href })
+              .then((resolvedURL) => done({ file: fileURLToPath(resolvedURL) }))
+              .catch((e) => done(e));
+          },
+        },
+        (exception, result) => {
+          if (exception) {
+            reject(exception);
+          } else {
+            resolve(result!);
+          }
+        },
+      );
+    } else {
+      reject(new Error(`Unsupported protocol: ${options.from}`));
+    }
   });
 }
 
