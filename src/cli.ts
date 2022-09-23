@@ -20,8 +20,8 @@ export function parseArgv(argv: string[]): RunnerOptions {
     .example("$0 'src/**/*.module.{css,scss,less}'", 'Also generate files for sass and less.')
     .example("$0 'src/**/*.module.css' --watch", 'Watch for changes and generate .d.ts and .d.ts.map.')
     .example("$0 'src/**/*.module.css' --declarationMap=false", 'Generate .d.ts only.')
-    .example("$0 'src/**/*.module.css' --sassLoadPaths=src/style", "Run with sass's --load-path.")
-    .example("$0 'src/**/*.module.css' --lessIncludePaths=src/style", "Run with less's --include-path.")
+    .example("$0 'src/**/*.module.css' --sassLoadPaths=src/style", "Run with sass's `--load-path`.")
+    .example("$0 'src/**/*.module.css' --lessIncludePaths=src/style", "Run with less's `--include-path`.")
     .detectLocale(false)
     .option('outDir', {
       type: 'string',
