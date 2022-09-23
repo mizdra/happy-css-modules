@@ -31,11 +31,6 @@ export type TransformerOptions = {
 /** The function to transform source code. */
 export type Transformer = (source: string, options: TransformerOptions) => TransformResult | Promise<TransformResult>;
 
-export const handleImportError = (packageName: string) => (e: unknown) => {
-  console.error(`${packageName} import failed. Did you forget to \`npm install -D ${packageName}\`?`);
-  throw e;
-};
-
 export const createDefaultTransformer: () => Transformer = () => async (source, options) => {
   const scssTransformer = createScssTransformer();
   const lessTransformer = createLessTransformer();

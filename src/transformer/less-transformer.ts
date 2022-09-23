@@ -1,6 +1,5 @@
 import type { Transformer } from '../index.js';
 import type { TransformerOptions } from './index.js';
-import { handleImportError } from './index.js';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention, @typescript-eslint/consistent-type-imports
 function createLessPluginResolver(Less: typeof import('less'), options: TransformerOptions): Less.Plugin {
@@ -41,11 +40,16 @@ function createLessPluginResolver(Less: typeof import('less'), options: Transfor
   return new LessPluginResolver(options);
 }
 
+const handleImportError = () => (e: unknown) => {
+  console.error('less package not found. Did you forget to `npm install -D less`?');
+  throw e;
+};
+
 export const createLessTransformer: () => Transformer = () => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   let less: typeof import('less');
   return async (source, options) => {
-    less ??= (await import('less').catch(handleImportError('less'))).default;
+    less ??= (await import('less').catch(handleImportError())).default;
     const result = await less.render(source, {
       filename: options.from,
       sourceMap: {},

@@ -5,7 +5,6 @@
 
 import type { LegacyResult } from 'sass';
 import type { Transformer, TransformerOptions } from './index.js';
-import { handleImportError } from './index.js';
 
 // const IS_JEST_ENVIRONMENT = process.env.JEST_WORKER_ID !== undefined;
 
@@ -75,11 +74,16 @@ async function renderSass(sass: typeof import('sass'), source: string, options: 
   });
 }
 
+const handleImportError = () => (e: unknown) => {
+  console.error('sass package not found. Did you forget to `npm install -D sass` or `npm install -D sass-embedded`?');
+  throw e;
+};
+
 export const createScssTransformer: () => Transformer = () => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  let sass: typeof import('sass');
+  let sass: typeof import('sass-embedded') | typeof import('sass');
   return async (source, options) => {
-    sass ??= (await import('sass').catch(handleImportError('sass'))).default;
+    sass ??= (await import('sass-embedded').catch(async () => import('sass')).catch(handleImportError())).default;
     const result = await renderSass(sass, source, options);
     return { css: result.css.toString(), map: result.map!.toString(), dependencies: result.stats.includedFiles };
 
