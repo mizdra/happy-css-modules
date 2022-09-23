@@ -140,3 +140,16 @@ test('sassLoadPaths', async () => {
   });
   await run({ ...defaultOptions, sassLoadPaths }); // not throw
 });
+
+test('lessIncludePaths', async () => {
+  const lessIncludePaths = ['test/relative', getFixturePath('/test/absolute')];
+  createFixtures({
+    '/test/1.less': dedent`
+    @import '2.less';
+    @import '3.less';
+    `,
+    '/test/relative/2.less': `.a { dummy: ''; }`,
+    '/test/absolute/3.less': `.b { dummy: ''; }`,
+  });
+  await run({ ...defaultOptions, lessIncludePaths }); // not throw
+});

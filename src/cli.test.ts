@@ -38,6 +38,13 @@ describe('parseArgv', () => {
     // Passing a number is treated as a string
     expect(parseArgv([...baseArgs, '1.css', '--sassLoadPaths', '1']).sassLoadPaths).toStrictEqual(['1']);
   });
+  test('--lessIncludePaths', () => {
+    expect(
+      parseArgv([...baseArgs, '1.css', '--lessIncludePaths', 'dir1', '--lessIncludePaths', 'dir2']).lessIncludePaths,
+    ).toStrictEqual(['dir1', 'dir2']);
+    // Passing a number is treated as a string
+    expect(parseArgv([...baseArgs, '1.css', '--lessIncludePaths', '1']).lessIncludePaths).toStrictEqual(['1']);
+  });
   test('--silent', () => {
     expect(parseArgv([...baseArgs, '1.css', '--silent']).silent).toBe(true);
     expect(parseArgv([...baseArgs, '1.css', '--no-silent']).silent).toBe(false);
