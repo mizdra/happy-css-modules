@@ -45,6 +45,15 @@ describe('parseArgv', () => {
     // Passing a number is treated as a string
     expect(parseArgv([...baseArgs, '1.css', '--lessIncludePaths', '1']).lessIncludePaths).toStrictEqual(['1']);
   });
+  test('--webpackResolveAlias', () => {
+    expect(
+      parseArgv([...baseArgs, '1.css', '--webpackResolveAlias', '{ "key1": "value1", "key2": "value2" }'])
+        .webpackResolveAlias,
+    ).toStrictEqual({
+      key1: 'value1',
+      key2: 'value2',
+    });
+  });
   test('--silent', () => {
     expect(parseArgv([...baseArgs, '1.css', '--silent']).silent).toBe(true);
     expect(parseArgv([...baseArgs, '1.css', '--no-silent']).silent).toBe(false);

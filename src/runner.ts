@@ -41,6 +41,12 @@ export interface RunnerOptions {
    */
   lessIncludePaths?: string[] | undefined;
   /**
+   * The option compatible with webpack's `resolve.alias`. It is an object consisting of a pair of alias names and relative or absolute paths.
+   * @example { style: 'src/styles', '@': 'src' }
+   * @example { style: '/home/user/repository/src/styles', '@': '/home/user/repository/src' }
+   */
+  webpackResolveAlias?: Record<string, string> | undefined;
+  /**
    * Silent output. Do not show "files written" messages.
    * @default false
    */
@@ -63,7 +69,10 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
   const silent = options.silent ?? false;
   const sassLoadPaths = options.sassLoadPaths?.map((path) => resolve(cwd, path));
   const lessIncludePaths = options.lessIncludePaths?.map((path) => resolve(cwd, path));
-  const resolver = options.resolver ?? createDefaultResolver({ sassLoadPaths, lessIncludePaths });
+  const webpackResolveAlias = options.webpackResolveAlias
+    ? Object.fromEntries(Object.entries(options.webpackResolveAlias).map(([key, value]) => [key, resolve(cwd, value)]))
+    : undefined;
+  const resolver = options.resolver ?? createDefaultResolver({ sassLoadPaths, lessIncludePaths, webpackResolveAlias });
   const distOptions = options.outDir
     ? {
         rootDir: cwd, // TODO: support `--rootDir` option
