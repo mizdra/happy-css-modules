@@ -137,12 +137,11 @@ import { run, parseArgv, createDefaultResolver, type Resolver } from 'happy-css-
 import { exists } from 'fs/promises';
 import { resolve, join } from 'path';
 
+const cwd = process.cwd();
 const runnerOptions = parseArgv(process.argv);
-const defaultResolver = createDefaultResolver({
-  // Some runner options must be passed to the default resolver.
-  sassLoadPaths: runnerOptions.sassLoadPaths?.map((path) => resolve(process.cwd(), path)),
-  lessIncludePaths: runnerOptions.lessIncludePaths?.map((path) => resolve(process.cwd(), path)),
-});
+const { sassLoadPaths, lessIncludePaths, webpackResolveAlias } = runnerOptions;
+// Some runner options must be passed to the default resolver.
+const defaultResolver = createDefaultResolver({ cwd, sassLoadPaths, lessIncludePaths, webpackResolveAlias });
 const stylesDir = resolve(__dirname, 'src/styles');
 
 const resolver: Resolver = async (specifier, options) => {
@@ -157,7 +156,7 @@ const resolver: Resolver = async (specifier, options) => {
   return false;
 };
 
-run({ ...runnerOptions, resolver }).catch((e) => {
+run({ ...runnerOptions, resolver, cwd }).catch((e) => {
   console.error(e);
   process.exit(1);
 });
