@@ -91,10 +91,14 @@
   "peerDependencies": {
     "less": "^3.0.0 || ^4.0.0",
     "postcss": "^8.0.0",
-    "sass": "^1.0.0"
+    "sass": "^1.0.0",
+    "sass-embedded": "^1.0.0"
   },
   "peerDependenciesMeta": {
     "sass": {
+      "optional": true
+    },
+    "sass-embedded": {
       "optional": true
     },
     "less": {
