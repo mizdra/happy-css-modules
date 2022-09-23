@@ -1,4 +1,4 @@
-import { dirname } from 'path';
+import { basename, dirname, join } from 'path';
 import enhancedResolve from 'enhanced-resolve';
 import { exists } from '../util.js';
 import type { Resolver } from './index.js';
@@ -72,16 +72,27 @@ export const createWebpackResolver: (webpackResolverOptions?: WebpackResolverOpt
     if (specifier.startsWith('~')) specifier = specifier.slice(1);
 
     for (const resolver of resolvers) {
-      try {
-        const resolved = resolver(dirname(options.request), specifier);
-        if (resolved !== false) {
-          const isExists = await exists(resolved);
-          if (isExists) return resolved;
+      const specifierVariants =
+        resolver === sassLoaderResolver
+          ? // Support partial import for sass
+            // https://sass-lang.com/documentation/at-rules/import#partials
+            // https://github.com/webpack-contrib/sass-loader/blob/0e9494074f69a6b6d47efea6c083a02a31a5ae84/test/sass/import-with-underscore.sass
+            [join(dirname(specifier), '_' + basename(specifier)), specifier]
+          : [specifier];
+
+      for (const specifierVariant of specifierVariants) {
+        try {
+          const resolved = resolver(dirname(options.request), specifierVariant);
+          if (resolved !== false) {
+            const isExists = await exists(resolved);
+            if (isExists) return resolved;
+          }
+        } catch (e) {
+          // noop
         }
-      } catch (e) {
-        // noop
       }
     }
+
     return false;
   };
 };

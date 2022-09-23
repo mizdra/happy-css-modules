@@ -34,7 +34,7 @@ test('resolves specifier with sass-loader mechanism', async () => {
   createFixtures({
     '/node_modules/package-1/index.scss': `.a {}`,
     '/test/styles/load-paths.scss': `.a {}`,
-    '/test/styles/_load-paths-with-underscore.scss': `.a {}`,
+    '/test/_partial-import.scss': `.a {}`,
   });
   expect(await webpackResolver('~package-1/index.scss', { request })).toBe(
     getFixturePath('/node_modules/package-1/index.scss'),
@@ -42,10 +42,14 @@ test('resolves specifier with sass-loader mechanism', async () => {
   expect(await webpackResolver('~package-1', { request })).toBe(getFixturePath('/node_modules/package-1/index.scss'));
   // ref: https://github.com/webpack-contrib/sass-loader/blob/bed9fb5799a90020d43f705ea405f85b368621d7/test/scss/import-include-paths.scss#L1
   expect(await webpackResolver('load-paths', { request })).toBe(getFixturePath('/test/styles/load-paths.scss'));
-  // FIXME
-  // ref: https://github.com/webpack-contrib/sass-loader/blob/bed9fb5799a90020d43f705ea405f85b368621d7/test/scss/import-include-paths.scss#L2
-  // ref: https://github.com/webpack-contrib/sass-loader/blob/49a578a218574ddc92a597c7e365b6c21960717e/src/utils.js#L492-L497
-  // expect(await webpackResolver('load-paths-with-underscore', { request })).toBe(getFixturePath('/test/styles/_load-paths-with-underscore.scss'));
+  // https://sass-lang.com/documentation/at-rules/import#partials
+  // https://github.com/webpack-contrib/sass-loader/blob/0e9494074f69a6b6d47efea6c083a02a31a5ae84/test/sass/import-with-underscore.sass
+  expect(await webpackResolver('partial-import', { request: getFixturePath('/test/1.scss') })).toBe(
+    getFixturePath('/test/_partial-import.scss'),
+  );
+  expect(await webpackResolver('test/partial-import', { request: getFixturePath('/test') })).toBe(
+    getFixturePath('/test/_partial-import.scss'),
+  );
 });
 
 test('resolves specifier with less-loader mechanism', async () => {
