@@ -13,12 +13,14 @@ const pkgJson = JSON.parse(readFileSync(resolve(dirname(fileURLToPath(import.met
  */
 export function parseArgv(argv: string[]): RunnerOptions {
   const parsedArgv = yargs(hideBin(argv))
+    .wrap(Math.min(120, process.stdout.columns))
     .scriptName('hcm')
     .usage('Create .d.ts and .d.ts.map from CSS modules *.css files.\n\n$0 [options] <glob>')
     .example("$0 'src/**/*.module.css'", 'Generate .d.ts and .d.ts.map.')
     .example("$0 'src/**/*.module.{css,scss,less}'", 'Also generate files for sass and less.')
     .example("$0 'src/**/*.module.css' --watch", 'Watch for changes and generate .d.ts and .d.ts.map.')
     .example("$0 'src/**/*.module.css' --declarationMap=false", 'Generate .d.ts only.')
+    .example("$0 'src/**/*.module.css' --sassLoadPaths=src/style", "Run with sass's --load-path.")
     .detectLocale(false)
     .option('outDir', {
       type: 'string',
