@@ -22,6 +22,7 @@ export function parseArgv(argv: string[]): RunnerOptions {
     .example("$0 'src/**/*.module.css' --declarationMap=false", 'Generate .d.ts only.')
     .example("$0 'src/**/*.module.css' --sassLoadPaths=src/style", "Run with sass's `--load-path`.")
     .example("$0 'src/**/*.module.css' --lessIncludePaths=src/style", "Run with less's `--include-path`.")
+    .example('$0 \'src/**/*.module.css\' --webpackResolveAlias=\'{"@": "src"}\'', "Run with webpack's `resolve.alias`.")
     .detectLocale(false)
     .option('outDir', {
       type: 'string',
@@ -52,6 +53,10 @@ export function parseArgv(argv: string[]): RunnerOptions {
       nargs: 1,
       describe: "The option compatible with less's `--include-path`.",
     })
+    .option('webpackResolveAlias', {
+      string: true,
+      describe: "The option compatible with webpack's `resolve.alias`.",
+    })
     .option('silent', {
       type: 'boolean',
       default: false,
@@ -64,6 +69,20 @@ export function parseArgv(argv: string[]): RunnerOptions {
       const patterns = argv._;
       // TODO: support multiple patterns
       if (patterns.length !== 1) throw new Error('Only one pattern is allowed.');
+      if (argv.webpackResolveAlias) {
+        let parsedWebpackResolveAlias: unknown;
+        try {
+          parsedWebpackResolveAlias = JSON.parse(argv.webpackResolveAlias);
+        } catch (e) {
+          throw new Error('--webpackResolveAlias must be a valid JSON string.');
+        }
+        if (typeof parsedWebpackResolveAlias !== 'object' || parsedWebpackResolveAlias === null)
+          throw new Error('--webpackResolveAlias must be an object');
+        if (!Object.keys(parsedWebpackResolveAlias).every((key) => typeof key === 'string'))
+          throw new Error('--webpackResolveAlias must be an object of string keys');
+        if (!Object.values(parsedWebpackResolveAlias).every((value) => typeof value === 'string'))
+          throw new Error('--webpackResolveAlias must be an object of string values');
+      }
       return true;
     })
     .parseSync();
@@ -76,6 +95,7 @@ export function parseArgv(argv: string[]): RunnerOptions {
     declarationMap: parsedArgv.declarationMap,
     sassLoadPaths: parsedArgv.sassLoadPaths?.map((item) => item.toString()),
     lessIncludePaths: parsedArgv.lessIncludePaths?.map((item) => item.toString()),
+    webpackResolveAlias: parsedArgv.webpackResolveAlias ? JSON.parse(parsedArgv.webpackResolveAlias) : undefined,
     silent: parsedArgv.silent,
   };
 }

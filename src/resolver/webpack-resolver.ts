@@ -14,6 +14,11 @@ export type WebpackResolverOptions = {
    * @example ['/home/user/repository/src/styles']
    */
   lessIncludePaths?: string[] | undefined;
+  /**
+   * The option compatible with webpack's `resolve.alias`. It is an object consisting of a pair of alias names and absolute paths.
+   * @example { style: '/home/user/repository/src/styles', '@': '/home/user/repository/src' }
+   */
+  webpackResolveAlias?: Record<string, string> | undefined;
 };
 
 // TODO: Support `resolve.alias` for Node.js API
@@ -33,6 +38,7 @@ export const createWebpackResolver: (webpackResolverOptions?: WebpackResolverOpt
     mainFiles: ['index', '...'],
     extensions: ['.css', '...'],
     preferRelative: true,
+    alias: webpackResolverOptions?.webpackResolveAlias,
   });
 
   /**
@@ -48,6 +54,7 @@ export const createWebpackResolver: (webpackResolverOptions?: WebpackResolverOpt
     extensions: ['.sass', '.scss', '.css'],
     restrictions: [/\.((sa|sc|c)ss)$/i],
     preferRelative: true,
+    alias: webpackResolverOptions?.webpackResolveAlias,
     modules: ['node_modules', ...(webpackResolverOptions?.sassLoadPaths ?? [])],
   });
 
@@ -63,6 +70,7 @@ export const createWebpackResolver: (webpackResolverOptions?: WebpackResolverOpt
     mainFiles: ['index', '...'],
     extensions: ['.less', '.css'],
     preferRelative: true,
+    alias: webpackResolverOptions?.webpackResolveAlias,
     modules: ['node_modules', ...(webpackResolverOptions?.lessIncludePaths ?? [])],
   });
 
