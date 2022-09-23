@@ -13,10 +13,6 @@ const pkgJson = JSON.parse(readFileSync(resolve(dirname(fileURLToPath(import.met
  */
 export function parseArgv(argv: string[]): RunnerOptions {
   const parsedArgv = yargs(hideBin(argv))
-    .parserConfiguration({
-      // workaround for https://github.com/yargs/yargs/issues/1318
-      'duplicate-arguments-array': false,
-    })
     .scriptName('hcm')
     .usage('Create .d.ts and .d.ts.map from CSS modules *.css files.\n\n$0 [options] <glob>')
     .example("$0 'src/**/*.module.css'", 'Generate .d.ts and .d.ts.map.')
@@ -43,6 +39,11 @@ export function parseArgv(argv: string[]): RunnerOptions {
       default: true,
       describe: 'Create sourcemaps for d.ts files',
     })
+    .option('sassLoadPaths', {
+      array: true,
+      nargs: 1,
+      describe: "The option compatible with sass's `--load-path`.",
+    })
     .option('silent', {
       type: 'boolean',
       default: false,
@@ -65,6 +66,7 @@ export function parseArgv(argv: string[]): RunnerOptions {
     watch: parsedArgv.watch,
     localsConvention: parsedArgv.localsConvention,
     declarationMap: parsedArgv.declarationMap,
+    sassLoadPaths: parsedArgv.sassLoadPaths?.map((item) => item.toString()),
     silent: parsedArgv.silent,
   };
 }
