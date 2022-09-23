@@ -24,25 +24,29 @@ export type Resolver = (specifier: string, options: ResolverOptions) => string |
  * @param options The options to resolve
  * @returns The resolved path (absolute). `false` means to skip resolving.
  */
-export const createDefaultResolver: () => Resolver = () => async (specifier, options) => {
+export const createDefaultResolver: () => Resolver = () => {
   const relativeResolver = createRelativeResolver();
   const nodeResolver = createNodeResolver();
   const webpackResolver = createWebpackResolver();
 
   // In less-loader, `relativeResolver` has priority over `webpackResolver`.
   // happy-css-modules follows suit.
+  // ref: https://github.com/webpack-contrib/sass-loader/blob/49a578a218574ddc92a597c7e365b6c21960717e/src/utils.js#L588-L596
   // ref: https://github.com/webpack-contrib/less-loader/tree/454e187f58046356c3d383d67fda763db8bfc528#webpack-resolver
   const resolvers = [relativeResolver, nodeResolver, webpackResolver];
-  for (const resolver of resolvers) {
-    try {
-      const resolved = await resolver(specifier, options);
-      if (resolved !== false) {
-        const isExists = await exists(resolved);
-        if (isExists) return resolved;
+
+  return async (specifier, options) => {
+    for (const resolver of resolvers) {
+      try {
+        const resolved = await resolver(specifier, options);
+        if (resolved !== false) {
+          const isExists = await exists(resolved);
+          if (isExists) return resolved;
+        }
+      } catch (e) {
+        // noop
       }
-    } catch (e) {
-      // noop
     }
-  }
-  return false;
+    return false;
+  };
 };
