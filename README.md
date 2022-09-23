@@ -27,23 +27,25 @@ Create .d.ts and .d.ts.map from CSS modules *.css files.
 hcm [options] <glob>
 
 Options:
-      --outDir            Output directory                                                                      [string]
-  -w, --watch             Watch input directory's css files or pattern                        [boolean] [default: false]
-      --localsConvention  Style of exported class names. [choices: "camelCase", "camelCaseOnly", "dashes", "dashesOnly"]
-      --declarationMap    Create sourcemaps for d.ts files                                     [boolean] [default: true]
-      --sassLoadPaths     The option compatible with sass's `--load-path`.                                       [array]
-      --lessIncludePaths  The option compatible with less's `--include-path`.                                    [array]
-      --silent            Silent output. Do not show "files written" messages                 [boolean] [default: false]
-  -h, --help              Show help                                                                            [boolean]
-  -v, --version           Show version number                                                                  [boolean]
+      --outDir               Output directory                                                                                       [string]
+  -w, --watch                Watch input directory's css files or pattern                                         [boolean] [default: false]
+      --localsConvention     Style of exported class names.                  [choices: "camelCase", "camelCaseOnly", "dashes", "dashesOnly"]
+      --declarationMap       Create sourcemaps for d.ts files                                                      [boolean] [default: true]
+      --sassLoadPaths        The option compatible with sass's `--load-path`.                                                        [array]
+      --lessIncludePaths     The option compatible with less's `--include-path`.                                                     [array]
+      --webpackResolveAlias  The option compatible with webpack's `resolve.alias`.                                                  [string]
+      --silent               Silent output. Do not show "files written" messages                                  [boolean] [default: false]
+  -h, --help                 Show help                                                                                             [boolean]
+  -v, --version              Show version number                                                                                   [boolean]
 
 Examples:
-  hcm 'src/**/*.module.css'                               Generate .d.ts and .d.ts.map.
-  hcm 'src/**/*.module.{css,scss,less}'                   Also generate files for sass and less.
-  hcm 'src/**/*.module.css' --watch                       Watch for changes and generate .d.ts and .d.ts.map.
-  hcm 'src/**/*.module.css' --declarationMap=false        Generate .d.ts only.
-  hcm 'src/**/*.module.css' --sassLoadPaths=src/style     Run with sass's `--load-path`.
-  hcm 'src/**/*.module.css' --lessIncludePaths=src/style  Run with less's `--include-path`.
+  hcm 'src/**/*.module.css'                                       Generate .d.ts and .d.ts.map.
+  hcm 'src/**/*.module.{css,scss,less}'                           Also generate files for sass and less.
+  hcm 'src/**/*.module.css' --watch                               Watch for changes and generate .d.ts and .d.ts.map.
+  hcm 'src/**/*.module.css' --declarationMap=false                Generate .d.ts only.
+  hcm 'src/**/*.module.css' --sassLoadPaths=src/style             Run with sass's `--load-path`.
+  hcm 'src/**/*.module.css' --lessIncludePaths=src/style          Run with less's `--include-path`.
+  hcm 'src/**/*.module.css' --webpackResolveAlias='{"@": "src"}'  Run with webpack's `resolve.alias`.
 ```
 
 ## Node.js API (Experimental)
