@@ -1,9 +1,8 @@
 import { createFixtures, getFixturePath } from '../test/util.js';
 import { createWebpackResolver } from './webpack-resolver.js';
 
-const webpackResolver = createWebpackResolver();
-
 test('resolves specifier with css-loader mechanism', async () => {
+  const webpackResolver = createWebpackResolver();
   const request = getFixturePath('/test/1.css');
   createFixtures({
     '/node_modules/package-1/index.css': `.a {}`,
@@ -53,12 +52,18 @@ test('resolves specifier with sass-loader mechanism', async () => {
 });
 
 test('resolves specifier with less-loader mechanism', async () => {
+  const webpackResolver = createWebpackResolver({ lessIncludePaths: [getFixturePath('/test/styles')] });
   const request = getFixturePath('/test/1.less');
   createFixtures({
     '/node_modules/package-1/index.less': `.a {}`,
+    '/test/styles/include-paths.less': `.a {}`,
   });
   expect(await webpackResolver('~package-1/index.less', { request })).toBe(
     getFixturePath('/node_modules/package-1/index.less'),
   );
   expect(await webpackResolver('~package-1', { request })).toBe(getFixturePath('/node_modules/package-1/index.less'));
+  // ref: https://github.com/webpack-contrib/less-loader/blob/81a0d27eb6d18e5dc550a60fc1007fdc77305b78/test/loader.test.js#L248-L253
+  // ref: https://github.com/webpack-contrib/less-loader/blob/393147064672ace986ec84aca21f69f0ab819a9c/test/fixtures/import-paths.less#L1
+  // ref: https://github.com/webpack-contrib/less-loader/blob/99d80bd290dae50375db6e17c5f56ec33754e258/test/helpers/getCodeFromLess.js#L47-L54
+  expect(await webpackResolver('include-paths', { request })).toBe(getFixturePath('/test/styles/include-paths.less'));
 });

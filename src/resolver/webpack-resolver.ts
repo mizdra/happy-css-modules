@@ -9,6 +9,11 @@ export type WebpackResolverOptions = {
    * @example ['/home/user/repository/src/styles']
    */
   sassLoadPaths?: string[] | undefined;
+  /**
+   * The option compatible with less's `--include-path`. It is an array of absolute paths.
+   * @example ['/home/user/repository/src/styles']
+   */
+  lessIncludePaths?: string[] | undefined;
 };
 
 // TODO: Support `resolve.alias` for Node.js API
@@ -58,6 +63,7 @@ export const createWebpackResolver: (webpackResolverOptions?: WebpackResolverOpt
     mainFiles: ['index', '...'],
     extensions: ['.less', '.css'],
     preferRelative: true,
+    modules: ['node_modules', ...(webpackResolverOptions?.lessIncludePaths ?? [])],
   });
 
   // NOTE: In theory, `sassLoaderResolver` should only be used when the resolver is called from `sassTransformer`.
