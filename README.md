@@ -55,59 +55,107 @@ Examples:
 
 See [src/index.ts](https://github.com/mizdra/happy-css-modules/blob/main/src/index.ts) for available API.
 
-### Example
+### Example: Custom `hcm` commands
 
-With the `transformer` option, you can use AltCSS, which is not supported by `happy-css-modules`.
+You can create your own customized `hcm` commands. We also provide a `parseArgv` utility that parses `process.argv` and extracts options.
 
 ```javascript
-// @ts-check
+#!/usr/bin/env ts-node
+// scripts/hcm.ts
 
-import { run } from 'happy-css-modules';
-import { readFile } from 'fs/promises';
-import { fileURLToPath, pathToFileURL } from 'url';
-import sass from 'sass';
+import { run, parseArgv } from 'happy-css-modules';
 
-// The custom transpiler supporting sass indented syntax
-/** @type {import('happy-css-modules').Transformer} */
-const transformer = async (source, from) => {
-  if (from.endsWith('.sass')) {
-    const result = await sass.compileStringAsync(source, {
-      // Use indented syntax
-      // ref: https://sass-lang.com/documentation/syntax#the-indented-syntax
-      syntax: 'indented',
-      url: pathToFileURL(from),
-      sourceMap: true,
-    });
-    return { css: result.css, map: result.sourceMap!, dependencies: result.loadedUrls };
-  }
-  return false;
-};
+// Write your code here...
 
 run({
-  pattern: 'src/**/*.css';
-  watch: false;
-  transformer,
+  // Inherit default CLI options (e.g. --watch).
+  ...parseArgv(process.argv),
+  // Add custom CLI options.
+  cwd: __dirname,
 }).catch((e) => {
   console.error(e);
   process.exit(1);
 });
 ```
 
-You can also create your own customized `hcm` commands. We also provide a `parseArgv` utility that parses `process.argv` and extracts options.
+### Example: Custom transformer
 
-```javascript
-#!/usr/bin/env node
-// scripts/hcm.js
-// @ts-check
+With the `transformer` option, you can use AltCSS, which is not supported by `happy-css-modules`.
 
-import { run, parseArgv } from 'happy-css-modules';
+```typescript
+#!/usr/bin/env ts-node
 
-// ...
+import { run, parseArgv, createDefaultTransformer, type Transformer } from 'happy-css-modules';
+import sass from 'sass';
+import { promisify } from 'util';
 
-run({
-  ...parseArgv(process.argv), // Inherit default CLI options (e.g. --watch)
-  transformer,
-}).catch((e) => {
+const defaultTransformer = createDefaultTransformer();
+const render = promisify(sass.render);
+
+// The custom transformer supporting sass indented syntax
+const transformer: Transformer = async (source, options) => {
+  if (from.endsWith('.sass')) {
+    const result = await render({
+      // Use indented syntax.
+      // ref: https://sass-lang.com/documentation/syntax#the-indented-syntax
+      indentedSyntax: true,
+      data: source,
+      file: options.from,
+      outFile: 'DUMMY',
+      // Output sourceMap.
+      sourceMap: true,
+      // Resolve import specifier using resolver.
+      importer: (url, prev, done) => {
+        options
+          .resolver(url, { request: prev })
+          .then((resolved) => done({ file: resolved }))
+          .catch((e) => done(e));
+      },
+    });
+    return { css: result.css, map: result.sourceMap!, dependencies: result.loadedUrls };
+  }
+  // Fallback to default transformer.
+  return await defaultTransformer(source, from);
+};
+
+run({ ...parseArgv(process.argv), transformer }).catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
+```
+
+### Example: Custom resolver
+
+With the `resolver` option, you can customize the resolution algorithm for import specifier (such as `@import "specifier"`).
+
+```typescript
+#!/usr/bin/env ts-node
+
+import { run, parseArgv, createDefaultResolver, type Resolver } from 'happy-css-modules';
+import { exists } from 'fs/promises';
+import { resolve, join } from 'path';
+
+const runnerOptions = parseArgv(process.argv);
+const defaultResolver = createDefaultResolver({
+  // Some runner options must be passed to the default resolver.
+  sassLoadPaths: runnerOptions.sassLoadPaths?.map((path) => resolve(process.cwd(), path)),
+  lessIncludePaths: runnerOptions.lessIncludePaths?.map((path) => resolve(process.cwd(), path)),
+});
+const stylesDir = resolve(__dirname, 'src/styles');
+
+const resolver: Resolver = async (specifier, options) => {
+  // If the default resolver cannot resolve, fallback to a customized resolve algorithm.
+  const resolvedByDefaultResolver = await defaultResolver(specifier, options);
+  if (resolvedByDefaultResolver === false) {
+    // Search for files in `src/styles` directory.
+    const path = join(stylesDir, specifier);
+    if (await exists(path)) return path;
+  }
+  // Returns `false` if specifier cannot be resolved.
+  return false;
+};
+
+run({ ...runnerOptions, resolver }).catch((e) => {
   console.error(e);
   process.exit(1);
 });
