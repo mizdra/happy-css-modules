@@ -153,3 +153,16 @@ test('lessIncludePaths', async () => {
   });
   await run({ ...defaultOptions, lessIncludePaths }); // not throw
 });
+
+test('webpackResolveAlias', async () => {
+  const webpackResolveAlias = { '@relative': 'test/relative', '@absolute': getFixturePath('/test/absolute') };
+  createFixtures({
+    '/test/1.less': dedent`
+    @import '@relative/2.less';
+    @import '@absolute/3.less';
+    `,
+    '/test/relative/2.less': `.a { dummy: ''; }`,
+    '/test/absolute/3.less': `.b { dummy: ''; }`,
+  });
+  await run({ ...defaultOptions, webpackResolveAlias }); // not throw
+});
