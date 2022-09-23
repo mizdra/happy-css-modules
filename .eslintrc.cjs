@@ -44,7 +44,7 @@ module.exports = {
       },
       rules: {
         '@typescript-eslint/no-unused-vars': 2,
-        '@typescript-eslint/consistent-type-imports': 2,
+        '@typescript-eslint/consistent-type-imports': [2, { disallowTypeAnnotations: false }],
       },
     },
     {

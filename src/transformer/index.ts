@@ -36,14 +36,16 @@ export const handleImportError = (packageName: string) => (e: unknown) => {
   throw e;
 };
 
-export const createDefaultTransformer: () => Transformer = () => async (source, options) => {
+export const createDefaultTransformer: () => Transformer = () => {
   const scssTransformer = createScssTransformer();
   const lessTransformer = createLessTransformer();
-  if (options.from.endsWith('.scss')) {
-    return scssTransformer(source, options);
-  } else if (options.from.endsWith('.less')) {
-    return lessTransformer(source, options);
-  }
-  // TODO: support postcss
-  return false;
+  return async (source, options) => {
+    if (options.from.endsWith('.scss')) {
+      return scssTransformer(source, options);
+    } else if (options.from.endsWith('.less')) {
+      return lessTransformer(source, options);
+    }
+    // TODO: support postcss
+    return false;
+  };
 };
