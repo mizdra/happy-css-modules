@@ -1,6 +1,7 @@
 import { exists } from '../util.js';
 import { createNodeResolver } from './node-resolver.js';
 import { createRelativeResolver } from './relative-resolver.js';
+import type { WebpackResolverOptions } from './webpack-resolver.js';
 import { createWebpackResolver } from './webpack-resolver.js';
 
 export type ResolverOptions = {
@@ -13,6 +14,8 @@ export type ResolverOptions = {
  * */
 export type Resolver = (specifier: string, options: ResolverOptions) => string | false | Promise<string | false>;
 
+export type DefaultResolverOptions = WebpackResolverOptions;
+
 /**
  * The Default resolver.
  *
@@ -24,10 +27,12 @@ export type Resolver = (specifier: string, options: ResolverOptions) => string |
  * @param options The options to resolve
  * @returns The resolved path (absolute). `false` means to skip resolving.
  */
-export const createDefaultResolver: () => Resolver = () => {
+export const createDefaultResolver: (defaultResolverOptions?: DefaultResolverOptions | undefined) => Resolver = (
+  defaultResolverOptions,
+) => {
   const relativeResolver = createRelativeResolver();
   const nodeResolver = createNodeResolver();
-  const webpackResolver = createWebpackResolver();
+  const webpackResolver = createWebpackResolver(defaultResolverOptions);
 
   // In less-loader, `relativeResolver` has priority over `webpackResolver`.
   // happy-css-modules follows suit.

@@ -29,14 +29,23 @@ test('resolves specifier with css-loader mechanism', async () => {
 });
 
 test('resolves specifier with sass-loader mechanism', async () => {
+  const webpackResolver = createWebpackResolver({ sassLoadPaths: [getFixturePath('/test/styles')] });
   const request = getFixturePath('/test/1.scss');
   createFixtures({
     '/node_modules/package-1/index.scss': `.a {}`,
+    '/test/styles/load-paths.scss': `.a {}`,
+    '/test/styles/_load-paths-with-underscore.scss': `.a {}`,
   });
   expect(await webpackResolver('~package-1/index.scss', { request })).toBe(
     getFixturePath('/node_modules/package-1/index.scss'),
   );
   expect(await webpackResolver('~package-1', { request })).toBe(getFixturePath('/node_modules/package-1/index.scss'));
+  // ref: https://github.com/webpack-contrib/sass-loader/blob/bed9fb5799a90020d43f705ea405f85b368621d7/test/scss/import-include-paths.scss#L1
+  expect(await webpackResolver('load-paths', { request })).toBe(getFixturePath('/test/styles/load-paths.scss'));
+  // FIXME
+  // ref: https://github.com/webpack-contrib/sass-loader/blob/bed9fb5799a90020d43f705ea405f85b368621d7/test/scss/import-include-paths.scss#L2
+  // ref: https://github.com/webpack-contrib/sass-loader/blob/49a578a218574ddc92a597c7e365b6c21960717e/src/utils.js#L492-L497
+  // expect(await webpackResolver('load-paths-with-underscore', { request })).toBe(getFixturePath('/test/styles/_load-paths-with-underscore.scss'));
 });
 
 test('resolves specifier with less-loader mechanism', async () => {

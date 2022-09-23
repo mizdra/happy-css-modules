@@ -3,8 +3,18 @@ import enhancedResolve from 'enhanced-resolve';
 import { exists } from '../util.js';
 import type { Resolver } from './index.js';
 
+export type WebpackResolverOptions = {
+  /**
+   * The option compatible with sass's `--load-path`. It is an array of absolute paths.
+   * @example ['/home/user/repository/src/styles']
+   */
+  sassLoadPaths?: string[] | undefined;
+};
+
 // TODO: Support `resolve.alias` for Node.js API
-export const createWebpackResolver: () => Resolver = () => {
+export const createWebpackResolver: (webpackResolverOptions?: WebpackResolverOptions | undefined) => Resolver = (
+  webpackResolverOptions,
+) => {
   /**
    * A resolver compatible with css-loader.
    *
@@ -33,6 +43,7 @@ export const createWebpackResolver: () => Resolver = () => {
     extensions: ['.sass', '.scss', '.css'],
     restrictions: [/\.((sa|sc|c)ss)$/i],
     preferRelative: true,
+    modules: ['node_modules', ...(webpackResolverOptions?.sassLoadPaths ?? [])],
   });
 
   /**

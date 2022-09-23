@@ -116,14 +116,27 @@ describe('handles external files', () => {
   test('treats imported tokens from external files the same as local tokens', async () => {
     await run({ ...defaultOptions });
     expect(await readFile(getFixturePath('/test/1.css.d.ts'), 'utf8')).toMatchInlineSnapshot(`
-    "declare const styles:
-      & Readonly<Pick<(typeof import("./2.css"))["default"], "b">>
-      & Readonly<{ "c": string }>
-      & Readonly<{ "a": string }>
-    ;
-    export default styles;
-    //# sourceMappingURL=./1.css.d.ts.map
-    "
-  `);
+          "declare const styles:
+            & Readonly<Pick<(typeof import("./2.css"))["default"], "b">>
+            & Readonly<{ "c": string }>
+            & Readonly<{ "a": string }>
+          ;
+          export default styles;
+          //# sourceMappingURL=./1.css.d.ts.map
+          "
+      `);
   });
+});
+
+test('sassLoadPaths', async () => {
+  const sassLoadPaths = ['test/relative', getFixturePath('/test/absolute')];
+  createFixtures({
+    '/test/1.scss': dedent`
+    @import '2.scss';
+    @import '3.scss';
+    `,
+    '/test/relative/2.scss': `.a { dummy: ''; }`,
+    '/test/absolute/3.scss': `.b { dummy: ''; }`,
+  });
+  await run({ ...defaultOptions, sassLoadPaths }); // not throw
 });

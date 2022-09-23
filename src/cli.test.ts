@@ -31,6 +31,13 @@ describe('parseArgv', () => {
     expect(parseArgv([...baseArgs, '1.css', '--declarationMap']).declarationMap).toBe(true);
     expect(parseArgv([...baseArgs, '1.css', '--no-declarationMap']).declarationMap).toBe(false);
   });
+  test('--sassLoadPaths', () => {
+    expect(
+      parseArgv([...baseArgs, '1.css', '--sassLoadPaths', 'dir1', '--sassLoadPaths', 'dir2']).sassLoadPaths,
+    ).toStrictEqual(['dir1', 'dir2']);
+    // Passing a number is treated as a string
+    expect(parseArgv([...baseArgs, '1.css', '--sassLoadPaths', '1']).sassLoadPaths).toStrictEqual(['1']);
+  });
   test('--silent', () => {
     expect(parseArgv([...baseArgs, '1.css', '--silent']).silent).toBe(true);
     expect(parseArgv([...baseArgs, '1.css', '--no-silent']).silent).toBe(false);
