@@ -35,6 +35,12 @@ export interface RunnerOptions {
    */
   sassLoadPaths?: string[] | undefined;
   /**
+   * The option compatible with less's `--include-path`. It is an array of relative or absolute paths.
+   * @example ['src/styles']
+   * @example ['/home/user/repository/src/styles']
+   */
+  lessIncludePaths?: string[] | undefined;
+  /**
    * Silent output. Do not show "files written" messages.
    * @default false
    */
@@ -56,7 +62,8 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
   const cwd = options.cwd ?? process.cwd();
   const silent = options.silent ?? false;
   const sassLoadPaths = options.sassLoadPaths?.map((path) => resolve(cwd, path));
-  const resolver = options.resolver ?? createDefaultResolver({ sassLoadPaths });
+  const lessIncludePaths = options.lessIncludePaths?.map((path) => resolve(cwd, path));
+  const resolver = options.resolver ?? createDefaultResolver({ sassLoadPaths, lessIncludePaths });
   const distOptions = options.outDir
     ? {
         rootDir: cwd, // TODO: support `--rootDir` option
