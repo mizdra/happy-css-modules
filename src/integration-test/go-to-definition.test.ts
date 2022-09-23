@@ -1,11 +1,9 @@
-import { jest } from '@jest/globals';
 import dedent from 'dedent';
 import { run } from '../runner.js';
-import { getModuleDefinitions, getMultipleIdentifierDefinitions } from '../test/tsserver.js';
+import { createTSServer } from '../test/tsserver.js';
 import { createFixtures, getFixturePath } from '../test/util.js';
 
-// It is heavy test, so increase timeout.
-jest.setTimeout(60 * 1000); // 60s
+const server = await createTSServer();
 
 const defaultOptions = {
   pattern: 'test/**/*.{css,scss}',
@@ -13,6 +11,10 @@ const defaultOptions = {
   declarationMap: true,
   cwd: getFixturePath('/'),
 };
+
+afterAll(async () => {
+  await server.exit();
+});
 
 test('basic', async () => {
   createFixtures({
@@ -44,7 +46,7 @@ test('basic', async () => {
     `,
   });
   await run({ ...defaultOptions });
-  const results = await getMultipleIdentifierDefinitions(getFixturePath(`/test/1.css`), [
+  const results = await server.getMultipleIdentifierDefinitions(getFixturePath(`/test/1.css`), [
     'basic',
     'cascading',
     'pseudo_class_1',
@@ -223,7 +225,7 @@ test('basic', async () => {
       },
     ]
   `);
-  const moduleDefinitions = await getModuleDefinitions(getFixturePath('/test/1.css'));
+  const moduleDefinitions = await server.getModuleDefinitions(getFixturePath('/test/1.css'));
   expect(moduleDefinitions).toMatchInlineSnapshot(`
     [
       { file: "<fixtures>/test/1.css", text: "", start: { line: 1, offset: 1 }, end: { line: 1, offset: 1 } },
@@ -248,7 +250,7 @@ test('imported tokens', async () => {
     `,
   });
   await run({ ...defaultOptions });
-  const results = await getMultipleIdentifierDefinitions(getFixturePath(`/test/1.css`), ['a', 'b', 'c', 'd']);
+  const results = await server.getMultipleIdentifierDefinitions(getFixturePath(`/test/1.css`), ['a', 'b', 'c', 'd']);
   expect(results).toMatchInlineSnapshot(`
     [
       {
@@ -307,7 +309,7 @@ test('with transformer', async () => {
     `,
   });
   await run({ ...defaultOptions });
-  const results = await getMultipleIdentifierDefinitions(getFixturePath(`/test/1.scss`), [
+  const results = await server.getMultipleIdentifierDefinitions(getFixturePath(`/test/1.scss`), [
     'basic',
     'nesting',
     'nesting_1',
