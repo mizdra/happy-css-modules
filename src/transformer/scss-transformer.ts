@@ -7,7 +7,6 @@ import type { LegacyResult } from 'sass';
 import type { Transformer, TransformerOptions } from './index.js';
 import { handleImportError } from './index.js';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 async function renderSass(sass: typeof import('sass'), source: string, options: TransformerOptions) {
   return new Promise<LegacyResult>((resolve, reject) => {
     sass.render(
@@ -35,7 +34,6 @@ async function renderSass(sass: typeof import('sass'), source: string, options: 
 }
 
 export const createScssTransformer: () => Transformer = () => {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   let sass: typeof import('sass');
   return async (source, options) => {
     sass ??= (await import('sass').catch(handleImportError('sass'))).default;
