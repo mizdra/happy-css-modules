@@ -1,6 +1,6 @@
 import { constants } from 'fs';
 import { access } from 'fs/promises';
-import { join, resolve } from 'path';
+import { join } from 'path';
 import minimatch from 'minimatch';
 /**
  * The SystemError type of Node.js.
@@ -64,8 +64,4 @@ export async function exists(path: string): Promise<boolean> {
 
 export function isMatchByGlob(filePath: string, pattern: string, options: { cwd: string }): boolean {
   return minimatch(filePath, join(options.cwd, pattern));
-}
-
-export function resolveByCwd(relativeOrAbsolutePath: string, options: { cwd: string }): string {
-  return resolve(options.cwd, relativeOrAbsolutePath);
 }

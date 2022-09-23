@@ -10,7 +10,7 @@ import { Loader } from './loader/index.js';
 import type { Resolver } from './resolver/index.js';
 import { createDefaultResolver } from './resolver/index.js';
 import { type Transformer } from './transformer/index.js';
-import { isMatchByGlob, resolveByCwd } from './util.js';
+import { isMatchByGlob } from './util.js';
 
 const glob = util.promisify(_glob);
 
@@ -54,18 +54,19 @@ export async function run(options: OverrideProp<RunnerOptions, 'watch', true>): 
 export async function run(options: RunnerOptions): Promise<void>;
 export async function run(options: RunnerOptions): Promise<Watcher | void> {
   const cwd = options.cwd ?? process.cwd();
-  const sassLoadPaths = options.sassLoadPaths?.map((path) => resolveByCwd(path, { cwd }));
-
+  const silent = options.silent ?? false;
+  const sassLoadPaths = options.sassLoadPaths?.map((path) => resolve(cwd, path));
   const resolver = options.resolver ?? createDefaultResolver({ sassLoadPaths });
-  const loader = new Loader({ transformer: options.transformer, resolver });
   const distOptions = options.outDir
     ? {
-        rootDir: process.cwd(), // TODO: support `--rootDir` option
+        rootDir: cwd, // TODO: support `--rootDir` option
         outDir: options.outDir,
       }
     : undefined;
+
+  const loader = new Loader({ transformer: options.transformer, resolver });
   const isExternalFile = (filePath: string) => {
-    return !isMatchByGlob(filePath, options.pattern, { cwd: options.cwd ?? process.cwd() });
+    return !isMatchByGlob(filePath, options.pattern, { cwd });
   };
 
   async function processFile(filePath: string) {
@@ -79,8 +80,8 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
         dtsFormatOptions: {
           localsConvention: options.localsConvention,
         },
-        silent: options.silent ?? false,
-        cwd: options.cwd ?? process.cwd(),
+        silent,
+        cwd,
         isExternalFile,
       });
     } catch (error) {
@@ -91,20 +92,20 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
   }
 
   if (options.watch) {
-    if (!options.silent) console.log('Watch ' + options.pattern + '...');
-    const watcher = chokidar.watch([options.pattern.replace(/\\/g, '/')], options.cwd ? { cwd: options.cwd } : {});
+    if (!silent) console.log('Watch ' + options.pattern + '...');
+    const watcher = chokidar.watch([options.pattern.replace(/\\/g, '/')], { cwd });
     watcher.on('all', (eventName, filePath) => {
       if (eventName === 'add' || eventName === 'change') {
-        processFile(resolve(options.cwd ?? process.cwd(), filePath)).catch(() => {
+        processFile(resolve(cwd, filePath)).catch(() => {
           // TODO: Emit a error by `Watcher#onerror`
         });
       }
     });
     return { close: async () => watcher.close() };
   } else {
-    const filePaths = (await glob(options.pattern, { dot: true, cwd: options.cwd ?? process.cwd() }))
+    const filePaths = (await glob(options.pattern, { dot: true, cwd }))
       // convert relative path to absolute path
-      .map((file) => resolve(options.cwd ?? process.cwd(), file));
+      .map((file) => resolve(cwd, file));
 
     // TODO: Use `@file-cache/core` to process only files that have changed
     const errors: unknown[] = [];
