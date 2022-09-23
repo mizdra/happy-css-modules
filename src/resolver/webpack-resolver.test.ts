@@ -2,9 +2,9 @@ import { createFixtures, getFixturePath } from '../test/util.js';
 import { createWebpackResolver } from './webpack-resolver.js';
 
 const webpackResolver = createWebpackResolver();
-const request = getFixturePath('/test/1.css');
 
-test('resolves specifier with webpack mechanism', async () => {
+test('resolves specifier with css-loader mechanism', async () => {
+  const request = getFixturePath('/test/1.css');
   createFixtures({
     '/node_modules/package-1/index.css': `.a {}`,
     '/node_modules/package-2/index.css': `.a {}`,
@@ -13,8 +13,6 @@ test('resolves specifier with webpack mechanism', async () => {
     '/node_modules/package-4/style.css': `.a {}`,
     '/node_modules/@scoped/package-5/index.css': `.a {}`,
     '/node_modules/package-6/index.css': `.a {}`,
-    '/node_modules/package-7/index.scss': `.a { dummy: ''; }`,
-    '/node_modules/package-8/index.less': `.a { dummy: ''; }`,
   });
   expect(await webpackResolver('~package-1/index.css', { request })).toBe(
     getFixturePath('/node_modules/package-1/index.css'),
@@ -28,6 +26,26 @@ test('resolves specifier with webpack mechanism', async () => {
   expect(await webpackResolver('package-6/index.css', { request })).toBe(
     getFixturePath('/node_modules/package-6/index.css'),
   );
-  expect(await webpackResolver('~package-7', { request })).toBe(getFixturePath('/node_modules/package-7/index.scss'));
-  expect(await webpackResolver('~package-8', { request })).toBe(getFixturePath('/node_modules/package-8/index.less'));
+});
+
+test('resolves specifier with sass-loader mechanism', async () => {
+  const request = getFixturePath('/test/1.scss');
+  createFixtures({
+    '/node_modules/package-1/index.scss': `.a {}`,
+  });
+  expect(await webpackResolver('~package-1/index.scss', { request })).toBe(
+    getFixturePath('/node_modules/package-1/index.scss'),
+  );
+  expect(await webpackResolver('~package-1', { request })).toBe(getFixturePath('/node_modules/package-1/index.scss'));
+});
+
+test('resolves specifier with less-loader mechanism', async () => {
+  const request = getFixturePath('/test/1.less');
+  createFixtures({
+    '/node_modules/package-1/index.less': `.a {}`,
+  });
+  expect(await webpackResolver('~package-1/index.less', { request })).toBe(
+    getFixturePath('/node_modules/package-1/index.less'),
+  );
+  expect(await webpackResolver('~package-1', { request })).toBe(getFixturePath('/node_modules/package-1/index.less'));
 });
