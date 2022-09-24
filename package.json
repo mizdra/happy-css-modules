@@ -48,6 +48,7 @@
     "import-meta-resolve": "^2.1.0",
     "minimatch": "^5.1.0",
     "postcss": "^8.4.14",
+    "postcss-load-config": "^4.0.1",
     "postcss-modules": "^4.3.1",
     "postcss-selector-parser": "^6.0.10",
     "postcss-value-parser": "^4.2.0",
