@@ -9,7 +9,7 @@ import { emitGeneratedFiles } from './emitter/index.js';
 import { Loader } from './loader/index.js';
 import type { Resolver } from './resolver/index.js';
 import { createDefaultResolver } from './resolver/index.js';
-import { type Transformer } from './transformer/index.js';
+import { createDefaultTransformer, type Transformer } from './transformer/index.js';
 import { isMatchByGlob } from './util.js';
 
 const glob = util.promisify(_glob);
@@ -47,6 +47,13 @@ export interface RunnerOptions {
    */
   webpackResolveAlias?: Record<string, string> | undefined;
   /**
+   * The option compatible with postcss's `--config`. It is a relative or absolute path.
+   * @example '.'
+   * @example 'postcss.config.js'
+   * @example '/home/user/repository/src'
+   */
+  postcssConfig?: string | undefined;
+  /**
    * Silent output. Do not show "files written" messages.
    * @default false
    */
@@ -75,6 +82,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
       lessIncludePaths: options.lessIncludePaths,
       webpackResolveAlias: options.webpackResolveAlias,
     });
+  const transformer = options.transformer ?? createDefaultTransformer({ cwd, postcssConfig: options.postcssConfig });
   const distOptions = options.outDir
     ? {
         rootDir: cwd, // TODO: support `--rootDir` option
@@ -82,7 +90,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
       }
     : undefined;
 
-  const loader = new Loader({ transformer: options.transformer, resolver });
+  const loader = new Loader({ transformer, resolver });
   const isExternalFile = (filePath: string) => {
     return !isMatchByGlob(filePath, options.pattern, { cwd });
   };
