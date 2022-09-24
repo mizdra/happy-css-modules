@@ -67,12 +67,14 @@ export async function run(options: RunnerOptions): Promise<void>;
 export async function run(options: RunnerOptions): Promise<Watcher | void> {
   const cwd = options.cwd ?? process.cwd();
   const silent = options.silent ?? false;
-  const sassLoadPaths = options.sassLoadPaths?.map((path) => resolve(cwd, path));
-  const lessIncludePaths = options.lessIncludePaths?.map((path) => resolve(cwd, path));
-  const webpackResolveAlias = options.webpackResolveAlias
-    ? Object.fromEntries(Object.entries(options.webpackResolveAlias).map(([key, value]) => [key, resolve(cwd, value)]))
-    : undefined;
-  const resolver = options.resolver ?? createDefaultResolver({ sassLoadPaths, lessIncludePaths, webpackResolveAlias });
+  const resolver =
+    options.resolver ??
+    createDefaultResolver({
+      cwd,
+      sassLoadPaths: options.sassLoadPaths,
+      lessIncludePaths: options.lessIncludePaths,
+      webpackResolveAlias: options.webpackResolveAlias,
+    });
   const distOptions = options.outDir
     ? {
         rootDir: cwd, // TODO: support `--rootDir` option

@@ -129,40 +129,34 @@ describe('handles external files', () => {
 });
 
 test('sassLoadPaths', async () => {
-  const sassLoadPaths = ['test/relative', getFixturePath('/test/absolute')];
+  const sassLoadPaths = ['test/relative'];
   createFixtures({
     '/test/1.scss': dedent`
     @import '2.scss';
-    @import '3.scss';
     `,
     '/test/relative/2.scss': `.a { dummy: ''; }`,
-    '/test/absolute/3.scss': `.b { dummy: ''; }`,
   });
   await run({ ...defaultOptions, sassLoadPaths }); // not throw
 });
 
 test('lessIncludePaths', async () => {
-  const lessIncludePaths = ['test/relative', getFixturePath('/test/absolute')];
+  const lessIncludePaths = ['test/relative'];
   createFixtures({
     '/test/1.less': dedent`
     @import '2.less';
-    @import '3.less';
     `,
     '/test/relative/2.less': `.a { dummy: ''; }`,
-    '/test/absolute/3.less': `.b { dummy: ''; }`,
   });
   await run({ ...defaultOptions, lessIncludePaths }); // not throw
 });
 
 test('webpackResolveAlias', async () => {
-  const webpackResolveAlias = { '@relative': 'test/relative', '@absolute': getFixturePath('/test/absolute') };
+  const webpackResolveAlias = { '@relative': 'test/relative' };
   createFixtures({
     '/test/1.less': dedent`
     @import '@relative/2.less';
-    @import '@absolute/3.less';
     `,
     '/test/relative/2.less': `.a { dummy: ''; }`,
-    '/test/absolute/3.less': `.b { dummy: ''; }`,
   });
   await run({ ...defaultOptions, webpackResolveAlias }); // not throw
 });

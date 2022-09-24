@@ -1,21 +1,26 @@
-import { basename, dirname, join } from 'path';
+import { basename, dirname, join, resolve } from 'path';
 import enhancedResolve from 'enhanced-resolve';
 import { exists } from '../util.js';
 import type { Resolver } from './index.js';
 
 export type WebpackResolverOptions = {
+  /** Working directory path. */
+  cwd?: string | undefined;
   /**
-   * The option compatible with sass's `--load-path`. It is an array of absolute paths.
+   * The option compatible with sass's `--load-path`. It is an array of relative or absolute paths.
+   * @example ['src/styles']
    * @example ['/home/user/repository/src/styles']
    */
   sassLoadPaths?: string[] | undefined;
   /**
-   * The option compatible with less's `--include-path`. It is an array of absolute paths.
+   * The option compatible with less's `--include-path`. It is an array of relative or absolute paths.
+   * @example ['src/styles']
    * @example ['/home/user/repository/src/styles']
    */
   lessIncludePaths?: string[] | undefined;
   /**
-   * The option compatible with webpack's `resolve.alias`. It is an object consisting of a pair of alias names and absolute paths.
+   * The option compatible with webpack's `resolve.alias`. It is an object consisting of a pair of alias names and relative or absolute paths.
+   * @example { style: 'src/styles', '@': 'src' }
    * @example { style: '/home/user/repository/src/styles', '@': '/home/user/repository/src' }
    */
   webpackResolveAlias?: Record<string, string> | undefined;
@@ -25,6 +30,14 @@ export type WebpackResolverOptions = {
 export const createWebpackResolver: (webpackResolverOptions?: WebpackResolverOptions | undefined) => Resolver = (
   webpackResolverOptions,
 ) => {
+  const cwd = webpackResolverOptions?.cwd ?? process.cwd();
+  const sassLoadPaths = webpackResolverOptions?.sassLoadPaths?.map((path) => resolve(cwd, path));
+  const lessIncludePaths = webpackResolverOptions?.lessIncludePaths?.map((path) => resolve(cwd, path));
+  const webpackResolveAlias = webpackResolverOptions?.webpackResolveAlias
+    ? Object.fromEntries(
+        Object.entries(webpackResolverOptions?.webpackResolveAlias).map(([key, value]) => [key, resolve(cwd, value)]),
+      )
+    : undefined;
   /**
    * A resolver compatible with css-loader.
    *
@@ -38,7 +51,7 @@ export const createWebpackResolver: (webpackResolverOptions?: WebpackResolverOpt
     mainFiles: ['index', '...'],
     extensions: ['.css', '...'],
     preferRelative: true,
-    alias: webpackResolverOptions?.webpackResolveAlias,
+    alias: webpackResolveAlias,
   });
 
   /**
@@ -54,8 +67,8 @@ export const createWebpackResolver: (webpackResolverOptions?: WebpackResolverOpt
     extensions: ['.sass', '.scss', '.css'],
     restrictions: [/\.((sa|sc|c)ss)$/i],
     preferRelative: true,
-    alias: webpackResolverOptions?.webpackResolveAlias,
-    modules: ['node_modules', ...(webpackResolverOptions?.sassLoadPaths ?? [])],
+    alias: webpackResolveAlias,
+    modules: ['node_modules', ...(sassLoadPaths ?? [])],
   });
 
   /**
@@ -70,8 +83,8 @@ export const createWebpackResolver: (webpackResolverOptions?: WebpackResolverOpt
     mainFiles: ['index', '...'],
     extensions: ['.less', '.css'],
     preferRelative: true,
-    alias: webpackResolverOptions?.webpackResolveAlias,
-    modules: ['node_modules', ...(webpackResolverOptions?.lessIncludePaths ?? [])],
+    alias: webpackResolveAlias,
+    modules: ['node_modules', ...(lessIncludePaths ?? [])],
   });
 
   // NOTE: In theory, `sassLoaderResolver` should only be used when the resolver is called from `sassTransformer`.
