@@ -3,6 +3,7 @@ import styles2 from './02-import/1.css';
 import styles3 from './03-composes/1.css';
 import styles4 from './04-sass/1.scss';
 import styles5 from './05-less/1.less';
+import styles6 from './06-postcss/1.css';
 
 console.log(styles1.basic);
 console.log(styles1.cascading);
@@ -45,3 +46,7 @@ console.log(styles5.a_2_1);
 console.log(styles5.a_2_2);
 console.log(styles5.b_1);
 console.log(styles5.c);
+
+console.log(styles6.a_1);
+console.log(styles6.a_2);
+console.log(styles6.b);
