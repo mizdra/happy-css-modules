@@ -105,5 +105,10 @@
     }
   },
   "packageManager": "pnpm@7.9.5",
-  "prettier": "@mizdra/prettier-config-mizdra"
+  "prettier": "@mizdra/prettier-config-mizdra",
+  "pnpm": {
+    "patchedDependencies": {
+      "postcss-load-config@4.0.1": "patches/postcss-load-config@4.0.1.patch"
+    }
+  }
 }

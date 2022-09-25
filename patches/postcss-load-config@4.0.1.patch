@@ -1,0 +1,18 @@
+diff --git a/src/index.js b/src/index.js
+index a7d16703a96a1229381beef905287192db332332..b692564db4dbd16e810a470dbc95209eb0589568 100644
+--- a/src/index.js
++++ b/src/index.js
+@@ -68,8 +68,11 @@ const createContext = (ctx) => {
+ }
+ 
+ const importDefault = async filepath => {
+-  const module = await import(url.pathToFileURL(filepath).href)
+-  return module.default
++  // This is code for importing configuration files such as postcss.config.js.
++  // However, for some reason, using dynamic import causes a `Segmentation fault (core dumped)`. This is probably a bug in Jest, Node.js, or V8.
++  // So here we use `require` instead. `require` cannot import ESM modules, but the configuration file used in the test is in CJS format, so we can ignore the problem.
++  const module = require(filepath)
++  return module
+ }
+ 
+ const addTypeScriptLoader = (options = {}, loader) => {
