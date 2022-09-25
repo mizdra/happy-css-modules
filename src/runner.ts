@@ -111,8 +111,13 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
         isExternalFile,
       });
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-      console.error(chalk.red('[Error] ' + error));
+      if (error instanceof Error) {
+        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+        console.error(chalk.red('[Error] ' + error.stack));
+      } else {
+        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+        console.error(chalk.red('[Error] ' + error));
+      }
       throw error;
     }
   }

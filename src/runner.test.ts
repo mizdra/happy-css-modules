@@ -91,9 +91,9 @@ test('returns an error if the file fails to process in non-watch mode', async ()
   // The error is logged to console.error.
   expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
   // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-  expect(consoleErrorSpy).toHaveBeenNthCalledWith(1, chalk.red('[Error] ' + error.errors[0]));
+  expect(consoleErrorSpy).toHaveBeenNthCalledWith(1, chalk.red('[Error] ' + error.errors[0]!.stack));
   // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-  expect(consoleErrorSpy).toHaveBeenNthCalledWith(2, chalk.red('[Error] ' + error.errors[1]));
+  expect(consoleErrorSpy).toHaveBeenNthCalledWith(2, chalk.red('[Error] ' + error.errors[1].stack));
 
   // The valid files are emitted.
   expect(await exists(getFixturePath('/test/1.css.d.ts'))).toBe(true);
