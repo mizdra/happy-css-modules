@@ -16,7 +16,7 @@ specifiers:
   '@types/line-column': ^1.0.0
   '@types/minimatch': ^5.1.2
   '@types/node': ^18.0.6
-  '@types/yargs': ^17.0.12
+  '@types/yargs': ^17.0.13
   '@typescript-eslint/eslint-plugin': ^5.31.0
   '@typescript-eslint/parser': ^5.31.0
   '@typescript/server-harness': ^0.2.0
@@ -80,7 +80,7 @@ devDependencies:
   '@types/line-column': 1.0.0
   '@types/minimatch': 5.1.2
   '@types/node': 18.0.6
-  '@types/yargs': 17.0.12
+  '@types/yargs': 17.0.13
   '@typescript-eslint/eslint-plugin': 5.31.0_d5zwcxr4bwkhmuo464cb3a2puu
   '@typescript-eslint/parser': 5.31.0_he2ccbldppg44uulnyq4rwocfa
   '@typescript/server-harness': 0.2.0
@@ -814,7 +814,7 @@ packages:
       '@types/istanbul-lib-coverage': 2.0.4
       '@types/istanbul-reports': 3.0.1
       '@types/node': 18.7.11
-      '@types/yargs': 17.0.12
+      '@types/yargs': 17.0.13
       chalk: 4.1.2
     dev: true
 
@@ -1054,8 +1054,8 @@ packages:
     resolution: {integrity: sha512-iO9ZQHkZxHn4mSakYV0vFHAVDyEOIJQrV2uZ06HxEPcx+mt8swXoZHIbaaJ2crJYFfErySgktuTZ3BeLz+XmFA==}
     dev: true
 
-  /@types/yargs/17.0.12:
-    resolution: {integrity: sha512-Nz4MPhecOFArtm81gFQvQqdV7XYCrWKx5uUt6GNHredFHn1i2mtWqXTON7EPXMtNi1qjtjEM/VCHDhcHsAMLXQ==}
+  /@types/yargs/17.0.13:
+    resolution: {integrity: sha512-9sWaruZk2JGxIQU+IhI1fhPYRcQ0UuTNuKuCW9bR5fp7qi2Llf7WDzNa17Cy7TKnh3cdxDOiyTu6gaLS0eDatg==}
     dependencies:
       '@types/yargs-parser': 21.0.0
     dev: true
