@@ -70,7 +70,7 @@
     "@types/line-column": "^1.0.0",
     "@types/minimatch": "^5.1.2",
     "@types/node": "^18.0.6",
-    "@types/yargs": "^17.0.12",
+    "@types/yargs": "^17.0.13",
     "@typescript-eslint/eslint-plugin": "^5.31.0",
     "@typescript-eslint/parser": "^5.31.0",
     "@typescript/server-harness": "^0.2.0",
