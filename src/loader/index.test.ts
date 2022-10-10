@@ -1,6 +1,8 @@
 import fs, { readFile, writeFile } from 'fs/promises';
+import { randomUUID } from 'node:crypto';
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
+import { createDefaultTransformer } from '../index.js';
 import { createFixtures, FIXTURE_DIR_PATH, getFixturePath } from '../test/util.js';
 import { sleepSync } from '../util.js';
 
@@ -311,7 +313,83 @@ test('throws error the composition of non-existent file', async () => {
   }).rejects.toThrowError(`Could not resolve './2.css' in '<fixtures>/test/1.css'`);
 });
 
-test.todo('supports sourcemap file and inline sourcemap');
+describe('supports sourcemap', () => {
+  test('restores original locations from sourcemap', async () => {
+    const transformer = createDefaultTransformer();
+    const loader = new Loader({ transformer });
+    createFixtures({
+      '/test/1.scss': dedent`
+      .nesting {
+        dummy: '';
+        .nesting_child {
+          dummy: '';
+        }
+      }
+      `,
+    });
+    const result = await loader.load(getFixturePath('/test/1.scss'));
+    expect(result).toMatchInlineSnapshot(`
+      {
+        dependencies: [],
+        tokens: [
+          {
+            name: "nesting",
+            originalLocations: [
+              { filePath: "<fixtures>/test/1.scss", start: { line: 1, column: 1 }, end: { line: 1, column: 8 } },
+              { filePath: "<fixtures>/test/1.scss", start: { line: 3, column: 3 }, end: { line: 3, column: 10 } },
+            ],
+          },
+          {
+            name: "nesting_child",
+            originalLocations: [
+              { filePath: "<fixtures>/test/1.scss", start: { line: 3, column: 3 }, end: { line: 3, column: 16 } },
+            ],
+          },
+        ],
+      }
+    `);
+  });
+  test('treats originalLocation as empty if sourcemap is broken', async () => {
+    const uuid = randomUUID();
+    createFixtures({
+      [`/${uuid}/postcss.config.js`]: dedent`
+      module.exports = {
+        plugins: [],
+      };
+      `,
+      '/test/1.css': dedent`
+      .selector_list_a_1, .selector_list_a_2 {}
+      /* In postcss, including newlines in the selector list breaks the sourcemap. */
+      .selector_list_b_1,
+      .selector_list_b_2 {}
+      `,
+    });
+    const transformer = createDefaultTransformer({ postcssConfig: getFixturePath(`/${uuid}/postcss.config.js`) });
+    const loader = new Loader({ transformer });
+    const result = await loader.load(getFixturePath('/test/1.css'));
+    expect(result).toMatchInlineSnapshot(`
+      {
+        dependencies: [],
+        tokens: [
+          {
+            name: "selector_list_a_1",
+            originalLocations: [
+              { filePath: "<fixtures>/test/1.css", start: { line: 1, column: 1 }, end: { line: 1, column: 18 } },
+            ],
+          },
+          {
+            name: "selector_list_a_2",
+            originalLocations: [
+              { filePath: "<fixtures>/test/1.css", start: { line: 1, column: 1 }, end: { line: 1, column: 18 } },
+            ],
+          },
+          { name: "selector_list_b_1", originalLocations: [{}] },
+          { name: "selector_list_b_2", originalLocations: [{}] },
+        ],
+      }
+    `);
+  });
+});
 
 test('ignores http(s) protocol file', async () => {
   createFixtures({

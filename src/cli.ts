@@ -57,6 +57,11 @@ export function parseArgv(argv: string[]): RunnerOptions {
       string: true,
       describe: "The option compatible with webpack's `resolve.alias`.",
     })
+    // TODO: Support --noPostcssConfig option.
+    .option('postcssConfig', {
+      string: true,
+      describe: "The option compatible with postcss's `--config`.",
+    })
     .option('silent', {
       type: 'boolean',
       default: false,
@@ -96,6 +101,7 @@ export function parseArgv(argv: string[]): RunnerOptions {
     sassLoadPaths: parsedArgv.sassLoadPaths?.map((item) => item.toString()),
     lessIncludePaths: parsedArgv.lessIncludePaths?.map((item) => item.toString()),
     webpackResolveAlias: parsedArgv.webpackResolveAlias ? JSON.parse(parsedArgv.webpackResolveAlias) : undefined,
+    postcssConfig: parsedArgv.postcssConfig,
     silent: parsedArgv.silent,
   };
 }

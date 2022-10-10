@@ -1,5 +1,7 @@
 import type { StrictlyResolver } from '../loader/index.js';
 import { createLessTransformer } from './less-transformer.js';
+import type { PostcssTransformerOptions } from './postcss-transformer.js';
+import { createPostcssTransformer } from './postcss-transformer.js';
 import { createScssTransformer } from './scss-transformer.js';
 
 /**
@@ -36,16 +38,22 @@ export const handleImportError = (packageName: string) => (e: unknown) => {
   throw e;
 };
 
-export const createDefaultTransformer: () => Transformer = () => {
+export type DefaultTransformerOptions = PostcssTransformerOptions;
+
+export const createDefaultTransformer: (defaultTransformerOptions?: DefaultTransformerOptions) => Transformer = (
+  defaultTransformerOptions,
+) => {
   const scssTransformer = createScssTransformer();
   const lessTransformer = createLessTransformer();
+  const postcssTransformer = createPostcssTransformer(defaultTransformerOptions);
   return async (source, options) => {
     if (options.from.endsWith('.scss')) {
       return scssTransformer(source, options);
     } else if (options.from.endsWith('.less')) {
       return lessTransformer(source, options);
+    } else {
+      // TODO: Support multi-stage transformations by sass and less.
+      return postcssTransformer(source, options);
     }
-    // TODO: support postcss
-    return false;
   };
 };

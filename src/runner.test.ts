@@ -1,4 +1,6 @@
 import { readFile, writeFile } from 'fs/promises';
+import { randomUUID } from 'node:crypto';
+import { createRequire } from 'node:module';
 import { jest } from '@jest/globals';
 import chalk from 'chalk';
 import dedent from 'dedent';
@@ -6,6 +8,8 @@ import AggregateError from 'es-aggregate-error';
 import type { Watcher } from './runner.js';
 import { run } from './runner.js';
 import { createFixtures, exists, getFixturePath, waitForAsyncTask } from './test/util.js';
+
+const require = createRequire(import.meta.url);
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
@@ -87,9 +91,9 @@ test('returns an error if the file fails to process in non-watch mode', async ()
   // The error is logged to console.error.
   expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
   // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-  expect(consoleErrorSpy).toHaveBeenNthCalledWith(1, chalk.red('[Error] ' + error.errors[0]));
+  expect(consoleErrorSpy).toHaveBeenNthCalledWith(1, chalk.red('[Error] ' + error.errors[0]!.stack));
   // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-  expect(consoleErrorSpy).toHaveBeenNthCalledWith(2, chalk.red('[Error] ' + error.errors[1]));
+  expect(consoleErrorSpy).toHaveBeenNthCalledWith(2, chalk.red('[Error] ' + error.errors[1].stack));
 
   // The valid files are emitted.
   expect(await exists(getFixturePath('/test/1.css.d.ts'))).toBe(true);
@@ -159,4 +163,23 @@ test('webpackResolveAlias', async () => {
     '/test/relative/2.less': `.a { dummy: ''; }`,
   });
   await run({ ...defaultOptions, webpackResolveAlias }); // not throw
+});
+
+test('postcssConfig', async () => {
+  const uuid = randomUUID();
+  const postcssConfig = `${uuid}/postcss.config.js`;
+  createFixtures({
+    [`/${uuid}/postcss.config.js`]: dedent`
+    module.exports = {
+      plugins: [
+        require('${require.resolve('postcss-simple-vars')}'),
+      ],
+    };
+    `,
+    '/test/1.css': dedent`
+    $prefix: foo;
+    .$(prefix)_bar {}
+    `,
+  });
+  await run({ ...defaultOptions, postcssConfig }); // not throw
 });

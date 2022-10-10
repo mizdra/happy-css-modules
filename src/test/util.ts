@@ -31,18 +31,24 @@ export function createComposesDeclarations(root: Root): Declaration[] {
 
 export function fakeToken(args: {
   name: Token['name'];
-  originalLocations: { filePath?: Location['filePath']; start: Location['start'] }[];
+  originalLocations: { filePath?: Location['filePath']; start?: Location['start'] }[];
 }): Token {
   return {
     name: args.name,
-    originalLocations: args.originalLocations.map((location) => ({
-      filePath: location.filePath ?? getFixturePath('/test/1.css'),
-      start: location.start,
-      end: {
-        line: location.start.line,
-        column: location.start.column + args.name.length - 1,
-      },
-    })),
+    originalLocations: args.originalLocations.map((location) => {
+      if (location.filePath === undefined || location.start === undefined) {
+        return { filePath: undefined, start: undefined, end: undefined };
+      } else {
+        return {
+          filePath: location.filePath ?? getFixturePath('/test/1.css'),
+          start: location.start,
+          end: {
+            line: location.start.line,
+            column: location.start.column + args.name.length - 1,
+          },
+        };
+      }
+    }),
   };
 }
 

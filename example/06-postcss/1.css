@@ -1,0 +1,10 @@
+@import './2.css'; /* postcss-import feature test */
+@import 'https://raw.githubusercontent.com/mizdra/happy-css-modules/main/example/06-postcss/2.css';
+
+$prefix: a; /* postcss-simple-vars feature test */
+.$(prefix)_1 {
+  dummy: '';
+}
+.$(prefix)_2 {
+  dummy: '';
+}

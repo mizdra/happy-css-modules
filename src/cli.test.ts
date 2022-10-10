@@ -54,6 +54,12 @@ describe('parseArgv', () => {
       key2: 'value2',
     });
   });
+  test('--postcssConfig', () => {
+    expect(parseArgv([...baseArgs, '1.css', '--postcssConfig', '.']).postcssConfig).toBe('.');
+    expect(parseArgv([...baseArgs, '1.css', '--postcssConfig', 'postcss.config.js']).postcssConfig).toBe(
+      'postcss.config.js',
+    );
+  });
   test('--silent', () => {
     expect(parseArgv([...baseArgs, '1.css', '--silent']).silent).toBe(true);
     expect(parseArgv([...baseArgs, '1.css', '--no-silent']).silent).toBe(false);

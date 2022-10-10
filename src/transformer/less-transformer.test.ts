@@ -45,37 +45,37 @@ test('handles less features', async () => {
         {
           name: "b_1",
           originalLocations: [
-            { filePath: "<fixtures>/test/2.less", start: { line: 1, column: 1 }, end: { line: 1, column: 3 } },
+            { filePath: "<fixtures>/test/2.less", start: { line: 1, column: 1 }, end: { line: 1, column: 4 } },
           ],
         },
         {
           name: "a_1",
           originalLocations: [
-            { filePath: "<fixtures>/test/1.less", start: { line: 2, column: 1 }, end: { line: 2, column: 3 } },
+            { filePath: "<fixtures>/test/1.less", start: { line: 2, column: 1 }, end: { line: 2, column: 4 } },
           ],
         },
         {
           name: "a_2",
           originalLocations: [
-            { filePath: "<fixtures>/test/1.less", start: { line: 3, column: 1 }, end: { line: 3, column: 3 } },
+            { filePath: "<fixtures>/test/1.less", start: { line: 3, column: 1 }, end: { line: 3, column: 4 } },
           ],
         },
         {
           name: "a_2_1",
           originalLocations: [
-            { filePath: "<fixtures>/test/1.less", start: { line: 6, column: 3 }, end: { line: 6, column: 7 } },
+            { filePath: "<fixtures>/test/1.less", start: { line: 6, column: 3 }, end: { line: 6, column: 8 } },
           ],
         },
         {
           name: "a_2_2",
           originalLocations: [
-            { filePath: "<fixtures>/test/1.less", start: { line: 7, column: 3 }, end: { line: 7, column: 7 } },
+            { filePath: "<fixtures>/test/1.less", start: { line: 7, column: 3 }, end: { line: 7, column: 8 } },
           ],
         },
         {
           name: "c",
           originalLocations: [
-            { filePath: "<fixtures>/test/3.less", start: { line: 1, column: 1 }, end: { line: 1, column: 1 } },
+            { filePath: "<fixtures>/test/3.less", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
       ],
