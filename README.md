@@ -34,6 +34,7 @@ Options:
       --sassLoadPaths        The option compatible with sass's `--load-path`.                                                        [array]
       --lessIncludePaths     The option compatible with less's `--include-path`.                                                     [array]
       --webpackResolveAlias  The option compatible with webpack's `resolve.alias`.                                                  [string]
+      --postcssConfig        The option compatible with postcss's `--config`.                                                       [string]
       --silent               Silent output. Do not show "files written" messages                                  [boolean] [default: false]
   -h, --help                 Show help                                                                                             [boolean]
   -v, --version              Show version number                                                                                   [boolean]
