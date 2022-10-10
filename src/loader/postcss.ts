@@ -11,14 +11,20 @@ export type Position = {
   column: number;
 };
 
-/** The location of class selector. */
-export type Location = {
-  filePath: string;
-  /** The inclusive starting position of the node's source (compatible with postcss). */
-  start: Position;
-  /** The inclusive ending position of the node's source (compatible with postcss). */
-  end: Position;
-};
+/** The original location of class selector. If the original location is not found, all fields are `undefined`. */
+export type Location =
+  | {
+      filePath: string;
+      /** The inclusive starting position of the node's source (compatible with postcss). */
+      start: Position;
+      /** The inclusive ending position of the node's source (compatible with postcss). */
+      end: Position;
+    }
+  | {
+      filePath: undefined;
+      start: undefined;
+      end: undefined;
+    };
 
 function removeDependenciesPlugin(): Plugin {
   return {
@@ -80,49 +86,45 @@ export function getOriginalLocation(rule: Rule, classSelector: ClassName): Locat
   if (rule.source.end === undefined || classSelector.source.end === undefined) throw new Error('Node#end is undefined');
   if (rule.source.input.file === undefined) throw new Error('Node#input.file is undefined');
 
-  const start = {
+  const classSelectorStartPosition = {
     // The line is 1-based.
     line: rule.source.start.line + (classSelector.source.start.line - 1),
     // The column is 1-based.
     column: rule.source.start.column + (classSelector.source.start.column - 1),
   };
-  const end = {
-    line: start.line,
+  const classSelectorEndPosition = {
+    line: classSelectorStartPosition.line,
     // The column is inclusive.
-    column: start.column + classSelector.value.length,
+    column: classSelectorStartPosition.column + classSelector.value.length,
   };
-  let location = {
+  const classSelectorLocation = {
     filePath: rule.source.input.file,
-    start,
-    end,
+    start: classSelectorStartPosition,
+    end: classSelectorEndPosition,
   };
 
-  if (rule.source.input.map) {
-    const origin = rule.source.input.origin(
-      location.start.line,
-      // The column of `Input#origin` is 0-based. This behavior is undocumented and probably a postcss's bug.
-      // TODO: Open PR to postcss/postcss
-      location.start.column - 1,
-    );
-    if (origin === false) throw new Error('`Input#origin` returned false');
-    if (origin.file === undefined) throw new Error('`FilePosition#file` is undefined');
+  if (!rule.source.input.map) return classSelectorLocation;
 
-    location = {
-      filePath: origin.file,
-      start: {
-        line: origin.line,
-        // The column of `Input#origin` is 0-based.
-        column: origin.column + 1,
-      },
-      end: {
-        line: origin.line,
-        // The column of `Input#origin` is 0-based. Also, the column of happy-css-modules is inclusive.
-        column: origin.column + 1 + (classSelector.value.length - 1),
-      },
-    };
+  const classSelectorOrigin = rule.source.input.origin(
+    classSelectorLocation.start.line,
+    // The column of `Input#origin` is 0-based. This behavior is undocumented and probably a postcss's bug.
+    // TODO: Open PR to postcss/postcss
+    classSelectorLocation.start.column - 1,
+  );
+  if (classSelectorOrigin === false || classSelectorOrigin.file === undefined) {
+    return { filePath: undefined, start: undefined, end: undefined };
   }
-
-  return location;
+  return {
+    filePath: classSelectorOrigin.file,
+    start: {
+      line: classSelectorOrigin.line,
+      column: classSelectorOrigin.column + 1,
+    },
+    end: {
+      line: classSelectorOrigin.line,
+      column: classSelectorOrigin.column + classSelector.value.length + 1,
+    },
+  };
 }
 
 function isAtRuleNode(node: Node): node is AtRule {

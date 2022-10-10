@@ -65,7 +65,16 @@ function generateTokenDeclarations(
     // This is due to the sourcemap specification. Therefore, we output multiple type definitions
     // with the same name and assign a separate original position to each.
 
-    for (const originalLocation of token.originalLocations) {
+    for (let originalLocation of token.originalLocations) {
+      if (originalLocation.filePath === undefined) {
+        // If the original location is not specified, fallback to the source file.
+        originalLocation = {
+          filePath: filePath,
+          start: { line: 1, column: 1 },
+          end: { line: 1, column: 1 },
+        };
+      }
+
       result.push(
         originalLocation.filePath === filePath || isExternalFile(originalLocation.filePath)
           ? new SourceNode(null, null, null, [
