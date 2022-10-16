@@ -1,7 +1,10 @@
-import { constants } from 'fs';
+import { constants, readFileSync } from 'fs';
 import { access } from 'fs/promises';
-import { join } from 'path';
+import { join, dirname, resolve } from 'path';
+import { fileURLToPath } from 'url';
+import { resolve as importMetaResolve } from 'import-meta-resolve';
 import minimatch from 'minimatch';
+
 /**
  * The SystemError type of Node.js.
  * @see https://nodejs.org/api/errors.html#class-systemerror
@@ -64,4 +67,20 @@ export async function exists(path: string): Promise<boolean> {
 
 export function isMatchByGlob(filePath: string, pattern: string, options: { cwd: string }): boolean {
   return minimatch(filePath, join(options.cwd, pattern));
+}
+
+export function getPackageJson() {
+  return JSON.parse(readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '../package.json'), 'utf-8'));
+}
+
+export async function getInstalledPeerDependencies(): Promise<string[]> {
+  const pkgJson = getPackageJson();
+  const result = [];
+  for (const deps of Object.keys(pkgJson.peerDependencies)) {
+    const isInstalled = await importMetaResolve(deps, import.meta.url)
+      .then(() => true)
+      .catch(() => false);
+    if (isInstalled) result.push(deps);
+  }
+  return result;
 }

@@ -1,21 +1,18 @@
-import { readFileSync } from 'fs';
-import { dirname, resolve } from 'path';
-import { fileURLToPath } from 'url';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { type RunnerOptions } from './runner.js';
-
-const pkgJson = JSON.parse(readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '../package.json'), 'utf-8'));
+import { getPackageJson } from './util.js';
 
 /**
  * Parse command line arguments.
  * @returns Runner options.
  */
 export function parseArgv(argv: string[]): RunnerOptions {
+  const pkgJson = getPackageJson();
   const parsedArgv = yargs(hideBin(argv))
     .wrap(Math.min(140, process.stdout.columns))
     .scriptName('hcm')
-    .usage('Create .d.ts and .d.ts.map from CSS modules *.css files.\n\n$0 [options] <glob>')
+    .usage('Generate .d.ts and .d.ts.map for CSS modules.\n\n$0 [options] <glob>')
     .example("$0 'src/**/*.module.css'", 'Generate .d.ts and .d.ts.map.')
     .example("$0 'src/**/*.module.{css,scss,less}'", 'Also generate files for sass and less.')
     .example("$0 'src/**/*.module.css' --watch", 'Watch for changes and generate .d.ts and .d.ts.map.')
@@ -62,6 +59,17 @@ export function parseArgv(argv: string[]): RunnerOptions {
       string: true,
       describe: "The option compatible with postcss's `--config`.",
     })
+    .option('cache', {
+      type: 'boolean',
+      default: true,
+      describe: 'Only generate .d.ts and .d.ts.map for changed files.',
+    })
+    .option('cacheStrategy', {
+      choices: ['content', 'metadata'] as const,
+      // NOTE: This is a workaround for `parsedArgv.cacheStrategy` type breaks.
+      default: 'content' as RunnerOptions['cacheStrategy'],
+      describe: 'Strategy for the cache to use for detecting changed files.',
+    })
     .option('silent', {
       type: 'boolean',
       default: false,
@@ -102,6 +110,8 @@ export function parseArgv(argv: string[]): RunnerOptions {
     lessIncludePaths: parsedArgv.lessIncludePaths?.map((item) => item.toString()),
     webpackResolveAlias: parsedArgv.webpackResolveAlias ? JSON.parse(parsedArgv.webpackResolveAlias) : undefined,
     postcssConfig: parsedArgv.postcssConfig,
+    cache: parsedArgv.cache,
+    cacheStrategy: parsedArgv.cacheStrategy,
     silent: parsedArgv.silent,
   };
 }
