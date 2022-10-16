@@ -401,3 +401,12 @@ test('ignores http(s) protocol file', async () => {
   const result = await locator.load(getFixturePath('/test/1.css'));
   expect(result.dependencies).toStrictEqual([]);
 });
+
+test('block concurrent calls to load method', async () => {
+  createFixtures({
+    '/test/1.css': `.a {}`,
+  });
+  await expect(async () => {
+    await Promise.all([locator.load(getFixturePath('/test/1.css')), locator.load(getFixturePath('/test/1.css'))]);
+  }).rejects.toThrowError('Cannot call `Locator#load` concurrently.');
+});
