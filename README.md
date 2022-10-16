@@ -27,7 +27,6 @@ Generate .d.ts and .d.ts.map for CSS modules.
 hcm [options] <glob>
 
 Options:
-      --outDir               Output directory                                                                                       [string]
   -w, --watch                Watch input directory's css files or pattern                                         [boolean] [default: false]
       --localsConvention     Style of exported class names.                  [choices: "camelCase", "camelCaseOnly", "dashes", "dashesOnly"]
       --declarationMap       Create sourcemaps for d.ts files                                                      [boolean] [default: true]
