@@ -43,7 +43,6 @@
     "chalk": "^5.0.1",
     "chokidar": "^3.5.3",
     "enhanced-resolve": "^5.10.0",
-    "es-aggregate-error": "^1.0.8",
     "glob": "^8.0.3",
     "import-meta-resolve": "^2.1.0",
     "minimatch": "^5.1.0",
