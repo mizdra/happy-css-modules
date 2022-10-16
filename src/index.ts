@@ -7,3 +7,4 @@ export {
   createDefaultTransformer,
 } from './transformer/index.js';
 export { type Resolver, type ResolverOptions, createDefaultResolver } from './resolver/index.js';
+export { Locator, type LocatorOptions, type LoadResult, type Token, type Location } from './locator/index.js';
