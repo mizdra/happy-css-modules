@@ -5,12 +5,28 @@
 <h2 align="center">The Collection of tools to make CSS Modules happy :)</h2>
 
 <p align="center">
-  <em>Typed, definition jumps, and unused variable detection!</em>
+  <em>Typed, definition jumps, and unused selector detection!</em>
 </p>
 
 https://user-images.githubusercontent.com/9639995/189538880-872ad38d-2c9d-4c19-b257-521018963eec.mov
 
 This is an experimental project aimed at PoC for https://github.com/Quramy/typed-css-modules/issues/177.
+
+## Features
+
+- :white_check_mark: Strict type checking
+  - Generate `.d.ts` of CSS Modules for type checking
+- :mag: Definition jumps
+  - Clicking on a property on `.jsx`/`.tsx` will jump to the source of the definition on `.module.css`.
+  - This is accomplished by generating `.d.ts.map` (a.k.a. [Declaration Map](https://www.typescriptlang.org/tsconfig#declarationMap)).
+- :rotating_light: Unused selector detection (**Not implemented yet**)
+  - Detect unused selectors using information from strict type checking.
+- :handshake: High compatibility with the ecosystem
+  - Support for Postcss/Sass/Less
+  - Implement webpack-compatible resolving algorithms
+  - Also supports [`resolve.alias`](https://webpack.js.org/configuration/resolve/#resolvealias)
+- :beginner: Easy to use
+  - No configuration file, some simple CLI options
 
 ## Installation
 
@@ -19,6 +35,14 @@ $ npm i -D happy-css-modules
 ```
 
 ## Usage
+
+In the simple case, everything goes well with the following!
+
+```console
+$ hcm 'src/**/*.module.{css,scss,less}'
+```
+
+If you want to customize the behavior, see `--help`.
 
 ```console
 $ hcm --help
