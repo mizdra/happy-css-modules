@@ -60,6 +60,15 @@ describe('parseArgv', () => {
       'postcss.config.js',
     );
   });
+  test('--cache', () => {
+    expect(parseArgv([...baseArgs, '1.css']).cache).toBe(true);
+    expect(parseArgv([...baseArgs, '1.css', '--cache']).cache).toBe(true);
+    expect(parseArgv([...baseArgs, '1.css', '--no-cache']).cache).toBe(false);
+  });
+  test('--cacheStrategy', () => {
+    expect(parseArgv([...baseArgs, '1.css']).cacheStrategy).toBe('content');
+    expect(parseArgv([...baseArgs, '1.css', '--cacheStrategy', 'metadata']).cacheStrategy).toBe('metadata');
+  });
   test('--silent', () => {
     expect(parseArgv([...baseArgs, '1.css', '--silent']).silent).toBe(true);
     expect(parseArgv([...baseArgs, '1.css', '--no-silent']).silent).toBe(false);
