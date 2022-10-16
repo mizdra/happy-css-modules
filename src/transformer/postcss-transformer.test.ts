@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
-import { Loader } from '../locator/index.js';
+import { Locator } from '../locator/index.js';
 import { createFixtures, getFixturePath } from '../test/util.js';
 import { createPostcssTransformer } from './postcss-transformer.js';
 
@@ -14,7 +14,7 @@ const require = createRequire(import.meta.url);
 
 test('handles postcss features', async () => {
   const uuid = randomUUID();
-  const loader = new Loader({
+  const locator = new Locator({
     transformer: createPostcssTransformer({
       cwd,
       postcssConfig: `${uuid}/postcss.config.js`,
@@ -33,7 +33,7 @@ test('handles postcss features', async () => {
     .$(prefix)_bar {}
     `,
   });
-  const result = await loader.load(getFixturePath('/test/1.css'));
+  const result = await locator.load(getFixturePath('/test/1.css'));
 
   expect(result).toMatchInlineSnapshot(`
     {
@@ -52,13 +52,13 @@ test('handles postcss features', async () => {
 
 test('tracks dependencies that have been pre-bundled by postcss compiler', async () => {
   const uuid = randomUUID();
-  const loader = new Loader({
+  const locator = new Locator({
     transformer: createPostcssTransformer({
       cwd,
       postcssConfig: `${uuid}/postcss.config.js`,
     }),
   });
-  const loadSpy = jest.spyOn(loader, 'load');
+  const loadSpy = jest.spyOn(locator, 'load');
   createFixtures({
     [`/${uuid}/postcss.config.js`]: dedent`
     module.exports = {
@@ -75,10 +75,10 @@ test('tracks dependencies that have been pre-bundled by postcss compiler', async
     '/test/3.css': `@import './4.css'`,
     '/test/4.css': ``,
   });
-  const result = await loader.load(getFixturePath('/test/1.css'));
+  const result = await locator.load(getFixturePath('/test/1.css'));
 
   // The files imported using @import are pre-bundled by the compiler.
-  // Therefore, `Loader#load` is not called to process other files.
+  // Therefore, `Locator#load` is not called to process other files.
   expect(loadSpy).toBeCalledTimes(1);
   expect(loadSpy).toHaveBeenNthCalledWith(1, getFixturePath('/test/1.css'));
 
@@ -88,7 +88,7 @@ test('tracks dependencies that have been pre-bundled by postcss compiler', async
 
 test('resolves specifier using resolver', async () => {
   const uuid = randomUUID();
-  const loader = new Loader({
+  const locator = new Locator({
     transformer: createPostcssTransformer({
       cwd,
       postcssConfig: `${uuid}/postcss.config.js`,
@@ -109,13 +109,13 @@ test('resolves specifier using resolver', async () => {
     `,
     '/node_modules/package/index.css': `.a {}`,
   });
-  const result = await loader.load(getFixturePath('/test/1.css'));
+  const result = await locator.load(getFixturePath('/test/1.css'));
   expect(result.dependencies).toStrictEqual(['/node_modules/package/index.css'].map(getFixturePath));
 });
 
 test('ignores http(s) protocol file', async () => {
   const uuid = randomUUID();
-  const loader = new Loader({
+  const locator = new Locator({
     transformer: createPostcssTransformer({
       cwd,
       postcssConfig: `${uuid}/postcss.config.js`,
@@ -136,7 +136,7 @@ test('ignores http(s) protocol file', async () => {
     @import 'https://example.com/path/https.css';
     `,
   });
-  const result = await loader.load(getFixturePath('/test/1.css'));
+  const result = await locator.load(getFixturePath('/test/1.css'));
   expect(result.dependencies).toStrictEqual([]);
 });
 
@@ -165,7 +165,7 @@ test('returns false if postcssrc is not found', async () => {
 test('searches config from cwd if postcssConfig option is missing', async () => {
   const uuid = randomUUID();
   const cwd = `/${uuid}`;
-  const loader = new Loader({
+  const locator = new Locator({
     transformer: createPostcssTransformer({
       cwd: getFixturePath(cwd),
     }),
@@ -183,6 +183,6 @@ test('searches config from cwd if postcssConfig option is missing', async () => 
     .$(prefix)_bar {}
     `,
   });
-  const result = await loader.load(getFixturePath('/test/1.css'));
+  const result = await locator.load(getFixturePath('/test/1.css'));
   expect(result.tokens.map((token) => token.name)).toStrictEqual(['foo_bar']);
 });

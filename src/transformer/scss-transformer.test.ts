@@ -1,11 +1,11 @@
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
-import { Loader } from '../locator/index.js';
+import { Locator } from '../locator/index.js';
 import { createFixtures, getFixturePath } from '../test/util.js';
 import { createScssTransformer } from './scss-transformer.js';
 
-const loader = new Loader({ transformer: createScssTransformer() });
-const loadSpy = jest.spyOn(loader, 'load');
+const locator = new Locator({ transformer: createScssTransformer() });
+const loadSpy = jest.spyOn(locator, 'load');
 
 afterEach(() => {
   loadSpy.mockClear();
@@ -37,7 +37,7 @@ test('handles sass features', async () => {
       .d { dummy: ''; }
       `,
   });
-  const result = await loader.load(getFixturePath('/test/1.scss'));
+  const result = await locator.load(getFixturePath('/test/1.scss'));
 
   // NOTE: There should be only one originalLocations for 'a_2', but there are multiple.
   // This is probably due to an incorrect sourcemap output by the sass compiler.
@@ -110,10 +110,10 @@ test('tracks dependencies that have been pre-bundled by sass compiler', async ()
     '/test/4.scss': dedent`
     `,
   });
-  const result = await loader.load(getFixturePath('/test/1.scss'));
+  const result = await locator.load(getFixturePath('/test/1.scss'));
 
   // The files imported using @import are pre-bundled by the compiler.
-  // Therefore, `Loader#load` is not called to process other files.
+  // Therefore, `Locator#load` is not called to process other files.
   expect(loadSpy).toBeCalledTimes(1);
   expect(loadSpy).toHaveBeenNthCalledWith(1, getFixturePath('/test/1.scss'));
 
@@ -130,7 +130,7 @@ test('resolves specifier using resolver', async () => {
     '/node_modules/package-1/index.css': `.a {}`,
     '/node_modules/package-2/index.scss': `.a {}`,
   });
-  const result = await loader.load(getFixturePath('/test/1.scss'));
+  const result = await locator.load(getFixturePath('/test/1.scss'));
   expect(result.dependencies).toStrictEqual(
     ['/node_modules/package-1/index.css', '/node_modules/package-2/index.scss'].map(getFixturePath),
   );
@@ -144,6 +144,6 @@ test('ignores http(s) protocol file', async () => {
     @import 'https://example.com/path/scss.scss';
     `,
   });
-  const result = await loader.load(getFixturePath('/test/1.scss'));
+  const result = await locator.load(getFixturePath('/test/1.scss'));
   expect(result.dependencies).toStrictEqual([]);
 });
