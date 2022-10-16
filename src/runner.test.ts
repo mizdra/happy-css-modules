@@ -4,7 +4,6 @@ import { createRequire } from 'node:module';
 import { jest } from '@jest/globals';
 import chalk from 'chalk';
 import dedent from 'dedent';
-import AggregateError from 'es-aggregate-error';
 import type { Watcher } from './runner.js';
 import { run } from './runner.js';
 import { createFixtures, exists, getFixturePath, waitForAsyncTask } from './test/util.js';
