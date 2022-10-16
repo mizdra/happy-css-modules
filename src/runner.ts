@@ -1,4 +1,4 @@
-import { resolve } from 'path';
+import { resolve, relative } from 'path';
 import * as process from 'process';
 import * as util from 'util';
 import { createCache } from '@file-cache/core';
@@ -6,7 +6,7 @@ import { createNpmPackageKey } from '@file-cache/npm';
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 import _glob from 'glob';
-import { outputSkippingGenerationLog, isGeneratedFilesExist, emitGeneratedFiles } from './emitter/index.js';
+import { isGeneratedFilesExist, emitGeneratedFiles } from './emitter/index.js';
 import { Loader } from './loader/index.js';
 import type { Resolver } from './resolver/index.js';
 import { createDefaultResolver } from './resolver/index.js';
@@ -110,7 +110,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
         return JSON.stringify(options);
       },
     ],
-    noCache: !options.cache,
+    noCache: !(options.cache ?? true),
   });
 
   const loader = new Loader({ transformer, resolver });
@@ -129,10 +129,9 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
         dtsFormatOptions: {
           localsConvention: options.localsConvention,
         },
-        silent,
-        cwd,
         isExternalFile,
       });
+      if (!silent) console.log(`${chalk.green(relative(cwd, filePath))} (generated)`);
     } catch (error) {
       if (error instanceof Error) {
         // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
@@ -170,15 +169,14 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
     const errors: unknown[] = [];
     for (const filePath of filePaths) {
       try {
+        const _isGeneratedFilesExist = await isGeneratedFilesExist(filePath, distOptions, options.declarationMap);
+        const _isChangedFile = await isChangedFile(filePath);
         // Generate .d.ts and .d.ts.map only when the file has been updated.
         // However, if .d.ts or .d.ts.map has not yet been generated, always generate.
-        if (
-          !(await isGeneratedFilesExist(filePath, distOptions, options.declarationMap)) ||
-          (await isChangedFile(filePath))
-        ) {
+        if (!_isGeneratedFilesExist || _isChangedFile) {
           await processFile(filePath);
         } else {
-          if (!silent) outputSkippingGenerationLog(cwd, filePath);
+          if (!silent) console.log(chalk.gray(`${relative(cwd, filePath)} (skipped)`));
         }
       } catch (e: unknown) {
         errors.push(e);

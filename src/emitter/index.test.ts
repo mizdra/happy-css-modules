@@ -1,6 +1,5 @@
 import { readFile, stat } from 'fs/promises';
 import { jest } from '@jest/globals';
-import chalk from 'chalk';
 import { createFixtures, exists, fakeToken, getFixturePath, waitForAsyncTask } from '../test/util.js';
 import { emitGeneratedFiles, getRelativePath, isSubDirectoryFile } from './index.js';
 
@@ -30,7 +29,6 @@ describe('emitGeneratedFiles', () => {
     distOptions: undefined,
     emitDeclarationMap: true,
     dtsFormatOptions: undefined,
-    silent: true,
     cwd: getFixturePath('/test'),
     isExternalFile: () => false,
   };
@@ -77,53 +75,5 @@ describe('emitGeneratedFiles', () => {
     const mtimeForSourceMap3 = (await stat(getFixturePath('/test/1.css.d.ts.map'))).mtime;
     expect(mtimeForDts1).not.toEqual(mtimeForDts3); // not skipped
     expect(mtimeForSourceMap1).not.toEqual(mtimeForSourceMap3); // not skipped
-  });
-  test('outputs write log', async () => {
-    await emitGeneratedFiles({
-      ...defaultArgs,
-      filePath: getFixturePath('/test/1.css'),
-      emitDeclarationMap: true,
-      silent: false,
-    });
-    expect(consoleLogSpy).toHaveBeenCalledTimes(1);
-    expect(consoleLogSpy).toHaveBeenNthCalledWith(1, `Generated .d.ts and .d.ts.map for ${chalk.green('1.css')}`);
-    consoleLogSpy.mockClear();
-
-    await emitGeneratedFiles({
-      ...defaultArgs,
-      filePath: getFixturePath('/test/2.css'),
-      emitDeclarationMap: false,
-      silent: false,
-    });
-    expect(consoleLogSpy).toHaveBeenCalledTimes(1);
-    expect(consoleLogSpy).toHaveBeenNthCalledWith(1, `Generated .d.ts for ${chalk.green('2.css')}`);
-    consoleLogSpy.mockClear();
-
-    await emitGeneratedFiles({
-      ...defaultArgs,
-      filePath: getFixturePath('/test/3.css'),
-      emitDeclarationMap: false,
-      silent: true,
-    });
-    expect(consoleLogSpy).toHaveBeenCalledTimes(0);
-  });
-  test('changes working directory by cwd', async () => {
-    await emitGeneratedFiles({
-      ...defaultArgs,
-      filePath: getFixturePath('/test/1.css'),
-      emitDeclarationMap: false,
-      silent: false,
-      cwd: getFixturePath('/test'),
-    });
-    await emitGeneratedFiles({
-      ...defaultArgs,
-      filePath: getFixturePath('/test/1.css'),
-      emitDeclarationMap: false,
-      silent: false,
-      cwd: getFixturePath('/'),
-    });
-    expect(consoleLogSpy).toHaveBeenCalledTimes(2);
-    expect(consoleLogSpy).toHaveBeenNthCalledWith(1, `Generated .d.ts for ${chalk.green('1.css')}`);
-    expect(consoleLogSpy).toHaveBeenNthCalledWith(2, `Generated .d.ts for ${chalk.green('test/1.css')}`);
   });
 });

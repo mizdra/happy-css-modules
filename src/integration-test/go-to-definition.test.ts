@@ -10,6 +10,7 @@ const defaultOptions = {
   silent: true,
   declarationMap: true,
   cwd: getFixturePath('/'),
+  cache: false,
 };
 
 afterAll(async () => {

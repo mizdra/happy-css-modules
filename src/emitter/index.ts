@@ -1,5 +1,4 @@
 import { dirname, isAbsolute, relative } from 'path';
-import chalk from 'chalk';
 import { type Token } from '../loader/index.js';
 import { type LocalsConvention } from '../runner.js';
 import { exists } from '../util.js';
@@ -18,18 +17,6 @@ export function getRelativePath(fromFilePath: string, toFilePath: string): strin
 
 export function isSubDirectoryFile(fromDirectory: string, toFilePath: string): boolean {
   return isAbsolute(toFilePath) && toFilePath.startsWith(fromDirectory);
-}
-
-function outputGenerationLog(cwd: string, filePath: string, emitDeclarationMap: boolean | undefined): void {
-  if (emitDeclarationMap) {
-    console.log('Generated .d.ts and .d.ts.map for ' + chalk.green(relative(cwd, filePath)));
-  } else {
-    console.log('Generated .d.ts for ' + chalk.green(relative(cwd, filePath)));
-  }
-}
-
-export function outputSkippingGenerationLog(cwd: string, filePath: string): void {
-  console.log(chalk.gray(`Skip generation for ${relative(cwd, filePath)}`));
 }
 
 /** The distribution option. */
@@ -56,10 +43,6 @@ export type EmitterOptions = {
   emitDeclarationMap: boolean | undefined;
   /** The options for formatting the type definition. */
   dtsFormatOptions: DtsFormatOptions | undefined;
-  /** Silent output. Do not show "files written" messages */
-  silent: boolean;
-  /** Working directory path. */
-  cwd: string;
   /** Whether the file is from an external library or not. */
   isExternalFile: (filePath: string) => boolean;
 };
@@ -70,8 +53,6 @@ export async function emitGeneratedFiles({
   distOptions,
   emitDeclarationMap,
   dtsFormatOptions,
-  silent,
-  cwd,
   isExternalFile,
 }: EmitterOptions): Promise<void> {
   const dtsFilePath = getDtsFilePath(filePath, distOptions);
@@ -94,7 +75,6 @@ export async function emitGeneratedFiles({
   } else {
     await writeFileIfChanged(dtsFilePath, dtsContent);
   }
-  if (!silent) outputGenerationLog(cwd, filePath, emitDeclarationMap);
 }
 
 /**
