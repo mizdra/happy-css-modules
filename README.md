@@ -2,7 +2,7 @@
   <img alt="Cover image" src="./docs/cover.svg" />
 </p>
 
-<h2 align="center">The Collection of tools to make CSS Modules happy :)</h2>
+<h2 align="center">Make CSS Modules happy :)</h2>
 
 <p align="center">
   <em>Typed, definition jumps, and unused selector detection!</em>
