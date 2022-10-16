@@ -85,9 +85,8 @@ describe('emitGeneratedFiles', () => {
       emitDeclarationMap: true,
       silent: false,
     });
-    expect(consoleLogSpy).toHaveBeenCalledTimes(2);
-    expect(consoleLogSpy).toHaveBeenNthCalledWith(1, `Wrote ${chalk.green('1.css.d.ts')}`);
-    expect(consoleLogSpy).toHaveBeenNthCalledWith(2, `Wrote ${chalk.green('1.css.d.ts.map')}`);
+    expect(consoleLogSpy).toHaveBeenCalledTimes(1);
+    expect(consoleLogSpy).toHaveBeenNthCalledWith(1, `Generated .d.ts and .d.ts.map for ${chalk.green('1.css')}`);
     consoleLogSpy.mockClear();
 
     await emitGeneratedFiles({
@@ -97,7 +96,7 @@ describe('emitGeneratedFiles', () => {
       silent: false,
     });
     expect(consoleLogSpy).toHaveBeenCalledTimes(1);
-    expect(consoleLogSpy).toHaveBeenNthCalledWith(1, `Wrote ${chalk.green('2.css.d.ts')}`);
+    expect(consoleLogSpy).toHaveBeenNthCalledWith(1, `Generated .d.ts for ${chalk.green('2.css')}`);
     consoleLogSpy.mockClear();
 
     await emitGeneratedFiles({
@@ -124,7 +123,7 @@ describe('emitGeneratedFiles', () => {
       cwd: getFixturePath('/'),
     });
     expect(consoleLogSpy).toHaveBeenCalledTimes(2);
-    expect(consoleLogSpy).toHaveBeenNthCalledWith(1, `Wrote ${chalk.green('1.css.d.ts')}`);
-    expect(consoleLogSpy).toHaveBeenNthCalledWith(2, `Wrote ${chalk.green('test/1.css.d.ts')}`);
+    expect(consoleLogSpy).toHaveBeenNthCalledWith(1, `Generated .d.ts for ${chalk.green('1.css')}`);
+    expect(consoleLogSpy).toHaveBeenNthCalledWith(2, `Generated .d.ts for ${chalk.green('test/1.css')}`);
   });
 });
