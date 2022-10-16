@@ -238,3 +238,36 @@ assert.deepEqual(result, {
 This project was born as a PoC for [Quramy/typed-css-modules#177](https://github.com/Quramy/typed-css-modules/issues/177). That is why this project forks [`Quramy/typed-css-modules`](https://github.com/Quramy/typed-css-modules). Due to refactoring, only a small amount of code now comes from `Quramy/typed-css-modules`, but its contributions can still be found in the credits of the license.
 
 Thank you [@Quramy](https://github.com/Quramy)!
+
+## Prior art
+
+There are several prior art for each feature. In contrast, happy-css-modules is a comprehensive implementation of these features.
+
+### Strict type checking
+
+- [typed-css-modules](https://github.com/Quramy/typed-css-modules)
+  - Only `.css` can be processed.
+  - Resolving using webpack's resolve.alias is not implemented.
+- [typed-scss-modules](https://github.com/skovy/typed-scss-modules)
+  - Only `.scss` can be processed.
+  - Resolving using webpack's resolve.alias is not implemented.
+- [typed-less-modules](https://github.com/qiniu/typed-less-modules)
+  - Only `.less` can be processed.
+  - Resolving using webpack's resolve.alias is not implemented.
+- [typescript-plugin-css-modules](https://github.com/mrmckeb/typescript-plugin-css-modules)
+  - This is implemented as a TypeScript language service.
+    - Therefore, warnings can be issued on the editor, but not at compile time.
+    - In addition, the setup procedure is complicated.
+    - For more information, see [the documentation](https://github.com/mrmckeb/typescript-plugin-css-modules/tree/82ba03548c3d2193508e1a4dbc47c1aa9b22943c#about-this-plugin).
+
+### Definition jumps
+
+- [typescript-plugin-css-modules](https://github.com/mrmckeb/typescript-plugin-css-modules)
+  - Can only jump to the top of `.css`.
+
+### Unused selector detection
+
+- [stylelint-no-unused-selectors](https://github.com/nodaguti/stylelint-no-unused-selectors)
+  - Detectable patterns are limited.
+  - However, it works without `.d.ts`.
+  - For more information, see [the documentation](https://github.com/nodaguti/stylelint-no-unused-selectors/tree/57eeacaab675957aaa507f5524b9b78947e127b2/src/plugins/stylelint-no-unused-selectors-plugin-tsx#features-and-limitations)
