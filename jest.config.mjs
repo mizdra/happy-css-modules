@@ -15,6 +15,9 @@ const config = {
     // Map `./**/xxx.js` to `./**/xxx` (for ESM)
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
+  transform: {
+    '^.+\\.(t|j)sx?$': '@swc/jest',
+  },
   // for ESM
   resolver: join(dir, 'src/test/jest/resolver.cjs'),
 };
