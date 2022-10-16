@@ -1,15 +1,17 @@
-import { resolve } from 'path';
+import { resolve, relative } from 'path';
 import * as process from 'process';
 import * as util from 'util';
+import { createCache } from '@file-cache/core';
+import { createNpmPackageKey } from '@file-cache/npm';
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 import _glob from 'glob';
-import { emitGeneratedFiles } from './emitter/index.js';
+import { isGeneratedFilesExist, emitGeneratedFiles } from './emitter/index.js';
 import { Loader } from './loader/index.js';
 import type { Resolver } from './resolver/index.js';
 import { createDefaultResolver } from './resolver/index.js';
 import { createDefaultTransformer, type Transformer } from './transformer/index.js';
-import { isMatchByGlob } from './util.js';
+import { getInstalledPeerDependencies, isMatchByGlob } from './util.js';
 
 const glob = util.promisify(_glob);
 
@@ -53,6 +55,16 @@ export interface RunnerOptions {
    */
   postcssConfig?: string | undefined;
   /**
+   * Only generate .d.ts and .d.ts.map for changed files.
+   * @default true
+   */
+  cache?: boolean | undefined;
+  /**
+   * Strategy for the cache to use for detecting changed files.
+   * @default 'content'
+   */
+  cacheStrategy?: 'content' | 'metadata' | undefined;
+  /**
    * Silent output. Do not show "files written" messages.
    * @default false
    */
@@ -89,6 +101,18 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
       }
     : undefined;
 
+  const installedPeerDependencies = await getInstalledPeerDependencies();
+  const cache = await createCache({
+    mode: options.cacheStrategy ?? 'content',
+    keys: [
+      () => createNpmPackageKey(['happy-css-modules', ...installedPeerDependencies]),
+      () => {
+        return JSON.stringify(options);
+      },
+    ],
+    noCache: !(options.cache ?? true),
+  });
+
   const loader = new Loader({ transformer, resolver });
   const isExternalFile = (filePath: string) => {
     return !isMatchByGlob(filePath, options.pattern, { cwd });
@@ -105,10 +129,9 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
         dtsFormatOptions: {
           localsConvention: options.localsConvention,
         },
-        silent,
-        cwd,
         isExternalFile,
       });
+      if (!silent) console.log(`${chalk.green(relative(cwd, filePath))} (generated)`);
     } catch (error) {
       if (error instanceof Error) {
         // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
@@ -119,6 +142,12 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
       }
       throw error;
     }
+  }
+
+  async function isChangedFile(filePath: string) {
+    const result = await cache.getAndUpdateCache(filePath);
+    if (result.error) throw result.error;
+    return result.changed;
   }
 
   if (options.watch) {
@@ -137,11 +166,25 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
       // convert relative path to absolute path
       .map((file) => resolve(cwd, file));
 
-    // TODO: Use `@file-cache/core` to process only files that have changed
     const errors: unknown[] = [];
     for (const filePath of filePaths) {
-      await processFile(filePath).catch((e: unknown) => errors.push(e));
+      try {
+        const _isGeneratedFilesExist = await isGeneratedFilesExist(filePath, distOptions, options.declarationMap);
+        const _isChangedFile = await isChangedFile(filePath);
+        // Generate .d.ts and .d.ts.map only when the file has been updated.
+        // However, if .d.ts or .d.ts.map has not yet been generated, always generate.
+        if (!_isGeneratedFilesExist || _isChangedFile) {
+          await processFile(filePath);
+        } else {
+          if (!silent) console.log(chalk.gray(`${relative(cwd, filePath)} (skipped)`));
+        }
+      } catch (e: unknown) {
+        errors.push(e);
+      }
     }
     if (errors.length > 0) throw new AggregateError(errors, 'Failed to process files');
   }
+
+  // Write cache state to file for persistence
+  await cache.reconcile();
 }

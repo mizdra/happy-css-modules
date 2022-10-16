@@ -1,7 +1,7 @@
 import { dirname, isAbsolute, relative } from 'path';
-import chalk from 'chalk';
 import { type Token } from '../loader/index.js';
 import { type LocalsConvention } from '../runner.js';
+import { exists } from '../util.js';
 import { generateDtsContentWithSourceMap, getDtsFilePath } from './dts.js';
 import { writeFileIfChanged } from './file-system.js';
 import { generateSourceMappingURLComment, getSourceMapFilePath } from './source-map.js';
@@ -17,14 +17,6 @@ export function getRelativePath(fromFilePath: string, toFilePath: string): strin
 
 export function isSubDirectoryFile(fromDirectory: string, toFilePath: string): boolean {
   return isAbsolute(toFilePath) && toFilePath.startsWith(fromDirectory);
-}
-
-function outputGenerationLog(cwd: string, filePath: string, emitDeclarationMap: boolean | undefined): void {
-  if (emitDeclarationMap) {
-    console.log('Generated .d.ts and .d.ts.map for ' + chalk.green(relative(cwd, filePath)));
-  } else {
-    console.log('Generated .d.ts for ' + chalk.green(relative(cwd, filePath)));
-  }
 }
 
 /** The distribution option. */
@@ -51,10 +43,6 @@ export type EmitterOptions = {
   emitDeclarationMap: boolean | undefined;
   /** The options for formatting the type definition. */
   dtsFormatOptions: DtsFormatOptions | undefined;
-  /** Silent output. Do not show "files written" messages */
-  silent: boolean;
-  /** Working directory path. */
-  cwd: string;
   /** Whether the file is from an external library or not. */
   isExternalFile: (filePath: string) => boolean;
 };
@@ -65,8 +53,6 @@ export async function emitGeneratedFiles({
   distOptions,
   emitDeclarationMap,
   dtsFormatOptions,
-  silent,
-  cwd,
   isExternalFile,
 }: EmitterOptions): Promise<void> {
   const dtsFilePath = getDtsFilePath(filePath, distOptions);
@@ -89,5 +75,23 @@ export async function emitGeneratedFiles({
   } else {
     await writeFileIfChanged(dtsFilePath, dtsContent);
   }
-  if (!silent) outputGenerationLog(cwd, filePath, emitDeclarationMap);
+}
+
+/**
+ * Returns true if .d.ts (and .d.ts.map) files are generated for the given file.
+ */
+export async function isGeneratedFilesExist(
+  filePath: string,
+  distOptions: DistOptions | undefined,
+  emitDeclarationMap: boolean | undefined,
+): Promise<boolean> {
+  const dtsFilePath = getDtsFilePath(filePath, distOptions);
+  const sourceMapFilePath = getSourceMapFilePath(filePath, distOptions);
+  if (emitDeclarationMap && !(await exists(sourceMapFilePath))) {
+    return false;
+  }
+  if (!(await exists(dtsFilePath))) {
+    return false;
+  }
+  return true;
 }

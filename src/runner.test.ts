@@ -1,15 +1,26 @@
-import { readFile, writeFile } from 'fs/promises';
+import { readFile, rm, writeFile } from 'fs/promises';
 import { randomUUID } from 'node:crypto';
 import { createRequire } from 'node:module';
+import { dirname, join, resolve } from 'path';
+import { fileURLToPath } from 'url';
+import * as fileCacheNpm from '@file-cache/npm';
 import { jest } from '@jest/globals';
 import chalk from 'chalk';
 import dedent from 'dedent';
 import type { Watcher } from './runner.js';
-import { run } from './runner.js';
 import { createFixtures, exists, getFixturePath, waitForAsyncTask } from './test/util.js';
 
 const require = createRequire(import.meta.url);
 
+jest.unstable_mockModule('@file-cache/npm', () => ({
+  ...fileCacheNpm, // Inherit native functions
+  createNpmPackageKey: () => 'mocked-key',
+}));
+
+const { run } = await import('./runner.js');
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -18,7 +29,16 @@ const defaultOptions = {
   declarationMap: true,
   silent: true,
   cwd: getFixturePath('/'),
+  cache: false,
 };
+
+const dir = join(dirname(fileURLToPath(import.meta.url)));
+
+beforeEach(async () => {
+  consoleLogSpy.mockClear();
+  consoleErrorSpy.mockClear();
+  await rm(resolve(dir, '../node_modules/.cache/happy-css-modules'), { recursive: true, force: true }); // clear cache
+});
 
 // Exit the watcher even if the test fails
 let watcher: Watcher | undefined;
@@ -38,6 +58,49 @@ test('generates .d.ts and .d.ts.map', async () => {
   expect(await readFile(getFixturePath('/test/1.css.d.ts.map'), 'utf8')).toMatchSnapshot();
   expect(await readFile(getFixturePath('/test/2.css.d.ts'), 'utf8')).toMatchSnapshot();
   expect(await readFile(getFixturePath('/test/2.css.d.ts.map'), 'utf8')).toMatchSnapshot();
+});
+
+test('uses cache', async () => {
+  createFixtures({
+    '/test/1.css': '.a {}',
+  });
+  await run({ ...defaultOptions, declarationMap: true, silent: false, cache: true });
+  expect(consoleLogSpy).toBeCalledTimes(1);
+  expect(consoleLogSpy).toHaveBeenNthCalledWith(1, expect.stringContaining('generated'));
+  consoleLogSpy.mockClear();
+
+  // Skip generation
+  await run({ ...defaultOptions, declarationMap: true, silent: false, cache: true });
+  expect(consoleLogSpy).toBeCalledTimes(1);
+  expect(consoleLogSpy).toHaveBeenNthCalledWith(1, expect.stringContaining('skipped'));
+  consoleLogSpy.mockClear();
+
+  // Generates if generated files are missing
+  await rm(getFixturePath('/test/1.css.d.ts'));
+  await run({ ...defaultOptions, declarationMap: true, silent: false, cache: true });
+  expect(consoleLogSpy).toBeCalledTimes(1);
+  expect(consoleLogSpy).toHaveBeenNthCalledWith(1, expect.stringContaining('generated'));
+  consoleLogSpy.mockClear();
+
+  // Generates if options are changed
+  await run({ ...defaultOptions, declarationMap: false, silent: false, cache: true });
+  expect(consoleLogSpy).toBeCalledTimes(1);
+  expect(consoleLogSpy).toHaveBeenNthCalledWith(1, expect.stringContaining('generated'));
+  consoleLogSpy.mockClear();
+});
+
+test('outputs logs', async () => {
+  createFixtures({
+    '/test/1.css': '.a {}',
+  });
+  await run({ ...defaultOptions, silent: false, cache: true });
+  expect(consoleLogSpy).toBeCalledTimes(1);
+  expect(consoleLogSpy).toHaveBeenNthCalledWith(1, `${chalk.green('test/1.css')} (generated)`);
+  consoleLogSpy.mockClear();
+
+  await run({ ...defaultOptions, silent: false, cache: true });
+  expect(consoleLogSpy).toBeCalledTimes(1);
+  expect(consoleLogSpy).toHaveBeenNthCalledWith(1, `${chalk.gray('test/1.css (skipped)')}`);
 });
 
 test.todo('changes dts format with localsConvention options');

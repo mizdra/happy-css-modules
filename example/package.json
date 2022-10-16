@@ -5,8 +5,11 @@
   "type": "commonjs",
   "main": "app.js",
   "scripts": {
-    "hcm": "../bin/hcm.js '**/*.{css,scss,less}'"
+    "hcm": "pnpm i && hcm '**/*.{css,scss,less}'"
   },
   "author": "mizdra",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "happy-css-modules": "link:.."
+  }
 }
