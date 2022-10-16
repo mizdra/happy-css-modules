@@ -20,6 +20,7 @@ export function parseArgv(argv: string[]): RunnerOptions {
     .example("$0 'src/**/*.module.css' --sassLoadPaths=src/style", "Run with sass's `--load-path`.")
     .example("$0 'src/**/*.module.css' --lessIncludePaths=src/style", "Run with less's `--include-path`.")
     .example('$0 \'src/**/*.module.css\' --webpackResolveAlias=\'{"@": "src"}\'', "Run with webpack's `resolve.alias`.")
+    .example("$0 'src/**/*.module.css' --cache=false", 'Disable cache.')
     .detectLocale(false)
     .option('outDir', {
       type: 'string',
