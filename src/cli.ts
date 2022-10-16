@@ -22,10 +22,6 @@ export function parseArgv(argv: string[]): RunnerOptions {
     .example('$0 \'src/**/*.module.css\' --webpackResolveAlias=\'{"@": "src"}\'', "Run with webpack's `resolve.alias`.")
     .example("$0 'src/**/*.module.css' --cache=false", 'Disable cache.')
     .detectLocale(false)
-    .option('outDir', {
-      type: 'string',
-      describe: 'Output directory',
-    })
     .option('watch', {
       type: 'boolean',
       alias: 'w',
@@ -103,7 +99,6 @@ export function parseArgv(argv: string[]): RunnerOptions {
   const patterns: string[] = parsedArgv._.map((pattern) => pattern.toString());
   return {
     pattern: patterns[0]!,
-    outDir: parsedArgv.outDir,
     watch: parsedArgv.watch,
     localsConvention: parsedArgv.localsConvention,
     declarationMap: parsedArgv.declarationMap,

@@ -9,12 +9,7 @@ const loader = new Loader();
 const isExternalFile = () => false;
 
 test('getDtsFilePath', () => {
-  expect(getDtsFilePath('/app/src/dir/1.css', undefined)).toBe('/app/src/dir/1.css.d.ts');
-  expect(getDtsFilePath('/app/src/dir/1.css', { rootDir: '/app', outDir: '/app/dist' })).toBe(
-    '/app/dist/src/dir/1.css.d.ts',
-  );
-  expect(() => getDtsFilePath('/tmp/src/dir/1.css', { rootDir: '/app', outDir: '/app/dist' })).toThrow();
-  expect(() => getDtsFilePath('/app/src/dir/1.css', { rootDir: '/app', outDir: '/tmp/dist' })).toThrow();
+  expect(getDtsFilePath('/app/src/dir/1.css')).toBe('/app/src/dir/1.css.d.ts');
 });
 
 describe('generateDtsContentWithSourceMap', () => {

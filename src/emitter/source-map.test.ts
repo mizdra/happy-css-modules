@@ -2,12 +2,7 @@ import { EOL } from 'os';
 import { getSourceMapFilePath, generateSourceMappingURLComment } from './source-map.js';
 
 test('getSourceMapFilePath', () => {
-  expect(getSourceMapFilePath('/app/src/dir/1.css', undefined)).toBe('/app/src/dir/1.css.d.ts.map');
-  expect(getSourceMapFilePath('/app/src/dir/1.css', { rootDir: '/app', outDir: '/app/dist' })).toBe(
-    '/app/dist/src/dir/1.css.d.ts.map',
-  );
-  expect(() => getSourceMapFilePath('/tmp/src/dir/1.css', { rootDir: '/app', outDir: '/app/dist' })).toThrow();
-  expect(() => getSourceMapFilePath('/app/src/dir/1.css', { rootDir: '/app', outDir: '/tmp/dist' })).toThrow();
+  expect(getSourceMapFilePath('/app/src/dir/1.css')).toBe('/app/src/dir/1.css.d.ts.map');
 });
 
 test('generateSourceMappingURLComment', () => {
