@@ -14,7 +14,6 @@ specifiers:
   '@mizdra/prettier-config-mizdra': ^1.0.0
   '@types/babel__core': ^7.1.19
   '@types/dedent': ^0.7.0
-  '@types/es-aggregate-error': ^1.0.2
   '@types/glob': ^7.2.0
   '@types/jest': ^29.0.0
   '@types/less': ^3.0.3
@@ -80,7 +79,6 @@ devDependencies:
   '@mizdra/prettier-config-mizdra': 1.0.0_prettier@2.7.1
   '@types/babel__core': 7.1.19
   '@types/dedent': 0.7.0
-  '@types/es-aggregate-error': 1.0.2
   '@types/glob': 7.2.0
   '@types/jest': 29.0.0
   '@types/less': 3.0.3
@@ -979,12 +977,6 @@ packages:
 
   /@types/dedent/0.7.0:
     resolution: {integrity: sha512-EGlKlgMhnLt/cM4DbUSafFdrkeJoC9Mvnj0PUCU7tFmTjMjNRT957kXCx0wYm3JuEq4o4ZsS5vG+NlkM2DMd2A==}
-    dev: true
-
-  /@types/es-aggregate-error/1.0.2:
-    resolution: {integrity: sha512-erqUpFXksaeR2kejKnhnjZjbFxUpGZx4Z7ydNL9ie8tEhXPiZTsLeUDJ6aR1F8j5wWUAtOAQWUqkc7givBJbBA==}
-    dependencies:
-      '@types/node': 18.7.11
     dev: true
 
   /@types/glob/7.2.0:

@@ -63,7 +63,6 @@
     "@mizdra/prettier-config-mizdra": "^1.0.0",
     "@types/babel__core": "^7.1.19",
     "@types/dedent": "^0.7.0",
-    "@types/es-aggregate-error": "^1.0.2",
     "@types/glob": "^7.2.0",
     "@types/jest": "^29.0.0",
     "@types/less": "^3.0.3",
