@@ -19,8 +19,12 @@ export function isSubDirectoryFile(fromDirectory: string, toFilePath: string): b
   return isAbsolute(toFilePath) && toFilePath.startsWith(fromDirectory);
 }
 
-function outputWriteLog(cwd: string, filePath: string) {
-  console.log('Wrote ' + chalk.green(relative(cwd, filePath)));
+function outputGenerationLog(cwd: string, filePath: string, emitDeclarationMap: boolean | undefined): void {
+  if (emitDeclarationMap) {
+    console.log('Generated .d.ts and .d.ts.map for ' + chalk.green(relative(cwd, filePath)));
+  } else {
+    console.log('Generated .d.ts for ' + chalk.green(relative(cwd, filePath)));
+  }
 }
 
 /** The distribution option. */
@@ -79,14 +83,11 @@ export async function emitGeneratedFiles({
   if (emitDeclarationMap) {
     const sourceMappingURLComment = generateSourceMappingURLComment(dtsFilePath, sourceMapFilePath);
     await writeFileIfChanged(dtsFilePath, dtsContent + sourceMappingURLComment);
-    if (!silent) outputWriteLog(cwd, dtsFilePath);
-
     // NOTE: tsserver does not support inline declaration maps. Therefore, sourcemap files must be output.
     // blocked by: https://github.com/microsoft/TypeScript/issues/38966
     await writeFileIfChanged(sourceMapFilePath, sourceMap.toString());
-    if (!silent) outputWriteLog(cwd, sourceMapFilePath);
   } else {
     await writeFileIfChanged(dtsFilePath, dtsContent);
-    if (!silent) outputWriteLog(cwd, dtsFilePath);
   }
+  if (!silent) outputGenerationLog(cwd, filePath, emitDeclarationMap);
 }

@@ -3,7 +3,6 @@ import * as process from 'process';
 import * as util from 'util';
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
-import AggregateError from 'es-aggregate-error';
 import _glob from 'glob';
 import { emitGeneratedFiles } from './emitter/index.js';
 import { Loader } from './loader/index.js';
