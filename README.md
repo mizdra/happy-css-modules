@@ -10,8 +10,6 @@
 
 https://user-images.githubusercontent.com/9639995/189538880-872ad38d-2c9d-4c19-b257-521018963eec.mov
 
-This is an experimental project aimed at PoC for https://github.com/Quramy/typed-css-modules/issues/177.
-
 ## Features
 
 - :white_check_mark: Strict type checking
@@ -234,3 +232,9 @@ assert.deepEqual(result, {
   ],
 });
 ```
+
+## About the origins of this project
+
+This project was born as a PoC for [Quramy/typed-css-modules#177](https://github.com/Quramy/typed-css-modules/issues/177). That is why this project forks [`Quramy/typed-css-modules`](https://github.com/Quramy/typed-css-modules). Due to refactoring, only a small amount of code now comes from `Quramy/typed-css-modules`, but its contributions can still be found in the credits of the license.
+
+Thank you [@Quramy](https://github.com/Quramy)!
