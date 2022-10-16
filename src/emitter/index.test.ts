@@ -26,7 +26,6 @@ describe('emitGeneratedFiles', () => {
   const defaultArgs = {
     filePath: getFixturePath('/test/1.css'),
     tokens: [fakeToken({ name: 'foo', originalLocations: [{ start: { line: 1, column: 1 } }] })],
-    distOptions: undefined,
     emitDeclarationMap: true,
     dtsFormatOptions: undefined,
     cwd: getFixturePath('/test'),

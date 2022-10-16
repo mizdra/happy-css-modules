@@ -23,7 +23,6 @@ export type LocalsConvention = 'camelCase' | 'camelCaseOnly' | 'dashes' | 'dashe
 
 export interface RunnerOptions {
   pattern: string;
-  outDir?: string | undefined;
   watch?: boolean | undefined;
   localsConvention?: LocalsConvention | undefined;
   declarationMap?: boolean | undefined;
@@ -94,12 +93,6 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
       webpackResolveAlias: options.webpackResolveAlias,
     });
   const transformer = options.transformer ?? createDefaultTransformer({ cwd, postcssConfig: options.postcssConfig });
-  const distOptions = options.outDir
-    ? {
-        rootDir: cwd, // TODO: support `--rootDir` option
-        outDir: options.outDir,
-      }
-    : undefined;
 
   const installedPeerDependencies = await getInstalledPeerDependencies();
   const cache = await createCache({
@@ -124,7 +117,6 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
       await emitGeneratedFiles({
         filePath,
         tokens: result.tokens,
-        distOptions,
         emitDeclarationMap: options.declarationMap,
         dtsFormatOptions: {
           localsConvention: options.localsConvention,
@@ -169,7 +161,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
     const errors: unknown[] = [];
     for (const filePath of filePaths) {
       try {
-        const _isGeneratedFilesExist = await isGeneratedFilesExist(filePath, distOptions, options.declarationMap);
+        const _isGeneratedFilesExist = await isGeneratedFilesExist(filePath, options.declarationMap);
         const _isChangedFile = await isChangedFile(filePath);
         // Generate .d.ts and .d.ts.map only when the file has been updated.
         // However, if .d.ts or .d.ts.map has not yet been generated, always generate.

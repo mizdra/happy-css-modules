@@ -1,27 +1,18 @@
 import { EOL } from 'os';
-import { join, relative, basename } from 'path';
+import { basename } from 'path';
 import camelcase from 'camelcase';
 import { SourceNode, type CodeWithSourceMap } from '../library/source-map/index.js';
 import { type Token } from '../loader/index.js';
 import { type LocalsConvention } from '../runner.js';
-import { type DistOptions, getRelativePath, isSubDirectoryFile, type DtsFormatOptions } from './index.js';
+import { getRelativePath, type DtsFormatOptions } from './index.js';
 
 /**
  * Get .d.ts file path.
  * @param filePath The path to the source file (i.e. `/dir/foo.css`). It is absolute.
- * @param distOptions The distribution option.
  * @returns The path to the .d.ts file. It is absolute.
  */
-export function getDtsFilePath(filePath: string, distOptions: DistOptions | undefined): string {
-  if (distOptions) {
-    if (!isSubDirectoryFile(distOptions.rootDir, filePath))
-      throw new Error(`The filePath(${filePath}) is not a subdirectory of rootDir(${distOptions.rootDir}).`);
-    if (!isSubDirectoryFile(distOptions.rootDir, distOptions.outDir))
-      throw new Error(`The outDir(${distOptions.outDir}) is not a subdirectory of rootDir(${distOptions.rootDir}).`);
-    return join(distOptions.outDir, relative(distOptions.rootDir, filePath) + '.d.ts');
-  } else {
-    return filePath + '.d.ts';
-  }
+export function getDtsFilePath(filePath: string): string {
+  return filePath + '.d.ts';
 }
 
 function dashesCamelCase(str: string): string {

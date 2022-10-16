@@ -10,10 +10,6 @@ describe('parseArgv', () => {
     // TODO: Support multiple patterns
     // parseArgv([...baseArgs, 'foo', 'bar']);
   });
-  test('--outDir', () => {
-    expect(parseArgv([...baseArgs, '1.css', '--outDir', 'foo']).outDir).toStrictEqual('foo');
-    expect(parseArgv([...baseArgs, '1.css', '--outDir', '1']).outDir).toStrictEqual('1');
-  });
   test('--watch', () => {
     expect(parseArgv([...baseArgs, '1.css', '--watch']).watch).toBe(true);
     expect(parseArgv([...baseArgs, '1.css', '--no-watch']).watch).toBe(false);

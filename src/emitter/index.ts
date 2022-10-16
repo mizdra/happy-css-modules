@@ -19,14 +19,6 @@ export function isSubDirectoryFile(fromDirectory: string, toFilePath: string): b
   return isAbsolute(toFilePath) && toFilePath.startsWith(fromDirectory);
 }
 
-/** The distribution option. */
-export type DistOptions = {
-  /** Root directory. It is absolute. */
-  rootDir: string;
-  /** The path to the output directory. It is absolute. */
-  outDir: string;
-};
-
 export type DtsFormatOptions = {
   localsConvention?: LocalsConvention;
 };
@@ -37,8 +29,6 @@ export type EmitterOptions = {
   filePath: string;
   /** The tokens exported by the source file. */
   tokens: Token[];
-  /** The distribution option. */
-  distOptions: DistOptions | undefined;
   /** Whether to output declaration map (i.e. `/dir/foo.css.d.ts.map`) or not. */
   emitDeclarationMap: boolean | undefined;
   /** The options for formatting the type definition. */
@@ -50,13 +40,12 @@ export type EmitterOptions = {
 export async function emitGeneratedFiles({
   filePath,
   tokens,
-  distOptions,
   emitDeclarationMap,
   dtsFormatOptions,
   isExternalFile,
 }: EmitterOptions): Promise<void> {
-  const dtsFilePath = getDtsFilePath(filePath, distOptions);
-  const sourceMapFilePath = getSourceMapFilePath(filePath, distOptions);
+  const dtsFilePath = getDtsFilePath(filePath);
+  const sourceMapFilePath = getSourceMapFilePath(filePath);
   const { dtsContent, sourceMap } = generateDtsContentWithSourceMap(
     filePath,
     dtsFilePath,
@@ -82,11 +71,10 @@ export async function emitGeneratedFiles({
  */
 export async function isGeneratedFilesExist(
   filePath: string,
-  distOptions: DistOptions | undefined,
   emitDeclarationMap: boolean | undefined,
 ): Promise<boolean> {
-  const dtsFilePath = getDtsFilePath(filePath, distOptions);
-  const sourceMapFilePath = getSourceMapFilePath(filePath, distOptions);
+  const dtsFilePath = getDtsFilePath(filePath);
+  const sourceMapFilePath = getSourceMapFilePath(filePath);
   if (emitDeclarationMap && !(await exists(sourceMapFilePath))) {
     return false;
   }
