@@ -1,5 +1,5 @@
 import { dirname, isAbsolute, relative } from 'path';
-import { type Token } from '../loader/index.js';
+import { type Token } from '../locator/index.js';
 import { type LocalsConvention } from '../runner.js';
 import { exists } from '../util.js';
 import { generateDtsContentWithSourceMap, getDtsFilePath } from './dts.js';

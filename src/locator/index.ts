@@ -36,7 +36,7 @@ type CacheEntry = {
   result: LoadResult;
 };
 
-/** The result of `Loader#load`. */
+/** The result of `Locator#load`. */
 export type LoadResult = {
   /** The path of the file imported from the source file with `@import` or `composes`. */
   dependencies: string[];
@@ -60,7 +60,7 @@ function normalizeTokens(tokens: Token[]): Token[] {
   }));
 }
 
-export type LoaderOptions = {
+export type LocatorOptions = {
   /** The function to transform source code. */
   transformer?: Transformer | undefined;
   /** The function to resolve the path of the imported file. */
@@ -71,12 +71,12 @@ export type LoaderOptions = {
 export type StrictlyResolver = (...args: Parameters<Resolver>) => Promise<string>;
 
 /** This class collects information on tokens exported from CSS Modules files. */
-export class Loader {
+export class Locator {
   private readonly cache: Map<string, CacheEntry> = new Map();
   private readonly transformer: Transformer | undefined;
   private readonly resolver: StrictlyResolver;
 
-  constructor(options?: LoaderOptions) {
+  constructor(options?: LocatorOptions) {
     this.transformer = options?.transformer ?? createDefaultTransformer();
     this.resolver = async (specifier, resolverOptions) => {
       const resolver = options?.resolver ?? createDefaultResolver();
@@ -137,7 +137,7 @@ export class Loader {
 
   /** Returns information about the tokens exported from the CSS Modules file. */
   async load(filePath: string): Promise<LoadResult> {
-    // NOTE: Loader does not support concurrent calls.
+    // NOTE: Locator does not support concurrent calls.
     // TODO: Throw an error if called concurrently.
     if (!(await this.isCacheOutdated(filePath))) {
       const cacheEntry = this.cache.get(filePath)!;

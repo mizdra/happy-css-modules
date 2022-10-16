@@ -1,4 +1,4 @@
-import type { StrictlyResolver } from '../loader/index.js';
+import type { StrictlyResolver } from '../locator/index.js';
 import { createLessTransformer } from './less-transformer.js';
 import type { PostcssTransformerOptions } from './postcss-transformer.js';
 import { createPostcssTransformer } from './postcss-transformer.js';

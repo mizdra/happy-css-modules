@@ -1,11 +1,11 @@
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
-import { Loader } from '../loader/index.js';
+import { Locator } from '../locator/index.js';
 import { createFixtures, getFixturePath } from '../test/util.js';
 import { createLessTransformer } from './less-transformer.js';
 
-const loader = new Loader({ transformer: createLessTransformer() });
-const loadSpy = jest.spyOn(loader, 'load');
+const locator = new Locator({ transformer: createLessTransformer() });
+const loadSpy = jest.spyOn(locator, 'load');
 
 afterEach(() => {
   loadSpy.mockClear();
@@ -35,7 +35,7 @@ test('handles less features', async () => {
       .c { dummy: ''; }
       `,
   });
-  const result = await loader.load(getFixturePath('/test/1.less'));
+  const result = await locator.load(getFixturePath('/test/1.less'));
 
   // FIXME: The end position of 'a_2_2' is incorrect.
   expect(result).toMatchInlineSnapshot(`
@@ -97,10 +97,10 @@ test('tracks dependencies that have been pre-bundled by less compiler', async ()
     '/test/4.less': dedent`
     `,
   });
-  const result = await loader.load(getFixturePath('/test/1.less'));
+  const result = await locator.load(getFixturePath('/test/1.less'));
 
   // The files imported using @import are pre-bundled by the compiler.
-  // Therefore, `Loader#load` is not called to process other files.
+  // Therefore, `Locator#load` is not called to process other files.
   expect(loadSpy).toBeCalledTimes(1);
   expect(loadSpy).toHaveBeenNthCalledWith(1, getFixturePath('/test/1.less'));
 
@@ -121,7 +121,7 @@ test('resolves specifier using resolver', async () => {
     '/node_modules/package-1/index.css': `.a {}`,
     '/node_modules/package-2/index.less': `.a {}`,
   });
-  const result = await loader.load(getFixturePath('/test/1.less'));
+  const result = await locator.load(getFixturePath('/test/1.less'));
   // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
   expect(result.dependencies.sort()).toStrictEqual(
     // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
@@ -137,6 +137,6 @@ test('ignores http(s) protocol file', async () => {
     @import 'https://example.com/path/less.less';
     `,
   });
-  const result = await loader.load(getFixturePath('/test/1.less'));
+  const result = await locator.load(getFixturePath('/test/1.less'));
   expect(result.dependencies).toStrictEqual([]);
 });

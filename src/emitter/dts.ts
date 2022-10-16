@@ -2,7 +2,7 @@ import { EOL } from 'os';
 import { basename } from 'path';
 import camelcase from 'camelcase';
 import { SourceNode, type CodeWithSourceMap } from '../library/source-map/index.js';
-import { type Token } from '../loader/index.js';
+import { type Token } from '../locator/index.js';
 import { type LocalsConvention } from '../runner.js';
 import { getRelativePath, type DtsFormatOptions } from './index.js';
 

@@ -7,7 +7,7 @@ import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 import _glob from 'glob';
 import { isGeneratedFilesExist, emitGeneratedFiles } from './emitter/index.js';
-import { Loader } from './loader/index.js';
+import { Locator } from './locator/index.js';
 import type { Resolver } from './resolver/index.js';
 import { createDefaultResolver } from './resolver/index.js';
 import { createDefaultTransformer, type Transformer } from './transformer/index.js';
@@ -106,14 +106,14 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
     noCache: !(options.cache ?? true),
   });
 
-  const loader = new Loader({ transformer, resolver });
+  const locator = new Locator({ transformer, resolver });
   const isExternalFile = (filePath: string) => {
     return !isMatchByGlob(filePath, options.pattern, { cwd });
   };
 
   async function processFile(filePath: string) {
     try {
-      const result = await loader.load(filePath);
+      const result = await locator.load(filePath);
       await emitGeneratedFiles({
         filePath,
         tokens: result.tokens,

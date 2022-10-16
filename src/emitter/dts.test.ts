@@ -1,11 +1,11 @@
 import dedent from 'dedent';
 import { SourceMapConsumer } from 'source-map';
-import { Loader } from '../loader/index.js';
+import { Locator } from '../locator/index.js';
 import { getFixturePath, createFixtures } from '../test/util.js';
 import { generateDtsContentWithSourceMap, getDtsFilePath } from './dts.js';
 import { type DtsFormatOptions } from './index.js';
 
-const loader = new Loader();
+const locator = new Locator();
 const isExternalFile = () => false;
 
 test('getDtsFilePath', () => {
@@ -35,7 +35,7 @@ describe('generateDtsContentWithSourceMap', () => {
       .d {}
       `,
     });
-    const result = await loader.load(filePath);
+    const result = await locator.load(filePath);
     const { dtsContent, sourceMap } = generateDtsContentWithSourceMap(
       filePath,
       dtsFilePath,
@@ -89,7 +89,7 @@ describe('generateDtsContentWithSourceMap', () => {
         .foo_bar {}
         `,
       });
-      return await loader.load(filePath);
+      return await locator.load(filePath);
     }
     test('undefined', async () => {
       const result = await getResult(filePath);
@@ -210,7 +210,7 @@ describe('generateDtsContentWithSourceMap', () => {
     createFixtures({
       '/test/1.css': `.a {}`,
     });
-    const result = await loader.load(filePath);
+    const result = await locator.load(filePath);
     const { dtsContent, sourceMap } = generateDtsContentWithSourceMap(
       getFixturePath('/test/src/1.css'),
       getFixturePath('/test/dist/1.css.d.ts'),
@@ -239,7 +239,7 @@ describe('generateDtsContentWithSourceMap', () => {
       '/test/2.css': `.b {}`,
       '/test/3.css': `.c {}`,
     });
-    const result = await loader.load(filePath);
+    const result = await locator.load(filePath);
     const { dtsContent } = generateDtsContentWithSourceMap(
       filePath,
       dtsFilePath,

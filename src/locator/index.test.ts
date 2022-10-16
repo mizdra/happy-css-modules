@@ -15,10 +15,10 @@ jest.unstable_mockModule('fs/promises', () => ({
 
 // After the mock of fs/promises is complete, . /index.js after the mock of fs/promises is complete.
 // ref: https://www.coolcomputerclub.com/posts/jest-hoist-await/
-const { Loader } = await import('./index.js');
+const { Locator } = await import('./index.js');
 // NOTE: ../test/util.js depends on . /index.js, so it must also be imported dynamically...
 
-const loader = new Loader();
+const locator = new Locator();
 
 afterEach(() => {
   readFileSpy.mockClear();
@@ -31,7 +31,7 @@ test('basic', async () => {
     .b {}
     `,
   });
-  const result = await loader.load(getFixturePath('/test/1.css'));
+  const result = await locator.load(getFixturePath('/test/1.css'));
   expect(result).toMatchInlineSnapshot(`
     {
       dependencies: [],
@@ -77,7 +77,7 @@ test('tracks other files when `@import` is present', async () => {
     .d {}
     `,
   });
-  const result = await loader.load(getFixturePath('/test/1.css'));
+  const result = await locator.load(getFixturePath('/test/1.css'));
   expect(result).toMatchInlineSnapshot(`
     {
       dependencies: [
@@ -137,7 +137,7 @@ test('tracks other files when `composes` is present', async () => {
     .e {}
     `,
   });
-  const result = await loader.load(getFixturePath('/test/1.css'));
+  const result = await locator.load(getFixturePath('/test/1.css'));
   expect(result).toMatchInlineSnapshot(`
     {
       dependencies: ["<fixtures>/test/2.css", "<fixtures>/test/3.css", "<fixtures>/test/4.css"],
@@ -201,7 +201,7 @@ test('normalizes tokens', async () => {
     .c {}
     `,
   });
-  const result = await loader.load(getFixturePath('/test/1.css'));
+  const result = await locator.load(getFixturePath('/test/1.css'));
   expect(result).toMatchInlineSnapshot(`
     {
       dependencies: ["<fixtures>/test/2.css", "<fixtures>/test/3.css"],
@@ -250,7 +250,7 @@ test.failing('returns the result from the cache when the file has not been modif
     .d {}
     `,
   });
-  await loader.load(getFixturePath('/test/1.css'));
+  await locator.load(getFixturePath('/test/1.css'));
   expect(readFileSpy).toHaveBeenCalledTimes(3);
   expect(readFileSpy).toHaveBeenNthCalledWith(1, '/test/1.css', 'utf-8');
   expect(readFileSpy).toHaveBeenNthCalledWith(2, '/test/2.css', 'utf-8');
@@ -262,17 +262,17 @@ test.failing('returns the result from the cache when the file has not been modif
   await writeFile(getFixturePath('/test/2.css'), await readFile(getFixturePath('/test/2.css'), 'utf-8'));
 
   // `3.css` is not updated, so the cache is used. Therefore, `readFile` is not called.
-  await loader.load(getFixturePath('/test/3.css'));
+  await locator.load(getFixturePath('/test/3.css'));
   expect(readFileSpy).toHaveBeenCalledTimes(0);
 
   // `1.css` is not updated, but dependencies are updated, so the cache is used. Therefore, `readFile` is called.
-  await loader.load(getFixturePath('/test/1.css'));
+  await locator.load(getFixturePath('/test/1.css'));
   expect(readFileSpy).toHaveBeenCalledTimes(2);
   expect(readFileSpy).toHaveBeenNthCalledWith(1, '/test/1.css', 'utf-8');
   expect(readFileSpy).toHaveBeenNthCalledWith(2, '/test/2.css', 'utf-8');
 
   // ``2.css` is updated, but the cache is already available because it was updated in the previous step. Therefore, `readFile` is not called.
-  await loader.load(getFixturePath('/test/2.css'));
+  await locator.load(getFixturePath('/test/2.css'));
   expect(readFileSpy).toHaveBeenCalledTimes(2);
 });
 
@@ -291,7 +291,7 @@ test('ignores the composition of non-existent tokens', async () => {
     .b {}
     `,
   });
-  const result = await loader.load(getFixturePath('/test/1.css'));
+  const result = await locator.load(getFixturePath('/test/1.css'));
   expect(result.tokens.map((t) => t.name)).toStrictEqual(['a', 'b']);
 });
 
@@ -306,7 +306,7 @@ test('throws error the composition of non-existent file', async () => {
     `,
   });
   await expect(async () => {
-    await loader.load(getFixturePath('/test/1.css')).catch((e) => {
+    await locator.load(getFixturePath('/test/1.css')).catch((e) => {
       e.message = e.message.replace(FIXTURE_DIR_PATH, '<fixtures>');
       throw e;
     });
@@ -316,7 +316,7 @@ test('throws error the composition of non-existent file', async () => {
 describe('supports sourcemap', () => {
   test('restores original locations from sourcemap', async () => {
     const transformer = createDefaultTransformer();
-    const loader = new Loader({ transformer });
+    const locator = new Locator({ transformer });
     createFixtures({
       '/test/1.scss': dedent`
       .nesting {
@@ -327,7 +327,7 @@ describe('supports sourcemap', () => {
       }
       `,
     });
-    const result = await loader.load(getFixturePath('/test/1.scss'));
+    const result = await locator.load(getFixturePath('/test/1.scss'));
     expect(result).toMatchInlineSnapshot(`
       {
         dependencies: [],
@@ -365,8 +365,8 @@ describe('supports sourcemap', () => {
       `,
     });
     const transformer = createDefaultTransformer({ postcssConfig: getFixturePath(`/${uuid}/postcss.config.js`) });
-    const loader = new Loader({ transformer });
-    const result = await loader.load(getFixturePath('/test/1.css'));
+    const locator = new Locator({ transformer });
+    const result = await locator.load(getFixturePath('/test/1.css'));
     expect(result).toMatchInlineSnapshot(`
       {
         dependencies: [],
@@ -398,6 +398,6 @@ test('ignores http(s) protocol file', async () => {
     @import 'https://example.com/path/https.css';
     `,
   });
-  const result = await loader.load(getFixturePath('/test/1.css'));
+  const result = await locator.load(getFixturePath('/test/1.css'));
   expect(result.dependencies).toStrictEqual([]);
 });
