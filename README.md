@@ -165,6 +165,52 @@ run({ ...runnerOptions, resolver, cwd }).catch((e) => {
 });
 ```
 
+### Example: Get locations for selectors exported by CSS Modules
+
+`Locator` can be used to get location for selectors exported by CSS Modules.
+
+```typescript
+import { Locator } from 'happy-css-modules';
+import { resolve } from 'path';
+import assert from 'assert';
+
+const locator = new Locator({
+  // You can customize the transformer and resolver used by the locator.
+  // transformer: createDefaultTransformer(),
+  // resolver: createDefaultResolver(),
+});
+
+// Process https://github.com/mizdra/happy-css-modules/blob/main/example/02-import/2.css
+const filePath = resolve('example/02-import/2.css'); // Convert to absolute path
+const result = await locator.load(filePath);
+
+assert.deepEqual(result, {
+  dependencies: ['/Users/mizdra/src/github.com/mizdra/happy-css-modules/example/02-import/3.css'],
+  tokens: [
+    {
+      name: 'b',
+      originalLocations: [
+        {
+          filePath: '/Users/mizdra/src/github.com/mizdra/happy-css-modules/example/02-import/3.css',
+          start: { line: 1, column: 1 },
+          end: { line: 1, column: 2 },
+        },
+      ],
+    },
+    {
+      name: 'a',
+      originalLocations: [
+        {
+          filePath: '/Users/mizdra/src/github.com/mizdra/happy-css-modules/example/02-import/2.css',
+          start: { line: 3, column: 1 },
+          end: { line: 3, column: 2 },
+        },
+      ],
+    },
+  ],
+});
+```
+
 ## TODO
 
 - [x] Add more tests
