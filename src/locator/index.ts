@@ -75,6 +75,7 @@ export class Locator {
   private readonly cache: Map<string, CacheEntry> = new Map();
   private readonly transformer: Transformer | undefined;
   private readonly resolver: StrictlyResolver;
+  private loading = false;
 
   constructor(options?: LocatorOptions) {
     this.transformer = options?.transformer ?? createDefaultTransformer();
@@ -137,8 +138,15 @@ export class Locator {
 
   /** Returns information about the tokens exported from the CSS Modules file. */
   async load(filePath: string): Promise<LoadResult> {
-    // NOTE: Locator does not support concurrent calls.
-    // TODO: Throw an error if called concurrently.
+    if (this.loading) throw new Error('Cannot call `Locator#load` concurrently.');
+    this.loading = true;
+    const result = await this._load(filePath).finally(() => {
+      this.loading = false;
+    });
+    return result;
+  }
+
+  private async _load(filePath: string): Promise<LoadResult> {
     if (!(await this.isCacheOutdated(filePath))) {
       const cacheEntry = this.cache.get(filePath)!;
       return cacheEntry.result;
@@ -164,7 +172,7 @@ export class Locator {
       if (!importedSheetPath) continue;
       if (isIgnoredSpecifier(importedSheetPath)) continue;
       const from = await this.resolver(importedSheetPath, { request: filePath });
-      const result = await this.load(from);
+      const result = await this._load(from);
       const externalTokens = result.tokens;
       dependencies.push(from, ...result.dependencies);
       tokens.push(...externalTokens);
@@ -190,7 +198,7 @@ export class Locator {
       if (!declarationDetail) continue;
       if (isIgnoredSpecifier(declarationDetail.from)) continue;
       const from = await this.resolver(declarationDetail.from, { request: filePath });
-      const result = await this.load(from);
+      const result = await this._load(from);
       const externalTokens = result.tokens.filter((token) => declarationDetail.tokenNames.includes(token.name));
       dependencies.push(from, ...result.dependencies);
       tokens.push(...externalTokens);
