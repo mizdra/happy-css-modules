@@ -4,7 +4,7 @@ import { tmpdir } from 'os';
 import { dirname, join, resolve } from 'path';
 import postcss, { type Root, type Rule, type AtRule, type Declaration } from 'postcss';
 import { type ClassName } from 'postcss-selector-parser';
-import { type Token, collectNodes, type Location } from '../loader/index.js';
+import { type Token, collectNodes, type Location } from '../locator/index.js';
 import { sleepSync } from '../util.js';
 
 export const FIXTURE_DIR_PATH = resolve(

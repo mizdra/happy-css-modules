@@ -7,7 +7,7 @@ import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 import _glob from 'glob';
 import { isGeneratedFilesExist, emitGeneratedFiles } from './emitter/index.js';
-import { Loader } from './loader/index.js';
+import { Loader } from './locator/index.js';
 import type { Resolver } from './resolver/index.js';
 import { createDefaultResolver } from './resolver/index.js';
 import { createDefaultTransformer, type Transformer } from './transformer/index.js';

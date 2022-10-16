@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { createRequire } from 'node:module';
 import dedent from 'dedent';
-import { Loader } from '../loader/index.js';
+import { Loader } from '../locator/index.js';
 import { createFixtures, getFixturePath } from '../test/util.js';
 import { createDefaultTransformer } from './index.js';
 

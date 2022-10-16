@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
-import { Loader } from '../loader/index.js';
+import { Loader } from '../locator/index.js';
 import { createFixtures, getFixturePath } from '../test/util.js';
 import { createScssTransformer } from './scss-transformer.js';
 
