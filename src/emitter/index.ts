@@ -28,6 +28,10 @@ function outputGenerationLog(cwd: string, filePath: string, emitDeclarationMap: 
   }
 }
 
+export function outputSkippingGenerationLog(cwd: string, filePath: string): void {
+  console.log(chalk.gray(`Skip generation for ${relative(cwd, filePath)}`));
+}
+
 /** The distribution option. */
 export type DistOptions = {
   /** Root directory. It is absolute. */
