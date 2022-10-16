@@ -2,6 +2,7 @@ import { dirname, isAbsolute, relative } from 'path';
 import chalk from 'chalk';
 import { type Token } from '../loader/index.js';
 import { type LocalsConvention } from '../runner.js';
+import { exists } from '../util.js';
 import { generateDtsContentWithSourceMap, getDtsFilePath } from './dts.js';
 import { writeFileIfChanged } from './file-system.js';
 import { generateSourceMappingURLComment, getSourceMapFilePath } from './source-map.js';
@@ -90,4 +91,23 @@ export async function emitGeneratedFiles({
     await writeFileIfChanged(dtsFilePath, dtsContent);
   }
   if (!silent) outputGenerationLog(cwd, filePath, emitDeclarationMap);
+}
+
+/**
+ * Returns true if .d.ts (and .d.ts.map) files are generated for the given file.
+ */
+export async function isGeneratedFilesExist(
+  filePath: string,
+  distOptions: DistOptions | undefined,
+  emitDeclarationMap: boolean | undefined,
+): Promise<boolean> {
+  const dtsFilePath = getDtsFilePath(filePath, distOptions);
+  const sourceMapFilePath = getSourceMapFilePath(filePath, distOptions);
+  if (emitDeclarationMap && !(await exists(sourceMapFilePath))) {
+    return false;
+  }
+  if (!(await exists(dtsFilePath))) {
+    return false;
+  }
+  return true;
 }

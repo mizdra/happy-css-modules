@@ -6,7 +6,7 @@ import { createNpmPackageKey } from '@file-cache/npm';
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 import _glob from 'glob';
-import { emitGeneratedFiles } from './emitter/index.js';
+import { isGeneratedFilesExist, emitGeneratedFiles } from './emitter/index.js';
 import { Loader } from './loader/index.js';
 import type { Resolver } from './resolver/index.js';
 import { createDefaultResolver } from './resolver/index.js';
@@ -170,8 +170,14 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
     const errors: unknown[] = [];
     for (const filePath of filePaths) {
       try {
-        if (!(await isChangedFile(filePath))) continue;
-        await processFile(filePath);
+        // Generate .d.ts and .d.ts.map only when the file has been updated.
+        // However, if .d.ts or .d.ts.map has not yet been generated, always generate.
+        if (
+          !(await isGeneratedFilesExist(filePath, distOptions, options.declarationMap)) ||
+          (await isChangedFile(filePath))
+        ) {
+          await processFile(filePath);
+        }
       } catch (e: unknown) {
         errors.push(e);
       }
