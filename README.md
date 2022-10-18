@@ -17,8 +17,6 @@ https://user-images.githubusercontent.com/9639995/189538880-872ad38d-2c9d-4c19-b
 - :mag: Definition jumps
   - Clicking on a property on `.jsx`/`.tsx` will jump to the source of the definition on `.module.css`.
   - This is accomplished by generating `.d.ts.map` (a.k.a. [Declaration Map](https://www.typescriptlang.org/tsconfig#declarationMap)).
-- :rotating_light: Unused selector detection (**Not implemented yet**)
-  - Detect unused selectors using information from strict type checking.
 - :handshake: High compatibility with the ecosystem
   - Support for Postcss/Sass/Less
   - Implement webpack-compatible resolving algorithms
@@ -264,10 +262,3 @@ There are several prior art for each feature. In contrast, happy-css-modules is 
 
 - [typescript-plugin-css-modules](https://github.com/mrmckeb/typescript-plugin-css-modules)
   - Can only jump to the top of `.css`.
-
-### Unused selector detection
-
-- [stylelint-no-unused-selectors](https://github.com/nodaguti/stylelint-no-unused-selectors)
-  - Detectable patterns are limited.
-  - However, it works without `.d.ts`.
-  - For more information, see [the documentation](https://github.com/nodaguti/stylelint-no-unused-selectors/tree/57eeacaab675957aaa507f5524b9b78947e127b2/src/plugins/stylelint-no-unused-selectors-plugin-tsx#features-and-limitations)
