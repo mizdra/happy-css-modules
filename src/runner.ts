@@ -3,6 +3,7 @@ import * as process from 'process';
 import * as util from 'util';
 import { createCache } from '@file-cache/core';
 import { createNpmPackageKey } from '@file-cache/npm';
+import AwaitLock from 'await-lock';
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 import _glob from 'glob';
@@ -82,6 +83,8 @@ type OverrideProp<T, K extends keyof T, V extends T[K]> = Omit<T, K> & { [P in K
 export async function run(options: OverrideProp<RunnerOptions, 'watch', true>): Promise<Watcher>;
 export async function run(options: RunnerOptions): Promise<void>;
 export async function run(options: RunnerOptions): Promise<Watcher | void> {
+  const lock = new AwaitLock.default();
+
   const cwd = options.cwd ?? process.cwd();
   const silent = options.silent ?? false;
   const resolver =
@@ -113,6 +116,9 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
 
   async function processFile(filePath: string) {
     try {
+      // Locator#load cannot be called concurrently. Therefore, it takes a lock and waits.
+      await lock.acquireAsync();
+
       const result = await locator.load(filePath);
       await emitGeneratedFiles({
         filePath,
@@ -133,6 +139,8 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
         console.error(chalk.red('[Error] ' + error));
       }
       throw error;
+    } finally {
+      lock.release();
     }
   }
 
