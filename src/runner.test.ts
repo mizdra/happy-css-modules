@@ -133,6 +133,12 @@ test('watches for changes in files', async () => {
   await writeFile(getFixturePath('/test/1.css'), '.a-2 {}');
   await waitForAsyncTask(500); // Wait until the file is written
   expect(await readFile(getFixturePath('/test/1.css.d.ts'), 'utf8')).toMatch(/a-2/);
+
+  await writeFile(getFixturePath('/test/2.css'), '.b {}');
+  await writeFile(getFixturePath('/test/3.css'), '.c {}');
+  await waitForAsyncTask(500); // Wait until the file is written
+  expect(await readFile(getFixturePath('/test/2.css.d.ts'), 'utf8')).toMatch(/b/);
+  expect(await readFile(getFixturePath('/test/3.css.d.ts'), 'utf8')).toMatch(/c/);
 });
 test('returns an error if the file fails to process in non-watch mode', async () => {
   createFixtures({
