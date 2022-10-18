@@ -41,6 +41,7 @@
   "dependencies": {
     "@file-cache/core": "^1.1.3",
     "@file-cache/npm": "^1.1.3",
+    "await-lock": "^2.2.2",
     "camelcase": "^7.0.0",
     "chalk": "^5.0.1",
     "chokidar": "^3.5.3",
