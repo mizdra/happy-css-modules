@@ -81,9 +81,7 @@ When tsserver (TypeScript Language Server for VSCode) tries to jump to the code 
 
 ![Illustration of how definition jump works](docs/how-does-definition-jumps-work/basic/flow.drawio.svg)
 
-The case of multiple definitions is a bit more complicated.
-
-This is because the Source Map specification does not allow for a 1:N mapping of the generated:original locations. Therefore, happy-css-modules define multiple definitions of the same property type and map each property to a different location in `.module.css`.
+The case of multiple definitions is a bit more complicated. This is because the Source Map specification does not allow for a 1:N mapping of the generated:original locations. Therefore, happy-css-modules define multiple definitions of the same property type and map each property to a different location in `.module.css`.
 
 ![Illustration of a case with multiple definitions](docs/how-does-definition-jumps-work/multiple-definitions/flow.drawio.svg)
 
