@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
 import { Locator } from '../locator/index.js';
-import { createFixtures, getFixturePath } from '../test/util.js';
+import { createFixtures, getFixturePath } from '../test-util/util.js';
 import { createScssTransformer } from './scss-transformer.js';
 
 const locator = new Locator({ transformer: createScssTransformer() });

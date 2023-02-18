@@ -3,7 +3,7 @@ import { createRequire } from 'node:module';
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
 import { Locator } from '../locator/index.js';
-import { createFixtures, getFixturePath } from '../test/util.js';
+import { createFixtures, getFixturePath } from '../test-util/util.js';
 import { createPostcssTransformer } from './postcss-transformer.js';
 
 const cwd = getFixturePath('/');

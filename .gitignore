@@ -9,4 +9,3 @@ example/bundle.css
 dist/
 coverage/
 *.tsbuildinfo
-test/*.css.d.ts

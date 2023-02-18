@@ -1,7 +1,7 @@
 import dedent from 'dedent';
 import { SourceMapConsumer } from 'source-map';
 import { Locator } from '../locator/index.js';
-import { getFixturePath, createFixtures } from '../test/util.js';
+import { getFixturePath, createFixtures } from '../test-util/util.js';
 import { generateDtsContentWithSourceMap, getDtsFilePath } from './dts.js';
 import { type DtsFormatOptions } from './index.js';
 

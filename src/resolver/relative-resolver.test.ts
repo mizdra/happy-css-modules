@@ -1,4 +1,4 @@
-import { getFixturePath } from '../test/util.js';
+import { getFixturePath } from '../test-util/util.js';
 import { createRelativeResolver } from './relative-resolver.js';
 
 const relativeResolver = createRelativeResolver();

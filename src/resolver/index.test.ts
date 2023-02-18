@@ -1,4 +1,4 @@
-import { createFixtures, getFixturePath } from '../test/util.js';
+import { createFixtures, getFixturePath } from '../test-util/util.js';
 import { createDefaultResolver } from './index.js';
 
 const defaultResolver = createDefaultResolver();

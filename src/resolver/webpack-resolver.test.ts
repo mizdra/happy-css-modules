@@ -1,4 +1,4 @@
-import { createFixtures, getFixturePath } from '../test/util.js';
+import { createFixtures, getFixturePath } from '../test-util/util.js';
 import { createWebpackResolver } from './webpack-resolver.js';
 
 test('resolves specifier with css-loader mechanism', async () => {

@@ -1,5 +1,5 @@
 import { readFile, rm, stat } from 'fs/promises';
-import { createFixtures, getFixturePath } from '../test/util.js';
+import { createFixtures, getFixturePath } from '../test-util/util.js';
 import { writeFileIfChanged } from './file-system.js';
 
 const TEST_FILE_PATH = getFixturePath('/test.txt');

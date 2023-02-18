@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
 import { createDefaultTransformer } from '../index.js';
-import { createFixtures, FIXTURE_DIR_PATH, getFixturePath } from '../test/util.js';
+import { createFixtures, FIXTURE_DIR_PATH, getFixturePath } from '../test-util/util.js';
 import { sleepSync } from '../util.js';
 
 const readFileSpy = jest.spyOn(fs, 'readFile');
