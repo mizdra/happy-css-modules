@@ -253,33 +253,25 @@ Thank you [@Quramy](https://github.com/Quramy)!
 
 ## Prior art
 
-There are several prior art for each feature. In contrast, happy-css-modules is a comprehensive implementation of these features.
+There is a lot of excellent prior art.
 
-### Strict type checking
+- ✅ Supported
+- 🔶 Partially supported
+- 🛑 Not supported
+- ❓ Unknown
 
-- [Quramy/typed-css-modules](https://github.com/Quramy/typed-css-modules)
-  - Only `.css` can be processed.
-  - Resolving using webpack's resolve.alias is not implemented.
-- [skovy/typed-scss-modules](https://github.com/skovy/typed-scss-modules)
-  - Only `.scss` can be processed.
-  - Resolving using webpack's resolve.alias is not implemented.
-- [qiniu/typed-less-modules](https://github.com/qiniu/typed-less-modules)
-  - Only `.less` can be processed.
-  - Resolving using webpack's resolve.alias is not implemented.
-- [mrmckeb/typescript-plugin-css-modules](https://github.com/mrmckeb/typescript-plugin-css-modules)
-  - This is implemented as a TypeScript language service.
-    - Therefore, warnings can be issued on the editor, but not at compile time.
-    - In addition, the setup procedure is complicated.
-    - For more information, see [the documentation](https://github.com/mrmckeb/typescript-plugin-css-modules/tree/82ba03548c3d2193508e1a4dbc47c1aa9b22943c#about-this-plugin).
+| Repository                                                                                        | Strict type checking | Definition jumps | Sass | Less | `resolve.alias` |              How implemented              |
+| :------------------------------------------------------------------------------------------------ | :------------------: | :--------------: | :--: | :--: | :-------------: | :---------------------------------------: |
+| [Quramy/typed-css-modules](https://github.com/Quramy/typed-css-modules)                           |          ✅          |        🛑        |  🛑  |  🛑  |       🛑        |                 CLI Tool                  |
+| [skovy/typed-scss-modules](https://github.com/skovy/typed-scss-modules)                           |          ✅          |        🛑        |  ✅  |  🛑  |       🛑        |                 CLI Tool                  |
+| [qiniu/typed-less-modules](https://github.com/qiniu/typed-less-modules)                           |          ✅          |        🛑        |  🛑  |  ✅  |       🛑        |                 CLI Tool                  |
+| [mrmckeb/typescript-plugin-css-modules](https://github.com/mrmckeb/typescript-plugin-css-modules) |   🔶<sup>\*1</sup>   | 🔶<sup>\*2</sup> |  ✅  |  ✅  |       🛑        | TypeScript Language Service<sup>\*3</sup> |
+| [clinyong/vscode-css-modules](https://github.com/clinyong/vscode-css-modules)                     |          🛑          |        ✅        |  ✅  |  ✅  |       🛑        |             VSCode Extension              |
+| [Viijay-Kr/react-ts-css](https://github.com/Viijay-Kr/react-ts-css)                               |   🔶<sup>\*1</sup>   |        ✅        |  ✅  |  ✅  |       ❓        |             VSCode Extension              |
+| [mizdra/happy-css-modules](https://github.com/mizdra/happy-css-modules)                           |          ✅          |        ✅        |  ✅  |  ✅  |       ✅        |        CLI Tool + Declaration Map         |
 
-### Definition jumps
+- \*1: Warnings are displayed in the editor, but not at compile time.
+- \*2: Not supported for `.less` definition jumps.
+- \*3: The TypeScript language service can display warnings in the editor, but not at compile time. It is also complicated to set up.
 
-- [mrmckeb/typescript-plugin-css-modules](https://github.com/mrmckeb/typescript-plugin-css-modules)
-  - Does not support `.less` or `.sass` definition jumps.
-- [clinyong/vscode-css-modules](https://github.com/clinyong/vscode-css-modules)
-  - This works as expected in most cases.
-  - However, it does not support complex resolution algorithms such as `resolve.alias`.
-  - It is implemented as a VSCode extension.
-- [Viijay-Kr/react-ts-css](https://github.com/Viijay-Kr/react-ts-css)
-  - It works as expected in most cases, and it's highly functional!
-  - It is implemented as a VSCode extension.
+Another known tool for generating `.css.d.ts` is [wix/stylable](https://github.com/wix/stylable) , which does not use CSS Modules.
