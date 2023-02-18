@@ -7,3 +7,4 @@ coverage/
 *.scss.d.ts
 *.less.d.ts
 pnpm-lock.yaml
+/docs/how-does-definition-jumps-work
