@@ -1,4 +1,4 @@
-import { readFile, rm, writeFile } from 'fs/promises';
+import { readFile, rm, symlink, writeFile } from 'fs/promises';
 import { randomUUID } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'path';
@@ -250,4 +250,34 @@ test('postcssConfig', async () => {
     `,
   });
   await run({ ...defaultOptions, postcssConfig }); // not throw
+});
+
+test('support symlink', async () => {
+  createFixtures({
+    '/external/1.css': '.a {}',
+    '/external/2.css': '.b {}',
+    '/test': {}, // empty directory
+  });
+  await symlink(getFixturePath('/external/1.css'), getFixturePath('/test/1.css'));
+  await symlink(getFixturePath('/external/2.css'), getFixturePath('/test/2.txt'));
+
+  await run({ ...defaultOptions, watch: false });
+
+  // Symlinks that do not match the pattern are not processed.
+  expect(await exists(getFixturePath('/test/1.css.d.ts'))).toBe(true);
+  expect(await exists(getFixturePath('/test/2.css.d.ts'))).toBe(false);
+  expect(await exists(getFixturePath('/test/2.txt.d.ts'))).toBe(false);
+
+  // The path referred to by sourceMappingURL or sources field is the path before symlink resolution.
+  expect(await readFile(getFixturePath('/test/1.css.d.ts'), 'utf8')).toMatchInlineSnapshot(`
+    "declare const styles:
+      & Readonly<{ "a": string }>
+    ;
+    export default styles;
+    //# sourceMappingURL=./1.css.d.ts.map
+    "
+  `);
+  expect(await readFile(getFixturePath('/test/1.css.d.ts.map'), 'utf8')).toMatchInlineSnapshot(
+    `"{"version":3,"sources":["./1.css"],"names":["a"],"mappings":"AAAA;AAAA,E,aAAAA,G,WAAA;AAAA;AAAA","file":"1.css.d.ts","sourceRoot":""}"`,
+  );
 });
