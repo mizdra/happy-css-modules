@@ -73,6 +73,20 @@ Examples:
   hcm 'src/**/*.module.css' --cache=false                         Disable cache.
 ```
 
+## How docs definition jumps work?
+
+In addition to `.module.css.d.ts`, happy-css-modules also generates a `.module.css.d.ts.map` file (a.k.a. [Declaration Map](https://www.typescriptlang.org/tsconfig#declarationMap)). This file is a Source Map that contains code mapping information from generated (`.module.css.d.ts`) to source (`.module.css`).
+
+When tsserver (TypeScript Language Server for VSCode) tries to jump to the code on `.module.css.d.ts`, it restores the original location from this Source Map and redirects to the code on` .module.css`. happy-css-modules uses this mechanism to realize definition jump.
+
+![Illustration of how definition jump works](docs/how-does-definition-jumps-work/basic/flow.drawio.svg)
+
+The case of multiple definitions is a bit more complicated.
+
+This is because the Source Map specification does not allow for a 1:N mapping of the generated:original locations. Therefore, happy-css-modules define multiple definitions of the same property type and map each property to a different location in `.module.css`.
+
+![Illustration of a case with multiple definitions](docs/how-does-definition-jumps-work/multiple-definitions/flow.drawio.svg)
+
 ## Node.js API (Experimental)
 
 > **Warning**
