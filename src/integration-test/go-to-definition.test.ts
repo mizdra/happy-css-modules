@@ -1,7 +1,7 @@
 import dedent from 'dedent';
 import { run } from '../runner.js';
-import { createTSServer } from '../test/tsserver.js';
-import { createFixtures, getFixturePath } from '../test/util.js';
+import { createTSServer } from '../test-util/tsserver.js';
+import { createFixtures, getFixturePath } from '../test-util/util.js';
 
 const server = await createTSServer();
 

@@ -29,8 +29,8 @@ module.exports = {
               '!../*/util.js',
               '!./library/*',
               '!../library/*',
-              '!./test/*',
-              '!../test/*',
+              '!./test-util/*',
+              '!../test-util/*',
             ],
           },
         ],
@@ -48,7 +48,7 @@ module.exports = {
       },
     },
     {
-      files: ['src/test/**/*.{ts,tsx,cts,mts}', '*.test.{ts,tsx,cts,mts}'],
+      files: ['src/test-util/**/*.{ts,tsx,cts,mts}', '*.test.{ts,tsx,cts,mts}'],
       env: {
         jest: true,
       },

@@ -5,7 +5,7 @@ import {
   createAtImports,
   createComposesDeclarations,
   createFixtures,
-} from '../test/util.js';
+} from '../test-util/util.js';
 import {
   generateLocalTokenNames,
   getOriginalLocation,

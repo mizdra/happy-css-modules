@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { createRequire } from 'node:module';
 import dedent from 'dedent';
 import { Locator } from '../locator/index.js';
-import { createFixtures, getFixturePath } from '../test/util.js';
+import { createFixtures, getFixturePath } from '../test-util/util.js';
 import { createDefaultTransformer } from './index.js';
 
 const require = createRequire(import.meta.url);

@@ -19,7 +19,7 @@ const config = {
     '^.+\\.(t|j)sx?$': '@swc/jest',
   },
   // for ESM
-  resolver: join(dir, 'src/test/jest/resolver.cjs'),
+  resolver: join(dir, 'src/test-util/jest/resolver.cjs'),
 };
 
 // eslint-disable-next-line import/no-default-export
