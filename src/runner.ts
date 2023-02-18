@@ -153,12 +153,18 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
   if (options.watch) {
     if (!silent) console.log('Watch ' + options.pattern + '...');
     const watcher = chokidar.watch([options.pattern.replace(/\\/g, '/')], { cwd });
-    watcher.on('all', (eventName, filePath) => {
-      if (eventName === 'add' || eventName === 'change') {
-        processFile(resolve(cwd, filePath)).catch(() => {
-          // TODO: Emit a error by `Watcher#onerror`
-        });
-      }
+    watcher.on('all', (eventName, relativeFilePath) => {
+      const filePath = resolve(cwd, relativeFilePath);
+
+      // There is a bug in chokidar that matches symlinks that do not match the pattern.
+      // ref: https://github.com/paulmillr/chokidar/issues/967
+      if (isExternalFile(filePath)) return;
+
+      if (eventName !== 'add' && eventName !== 'change') return;
+
+      processFile(filePath).catch(() => {
+        // TODO: Emit a error by `Watcher#onerror`
+      });
     });
     return { close: async () => watcher.close() };
   } else {
