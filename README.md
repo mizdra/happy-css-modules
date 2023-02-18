@@ -81,9 +81,7 @@ When tsserver (TypeScript Language Server for VSCode) tries to jump to the code 
 
 ![Illustration of how definition jump works](docs/how-does-definition-jumps-work/basic/flow.drawio.svg)
 
-The case of multiple definitions is a bit more complicated.
-
-This is because the Source Map specification does not allow for a 1:N mapping of the generated:original locations. Therefore, happy-css-modules define multiple definitions of the same property type and map each property to a different location in `.module.css`.
+The case of multiple definitions is a bit more complicated. This is because the Source Map specification does not allow for a 1:N mapping of the generated:original locations. Therefore, happy-css-modules define multiple definitions of the same property type and map each property to a different location in `.module.css`.
 
 ![Illustration of a case with multiple definitions](docs/how-does-definition-jumps-work/multiple-definitions/flow.drawio.svg)
 
@@ -259,16 +257,16 @@ There are several prior art for each feature. In contrast, happy-css-modules is 
 
 ### Strict type checking
 
-- [typed-css-modules](https://github.com/Quramy/typed-css-modules)
+- [Quramy/typed-css-modules](https://github.com/Quramy/typed-css-modules)
   - Only `.css` can be processed.
   - Resolving using webpack's resolve.alias is not implemented.
-- [typed-scss-modules](https://github.com/skovy/typed-scss-modules)
+- [skovy/typed-scss-modules](https://github.com/skovy/typed-scss-modules)
   - Only `.scss` can be processed.
   - Resolving using webpack's resolve.alias is not implemented.
-- [typed-less-modules](https://github.com/qiniu/typed-less-modules)
+- [qiniu/typed-less-modules](https://github.com/qiniu/typed-less-modules)
   - Only `.less` can be processed.
   - Resolving using webpack's resolve.alias is not implemented.
-- [typescript-plugin-css-modules](https://github.com/mrmckeb/typescript-plugin-css-modules)
+- [mrmckeb/typescript-plugin-css-modules](https://github.com/mrmckeb/typescript-plugin-css-modules)
   - This is implemented as a TypeScript language service.
     - Therefore, warnings can be issued on the editor, but not at compile time.
     - In addition, the setup procedure is complicated.
@@ -276,5 +274,12 @@ There are several prior art for each feature. In contrast, happy-css-modules is 
 
 ### Definition jumps
 
-- [typescript-plugin-css-modules](https://github.com/mrmckeb/typescript-plugin-css-modules)
-  - Can only jump to the top of `.css`.
+- [mrmckeb/typescript-plugin-css-modules](https://github.com/mrmckeb/typescript-plugin-css-modules)
+  - Does not support `.less` or `.sass` definition jumps.
+- [clinyong/vscode-css-modules](https://github.com/clinyong/vscode-css-modules)
+  - This works as expected in most cases.
+  - However, it does not support complex resolution algorithms such as `resolve.alias`.
+  - It is implemented as a VSCode extension.
+- [Viijay-Kr/react-ts-css](https://github.com/Viijay-Kr/react-ts-css)
+  - It works as expected in most cases, and it's highly functional!
+  - It is implemented as a VSCode extension.
