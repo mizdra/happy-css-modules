@@ -9,6 +9,7 @@ import * as chokidar from 'chokidar';
 import _glob from 'glob';
 import { isGeneratedFilesExist, emitGeneratedFiles } from './emitter/index.js';
 import { Locator } from './locator/index.js';
+import { Logger } from './logger.js';
 import type { Resolver } from './resolver/index.js';
 import { createDefaultResolver } from './resolver/index.js';
 import { createDefaultTransformer, type Transformer } from './transformer/index.js';
@@ -84,9 +85,9 @@ export async function run(options: OverrideProp<RunnerOptions, 'watch', true>): 
 export async function run(options: RunnerOptions): Promise<void>;
 export async function run(options: RunnerOptions): Promise<Watcher | void> {
   const lock = new AwaitLock.default();
+  const logger = new Logger(options.silent ? 'silent' : 'debug');
 
   const cwd = options.cwd ?? process.cwd();
-  const silent = options.silent ?? false;
   const resolver =
     options.resolver ??
     createDefaultResolver({
@@ -129,14 +130,12 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
         },
         isExternalFile,
       });
-      if (!silent) console.log(`${chalk.green(relative(cwd, filePath))} (generated)`);
+      logger.info(`${chalk.green(relative(cwd, filePath))} (generated)`);
     } catch (error) {
       if (error instanceof Error) {
-        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-        console.error(chalk.red('[Error] ' + error.stack));
+        logger.error(chalk.red(error.stack));
       } else {
-        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-        console.error(chalk.red('[Error] ' + error));
+        logger.error(chalk.red(error));
       }
       throw error;
     } finally {
@@ -151,7 +150,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
   }
 
   if (options.watch) {
-    if (!silent) console.log('Watch ' + options.pattern + '...');
+    logger.info('Watch ' + options.pattern + '...');
     const watcher = chokidar.watch([options.pattern.replace(/\\/g, '/')], { cwd });
     watcher.on('all', (eventName, relativeFilePath) => {
       const filePath = resolve(cwd, relativeFilePath);
@@ -182,7 +181,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
         if (!_isGeneratedFilesExist || _isChangedFile) {
           await processFile(filePath);
         } else {
-          if (!silent) console.log(chalk.gray(`${relative(cwd, filePath)} (skipped)`));
+          logger.debug(chalk.gray(`${relative(cwd, filePath)} (skipped)`));
         }
       } catch (e: unknown) {
         errors.push(e);
