@@ -33,9 +33,9 @@ export type TransformerOptions = {
 /** The function to transform source code. */
 export type Transformer = (source: string, options: TransformerOptions) => TransformResult | Promise<TransformResult>;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- TODO: pass `e` to Error's cause option
 export const handleImportError = (packageName: string) => (e: unknown) => {
-  console.error(`${packageName} import failed. Did you forget to \`npm install -D ${packageName}\`?`);
-  throw e;
+  throw new Error(`${packageName} import failed. Did you forget to \`npm install -D ${packageName}\`?`);
 };
 
 export type DefaultTransformerOptions = PostcssTransformerOptions;
