@@ -95,12 +95,12 @@ test('outputs logs', async () => {
   });
   await run({ ...defaultOptions, silent: false, cache: true });
   expect(consoleLogSpy).toBeCalledTimes(1);
-  expect(consoleLogSpy).toHaveBeenNthCalledWith(1, `${chalk.green('test/1.css')} (generated)`);
+  expect(consoleLogSpy).toHaveBeenNthCalledWith(1, `${chalk.blue('[info]')} ${chalk.green('test/1.css')} (generated)`);
   consoleLogSpy.mockClear();
 
   await run({ ...defaultOptions, silent: false, cache: true });
   expect(consoleLogSpy).toBeCalledTimes(1);
-  expect(consoleLogSpy).toHaveBeenNthCalledWith(1, `${chalk.gray('test/1.css (skipped)')}`);
+  expect(consoleLogSpy).toHaveBeenNthCalledWith(1, `[debug] ${chalk.gray('test/1.css (skipped)')}`);
 });
 
 test.todo('changes dts format with localsConvention options');
@@ -158,10 +158,8 @@ test('returns an error if the file fails to process in non-watch mode', async ()
 
   // The error is logged to console.error.
   expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
-  // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-  expect(consoleErrorSpy).toHaveBeenNthCalledWith(1, chalk.red('[Error] ' + error.errors[0]!.stack));
-  // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-  expect(consoleErrorSpy).toHaveBeenNthCalledWith(2, chalk.red('[Error] ' + error.errors[1].stack));
+  expect(consoleErrorSpy).toHaveBeenNthCalledWith(1, chalk.red('[error]') + ' ' + chalk.red(error.errors[0]!.stack));
+  expect(consoleErrorSpy).toHaveBeenNthCalledWith(2, chalk.red('[error]') + ' ' + chalk.red(error.errors[1].stack));
 
   // The valid files are emitted.
   expect(await exists(getFixturePath('/test/1.css.d.ts'))).toBe(true);
