@@ -130,7 +130,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
         },
         isExternalFile,
       });
-      logger.info(`${chalk.green(relative(cwd, filePath))} (generated)`);
+      logger.info(chalk.green(`${relative(cwd, filePath)} (generated)`));
     } catch (error) {
       if (error instanceof Error) {
         logger.error(chalk.red(error.stack));

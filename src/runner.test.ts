@@ -95,7 +95,7 @@ test('outputs logs', async () => {
   });
   await run({ ...defaultOptions, silent: false, cache: true });
   expect(consoleLogSpy).toBeCalledTimes(1);
-  expect(consoleLogSpy).toHaveBeenNthCalledWith(1, `${chalk.blue('[info]')} ${chalk.green('test/1.css')} (generated)`);
+  expect(consoleLogSpy).toHaveBeenNthCalledWith(1, `${chalk.blue('[info]')} ${chalk.green('test/1.css (generated)')}`);
   consoleLogSpy.mockClear();
 
   await run({ ...defaultOptions, silent: false, cache: true });
