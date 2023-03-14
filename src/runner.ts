@@ -132,11 +132,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
       });
       logger.info(chalk.green(`${relative(cwd, filePath)} (generated)`));
     } catch (error) {
-      if (error instanceof Error) {
-        logger.error(chalk.red(error.stack));
-      } else {
-        logger.error(chalk.red(error));
-      }
+      logger.error(chalk.red(error));
       throw error;
     } finally {
       lock.release();
