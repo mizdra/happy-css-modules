@@ -173,9 +173,11 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
   }
 
   if (!options.watch) {
+    logger.info('Generate .d.ts for ' + options.pattern + '...');
     await processAllFiles();
   } else {
     // First, generate all files.
+    logger.info('Generate .d.ts for ' + options.pattern + '...');
     await processAllFiles().catch((e) => logger.error(e)); // If an error occurs, continue to watch.
 
     // Then, watch files.
