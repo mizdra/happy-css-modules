@@ -143,30 +143,13 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
     }
   }
 
-  async function isChangedFile(filePath: string) {
-    const result = await cache.getAndUpdateCache(filePath);
-    if (result.error) throw result.error;
-    return result.changed;
-  }
+  async function processAllFiles() {
+    async function isChangedFile(filePath: string) {
+      const result = await cache.getAndUpdateCache(filePath);
+      if (result.error) throw result.error;
+      return result.changed;
+    }
 
-  if (options.watch) {
-    logger.info('Watch ' + options.pattern + '...');
-    const watcher = chokidar.watch([options.pattern.replace(/\\/g, '/')], { cwd });
-    watcher.on('all', (eventName, relativeFilePath) => {
-      const filePath = resolve(cwd, relativeFilePath);
-
-      // There is a bug in chokidar that matches symlinks that do not match the pattern.
-      // ref: https://github.com/paulmillr/chokidar/issues/967
-      if (isExternalFile(filePath)) return;
-
-      if (eventName !== 'add' && eventName !== 'change') return;
-
-      processFile(filePath).catch(() => {
-        // TODO: Emit a error by `Watcher#onerror`
-      });
-    });
-    return { close: async () => watcher.close() };
-  } else {
     const filePaths = (await glob(options.pattern, { dot: true, cwd }))
       // convert relative path to absolute path
       .map((file) => resolve(cwd, file));
@@ -187,9 +170,33 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
         errors.push(e);
       }
     }
-    if (errors.length > 0) throw new AggregateError(errors, 'Failed to process files');
+
+    if (errors.length > 0) {
+      throw new AggregateError(errors, 'Failed to process files');
+    } else {
+      // Write cache state to file for persistence
+      await cache.reconcile();
+    }
   }
 
-  // Write cache state to file for persistence
-  await cache.reconcile();
+  if (options.watch) {
+    logger.info('Watch ' + options.pattern + '...');
+    const watcher = chokidar.watch([options.pattern.replace(/\\/g, '/')], { cwd });
+    watcher.on('all', (eventName, relativeFilePath) => {
+      const filePath = resolve(cwd, relativeFilePath);
+
+      // There is a bug in chokidar that matches symlinks that do not match the pattern.
+      // ref: https://github.com/paulmillr/chokidar/issues/967
+      if (isExternalFile(filePath)) return;
+
+      if (eventName !== 'add' && eventName !== 'change') return;
+
+      processFile(filePath).catch(() => {
+        // TODO: Emit a error by `Watcher#onerror`
+      });
+    });
+    return { close: async () => watcher.close() };
+  } else {
+    await processAllFiles();
+  }
 }
