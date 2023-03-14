@@ -131,9 +131,6 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
         isExternalFile,
       });
       logger.info(chalk.green(`${relative(cwd, filePath)} (generated)`));
-    } catch (error) {
-      logger.error(chalk.red(error));
-      throw error;
     } finally {
       lock.release();
     }
@@ -187,7 +184,8 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
 
       if (eventName !== 'add' && eventName !== 'change') return;
 
-      processFile(filePath).catch(() => {
+      processFile(filePath).catch((e) => {
+        logger.error(e);
         // TODO: Emit a error by `Watcher#onerror`
       });
     });
