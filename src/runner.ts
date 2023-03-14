@@ -176,11 +176,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
     logger.info('Generate .d.ts for ' + options.pattern + '...');
     await processAllFiles();
   } else {
-    // First, generate all files.
-    logger.info('Generate .d.ts for ' + options.pattern + '...');
-    await processAllFiles().catch((e) => logger.error(e)); // If an error occurs, continue to watch.
-
-    // Then, watch files.
+    // First, watch files.
     logger.info('Watch ' + options.pattern + '...');
     const watcher = chokidar.watch([options.pattern.replace(/\\/g, '/')], { cwd, ignoreInitial: true });
     watcher.on('all', (eventName, relativeFilePath) => {
@@ -197,6 +193,11 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
         // TODO: Emit a error by `Watcher#onerror`
       });
     });
+
+    // Second, generate all files.
+    logger.info('Generate .d.ts for ' + options.pattern + '...');
+    await processAllFiles().catch((e) => logger.error(e)); // If an error occurs, continue to watch.
+
     return { close: async () => watcher.close() };
   }
 }
