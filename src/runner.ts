@@ -195,7 +195,6 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
     });
 
     // Second, run initial code generation for all files.
-    logger.info('Generate .d.ts for ' + options.pattern + '...');
     processAllFiles().catch((e) => logger.error(e)); // If an error occurs, continue to watch.
 
     return { close: async () => watcher.close() };
