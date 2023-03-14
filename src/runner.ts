@@ -172,9 +172,15 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
     }
   }
 
-  if (options.watch) {
+  if (!options.watch) {
+    await processAllFiles();
+  } else {
+    // First, generate all files.
+    await processAllFiles().catch((e) => logger.error(e)); // If an error occurs, continue to watch.
+
+    // Then, watch files.
     logger.info('Watch ' + options.pattern + '...');
-    const watcher = chokidar.watch([options.pattern.replace(/\\/g, '/')], { cwd });
+    const watcher = chokidar.watch([options.pattern.replace(/\\/g, '/')], { cwd, ignoreInitial: true });
     watcher.on('all', (eventName, relativeFilePath) => {
       const filePath = resolve(cwd, relativeFilePath);
 
@@ -190,7 +196,5 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
       });
     });
     return { close: async () => watcher.close() };
-  } else {
-    await processAllFiles();
   }
 }
