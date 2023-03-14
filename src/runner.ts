@@ -166,15 +166,14 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
 
     if (errors.length > 0) {
       throw new AggregateError(errors, 'Failed to process files');
-    } else {
-      // Write cache state to file for persistence
-      await cache.reconcile();
     }
   }
 
   if (!options.watch) {
     logger.info('Generate .d.ts for ' + options.pattern + '...');
     await processAllFiles();
+    // Write cache state to file for persistence
+    await cache.reconcile();
   } else {
     // First, watch files.
     logger.info('Watch ' + options.pattern + '...');
@@ -196,6 +195,9 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
 
     // Second, run initial code generation for all files.
     processAllFiles().catch((e) => logger.error(e)); // If an error occurs, continue to watch.
+
+    // In watch mode, processFile may be executed by chokidar while processAllFiles is running, so reconcile must not be executed.
+    // await cache.reconcile();
 
     return { close: async () => watcher.close() };
   }
