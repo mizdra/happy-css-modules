@@ -7,9 +7,8 @@ import serverHarness from '@typescript/server-harness';
 import _glob from 'glob';
 import { resolve } from 'import-meta-resolve';
 import lineColumn from 'line-column';
-import type { UpdateOpenRequest, DefinitionResponse, DefinitionRequest } from 'typescript/lib/protocol.js';
+import type { server } from 'typescript/lib/tsserverlibrary.js';
 import { getFixturePath } from './util.js';
-
 const glob = promisify(_glob);
 
 async function writeFile(path: string, content: string): Promise<void> {
@@ -68,7 +67,7 @@ export async function createTSServer() {
       const results: { identifier: string; definitions: Definition[] }[] = [];
 
       for (let i = 0; i < identifiers.length; i++) {
-        const response: DefinitionResponse = await server.message({
+        const response: server.protocol.DefinitionResponse = await server.message({
           seq: 0,
           type: 'request',
           command: 'definition',
@@ -77,7 +76,7 @@ export async function createTSServer() {
             line: i + 2, // line, 1-based
             offset: 8, // column, 1-based
           },
-        } as DefinitionRequest);
+        } as server.protocol.DefinitionRequest);
         const definitions: Definition[] = response.body!.map((definition) => {
           const { file, start, end } = definition;
           const fileContent = readFileSync(file, 'utf-8');
@@ -100,7 +99,7 @@ export async function createTSServer() {
 
       await this.refreshCache();
 
-      const response: DefinitionResponse = await server.message({
+      const response: server.protocol.DefinitionResponse = await server.message({
         seq: 0,
         type: 'request',
         command: 'definition',
@@ -109,7 +108,7 @@ export async function createTSServer() {
           line: 1, // line, 1-based
           offset: 20, // column, 1-based
         },
-      } as DefinitionRequest);
+      } as server.protocol.DefinitionRequest);
       const definitions: Definition[] = response.body!.map((definition) => {
         const { file, start, end } = definition;
         const fileContent = readFileSync(file, 'utf-8');
@@ -127,12 +126,14 @@ export async function createTSServer() {
 
       const fixtureFilePaths = await glob(getFixturePath('/**/*.ts'), { dot: true });
       // latest contents
-      const openFiles: UpdateOpenRequest['arguments']['openFiles'] = fixtureFilePaths.map((filePath) => ({
-        file: filePath,
-        fileContent: readFileSync(filePath, 'utf-8'),
-        projectRootPath: getFixturePath('/server-harness'),
-        scriptKindName: 'TS', // It's easy to get this wrong when copy-pasting
-      }));
+      const openFiles: server.protocol.UpdateOpenRequest['arguments']['openFiles'] = fixtureFilePaths.map(
+        (filePath) => ({
+          file: filePath,
+          fileContent: readFileSync(filePath, 'utf-8'),
+          projectRootPath: getFixturePath('/server-harness'),
+          scriptKindName: 'TS', // It's easy to get this wrong when copy-pasting
+        }),
+      );
 
       // override the cache
       await server.message({
@@ -144,7 +145,7 @@ export async function createTSServer() {
           closedFiles: [],
           openFiles,
         },
-      } as UpdateOpenRequest);
+      } as server.protocol.UpdateOpenRequest);
     },
     exit: async () => {
       await server.message({ command: 'exit' });
