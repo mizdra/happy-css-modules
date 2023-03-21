@@ -1,6 +1,6 @@
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
-import { default as postcss, type Message } from 'postcss';
+import postcss, { type Message } from 'postcss';
 import type { Result } from 'postcss-load-config';
 import type { Transformer } from '../index.js';
 
@@ -44,7 +44,7 @@ export const createPostcssTransformer: (postcssTransformerOptions?: PostcssTrans
     });
     if (postcssConfig === undefined) return false;
 
-    const result = await postcss(postcssConfig.plugins).process(source, {
+    const result = await postcss.default(postcssConfig.plugins).process(source, {
       ...postcssConfig.options,
       from: options.from,
       map: { inline: false, absolute: true },
