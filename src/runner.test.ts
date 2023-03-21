@@ -59,7 +59,7 @@ test('generates .d.ts and .d.ts.map', async () => {
   expect(await readFile(getFixturePath('/test/2.css.d.ts.map'), 'utf8')).toMatchSnapshot();
 });
 
-test('uses cache', async () => {
+test('uses cache in non-watch mode', async () => {
   createFixtures({
     '/test/1.css': '.a {}',
   });
@@ -90,6 +90,68 @@ test('uses cache', async () => {
   expect(consoleLogSpy).toHaveBeenNthCalledWith(1, expect.anything(), expect.stringContaining('Generate .d.ts for'));
   expect(consoleLogSpy).toHaveBeenNthCalledWith(2, expect.anything(), expect.stringContaining('generated'));
   consoleLogSpy.mockClear();
+});
+
+test('uses cache in watch mode', async () => {
+  createFixtures({
+    '/test/1.css': '.a-1 {}',
+    '/test/2.css': '.b-1 {}',
+  });
+
+  // At first, process all files
+  watcher = await run({ ...defaultOptions, declarationMap: true, silent: false, cache: true, watch: true });
+  await waitForAsyncTask(1000); // Wait until the watcher is ready
+  expect(consoleLogSpy).toBeCalledTimes(3);
+  expect(consoleLogSpy).toHaveBeenNthCalledWith(
+    1,
+    expect.anything(),
+    expect.stringContaining('Watch test/**/*.{css,scss}...'),
+  );
+  expect(consoleLogSpy).toHaveBeenNthCalledWith(
+    2,
+    expect.anything(),
+    expect.stringContaining('test/1.css (generated)'),
+  );
+  expect(consoleLogSpy).toHaveBeenNthCalledWith(
+    3,
+    expect.anything(),
+    expect.stringContaining('test/2.css (generated)'),
+  );
+  consoleLogSpy.mockClear();
+
+  // Updating 1.css, it will only be processed
+  await writeFile(getFixturePath('/test/1.css'), '.a-2 {}');
+  await waitForAsyncTask(500); // Wait until the file is written
+  expect(consoleLogSpy).toBeCalledTimes(1);
+  expect(consoleLogSpy).toHaveBeenNthCalledWith(
+    1,
+    expect.anything(),
+    expect.stringContaining('test/1.css (generated)'),
+  );
+
+  // Close the watcher
+  await watcher.close();
+  consoleLogSpy.mockClear();
+
+  // Update 1.css
+  await writeFile(getFixturePath('/test/1.css'), '.a-1 {}');
+  await waitForAsyncTask(500); // Wait until the file is written
+
+  // The updated 1.css will be processed, and the non-updated 2.css will be skipped.
+  watcher = await run({ ...defaultOptions, declarationMap: true, silent: false, cache: true, watch: true });
+  await waitForAsyncTask(1000); // Wait until the watcher is ready
+  expect(consoleLogSpy).toBeCalledTimes(3);
+  expect(consoleLogSpy).toHaveBeenNthCalledWith(
+    1,
+    expect.anything(),
+    expect.stringContaining('Watch test/**/*.{css,scss}...'),
+  );
+  expect(consoleLogSpy).toHaveBeenNthCalledWith(
+    2,
+    expect.anything(),
+    expect.stringContaining('test/1.css (generated)'),
+  );
+  expect(consoleLogSpy).toHaveBeenNthCalledWith(3, expect.anything(), expect.stringContaining('test/2.css (skipped)'));
 });
 
 test('outputs logs', async () => {
