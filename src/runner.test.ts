@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import * as fileCacheNpm from '@file-cache/npm';
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
-import type { Watcher } from './runner.js';
+import type { RunnerOptions, Watcher } from './runner.js';
 import { createFixtures, exists, getFixturePath, waitForAsyncTask } from './test-util/util.js';
 
 const require = createRequire(import.meta.url);
@@ -23,10 +23,10 @@ const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
-const defaultOptions = {
+const defaultOptions: RunnerOptions = {
   pattern: 'test/**/*.{css,scss}',
   declarationMap: true,
-  silent: true,
+  logLevel: 'silent',
   cwd: getFixturePath('/'),
   cache: false,
 };
@@ -63,14 +63,14 @@ test('uses cache in non-watch mode', async () => {
   createFixtures({
     '/test/1.css': '.a {}',
   });
-  await run({ ...defaultOptions, declarationMap: true, silent: false, cache: true });
+  await run({ ...defaultOptions, declarationMap: true, logLevel: 'debug', cache: true });
   expect(consoleLogSpy).toBeCalledTimes(2);
   expect(consoleLogSpy).toHaveBeenNthCalledWith(1, expect.anything(), expect.stringContaining('Generate .d.ts for'));
   expect(consoleLogSpy).toHaveBeenNthCalledWith(2, expect.anything(), expect.stringContaining('generated'));
   consoleLogSpy.mockClear();
 
   // Skip generation
-  await run({ ...defaultOptions, declarationMap: true, silent: false, cache: true });
+  await run({ ...defaultOptions, declarationMap: true, logLevel: 'debug', cache: true });
   expect(consoleLogSpy).toBeCalledTimes(2);
   expect(consoleLogSpy).toHaveBeenNthCalledWith(1, expect.anything(), expect.stringContaining('Generate .d.ts for'));
   expect(consoleLogSpy).toHaveBeenNthCalledWith(2, expect.anything(), expect.stringContaining('skipped'));
@@ -78,14 +78,14 @@ test('uses cache in non-watch mode', async () => {
 
   // Generates if generated files are missing
   await rm(getFixturePath('/test/1.css.d.ts'));
-  await run({ ...defaultOptions, declarationMap: true, silent: false, cache: true });
+  await run({ ...defaultOptions, declarationMap: true, logLevel: 'debug', cache: true });
   expect(consoleLogSpy).toBeCalledTimes(2);
   expect(consoleLogSpy).toHaveBeenNthCalledWith(1, expect.anything(), expect.stringContaining('Generate .d.ts for'));
   expect(consoleLogSpy).toHaveBeenNthCalledWith(2, expect.anything(), expect.stringContaining('generated'));
   consoleLogSpy.mockClear();
 
   // Generates if options are changed
-  await run({ ...defaultOptions, declarationMap: false, silent: false, cache: true });
+  await run({ ...defaultOptions, declarationMap: false, logLevel: 'debug', cache: true });
   expect(consoleLogSpy).toBeCalledTimes(2);
   expect(consoleLogSpy).toHaveBeenNthCalledWith(1, expect.anything(), expect.stringContaining('Generate .d.ts for'));
   expect(consoleLogSpy).toHaveBeenNthCalledWith(2, expect.anything(), expect.stringContaining('generated'));
@@ -99,7 +99,7 @@ test('uses cache in watch mode', async () => {
   });
 
   // At first, process all files
-  watcher = await run({ ...defaultOptions, declarationMap: true, silent: false, cache: true, watch: true });
+  watcher = await run({ ...defaultOptions, declarationMap: true, logLevel: 'debug', cache: true, watch: true });
   await waitForAsyncTask(1000); // Wait until the watcher is ready
   expect(consoleLogSpy).toBeCalledTimes(3);
   expect(consoleLogSpy).toHaveBeenNthCalledWith(
@@ -138,7 +138,7 @@ test('uses cache in watch mode', async () => {
   await waitForAsyncTask(500); // Wait until the file is written
 
   // The updated 1.css will be processed, and the non-updated 2.css will be skipped.
-  watcher = await run({ ...defaultOptions, declarationMap: true, silent: false, cache: true, watch: true });
+  watcher = await run({ ...defaultOptions, declarationMap: true, logLevel: 'debug', cache: true, watch: true });
   await waitForAsyncTask(1000); // Wait until the watcher is ready
   expect(consoleLogSpy).toBeCalledTimes(3);
   expect(consoleLogSpy).toHaveBeenNthCalledWith(
@@ -158,7 +158,7 @@ test('outputs logs', async () => {
   createFixtures({
     '/test/1.css': '.a {}',
   });
-  await run({ ...defaultOptions, silent: false, cache: true });
+  await run({ ...defaultOptions, logLevel: 'debug', cache: true });
   expect(consoleLogSpy).toBeCalledTimes(2);
   expect(consoleLogSpy).toHaveBeenNthCalledWith(1, expect.anything(), expect.stringContaining('Generate .d.ts for'));
   expect(consoleLogSpy).toHaveBeenNthCalledWith(
@@ -168,7 +168,7 @@ test('outputs logs', async () => {
   );
   consoleLogSpy.mockClear();
 
-  await run({ ...defaultOptions, silent: false, cache: true });
+  await run({ ...defaultOptions, logLevel: 'debug', cache: true });
   expect(consoleLogSpy).toBeCalledTimes(2);
   expect(consoleLogSpy).toHaveBeenNthCalledWith(1, expect.anything(), expect.stringContaining('Generate .d.ts for'));
   expect(consoleLogSpy).toHaveBeenNthCalledWith(2, expect.anything(), expect.stringContaining('test/1.css (skipped)'));

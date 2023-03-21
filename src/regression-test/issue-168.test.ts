@@ -8,7 +8,7 @@ const defaultOptions: RunnerOptions = {
   pattern: 'test/**/*.css',
   cwd: getFixturePath('/'),
   cache: false,
-  silent: true,
+  logLevel: 'silent',
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
