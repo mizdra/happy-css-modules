@@ -65,8 +65,9 @@ describe('parseArgv', () => {
     expect(parseArgv([...baseArgs, '1.css']).cacheStrategy).toBe('content');
     expect(parseArgv([...baseArgs, '1.css', '--cacheStrategy', 'metadata']).cacheStrategy).toBe('metadata');
   });
-  test('--silent', () => {
-    expect(parseArgv([...baseArgs, '1.css', '--silent']).silent).toBe(true);
-    expect(parseArgv([...baseArgs, '1.css', '--no-silent']).silent).toBe(false);
+  test('--logLevel', () => {
+    expect(parseArgv([...baseArgs, '1.css']).logLevel).toBe('info');
+    expect(parseArgv([...baseArgs, '1.css', '--logLevel', 'debug']).logLevel).toBe('debug');
+    expect(parseArgv([...baseArgs, '1.css', '--logLevel', 'silent']).logLevel).toBe('silent');
   });
 });

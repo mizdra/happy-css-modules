@@ -1,13 +1,14 @@
 import dedent from 'dedent';
+import type { RunnerOptions } from '../runner.js';
 import { run } from '../runner.js';
 import { createTSServer } from '../test-util/tsserver.js';
 import { createFixtures, getFixturePath } from '../test-util/util.js';
 
 const server = await createTSServer();
 
-const defaultOptions = {
+const defaultOptions: RunnerOptions = {
   pattern: 'test/**/*.{css,scss}',
-  silent: true,
+  logLevel: 'silent',
   declarationMap: true,
   cwd: getFixturePath('/'),
   cache: false,

@@ -58,7 +58,7 @@ Options:
       --postcssConfig        The option compatible with postcss's `--config`.                                                       [string]
       --cache                Only generate .d.ts and .d.ts.map for changed files.                                  [boolean] [default: true]
       --cacheStrategy        Strategy for the cache to use for detecting changed files.[choices: "content", "metadata"] [default: "content"]
-      --silent               Silent output. Do not show "files written" messages                                  [boolean] [default: false]
+      --logLevel             What level of logs to report.                            [choices: "debug", "info", "silent"] [default: "info"]
   -h, --help                 Show help                                                                                             [boolean]
   -v, --version              Show version number                                                                                   [boolean]
 

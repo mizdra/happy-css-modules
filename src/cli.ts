@@ -67,10 +67,10 @@ export function parseArgv(argv: string[]): RunnerOptions {
       default: 'content' as RunnerOptions['cacheStrategy'],
       describe: 'Strategy for the cache to use for detecting changed files.',
     })
-    .option('silent', {
-      type: 'boolean',
-      default: false,
-      describe: 'Silent output. Do not show "files written" messages',
+    .option('logLevel', {
+      choices: ['debug', 'info', 'silent'] as const,
+      default: 'info' as RunnerOptions['logLevel'],
+      describe: 'What level of logs to report.',
     })
     .alias('h', 'help')
     .alias('v', 'version')
@@ -108,6 +108,6 @@ export function parseArgv(argv: string[]): RunnerOptions {
     postcssConfig: parsedArgv.postcssConfig,
     cache: parsedArgv.cache,
     cacheStrategy: parsedArgv.cacheStrategy,
-    silent: parsedArgv.silent,
+    logLevel: parsedArgv.logLevel,
   };
 }

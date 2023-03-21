@@ -66,10 +66,10 @@ export interface RunnerOptions {
    */
   cacheStrategy?: 'content' | 'metadata' | undefined;
   /**
-   * Silent output. Do not show "files written" messages.
-   * @default false
+   * What level of logs to report.
+   * @default 'info'
    */
-  silent?: boolean | undefined;
+  logLevel?: 'debug' | 'info' | 'silent' | undefined;
   /** Working directory path. */
   cwd?: string | undefined;
 }
@@ -85,7 +85,7 @@ export async function run(options: OverrideProp<RunnerOptions, 'watch', true>): 
 export async function run(options: RunnerOptions): Promise<void>;
 export async function run(options: RunnerOptions): Promise<Watcher | void> {
   const lock = new AwaitLock.default();
-  const logger = new Logger(options.silent ? 'silent' : 'debug');
+  const logger = new Logger(options.logLevel ?? 'info');
 
   const cwd = options.cwd ?? process.cwd();
   const resolver =
