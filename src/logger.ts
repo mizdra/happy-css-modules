@@ -12,20 +12,20 @@ export class Logger {
   constructor(logLevelLabel: LogLevelLabel) {
     this.logLevel = LOG_LEVEL[logLevelLabel];
   }
-  debug(message: string) {
+  debug(message: unknown) {
     if (this.logLevel >= LOG_LEVEL['debug']) {
       // eslint-disable-next-line no-console
-      console.log('[debug]' + ' ' + message);
+      console.log('[debug]', message);
     }
   }
-  info(message: string) {
+  info(message: unknown) {
     if (this.logLevel >= LOG_LEVEL['info']) {
       // eslint-disable-next-line no-console
-      console.log(chalk.blue('[info]') + ' ' + message);
+      console.log(chalk.blue('[info]'), message);
     }
   }
-  error(message: string) {
+  error(message: unknown) {
     // eslint-disable-next-line no-console
-    console.error(chalk.red('[error]') + ' ' + message);
+    console.error(chalk.red('[error]'), message);
   }
 }

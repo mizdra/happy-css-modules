@@ -116,9 +116,24 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
   };
 
   async function processFile(filePath: string) {
+    async function isChangedFile(filePath: string) {
+      const result = await cache.getAndUpdateCache(filePath);
+      if (result.error) throw result.error;
+      return result.changed;
+    }
+
+    // Locator#load cannot be called concurrently. Therefore, it takes a lock and waits.
+    await lock.acquireAsync();
+
     try {
-      // Locator#load cannot be called concurrently. Therefore, it takes a lock and waits.
-      await lock.acquireAsync();
+      const _isGeneratedFilesExist = await isGeneratedFilesExist(filePath, options.declarationMap);
+      const _isChangedFile = await isChangedFile(filePath);
+      // Generate .d.ts and .d.ts.map only when the file has been updated.
+      // However, if .d.ts or .d.ts.map has not yet been generated, always generate.
+      if (_isGeneratedFilesExist && !_isChangedFile) {
+        logger.debug(chalk.gray(`${relative(cwd, filePath)} (skipped)`));
+        return;
+      }
 
       const result = await locator.load(filePath);
       await emitGeneratedFiles({
@@ -131,25 +146,34 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
         isExternalFile,
       });
       logger.info(chalk.green(`${relative(cwd, filePath)} (generated)`));
-    } catch (error) {
-      if (error instanceof Error) {
-        logger.error(chalk.red(error.stack));
-      } else {
-        logger.error(chalk.red(error));
-      }
-      throw error;
+
+      await cache.reconcile(); // Update cache for the file
     } finally {
       lock.release();
     }
   }
 
-  async function isChangedFile(filePath: string) {
-    const result = await cache.getAndUpdateCache(filePath);
-    if (result.error) throw result.error;
-    return result.changed;
+  async function processAllFiles() {
+    const filePaths = (await glob(options.pattern, { dot: true, cwd }))
+      // convert relative path to absolute path
+      .map((file) => resolve(cwd, file));
+
+    const errors: unknown[] = [];
+    for (const filePath of filePaths) {
+      await processFile(filePath).catch((e) => errors.push(e));
+    }
+
+    if (errors.length > 0) {
+      throw new AggregateError(errors, 'Failed to process files');
+    }
   }
 
-  if (options.watch) {
+  if (!options.watch) {
+    logger.info('Generate .d.ts for ' + options.pattern + '...');
+    await processAllFiles();
+    // Write cache state to file for persistence
+  } else {
+    // First, watch files.
     logger.info('Watch ' + options.pattern + '...');
     const watcher = chokidar.watch([options.pattern.replace(/\\/g, '/')], { cwd });
     watcher.on('all', (eventName, relativeFilePath) => {
@@ -161,35 +185,12 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
 
       if (eventName !== 'add' && eventName !== 'change') return;
 
-      processFile(filePath).catch(() => {
+      processFile(filePath).catch((e) => {
+        logger.error(e);
         // TODO: Emit a error by `Watcher#onerror`
       });
     });
+
     return { close: async () => watcher.close() };
-  } else {
-    const filePaths = (await glob(options.pattern, { dot: true, cwd }))
-      // convert relative path to absolute path
-      .map((file) => resolve(cwd, file));
-
-    const errors: unknown[] = [];
-    for (const filePath of filePaths) {
-      try {
-        const _isGeneratedFilesExist = await isGeneratedFilesExist(filePath, options.declarationMap);
-        const _isChangedFile = await isChangedFile(filePath);
-        // Generate .d.ts and .d.ts.map only when the file has been updated.
-        // However, if .d.ts or .d.ts.map has not yet been generated, always generate.
-        if (!_isGeneratedFilesExist || _isChangedFile) {
-          await processFile(filePath);
-        } else {
-          logger.debug(chalk.gray(`${relative(cwd, filePath)} (skipped)`));
-        }
-      } catch (e: unknown) {
-        errors.push(e);
-      }
-    }
-    if (errors.length > 0) throw new AggregateError(errors, 'Failed to process files');
   }
-
-  // Write cache state to file for persistence
-  await cache.reconcile();
 }

@@ -62,7 +62,7 @@ jobs:
       - run: pnpm run build
       - run: pnpm install
         working-directory: example
-      - run: pnpm run hcm
+      - run: pnpm run hcm --watch=false
         working-directory: example
       - name: Verify if there is a difference in example
         run: |
