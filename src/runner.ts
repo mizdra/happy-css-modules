@@ -116,9 +116,24 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
   };
 
   async function processFile(filePath: string) {
+    async function isChangedFile(filePath: string) {
+      const result = await cache.getAndUpdateCache(filePath);
+      if (result.error) throw result.error;
+      return result.changed;
+    }
+
+    // Locator#load cannot be called concurrently. Therefore, it takes a lock and waits.
+    await lock.acquireAsync();
+
     try {
-      // Locator#load cannot be called concurrently. Therefore, it takes a lock and waits.
-      await lock.acquireAsync();
+      const _isGeneratedFilesExist = await isGeneratedFilesExist(filePath, options.declarationMap);
+      const _isChangedFile = await isChangedFile(filePath);
+      // Generate .d.ts and .d.ts.map only when the file has been updated.
+      // However, if .d.ts or .d.ts.map has not yet been generated, always generate.
+      if (_isGeneratedFilesExist && !_isChangedFile) {
+        logger.debug(chalk.gray(`${relative(cwd, filePath)} (skipped)`));
+        return;
+      }
 
       const result = await locator.load(filePath);
       await emitGeneratedFiles({
@@ -131,37 +146,21 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
         isExternalFile,
       });
       logger.info(chalk.green(`${relative(cwd, filePath)} (generated)`));
+
+      await cache.reconcile(); // Update cache for the file
     } finally {
       lock.release();
     }
   }
 
   async function processAllFiles() {
-    async function isChangedFile(filePath: string) {
-      const result = await cache.getAndUpdateCache(filePath);
-      if (result.error) throw result.error;
-      return result.changed;
-    }
-
     const filePaths = (await glob(options.pattern, { dot: true, cwd }))
       // convert relative path to absolute path
       .map((file) => resolve(cwd, file));
 
     const errors: unknown[] = [];
     for (const filePath of filePaths) {
-      try {
-        const _isGeneratedFilesExist = await isGeneratedFilesExist(filePath, options.declarationMap);
-        const _isChangedFile = await isChangedFile(filePath);
-        // Generate .d.ts and .d.ts.map only when the file has been updated.
-        // However, if .d.ts or .d.ts.map has not yet been generated, always generate.
-        if (!_isGeneratedFilesExist || _isChangedFile) {
-          await processFile(filePath);
-        } else {
-          logger.debug(chalk.gray(`${relative(cwd, filePath)} (skipped)`));
-        }
-      } catch (e: unknown) {
-        errors.push(e);
-      }
+      await processFile(filePath).catch((e) => errors.push(e));
     }
 
     if (errors.length > 0) {
@@ -173,11 +172,10 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
     logger.info('Generate .d.ts for ' + options.pattern + '...');
     await processAllFiles();
     // Write cache state to file for persistence
-    await cache.reconcile();
   } else {
     // First, watch files.
     logger.info('Watch ' + options.pattern + '...');
-    const watcher = chokidar.watch([options.pattern.replace(/\\/g, '/')], { cwd, ignoreInitial: true });
+    const watcher = chokidar.watch([options.pattern.replace(/\\/g, '/')], { cwd });
     watcher.on('all', (eventName, relativeFilePath) => {
       const filePath = resolve(cwd, relativeFilePath);
 
@@ -192,12 +190,6 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
         // TODO: Emit a error by `Watcher#onerror`
       });
     });
-
-    // Second, run initial code generation for all files.
-    processAllFiles().catch((e) => logger.error(e)); // If an error occurs, continue to watch.
-
-    // In watch mode, processFile may be executed by chokidar while processAllFiles is running, so reconcile must not be executed.
-    // await cache.reconcile();
 
     return { close: async () => watcher.close() };
   }
