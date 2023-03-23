@@ -7,6 +7,7 @@ import AwaitLock from 'await-lock';
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 import _glob from 'glob';
+import { DEFAULT_ARBITRARY_EXTENSIONS } from './config.js';
 import { isGeneratedFilesExist, emitGeneratedFiles } from './emitter/index.js';
 import { Locator } from './locator/index.js';
 import { Logger } from './logger.js';
@@ -26,6 +27,10 @@ export type LocalsConvention = 'camelCase' | 'camelCaseOnly' | 'dashes' | 'dashe
 export interface RunnerOptions {
   pattern: string;
   watch?: boolean | undefined;
+  /**
+   * Style of exported class names.
+   * @default undefined
+   */
   localsConvention?: LocalsConvention | undefined;
   declarationMap?: boolean | undefined;
   transformer?: Transformer | undefined;
@@ -55,6 +60,11 @@ export interface RunnerOptions {
    * @example '/home/user/repository/src'
    */
   postcssConfig?: string | undefined;
+  /**
+   * Generate `.d.css.ts` instead of `.css.d.ts`.
+   * @default false
+   */
+  arbitraryExtensions?: boolean | undefined;
   /**
    * Only generate .d.ts and .d.ts.map for changed files.
    * @default true
@@ -126,7 +136,11 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
     await lock.acquireAsync();
 
     try {
-      const _isGeneratedFilesExist = await isGeneratedFilesExist(filePath, options.declarationMap);
+      const _isGeneratedFilesExist = await isGeneratedFilesExist(
+        filePath,
+        options.declarationMap,
+        options.arbitraryExtensions ?? DEFAULT_ARBITRARY_EXTENSIONS,
+      );
       const _isChangedFile = await isChangedFile(filePath);
       // Generate .d.ts and .d.ts.map only when the file has been updated.
       // However, if .d.ts or .d.ts.map has not yet been generated, always generate.
@@ -142,6 +156,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
         emitDeclarationMap: options.declarationMap,
         dtsFormatOptions: {
           localsConvention: options.localsConvention,
+          arbitraryExtensions: options.arbitraryExtensions,
         },
         isExternalFile,
       });

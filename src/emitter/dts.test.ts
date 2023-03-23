@@ -9,7 +9,10 @@ const locator = new Locator();
 const isExternalFile = () => false;
 
 test('getDtsFilePath', () => {
-  expect(getDtsFilePath('/app/src/dir/1.css')).toBe('/app/src/dir/1.css.d.ts');
+  expect(getDtsFilePath('/app/src/dir/1.css', false)).toBe('/app/src/dir/1.css.d.ts');
+  expect(getDtsFilePath('/app/src/dir/1.scss', false)).toBe('/app/src/dir/1.scss.d.ts');
+  expect(getDtsFilePath('/app/src/dir/1.css', true)).toBe('/app/src/dir/1.d.css.ts');
+  expect(getDtsFilePath('/app/src/dir/1.scss', true)).toBe('/app/src/dir/1.d.scss.ts');
 });
 
 describe('generateDtsContentWithSourceMap', () => {

@@ -1,5 +1,5 @@
 import { EOL } from 'os';
-import { basename } from 'path';
+import { basename, parse, join } from 'path';
 import camelcase from 'camelcase';
 import { SourceNode, type CodeWithSourceMap } from '../library/source-map/index.js';
 import { type Token } from '../locator/index.js';
@@ -9,10 +9,16 @@ import { getRelativePath, type DtsFormatOptions } from './index.js';
 /**
  * Get .d.ts file path.
  * @param filePath The path to the source file (i.e. `/dir/foo.css`). It is absolute.
+ * @param arbitraryExtensions Generate `.d.css.ts` instead of `.css.d.ts`.
  * @returns The path to the .d.ts file. It is absolute.
  */
-export function getDtsFilePath(filePath: string): string {
-  return filePath + '.d.ts';
+export function getDtsFilePath(filePath: string, arbitraryExtensions: boolean): string {
+  if (arbitraryExtensions) {
+    const { dir, name, ext } = parse(filePath);
+    return join(dir, name + '.d' + ext + '.ts');
+  } else {
+    return filePath + '.d.ts';
+  }
 }
 
 function dashesCamelCase(str: string): string {
