@@ -1,4 +1,5 @@
 import { parseArgv } from './cli.js';
+import { DEFAULT_ARBITRARY_EXTENSIONS } from './config.js';
 
 const baseArgs = ['node', 'hcm'];
 
@@ -55,6 +56,10 @@ describe('parseArgv', () => {
     expect(parseArgv([...baseArgs, '1.css', '--postcssConfig', 'postcss.config.js']).postcssConfig).toBe(
       'postcss.config.js',
     );
+  });
+  test('--arbitraryExtensions', () => {
+    expect(parseArgv([...baseArgs, '1.css']).arbitraryExtensions).toBe(DEFAULT_ARBITRARY_EXTENSIONS);
+    expect(parseArgv([...baseArgs, '1.css', '--arbitraryExtensions']).arbitraryExtensions).toBe(true);
   });
   test('--cache', () => {
     expect(parseArgv([...baseArgs, '1.css']).cache).toBe(true);

@@ -56,6 +56,7 @@ Options:
       --lessIncludePaths     The option compatible with less's `--include-path`.                                                     [array]
       --webpackResolveAlias  The option compatible with webpack's `resolve.alias`.                                                  [string]
       --postcssConfig        The option compatible with postcss's `--config`.                                                       [string]
+      --arbitraryExtensions  Generate `.d.css.ts` instead of `.css.d.ts`.                                          [boolean] [default: true]
       --cache                Only generate .d.ts and .d.ts.map for changed files.                                  [boolean] [default: true]
       --cacheStrategy        Strategy for the cache to use for detecting changed files.[choices: "content", "metadata"] [default: "content"]
       --logLevel             What level of logs to report.                            [choices: "debug", "info", "silent"] [default: "info"]

@@ -1,5 +1,6 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+import { DEFAULT_ARBITRARY_EXTENSIONS } from './config.js';
 import { type RunnerOptions } from './runner.js';
 import { getPackageJson } from './util.js';
 
@@ -56,6 +57,11 @@ export function parseArgv(argv: string[]): RunnerOptions {
       string: true,
       describe: "The option compatible with postcss's `--config`.",
     })
+    .option('arbitraryExtensions', {
+      type: 'boolean',
+      default: DEFAULT_ARBITRARY_EXTENSIONS,
+      describe: 'Generate `.d.css.ts` instead of `.css.d.ts`.',
+    })
     .option('cache', {
       type: 'boolean',
       default: true,
@@ -106,6 +112,7 @@ export function parseArgv(argv: string[]): RunnerOptions {
     lessIncludePaths: parsedArgv.lessIncludePaths?.map((item) => item.toString()),
     webpackResolveAlias: parsedArgv.webpackResolveAlias ? JSON.parse(parsedArgv.webpackResolveAlias) : undefined,
     postcssConfig: parsedArgv.postcssConfig,
+    arbitraryExtensions: parsedArgv.arbitraryExtensions,
     cache: parsedArgv.cache,
     cacheStrategy: parsedArgv.cacheStrategy,
     logLevel: parsedArgv.logLevel,

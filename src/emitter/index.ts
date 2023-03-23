@@ -1,4 +1,5 @@
 import { dirname, isAbsolute, relative } from 'path';
+import { DEFAULT_ARBITRARY_EXTENSIONS } from '../config.js';
 import { type Token } from '../locator/index.js';
 import { type LocalsConvention } from '../runner.js';
 import { exists } from '../util.js';
@@ -20,7 +21,16 @@ export function isSubDirectoryFile(fromDirectory: string, toFilePath: string): b
 }
 
 export type DtsFormatOptions = {
+  /**
+   * Style of exported class names.
+   * @default undefined
+   */
   localsConvention?: LocalsConvention;
+  /**
+   * Generate `.d.css.ts` instead of `.css.d.ts`.
+   * @default false
+   */
+  arbitraryExtensions?: boolean | undefined;
 };
 
 /** The options for emitter. */
@@ -44,8 +54,9 @@ export async function emitGeneratedFiles({
   dtsFormatOptions,
   isExternalFile,
 }: EmitterOptions): Promise<void> {
-  const dtsFilePath = getDtsFilePath(filePath);
-  const sourceMapFilePath = getSourceMapFilePath(filePath);
+  const arbitraryExtensions = dtsFormatOptions?.arbitraryExtensions ?? DEFAULT_ARBITRARY_EXTENSIONS;
+  const dtsFilePath = getDtsFilePath(filePath, arbitraryExtensions);
+  const sourceMapFilePath = getSourceMapFilePath(filePath, arbitraryExtensions);
   const { dtsContent, sourceMap } = generateDtsContentWithSourceMap(
     filePath,
     dtsFilePath,
@@ -72,9 +83,10 @@ export async function emitGeneratedFiles({
 export async function isGeneratedFilesExist(
   filePath: string,
   emitDeclarationMap: boolean | undefined,
+  arbitraryExtensions: boolean,
 ): Promise<boolean> {
-  const dtsFilePath = getDtsFilePath(filePath);
-  const sourceMapFilePath = getSourceMapFilePath(filePath);
+  const dtsFilePath = getDtsFilePath(filePath, arbitraryExtensions);
+  const sourceMapFilePath = getSourceMapFilePath(filePath, arbitraryExtensions);
   if (emitDeclarationMap && !(await exists(sourceMapFilePath))) {
     return false;
   }
