@@ -48,7 +48,7 @@
     "enhanced-resolve": "^5.10.0",
     "glob": "^8.0.3",
     "import-meta-resolve": "^2.1.0",
-    "minimatch": "^5.1.2",
+    "minimatch": "^5.1.6",
     "postcss": "^8.4.18",
     "postcss-load-config": "^4.0.1",
     "postcss-modules": "^4.3.1",
