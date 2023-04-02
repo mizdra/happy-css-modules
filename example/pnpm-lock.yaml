@@ -1,7 +1,0 @@
-lockfileVersion: 5.4
-
-specifiers:
-  happy-css-modules: link:..
-
-devDependencies:
-  happy-css-modules: link:..
