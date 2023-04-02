@@ -23,7 +23,7 @@
   "packageManager": "npm@9.6.3",
   "prettier": "@mizdra/prettier-config-mizdra",
   "workspaces": [
-    "packages/happy-css-modules-cli"
+    "packages/*"
   ],
   "devDependencies": {
     "@jest/globals": "^29.0.3",

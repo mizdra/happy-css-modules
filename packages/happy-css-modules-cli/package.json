@@ -8,14 +8,15 @@
   "scripts": {
     "postinstall": "patch-package",
     "build": "tsc -p tsconfig.build.json",
-    "dev": "tsc-watch -p tsconfig.src.json --noClear --onSuccess 'npm --prefix example run hcm'"
+    "dev": "tsc-watch -p tsconfig.build.json --noClear --onSuccess 'npm --prefix example run hcm'"
   },
   "bin": {
     "hcm": "bin/hcm.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mizdra/happy-css-modules.git"
+    "url": "https://github.com/mizdra/happy-css-modules.git",
+    "directory": "packages/happy-css-modules-cli"
   },
   "keywords": [
     "css-modules",
