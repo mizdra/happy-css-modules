@@ -1,9 +1,9 @@
 .DS_Store
 node_modules/
-/packages/cli/example/app.js
-/packages/cli/example/*.css.d.ts
-/packages/cli/example/bundle.js
-/packages/cli/example/bundle.css
+/packages/happy-css-modules-cli/example/app.js
+/packages/happy-css-modules-cli/example/*.css.d.ts
+/packages/happy-css-modules-cli/example/bundle.js
+/packages/happy-css-modules-cli/example/bundle.css
 *.swp
 *.swo
 dist/
