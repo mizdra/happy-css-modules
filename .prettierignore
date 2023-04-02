@@ -1,8 +1,5 @@
-.git/
-node_modules/
 dist/
 __snapshots__/
-coverage/
 *.css.d.ts
 *.scss.d.ts
 *.less.d.ts
