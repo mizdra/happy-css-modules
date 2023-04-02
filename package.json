@@ -5,6 +5,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "postinstall": "patch-package",
     "lint": "run-s -c lint:*",
     "lint:prettier": "prettier --check .",
     "lint:eslint": "eslint .",
