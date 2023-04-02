@@ -11,6 +11,7 @@
       "args": [
         "run",
         "test",
+        "--",
         "--runInBand",
         "--watchAll=false",
         "--testTimeout=300000",

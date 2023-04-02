@@ -7,7 +7,7 @@ const dir = join(dirname(fileURLToPath(import.meta.url)));
 
 /** @type {import('@jest/types').Config.InitialOptions} */
 const config = {
-  testMatch: ['<rootDir>/src/**/*.test.ts?(x)'],
+  testMatch: ['<rootDir>/packages/*/src/**/*.test.ts?(x)'],
   setupFilesAfterEnv: ['./jest.setup.ts'],
   // for ESM
   extensionsToTreatAsEsm: ['.ts'],
@@ -19,7 +19,7 @@ const config = {
     '^.+\\.(t|j)sx?$': '@swc/jest',
   },
   // for ESM
-  resolver: join(dir, 'src/test-util/jest/resolver.cjs'),
+  resolver: join(dir, 'packages/happy-css-modules/src/test-util/jest/resolver.cjs'),
 };
 
 // eslint-disable-next-line import/no-default-export
