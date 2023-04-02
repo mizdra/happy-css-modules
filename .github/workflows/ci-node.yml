@@ -59,7 +59,7 @@ jobs:
       - run: npm run build
       - run: npm install
         working-directory: example
-      - run: npm run hcm --watch=false
+      - run: npm run hcm -- --watch=false
         working-directory: example
       - name: Verify if there is a difference in example
         run: |
