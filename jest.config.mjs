@@ -7,7 +7,7 @@ const dir = join(dirname(fileURLToPath(import.meta.url)));
 
 /** @type {import('@jest/types').Config.InitialOptions} */
 const config = {
-  testMatch: ['<rootDir>/src/**/*.test.ts?(x)'],
+  testMatch: ['<rootDir>/packages/*/src/**/*.test.ts?(x)'],
   setupFilesAfterEnv: ['./jest.setup.ts'],
   // for ESM
   extensionsToTreatAsEsm: ['.ts'],
