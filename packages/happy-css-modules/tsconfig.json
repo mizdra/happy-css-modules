@@ -1,10 +1,35 @@
-// 🙏 "Solution Style" tsconfig.json 🙏
-// ref: https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-9.html#support-for-solution-style-tsconfigjson-files
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.src.json" },
-    { "path": "./tsconfig.config.json" },
-    { "path": "./tsconfig.example.json" }
-  ]
+  "compilerOptions": {
+    /* Distribution Options */
+    // "target": "ES2019", // Override by inheritance
+    "sourceMap": true,
+
+    /* Module Options */
+    "module": "Node16",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Additional Language Features */
+
+    /* Strict Type-Checking Options */
+    "strict": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
+    "skipLibCheck": true,
+    "checkJs": true,
+
+    // Compatible for Node.js v16 (ref: https://github.com/microsoft/TypeScript/wiki/Node-Target-Mapping)
+    "target": "ES2021",
+    "lib": ["ES2021"],
+    "noEmit": true
+  }
 }
