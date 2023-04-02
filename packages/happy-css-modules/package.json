@@ -8,12 +8,7 @@
   "scripts": {
     "postinstall": "patch-package",
     "build": "tsc -p tsconfig.build.json",
-    "dev": "tsc-watch -p tsconfig.src.json --noClear --onSuccess 'npm --prefix example run hcm'",
-    "lint": "run-s -c lint:*",
-    "lint:prettier": "prettier --check .",
-    "lint:eslint": "eslint .",
-    "lint:tsc": "tsc -p tsconfig.json",
-    "test": "NODE_OPTIONS=\"--experimental-vm-modules $NODE_OPTIONS\" jest"
+    "dev": "tsc-watch -p tsconfig.src.json --noClear --onSuccess 'npm --prefix example run hcm'"
   },
   "bin": {
     "hcm": "bin/hcm.js"

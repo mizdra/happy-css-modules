@@ -3,7 +3,13 @@
   "version": "2.1.0",
   "description": "Creates .d.ts files from CSS Modules .css files",
   "type": "module",
-  "scripts": {},
+  "scripts": {
+    "lint": "run-s -c lint:*",
+    "lint:prettier": "prettier --check .",
+    "lint:eslint": "eslint .",
+    "lint:tsc": "tsc -p tsconfig.json",
+    "test": "NODE_OPTIONS=\"--experimental-vm-modules $NODE_OPTIONS\" jest"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/mizdra/happy-css-modules.git"
