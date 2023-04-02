@@ -9,11 +9,17 @@ import dedent from 'dedent';
 import type { RunnerOptions, Watcher } from './runner.js';
 import { createFixtures, exists, getFixturePath, waitForAsyncTask } from './test-util/util.js';
 
+const packageRootDir = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+
 const require = createRequire(import.meta.url);
 
 jest.unstable_mockModule('@file-cache/npm', () => ({
   ...fileCacheNpm, // Inherit native functions
   createNpmPackageKey: () => 'mocked-key',
+}));
+
+jest.unstable_mockModule('pkg-dir', () => ({
+  packageDirectory: () => packageRootDir,
 }));
 
 const { run } = await import('./runner.js');

@@ -1,7 +1,4 @@
 {
-  "name": "happy-css-modules",
-  "version": "2.1.0",
-  "description": "Creates .d.ts files from CSS Modules .css files",
   "private": true,
   "type": "module",
   "scripts": {
