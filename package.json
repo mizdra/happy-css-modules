@@ -105,6 +105,6 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@7.9.5",
+  "packageManager": "npm@9.6.3",
   "prettier": "@mizdra/prettier-config-mizdra"
 }
