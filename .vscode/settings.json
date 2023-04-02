@@ -11,7 +11,5 @@
   "jest.autoRun": {
     "watch": false,
     "onSave": "test-file"
-  },
-  // Do not open vscode-jest's terminal on launch.
-  "jest.showTerminalOnLaunch": false
+  }
 }
