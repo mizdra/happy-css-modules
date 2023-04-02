@@ -20,6 +20,7 @@
     "node": ">=16.0.0"
   },
   "packageManager": "npm@9.6.3",
+  "prettier": "@mizdra/prettier-config-mizdra",
   "workspaces": [
     "packages/happy-css-modules"
   ],
