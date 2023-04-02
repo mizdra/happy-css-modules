@@ -1,6 +1,6 @@
 import { format } from 'prettier';
 // eslint-disable-next-line no-restricted-imports
-import { FIXTURE_DIR_PATH } from './packages/happy-css-modules/src/test-util/util.js';
+import { FIXTURE_DIR_PATH } from './packages/cli/src/test-util/util.js';
 
 const jsonSerializer: jest.SnapshotSerializerPlugin = {
   serialize(val) {

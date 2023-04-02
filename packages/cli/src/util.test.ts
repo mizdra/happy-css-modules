@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { hasProp, isObject, isSystemError, unique, uniqueBy } from '../src/util.js';
+import { hasProp, isObject, isSystemError, unique, uniqueBy } from './util.js';
 import { createFixtures, getFixturePath } from './test-util/util.js';
 import { isMatchByGlob, exists } from './util.js';
 
