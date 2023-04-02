@@ -5,7 +5,7 @@
   "type": "commonjs",
   "main": "app.js",
   "scripts": {
-    "hcm": "pnpm i && hcm --watch '*-*/*.{css,scss,less}'"
+    "hcm": "npm i && hcm --watch '*-*/*.{css,scss,less}'"
   },
   "author": "mizdra",
   "license": "MIT",

@@ -14,9 +14,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'pnpm'
-      - run: pnpm install
-      - run: pnpm run lint
+          cache: 'npm'
+      - run: npm install
+      - run: npm run lint
 
   test:
     strategy:
@@ -37,13 +37,13 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-          cache: 'pnpm'
-      - run: pnpm install
+          cache: 'npm'
+      - run: npm install
 
       - run: npm i -D less@${{ matrix.less }}
         if: ${{ matrix.less }}
 
-      - run: pnpm run test
+      - run: npm run test
         env:
           CI: true
 
@@ -54,12 +54,12 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'pnpm'
-      - run: pnpm install
-      - run: pnpm run build
-      - run: pnpm install
+          cache: 'npm'
+      - run: npm install
+      - run: npm run build
+      - run: npm install
         working-directory: example
-      - run: pnpm run hcm --watch=false
+      - run: npm run hcm --watch=false
         working-directory: example
       - name: Verify if there is a difference in example
         run: |
