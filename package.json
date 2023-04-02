@@ -6,8 +6,9 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "postinstall": "patch-package",
     "build": "tsc -p tsconfig.src.json",
-    "dev": "tsc-watch -p tsconfig.src.json --noClear --onSuccess 'pnpm run --dir example hcm'",
+    "dev": "tsc-watch -p tsconfig.src.json --noClear --onSuccess 'npm --prefix example run hcm'",
     "lint": "run-s -c lint:*",
     "lint:prettier": "prettier --check .",
     "lint:eslint": "eslint .",
@@ -49,7 +50,7 @@
     "glob": "^8.0.3",
     "import-meta-resolve": "^2.1.0",
     "minimatch": "^5.1.6",
-    "postcss": "^8.4.21",
+    "postcss": "^8.0.0",
     "postcss-load-config": "^4.0.1",
     "postcss-modules": "^4.3.1",
     "postcss-selector-parser": "^6.0.11",
@@ -83,6 +84,7 @@
     "less": "^4.1.3",
     "line-column": "^1.0.2",
     "npm-run-all": "^4.1.5",
+    "patch-package": "^6.5.1",
     "postcss-import": "^15.0.0",
     "postcss-simple-vars": "^7.0.1",
     "prettier": "~2.7.1",
@@ -103,11 +105,6 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@7.9.5",
-  "prettier": "@mizdra/prettier-config-mizdra",
-  "pnpm": {
-    "patchedDependencies": {
-      "postcss-load-config@4.0.1": "patches/postcss-load-config@4.0.1.patch"
-    }
-  }
+  "packageManager": "npm@9.6.3",
+  "prettier": "@mizdra/prettier-config-mizdra"
 }

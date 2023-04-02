@@ -5,7 +5,7 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
-  "jest.jestCommandLine": "pnpm run test",
+  "jest.jestCommandLine": "npm run test --",
   // It is expensive to run the test each time the file to be tested (e.g. `loader.ts`) is saved.
   // So, run Jest only when the test file (e.g. `loader.test.ts`) is saved.
   "jest.autoRun": {

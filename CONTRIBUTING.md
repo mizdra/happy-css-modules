@@ -4,9 +4,9 @@ This is a guide for contributors.
 
 ## How to dev
 
-- `pnpm run build`: Build for production
-- `pnpm run lint`: Try static-checking
-- `pnpm run test`: Run tests
+- `npm run build`: Build for production
+- `npm run lint`: Try static-checking
+- `npm run test`: Run tests
 
 ## How to release
 
@@ -15,13 +15,13 @@ This is a guide for contributors.
   git switch main && git pull
   ```
 - ```bash
-  rm -rf dist && pnpm run build
+  rm -rf dist && npm run build
   ```
 - ```bash
-  pnpm version <major|minor|patch>
+  npm version <major|minor|patch>
   ```
 - ```bash
-  pnpm publish
+  npm publish
   ```
 - ```bash
   git push --follow-tags
