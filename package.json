@@ -1,0 +1,17 @@
+{
+  "name": "happy-css-modules",
+  "version": "2.1.0",
+  "description": "Creates .d.ts files from CSS Modules .css files",
+  "type": "module",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mizdra/happy-css-modules.git"
+  },
+  "author": "mizdra",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "packageManager": "npm@9.6.3"
+}
