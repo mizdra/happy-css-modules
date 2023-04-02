@@ -14,6 +14,9 @@
     "node": ">=16.0.0"
   },
   "packageManager": "npm@9.6.3",
+  "workspaces": [
+    "packages/happy-css-modules"
+  ],
   "devDependencies": {
     "@jest/globals": "^29.0.3",
     "@jest/types": "^29.0.3",
