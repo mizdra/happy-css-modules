@@ -1,7 +1,7 @@
-diff --git a/src/index.js b/src/index.js
-index a7d16703a96a1229381beef905287192db332332..b692564db4dbd16e810a470dbc95209eb0589568 100644
---- a/src/index.js
-+++ b/src/index.js
+diff --git a/node_modules/postcss-load-config/src/index.js b/node_modules/postcss-load-config/src/index.js
+index a7d1670..b692564 100644
+--- a/node_modules/postcss-load-config/src/index.js
++++ b/node_modules/postcss-load-config/src/index.js
 @@ -68,8 +68,11 @@ const createContext = (ctx) => {
  }
  
