@@ -57,11 +57,8 @@ jobs:
           cache: 'npm'
       - run: npm install
       - run: npm run build
-      - run: npm install
-        working-directory: example
-      - run: npm run hcm -- --watch=false
-        working-directory: example
-      - name: Verify if there is a difference in example
+      - run: npm run hcm -w example -- --watch=false
+      - name: Verify if there is a difference in packages/example
         run: |
           git add --intent-to-add .
-          git diff --exit-code example
+          git diff --exit-code packages/example

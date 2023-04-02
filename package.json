@@ -3,6 +3,8 @@
   "type": "module",
   "scripts": {
     "postinstall": "patch-package",
+    "dev": "npm -w example run hcm",
+    "build": "npm run build --workspaces --if-present",
     "lint": "run-s -c lint:*",
     "lint:prettier": "prettier --check .",
     "lint:eslint": "eslint .",

@@ -215,18 +215,18 @@ const locator = new Locator({
   // resolver: createDefaultResolver(),
 });
 
-// Process https://github.com/mizdra/happy-css-modules/blob/main/example/02-import/2.css
+// Process https://github.com/mizdra/happy-css-modules/blob/main/packages/example/02-import/2.css
 const filePath = resolve('example/02-import/2.css'); // Convert to absolute path
 const result = await locator.load(filePath);
 
 assert.deepEqual(result, {
-  dependencies: ['/Users/mizdra/src/github.com/mizdra/happy-css-modules/example/02-import/3.css'],
+  dependencies: ['/Users/mizdra/src/github.com/mizdra/packages/example/02-import/3.css'],
   tokens: [
     {
       name: 'b',
       originalLocations: [
         {
-          filePath: '/Users/mizdra/src/github.com/mizdra/happy-css-modules/example/02-import/3.css',
+          filePath: '/Users/mizdra/src/github.com/mizdra/packages/example/02-import/3.css',
           start: { line: 1, column: 1 },
           end: { line: 1, column: 2 },
         },
@@ -236,7 +236,7 @@ assert.deepEqual(result, {
       name: 'a',
       originalLocations: [
         {
-          filePath: '/Users/mizdra/src/github.com/mizdra/happy-css-modules/example/02-import/2.css',
+          filePath: '/Users/mizdra/src/github.com/mizdra/packages/example/02-import/2.css',
           start: { line: 3, column: 1 },
           end: { line: 3, column: 2 },
         },
