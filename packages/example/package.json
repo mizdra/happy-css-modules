@@ -5,7 +5,8 @@
   "type": "commonjs",
   "main": "app.js",
   "scripts": {
-    "hcm": "hcm --watch '*-*/*.{css,scss,less}'"
+    "hcm": "hcm --watch '*-*/*.{css,scss,less}'",
+    "lint": "stylelint '*-*/*.{css,scss,less}'"
   },
   "author": "mizdra",
   "license": "MIT",

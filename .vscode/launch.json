@@ -20,6 +20,14 @@
         "--runTestsByPath",
         "${jest.testFile}"
       ]
+    },
+    {
+      "name": "dev script",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"]
     }
   ]
 }

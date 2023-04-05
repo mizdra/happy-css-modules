@@ -1,0 +1,40 @@
+{
+  "name": "stylelint-happy-css-modules",
+  "version": "0.0.0",
+  "description": "",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "npm -w example run lint",
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mizdra/happy-css-modules.git",
+    "directory": "packages/stylelint-happy-css-modules"
+  },
+  "keywords": [
+    "css-modules",
+    "stylelint",
+    "stylelint-plugin"
+  ],
+  "files": [
+    "src",
+    "dist"
+  ],
+  "author": "mizdra <pp.mizdra@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "postcss": "^8.4.21",
+    "postcss-selector-parser": "^6.0.11",
+    "source-map": "^0.7.4",
+    "ts-morph": "^17.0.1"
+  },
+  "peerDependencies": {
+    "stylelint": "^15.3.0"
+  }
+}
