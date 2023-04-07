@@ -4,6 +4,7 @@
   "scripts": {
     "postinstall": "patch-package",
     "dev": "npm -w example run hcm",
+    "dev:stylelint-happy-css-modules": "npm -w stylelint-happy-css-modules run build && npm -w example run lint",
     "build": "npm run build --workspaces --if-present",
     "lint": "run-s -c lint:*",
     "lint:prettier": "prettier --check .",
@@ -20,10 +21,12 @@
   "engines": {
     "node": ">=16.0.0"
   },
-  "packageManager": "npm@9.6.3",
+  "packageManager": "npm@9.6.4",
   "prettier": "@mizdra/prettier-config-mizdra",
   "workspaces": [
-    "packages/*"
+    "packages/happy-css-modules",
+    "packages/stylelint-happy-css-modules",
+    "packages/example"
   ],
   "devDependencies": {
     "@eslint/eslintrc": "^2.0.2",
@@ -56,6 +59,8 @@
     "npm-run-all": "^4.1.5",
     "patch-package": "^6.5.1",
     "postcss-import": "^15.0.0",
+    "postcss-less": "^6.0.0",
+    "postcss-scss": "^4.0.6",
     "postcss-simple-vars": "^7.0.1",
     "prettier": "~2.7.1",
     "sass": "^1.54.3",
