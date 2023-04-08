@@ -1,16 +1,14 @@
 {
   "name": "vscode-happy-css-modules",
+  "version": "0.0.1",
   "displayName": "vscode-happy-css-modules",
   "description": "The vscode extension to improve the development experience for CSS Modules.",
-  "version": "0.0.1",
-  "engines": {
-    "vscode": "^1.77.0"
-  },
+  "type": "commonjs",
+  "main": "./out/extension.js",
   "categories": [
     "Other"
   ],
   "activationEvents": [],
-  "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
@@ -27,17 +25,9 @@
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js"
   },
-  "devDependencies": {
-    "@types/vscode": "^1.77.0",
-    "@types/glob": "^8.1.0",
-    "@types/mocha": "^10.0.1",
-    "@types/node": "16.x",
-    "@typescript-eslint/eslint-plugin": "^5.56.0",
-    "@typescript-eslint/parser": "^5.56.0",
-    "eslint": "^8.36.0",
-    "glob": "^8.1.0",
-    "mocha": "^10.2.0",
-    "typescript": "^4.9.5",
-    "@vscode/test-electron": "^2.3.0"
+  "author": "mizdra <pp.mizdra@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.77.0"
   }
 }
