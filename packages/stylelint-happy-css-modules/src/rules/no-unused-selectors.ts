@@ -90,10 +90,6 @@ function getLang(cssFilePath: string): Lang {
   throw new Error(`Unsupported extension: ${cssFilePath}`);
 }
 
-function unreachable(message: string): never {
-  throw new Error(`unreachable: ${message}`);
-}
-
 class UnsupportedSelectorError extends Error {
   static {
     this.prototype.name = 'UnsupportedSelectorError';
