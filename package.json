@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "postinstall": "patch-package",
-    "dev": "npm -w example run hcm",
+    "dev:happy-css-modules": "npm -w example run hcm",
     "dev:stylelint-happy-css-modules": "npm -w stylelint-happy-css-modules run build && npm -w example run lint",
     "build": "npm run build --workspaces --if-present",
     "lint": "run-s -c lint:*",

@@ -6,7 +6,6 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "dev": "npm -w example run lint",
     "build": "tsc -p tsconfig.build.json"
   },
   "repository": {
