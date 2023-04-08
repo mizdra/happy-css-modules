@@ -127,6 +127,8 @@ function checkUnsupportedSelector(classSelectorName: string, lang: Lang): void {
   }
 }
 
+const projectCacheStore = new Map<string, Project>();
+
 export const noUnusedSelectors: stylelint.Rule<boolean> = (primaryOption, secondaryOptions, _context) => {
   return (root, result) => {
     const validOptions = utils.validateOptions(
@@ -139,7 +141,10 @@ export const noUnusedSelectors: stylelint.Rule<boolean> = (primaryOption, second
       return;
     }
 
-    const project = new Project({ tsConfigFilePath: (secondaryOptions as Option).tsConfigFilePath });
+    const tsConfigFilePath = (secondaryOptions as Option).tsConfigFilePath;
+
+    const project = projectCacheStore.get(tsConfigFilePath) ?? new Project({ tsConfigFilePath });
+    projectCacheStore.set(tsConfigFilePath, project);
 
     if (root.source?.input.file === undefined) return;
 
