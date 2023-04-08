@@ -22,12 +22,12 @@
       ]
     },
     {
-      "name": "dev script",
+      "name": "dev:stylelint-happy-css-modules",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"]
+      "runtimeArgs": ["run", "dev:stylelint-happy-css-modules"]
     }
   ]
 }

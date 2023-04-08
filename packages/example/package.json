@@ -11,6 +11,7 @@
   "author": "mizdra",
   "license": "MIT",
   "dependencies": {
-    "happy-css-modules": "file:../happy-css-modules"
+    "happy-css-modules": "../happy-css-modules",
+    "stylelint-happy-css-modules": "../stylelint-happy-css-modules"
   }
 }
