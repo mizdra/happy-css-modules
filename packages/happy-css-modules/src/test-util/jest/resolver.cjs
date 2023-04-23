@@ -14,7 +14,7 @@ const nativeModule = require('node:module');
  * pathFilter?: (pkg: any, path: string, relativePath: string) => string;
  * rootDir?: string;
  * }} ResolverOptions
- * */
+ */
 
 /** @type {(path: string, options: ResolverOptions) => string} */
 function resolver(module, options) {
