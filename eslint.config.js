@@ -41,6 +41,7 @@ export default [
   }),
   {
     rules: {
+      'multiline-comment-style': [2, 'separate-lines'],
       // disable because this rule do not support ESM in TypeScript.
       // ref: https://github.com/import-js/eslint-plugin-import/issues/2170
       'import/no-unresolved': 'off',
@@ -66,7 +67,16 @@ export default [
         files: ['*.ts', '*.tsx', '*.cts', '*.mts'],
         extends: ['@mizdra/mizdra/+typescript'],
         rules: {
-          '@typescript-eslint/no-unused-vars': [2, { argsIgnorePattern: '^_' }],
+          '@typescript-eslint/no-unused-vars': [
+            2,
+            {
+              ignoreRestSiblings: true,
+              caughtErrors: 'all',
+              argsIgnorePattern: '^_',
+              destructuredArrayIgnorePattern: '^_',
+              caughtErrorsIgnorePattern: '^_',
+            },
+          ],
           '@typescript-eslint/consistent-type-imports': [2, { disallowTypeAnnotations: false }],
         },
       },
