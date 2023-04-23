@@ -190,7 +190,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
   } else {
     // First, watch files.
     logger.info('Watch ' + options.pattern + '...');
-    const watcher = chokidar.watch([options.pattern.replace(/\\/g, '/')], { cwd });
+    const watcher = chokidar.watch([options.pattern.replace(/\\/gu, '/')], { cwd });
     watcher.on('all', (eventName, relativeFilePath) => {
       const filePath = resolve(cwd, relativeFilePath);
 

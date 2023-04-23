@@ -5,7 +5,7 @@ import { FIXTURE_DIR_PATH } from './packages/happy-css-modules/src/test-util/uti
 const jsonSerializer: jest.SnapshotSerializerPlugin = {
   serialize(val) {
     const json = JSON.stringify(val);
-    const replacedJson = json.replace(new RegExp(FIXTURE_DIR_PATH, 'g'), '<fixtures>');
+    const replacedJson = json.replace(new RegExp(FIXTURE_DIR_PATH, 'gu'), '<fixtures>');
     return format(replacedJson, { parser: 'json5', printWidth: 120 }).trimEnd();
   },
 
@@ -41,7 +41,7 @@ const jsonSerializer: jest.SnapshotSerializerPlugin = {
 const errorSerializer: jest.SnapshotSerializerPlugin = {
   serialize(val) {
     if (!(val instanceof Error)) throw new Error('unreachable');
-    return val.message.replace(new RegExp(FIXTURE_DIR_PATH, 'g'), '<fixtures>');
+    return val.message.replace(new RegExp(FIXTURE_DIR_PATH, 'gu'), '<fixtures>');
   },
 
   test(val) {
