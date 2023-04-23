@@ -68,6 +68,7 @@ export async function exists(path: string): Promise<boolean> {
 
 type File = string;
 
+// eslint-disable-next-line no-use-before-define
 type DirectoryItem = File | DirectoryItems;
 
 type DirectoryItems = {

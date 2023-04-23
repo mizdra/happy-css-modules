@@ -30,18 +30,17 @@ export type Token = {
   /** The original locations of the token in the source file. */
   originalLocations: Location[];
 };
-
-type CacheEntry = {
-  mtime: number; // TODO: `--cache-strategy` option will allow you to switch between `content` and `metadata` modes.
-  result: LoadResult;
-};
-
 /** The result of `Locator#load`. */
 export type LoadResult = {
   /** The path of the file imported from the source file with `@import` or `composes`. */
   dependencies: string[];
   /** The tokens exported by the source file. */
   tokens: Token[];
+};
+
+type CacheEntry = {
+  mtime: number; // TODO: `--cache-strategy` option will allow you to switch between `content` and `metadata` modes.
+  result: LoadResult;
 };
 
 function normalizeTokens(tokens: Token[]): Token[] {

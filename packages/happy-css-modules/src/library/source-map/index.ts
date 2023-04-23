@@ -5,6 +5,7 @@ import { SourceNode as OriginalSourceNode, type CodeWithSourceMap } from 'source
 // The type definitions bundled in the source-map package are incorrect.
 // Therefore, the type definitions are overwritten here.
 
+// eslint-disable-next-line no-use-before-define
 type Chunk = string | StrictlyTypedSourceNode | Chunk[];
 
 interface StrictlyTypedSourceNode extends OriginalSourceNode {
