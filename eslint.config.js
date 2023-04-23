@@ -35,7 +35,7 @@ export default [
       },
     },
   },
-  ...compat.extends('@mizdra/mizdra', '@mizdra/mizdra/+typescript', '@mizdra/mizdra/+prettier'),
+  ...compat.extends('@mizdra/mizdra'),
   ...compat.env({
     node: true,
   }),
@@ -60,18 +60,18 @@ export default [
       'no-console': 2,
     },
   },
-  {
-    files: ['**/*.{ts,tsx,cts,mts}'],
-    languageOptions: {
-      parserOptions: {
-        project: ['tsconfig.json', 'example/tsconfig.json'],
+  ...compat.config({
+    overrides: [
+      {
+        files: ['*.ts', '*.tsx', '*.cts', '*.mts'],
+        extends: ['@mizdra/mizdra/+typescript'],
+        rules: {
+          '@typescript-eslint/no-unused-vars': [2, { argsIgnorePattern: '^_' }],
+          '@typescript-eslint/consistent-type-imports': [2, { disallowTypeAnnotations: false }],
+        },
       },
-    },
-    rules: {
-      '@typescript-eslint/no-unused-vars': [2, { argsIgnorePattern: '^_' }],
-      '@typescript-eslint/consistent-type-imports': [2, { disallowTypeAnnotations: false }],
-    },
-  },
+    ],
+  }),
   ...compat.env({
     files: ['src/test-util/**/*.{ts,tsx,cts,mts}', '*.test.{ts,tsx,cts,mts}'],
     env: {
@@ -105,4 +105,5 @@ export default [
       ],
     },
   },
+  ...compat.extends('@mizdra/mizdra/+prettier'),
 ];
