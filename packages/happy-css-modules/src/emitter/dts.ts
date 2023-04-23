@@ -101,6 +101,7 @@ function generateTokenDeclarations(
   return result;
 }
 
+// eslint-disable-next-line max-params -- TODO: fix warning
 export function generateDtsContentWithSourceMap(
   filePath: string,
   dtsFilePath: string,
