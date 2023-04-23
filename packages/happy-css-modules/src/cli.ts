@@ -104,6 +104,7 @@ export function parseArgv(argv: string[]): RunnerOptions {
     .parseSync();
   const patterns: string[] = parsedArgv._.map((pattern) => pattern.toString());
   return {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- Checked to be non-null by yargs.
     pattern: patterns[0]!,
     watch: parsedArgv.watch,
     localsConvention: parsedArgv.localsConvention,

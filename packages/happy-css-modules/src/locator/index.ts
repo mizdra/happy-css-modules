@@ -148,6 +148,7 @@ export class Locator {
 
   private async _load(filePath: string): Promise<LoadResult> {
     if (!(await this.isCacheOutdated(filePath))) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- Checked to be non-null by `isCacheOutdated`.
       const cacheEntry = this.cache.get(filePath)!;
       return cacheEntry.result;
     }

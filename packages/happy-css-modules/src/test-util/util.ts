@@ -10,6 +10,7 @@ import { sleepSync } from '../util.js';
 export const FIXTURE_DIR_PATH = resolve(
   realpathSync(tmpdir()),
   'happy-css-modules/fixtures',
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   process.env['JEST_WORKER_ID']!,
 );
 

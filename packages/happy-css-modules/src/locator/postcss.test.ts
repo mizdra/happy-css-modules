@@ -105,6 +105,7 @@ describe('getOriginalLocation', () => {
       .basic {}
       `),
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(getOriginalLocation(basic!.rule, basic!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 1, column: 1 }, end: { line: 1, column: 6 } }`,
     );
@@ -117,9 +118,11 @@ describe('getOriginalLocation', () => {
       .cascading {}
       `),
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(getOriginalLocation(cascading_1!.rule, cascading_1!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 1, column: 1 }, end: { line: 1, column: 10 } }`,
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(getOriginalLocation(cascading_2!.rule, cascading_2!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 2, column: 1 }, end: { line: 2, column: 10 } }`,
     );
@@ -133,12 +136,15 @@ describe('getOriginalLocation', () => {
       :not(.pseudo_class_3) {}
       `),
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(getOriginalLocation(pseudo_class_1!.rule, pseudo_class_1!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 1, column: 1 }, end: { line: 1, column: 15 } }`,
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(getOriginalLocation(pseudo_class_2!.rule, pseudo_class_2!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 2, column: 1 }, end: { line: 2, column: 15 } }`,
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(getOriginalLocation(pseudo_class_3!.rule, pseudo_class_3!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 3, column: 6 }, end: { line: 3, column: 20 } }`,
     );
@@ -150,9 +156,11 @@ describe('getOriginalLocation', () => {
       .multiple_selector_1.multiple_selector_2 {}
       `),
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(getOriginalLocation(multiple_selector_1!.rule, multiple_selector_1!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 1, column: 1 }, end: { line: 1, column: 20 } }`,
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(getOriginalLocation(multiple_selector_2!.rule, multiple_selector_2!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 1, column: 21 }, end: { line: 1, column: 40 } }`,
     );
@@ -165,9 +173,11 @@ describe('getOriginalLocation', () => {
       .combinator_1 + .combinator_2 {}
       `),
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(getOriginalLocation(combinator_1!.rule, combinator_1!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 1, column: 1 }, end: { line: 1, column: 13 } }`,
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(getOriginalLocation(combinator_2!.rule, combinator_2!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 1, column: 17 }, end: { line: 1, column: 29 } }`,
     );
@@ -183,6 +193,7 @@ describe('getOriginalLocation', () => {
       }
       `),
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(getOriginalLocation(at_rule!.rule, at_rule!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 3, column: 5 }, end: { line: 3, column: 12 } }`,
     );
@@ -194,9 +205,11 @@ describe('getOriginalLocation', () => {
       .selector_list_1, .selector_list_2 {}
       `),
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(getOriginalLocation(selector_list_1!.rule, selector_list_1!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 1, column: 1 }, end: { line: 1, column: 16 } }`,
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(getOriginalLocation(selector_list_2!.rule, selector_list_2!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 1, column: 19 }, end: { line: 1, column: 34 } }`,
     );
@@ -213,15 +226,19 @@ describe('getOriginalLocation', () => {
       :local(.local_class_name_4) {}
       `),
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(getOriginalLocation(local_class_name_1!.rule, local_class_name_1!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 1, column: 8 }, end: { line: 1, column: 26 } }`,
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(getOriginalLocation(local_class_name_2!.rule, local_class_name_2!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 3, column: 3 }, end: { line: 3, column: 21 } }`,
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(getOriginalLocation(local_class_name_3!.rule, local_class_name_3!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 4, column: 3 }, end: { line: 4, column: 21 } }`,
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(getOriginalLocation(local_class_name_4!.rule, local_class_name_4!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 6, column: 8 }, end: { line: 6, column: 26 } }`,
     );
@@ -236,9 +253,11 @@ describe('getOriginalLocation', () => {
       }
       `),
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(getOriginalLocation(composes_target!.rule, composes_target!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 1, column: 1 }, end: { line: 1, column: 16 } }`,
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(getOriginalLocation(composes!.rule, composes!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 2, column: 1 }, end: { line: 2, column: 9 } }`,
     );
@@ -252,13 +271,15 @@ describe('getOriginalLocation', () => {
         + .with_newline_3, {}
       `),
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(getOriginalLocation(with_newline_1!.rule, with_newline_1!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 1, column: 1 }, end: { line: 1, column: 15 } }`,
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(getOriginalLocation(with_newline_2!.rule, with_newline_2!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 2, column: 1 }, end: { line: 2, column: 15 } }`,
     );
-
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(getOriginalLocation(with_newline_3!.rule, with_newline_3!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 3, column: 5 }, end: { line: 3, column: 19 } }`,
     );
@@ -277,16 +298,16 @@ test('collectNodes', () => {
   const { atImports, classSelectors, composesDeclarations } = collectNodes(ast);
 
   expect(atImports).toHaveLength(2);
-  expect(atImports[0]!.toString()).toEqual('@import');
-  expect(atImports[1]!.toString()).toEqual('@import "test.css"');
+  expect(atImports[0]?.toString()).toEqual('@import');
+  expect(atImports[1]?.toString()).toEqual('@import "test.css"');
   expect(classSelectors).toHaveLength(2);
-  expect(classSelectors[0]!.rule.toString()).toEqual('.a { ignored: "ignored"; composes: a; }');
-  expect(classSelectors[0]!.classSelector.toString()).toEqual('.a');
-  expect(classSelectors[1]!.rule.toString()).toEqual('.b { ignored: "ignored"; composes: b; }');
-  expect(classSelectors[1]!.classSelector.toString()).toEqual('.b');
+  expect(classSelectors[0]?.rule.toString()).toEqual('.a { ignored: "ignored"; composes: a; }');
+  expect(classSelectors[0]?.classSelector.toString()).toEqual('.a');
+  expect(classSelectors[1]?.rule.toString()).toEqual('.b { ignored: "ignored"; composes: b; }');
+  expect(classSelectors[1]?.classSelector.toString()).toEqual('.b');
   expect(composesDeclarations).toHaveLength(2);
-  expect(composesDeclarations[0]!.toString()).toEqual('composes: a');
-  expect(composesDeclarations[1]!.toString()).toEqual('composes: b');
+  expect(composesDeclarations[0]?.toString()).toEqual('composes: a');
+  expect(composesDeclarations[1]?.toString()).toEqual('composes: b');
 });
 
 test('parseAtImport', () => {
@@ -299,10 +320,15 @@ test('parseAtImport', () => {
     @import "test.css" print;
     `),
   );
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   expect(parseAtImport(atImports[0]!)).toBe(undefined);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   expect(parseAtImport(atImports[1]!)).toBe('test.css');
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   expect(parseAtImport(atImports[2]!)).toBe('test.css');
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   expect(parseAtImport(atImports[3]!)).toBe('test.css');
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   expect(parseAtImport(atImports[4]!)).toBe('test.css');
 });
 
@@ -319,16 +345,21 @@ test('parseComposesDeclarationWithFromUrl', () => {
     }
     `),
   );
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   expect(parseComposesDeclarationWithFromUrl(composesDeclarations[0]!)).toStrictEqual(undefined);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   expect(parseComposesDeclarationWithFromUrl(composesDeclarations[1]!)).toStrictEqual(undefined);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   expect(parseComposesDeclarationWithFromUrl(composesDeclarations[2]!)).toStrictEqual({
     from: 'test.css',
     tokenNames: ['a'],
   });
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   expect(parseComposesDeclarationWithFromUrl(composesDeclarations[3]!)).toStrictEqual({
     from: 'test.css',
     tokenNames: ['a', 'b', 'c'],
   });
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   expect(parseComposesDeclarationWithFromUrl(composesDeclarations[4]!)).toStrictEqual({
     from: 'test.css',
     tokenNames: ['from', 'from', 'from'], // do not deduplicate.

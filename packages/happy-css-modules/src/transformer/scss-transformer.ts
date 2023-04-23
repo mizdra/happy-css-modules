@@ -13,6 +13,7 @@ function promisifySassRender(sass: typeof import('sass')) {
     return new Promise<LegacyResult>((resolve, reject) => {
       sass.render(options, (exception, result) => {
         if (exception) reject(exception);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         else resolve(result!);
       });
     });
@@ -36,6 +37,7 @@ export const createScssTransformer: () => Transformer = () => {
           .catch((e) => done(e));
       },
     });
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return { css: result.css.toString(), map: result.map!.toString(), dependencies: result.stats.includedFiles };
   };
 };

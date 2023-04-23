@@ -49,7 +49,9 @@ export async function createTSServer() {
   return {
     async getIdentifierDefinitions(filePath: string, identifier: string): Promise<Definition[]> {
       const results = await this.getMultipleIdentifierDefinitions(filePath, [identifier]);
-      return results[0]!.definitions;
+      const result = results[0];
+      if (!result) throw new Error(`No definition found for ${identifier}`);
+      return result.definitions;
     },
     async getMultipleIdentifierDefinitions(
       filePath: string,
@@ -77,6 +79,7 @@ export async function createTSServer() {
             offset: 8, // column, 1-based
           },
         } as server.protocol.DefinitionRequest);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const definitions: Definition[] = response.body!.map((definition) => {
           const { file, start, end } = definition;
           const fileContent = readFileSync(file, 'utf-8');
@@ -85,6 +88,7 @@ export async function createTSServer() {
           const text = fileContent.slice(startIndex, endIndex);
           return { file, text, start, end };
         });
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         results.push({ identifier: identifiers[i]!, definitions });
       }
       return results;
@@ -109,6 +113,7 @@ export async function createTSServer() {
           offset: 20, // column, 1-based
         },
       } as server.protocol.DefinitionRequest);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const definitions: Definition[] = response.body!.map((definition) => {
         const { file, start, end } = definition;
         const fileContent = readFileSync(file, 'utf-8');
