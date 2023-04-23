@@ -77,6 +77,7 @@ export async function getInstalledPeerDependencies(): Promise<string[]> {
   const pkgJson = getPackageJson();
   const result = [];
   for (const deps of Object.keys(pkgJson.peerDependencies)) {
+    // eslint-disable-next-line no-await-in-loop
     const isInstalled = await importMetaResolve(deps, import.meta.url)
       .then(() => true)
       .catch(() => false);

@@ -175,6 +175,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
 
     const errors: unknown[] = [];
     for (const filePath of filePaths) {
+      // eslint-disable-next-line no-await-in-loop
       await processFile(filePath).catch((e) => errors.push(e));
     }
 
