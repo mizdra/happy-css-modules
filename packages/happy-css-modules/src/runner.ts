@@ -129,7 +129,13 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
   async function processFile(filePath: string) {
     async function isChangedFile(filePath: string) {
       const result = await cache.getAndUpdateCache(filePath);
-      if (result.error) throw result.error;
+      if (result.error) {
+        if (result.error instanceof Error) {
+          throw result.error;
+        } else {
+          throw new Error(`Unknown error: ${JSON.stringify(result.error)}`);
+        }
+      }
       return result.changed;
     }
 
