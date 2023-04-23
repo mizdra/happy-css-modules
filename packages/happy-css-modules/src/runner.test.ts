@@ -187,7 +187,7 @@ test('does not emit declaration map if declarationMap is false', async () => {
   });
   await run({ ...defaultOptions, declarationMap: false });
   await expect(readFile(getFixturePath('/test/1.css.d.ts'), 'utf8')).resolves.not.toThrow();
-  await expect(readFile(getFixturePath('/test/1.css.d.ts.map'), 'utf8')).rejects.toThrow(/ENOENT/);
+  await expect(readFile(getFixturePath('/test/1.css.d.ts.map'), 'utf8')).rejects.toThrow(/ENOENT/u);
 });
 test('supports transformer', async () => {
   createFixtures({
