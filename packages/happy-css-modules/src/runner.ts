@@ -184,12 +184,12 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
   }
 
   if (!options.watch) {
-    logger.info('Generate .d.ts for ' + options.pattern + '...');
+    logger.info(`Generate .d.ts for ${options.pattern}...`);
     await processAllFiles();
     // Write cache state to file for persistence
   } else {
     // First, watch files.
-    logger.info('Watch ' + options.pattern + '...');
+    logger.info(`Watch ${options.pattern}...`);
     const watcher = chokidar.watch([options.pattern.replace(/\\/gu, '/')], { cwd });
     watcher.on('all', (eventName, relativeFilePath) => {
       const filePath = resolve(cwd, relativeFilePath);

@@ -10,9 +10,9 @@ test('getSourceMapFilePath', () => {
 
 test('generateSourceMappingURLComment', () => {
   expect(generateSourceMappingURLComment('/app/src/dir/1.css.d.ts', '/app/src/dir/1.css.d.ts.map')).toBe(
-    '//# sourceMappingURL=./1.css.d.ts.map' + EOL,
+    `//# sourceMappingURL=./1.css.d.ts.map${EOL}`,
   );
   expect(generateSourceMappingURLComment('/app/src/dir1/1.css.d.ts', '/app/src/dir2/1.css.d.ts.map')).toBe(
-    '//# sourceMappingURL=../dir2/1.css.d.ts.map' + EOL,
+    `//# sourceMappingURL=../dir2/1.css.d.ts.map${EOL}`,
   );
 });

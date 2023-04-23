@@ -92,7 +92,7 @@ describe('generateDtsContentWithSourceMap', () => {
         .foo_bar {}
         `,
       });
-      return await locator.load(filePath);
+      return locator.load(filePath);
     }
     test('undefined', async () => {
       const result = await getResult(filePath);
