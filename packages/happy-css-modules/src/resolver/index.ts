@@ -48,7 +48,7 @@ export const createDefaultResolver: (defaultResolverOptions?: DefaultResolverOpt
           const isExists = await exists(resolved);
           if (isExists) return resolved;
         }
-      } catch (e) {
+      } catch (_e) {
         // noop
       }
     }

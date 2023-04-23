@@ -89,7 +89,7 @@ export function parseArgv(argv: string[]): RunnerOptions {
         let parsedWebpackResolveAlias: unknown;
         try {
           parsedWebpackResolveAlias = JSON.parse(argv.webpackResolveAlias);
-        } catch (e) {
+        } catch (_e) {
           throw new Error('--webpackResolveAlias must be a valid JSON string.');
         }
         if (typeof parsedWebpackResolveAlias !== 'object' || parsedWebpackResolveAlias === null)

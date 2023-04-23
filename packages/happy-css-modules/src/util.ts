@@ -60,7 +60,7 @@ export async function exists(path: string): Promise<boolean> {
   try {
     await access(path, constants.F_OK);
     return true;
-  } catch (e) {
+  } catch (_e) {
     return false;
   }
 }

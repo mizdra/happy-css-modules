@@ -114,7 +114,7 @@ export const createWebpackResolver: (webpackResolverOptions?: WebpackResolverOpt
             const isExists = await exists(resolved);
             if (isExists) return resolved;
           }
-        } catch (e) {
+        } catch (_e) {
           // noop
         }
       }
