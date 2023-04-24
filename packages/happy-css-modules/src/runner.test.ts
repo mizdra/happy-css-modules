@@ -144,6 +144,7 @@ test('uses cache in watch mode', async () => {
   await waitForAsyncTask(500); // Wait until the file is written
 
   // The updated 1.css will be processed, and the non-updated 2.css will be skipped.
+  // eslint-disable-next-line require-atomic-updates -- TODO: fix warning
   watcher = await run({ ...defaultOptions, declarationMap: true, logLevel: 'debug', cache: true, watch: true });
   await waitForAsyncTask(1000); // Wait until the watcher is ready
   expect(consoleLogSpy).toBeCalledTimes(3);
