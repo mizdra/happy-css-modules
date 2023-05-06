@@ -31,7 +31,7 @@ function removeDependenciesPlugin(): Plugin {
     postcssPlugin: 'remove-dependencies',
     // eslint-disable-next-line @typescript-eslint/naming-convention
     AtRule(atRule) {
-      if (isAtImportNode(atRule)) {
+      if (isAtImportNode(atRule) || isAtValueNode(atRule)) {
         atRule.remove();
       }
     },
@@ -133,6 +133,10 @@ function isAtRuleNode(node: Node): node is AtRule {
 
 function isAtImportNode(node: Node): node is AtRule {
   return isAtRuleNode(node) && node.name === 'import';
+}
+
+function isAtValueNode(node: Node): node is AtRule {
+  return isAtRuleNode(node) && node.name === 'value';
 }
 
 function isRuleNode(node: Node): node is Rule {

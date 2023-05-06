@@ -80,6 +80,16 @@ describe('generateLocalTokenNames', () => {
       ),
     ).toStrictEqual([]);
   });
+  test('does not track styles imported by @value in other file because it is not a local token', async () => {
+    createFixtures({});
+    expect(
+      await generateLocalTokenNames(
+        createRoot(`
+        @value something from "/test/1.css";
+        `),
+      ),
+    ).toStrictEqual([]);
+  });
   test('does not track styles imported by composes in other file because it is not a local token', async () => {
     createFixtures({
       '/test/1.css': dedent`
