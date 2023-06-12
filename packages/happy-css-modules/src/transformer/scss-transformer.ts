@@ -22,7 +22,7 @@ function promisifySassRender(sass: typeof import('sass')) {
 export const createScssTransformer: () => Transformer = () => {
   let sass: typeof import('sass');
   return async (source, options) => {
-    sass ??= (await import('sass').catch(handleImportError('sass'))).default;
+    sass ??= (await import('sass').catch(handleImportError('sass')));
     const render = promisifySassRender(sass);
     const result = await render({
       data: source,
