@@ -31,7 +31,7 @@ function removeDependenciesPlugin(): Plugin {
     postcssPlugin: 'remove-dependencies',
     // eslint-disable-next-line @typescript-eslint/naming-convention
     AtRule(atRule) {
-      if (isAtImportNode(atRule) || isAtValueNode(atRule)) {
+      if (isAtImportNode(atRule) || isAtValueImport(atRule)) {
         atRule.remove();
       }
     },
@@ -139,6 +139,10 @@ function isAtValueNode(node: Node): node is AtRule {
   return isAtRuleNode(node) && node.name === 'value';
 }
 
+function isAtValueImport(node: Node): node is AtRule {
+  return isAtValueNode(node) && !node.params.includes(':');
+}
+
 function isRuleNode(node: Node): node is Rule {
   return node.type === 'rule';
 }
@@ -153,6 +157,7 @@ function isComposesDeclaration(node: Node): node is Declaration {
 
 type CollectNodesResult = {
   atImports: AtRule[];
+  atValues: AtRule[];
   classSelectors: { rule: Rule; classSelector: ClassName }[];
   composesDeclarations: Declaration[];
 };
@@ -163,11 +168,14 @@ type CollectNodesResult = {
  */
 export function collectNodes(ast: Root): CollectNodesResult {
   const atImports: AtRule[] = [];
+  const atValues: AtRule[] = [];
   const classSelectors: { rule: Rule; classSelector: ClassName }[] = [];
   const composesDeclarations: Declaration[] = [];
   ast.walk((node) => {
     if (isAtImportNode(node)) {
       atImports.push(node);
+    } else if (isAtValueNode(node)) {
+      atValues.push(node);
     } else if (isRuleNode(node)) {
       // In `rule.selector` comes the following string:
       // 1. ".foo"
@@ -187,7 +195,7 @@ export function collectNodes(ast: Root): CollectNodesResult {
       composesDeclarations.push(node);
     }
   });
-  return { atImports, classSelectors, composesDeclarations };
+  return { atImports, atValues, classSelectors, composesDeclarations };
 }
 
 /**

@@ -43,9 +43,11 @@ describe('generateLocalTokenNames', () => {
         .composes {
           composes: composes_target;
         }
+        @value atvalue: foo;
         `),
       ),
     ).toStrictEqual([
+      'atvalue',
       'basic',
       'cascading',
       'pseudo_class_1',
