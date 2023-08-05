@@ -177,6 +177,27 @@ test('tracks other files when `composes` is present', async () => {
   `);
 });
 
+test('tracks other files when `@value` is present', async () => {
+  createFixtures({
+    '/test/1.css': dedent`
+    @value a from './2.css';
+    @value b from '3.css';
+    @value c from '${getFixturePath('/test/4.css')}';
+    `,
+    '/test/2.css': dedent`
+    @value a: 1;
+    `,
+    '/test/3.css': dedent`
+    @value b: 2;
+    `,
+    '/test/4.css': dedent`
+    @value c: 3;
+    `,
+  });
+  const result = await locator.load(getFixturePath('/test/1.css'));
+  expect(result).toMatchInlineSnapshot(`{ dependencies: [], tokens: [] }`);
+});
+
 test('normalizes tokens', async () => {
   createFixtures({
     '/test/1.css': dedent`

@@ -11,6 +11,7 @@ import {
   type Location,
   parseComposesDeclarationWithFromUrl,
   collectNodes,
+  parseAtValue,
 } from './postcss.js';
 
 export { collectNodes, type Location } from './postcss.js';
@@ -205,14 +206,29 @@ export class Locator {
     }
 
     for (const atValue of atValues) {
-      const name = atValue.params.slice(0, atValue.params.indexOf(':'));
-      if (!localTokenNames.includes(name)) continue;
+      const atValueData = parseAtValue(atValue);
+      if (!atValueData) continue;
 
-      tokens.push({
-        name,
-        // TODO: `getOriginalLocation` expects a `ClassName`.
-        originalLocations: [],
-      });
+      if (atValueData.type === 'valueDeclaration') {
+        if (atValue.source === undefined) throw new Error('Unexpected error.');
+        tokens.push({
+          name: atValueData.tokenName,
+          originalLocations: [
+            {
+              filePath: atValue.source.input.file!,
+              start: atValue.source.start!,
+              end: atValue.source.end!,
+            },
+          ],
+        });
+      } else if (atValueData.type === 'valueImport') {
+        if (isIgnoredSpecifier(atValueData.importedSheetPath)) continue;
+        const from = await this.resolver(atValueData.importedSheetPath, { request: filePath });
+        const result = await this._load(from);
+        const externalTokens = result.tokens.filter((token) => atValueData.tokenNames.includes(token.name));
+        dependencies.push(from, ...result.dependencies);
+        tokens.push(...externalTokens);
+      }
     }
 
     const result: LoadResult = {

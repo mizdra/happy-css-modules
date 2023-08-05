@@ -215,6 +215,27 @@ export function parseAtImport(atImport: AtRule): string | undefined {
   return undefined;
 }
 
+type ParsedAtValue =
+  | { type: 'valueDeclaration'; tokenName: string; value: string }
+  | { type: 'valueImport'; importedSheetPath: string; tokenNames: string[] };
+
+export function parseAtValue(atValue: AtRule): ParsedAtValue | undefined {
+  // NOTE: `@value` property syntax is...
+  // Value Declaration's syntax: `@value <token-name>[:] <value>;`
+  // Value Import's syntax: `@value <import-specifier>[, <import-specifier>]* from <module-specifier>;`
+  // - variables:
+  //   - `<token-name>`: `<identifier>`
+  //   - `<value>`: `<any>`
+  //   - `<import-specifier>`: `<identifier>` or `<identifier> as <identifier>`
+  //   - `<module-specifier>`: `<string-literal>`
+  // - ref:
+  //   - https://github.com/css-modules/css-modules/blob/master/docs/values-variables.md
+  //   - https://github.com/css-modules/postcss-modules-values/blob/master/test/index.test.js
+  const nodes = valueParser(atValue.params).nodes;
+
+  // TODO
+}
+
 /**
  * Parse `composes` declaration with `from <url>`.
  * If the declaration is not found or do not have `from <url>`, return `undefined`.
