@@ -148,7 +148,7 @@ export class Locator {
 
     const tokens: Token[] = [];
 
-    const { atImports, classSelectors } = collectNodes(ast);
+    const { atImports, atValues, classSelectors } = collectNodes(ast);
 
     // Load imported sheets recursively.
     for (const atImport of atImports) {
@@ -175,6 +175,17 @@ export class Locator {
       tokens.push({
         name: classSelector.value,
         originalLocation,
+      });
+    }
+
+    for (const atValue of atValues) {
+      const name = atValue.params.slice(0, atValue.params.indexOf(':'));
+      if (!localTokenNames.includes(name)) continue;
+
+      tokens.push({
+        name,
+        // TODO: `getOriginalLocation` expects a `ClassName`.
+        originalLocations: [],
       });
     }
 

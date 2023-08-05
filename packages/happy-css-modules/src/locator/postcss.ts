@@ -158,6 +158,7 @@ function isRuleNode(node: Node): node is Rule {
 
 type CollectNodesResult = {
   atImports: AtRule[];
+  atValues: AtRule[];
   classSelectors: { rule: Rule; classSelector: ClassName }[];
 };
 
@@ -167,10 +168,13 @@ type CollectNodesResult = {
  */
 export function collectNodes(ast: Root): CollectNodesResult {
   const atImports: AtRule[] = [];
+  const atValues: AtRule[] = [];
   const classSelectors: { rule: Rule; classSelector: ClassName }[] = [];
   ast.walk((node) => {
     if (isAtImportNode(node)) {
       atImports.push(node);
+    } else if (isAtValueNode(node)) {
+      atValues.push(node);
     } else if (isRuleNode(node)) {
       // In `rule.selector` comes the following string:
       // 1. ".foo"
@@ -188,7 +192,7 @@ export function collectNodes(ast: Root): CollectNodesResult {
       }).processSync(node);
     }
   });
-  return { atImports, classSelectors };
+  return { atImports, atValues, classSelectors };
 }
 
 /**
