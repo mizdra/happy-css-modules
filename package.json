@@ -41,7 +41,7 @@
     "@types/eslint": "^8.37.0",
     "@types/glob": "^7.2.0",
     "@types/jest": "^29.0.0",
-    "@types/less": "^3.0.3",
+    "@types/less": "^3.0.4",
     "@types/line-column": "^1.0.0",
     "@types/minimatch": "^5.1.2",
     "@types/node": "^18.0.6",
