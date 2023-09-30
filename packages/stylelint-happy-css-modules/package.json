@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "camelcase": "^6.3.0",
-    "postcss": "^8.4.23",
+    "postcss": "^8.4.31",
     "postcss-selector-parser": "^6.0.12",
     "source-map": "^0.7.4",
     "ts-morph": "^17.0.1"
