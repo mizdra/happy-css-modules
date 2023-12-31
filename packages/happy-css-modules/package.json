@@ -34,7 +34,7 @@
     "@file-cache/core": "^1.1.4",
     "@file-cache/npm": "^1.1.4",
     "await-lock": "^2.2.2",
-    "camelcase": "^7.0.1",
+    "camelcase": "^8.0.0",
     "chalk": "^5.0.1",
     "chokidar": "^3.5.3",
     "enhanced-resolve": "^5.10.0",
