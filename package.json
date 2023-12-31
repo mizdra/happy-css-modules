@@ -29,7 +29,7 @@
     "packages/example"
   ],
   "devDependencies": {
-    "@eslint/eslintrc": "^2.0.3",
+    "@eslint/eslintrc": "^3.0.0",
     "@eslint/js": "^8.37.0",
     "@jest/globals": "^29.0.3",
     "@jest/types": "^29.0.3",
