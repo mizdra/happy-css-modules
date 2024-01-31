@@ -31,7 +31,7 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "@file-cache/core": "^1.1.4",
+    "@file-cache/core": "^2.0.0",
     "@file-cache/npm": "^1.1.4",
     "await-lock": "^2.2.2",
     "camelcase": "^7.0.1",
