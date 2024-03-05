@@ -28,7 +28,7 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "camelcase": "^6.3.0",
+    "camelcase": "^8.0.0",
     "postcss": "^8.4.31",
     "postcss-selector-parser": "^6.0.13",
     "source-map": "^0.7.4",
