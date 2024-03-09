@@ -43,9 +43,11 @@ describe('generateLocalTokenNames', () => {
         .composes {
           composes: composes_target;
         }
+        @value value: #BF4040;
         `),
       ),
     ).toStrictEqual([
+      'value',
       'basic',
       'cascading',
       'pseudo_class_1',
@@ -81,11 +83,15 @@ describe('generateLocalTokenNames', () => {
     ).toStrictEqual([]);
   });
   test('does not track styles imported by @value in other file because it is not a local token', async () => {
-    createFixtures({});
+    createFixtures({
+      '/test/1.css': dedent`
+      .a {}
+      `,
+    });
     expect(
       await generateLocalTokenNames(
         createRoot(`
-        @value something from "/test/1.css";
+        @value a from "/test/1.css";
         `),
       ),
     ).toStrictEqual([]);

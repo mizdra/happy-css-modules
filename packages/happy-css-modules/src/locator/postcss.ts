@@ -31,7 +31,7 @@ function removeDependenciesPlugin(): Plugin {
     postcssPlugin: 'remove-dependencies',
     // eslint-disable-next-line @typescript-eslint/naming-convention
     AtRule(atRule) {
-      if (isAtImportNode(atRule) || isAtValueNode(atRule)) {
+      if (isAtImportNode(atRule) || isAtValueImport(atRule)) {
         atRule.remove();
       }
     },
@@ -139,6 +139,10 @@ function isAtValueNode(node: Node): node is AtRule {
   return isAtRuleNode(node) && node.name === 'value';
 }
 
+function isAtValueImport(node: Node): node is AtRule {
+  return isAtValueNode(node) && !node.params.includes(':');
+}
+
 function isRuleNode(node: Node): node is Rule {
   return node.type === 'rule';
 }
@@ -153,6 +157,7 @@ function isComposesDeclaration(node: Node): node is Declaration {
 
 type CollectNodesResult = {
   atImports: AtRule[];
+  atValues: AtRule[];
   classSelectors: { rule: Rule; classSelector: ClassName }[];
   composesDeclarations: Declaration[];
 };
@@ -163,11 +168,14 @@ type CollectNodesResult = {
  */
 export function collectNodes(ast: Root): CollectNodesResult {
   const atImports: AtRule[] = [];
+  const atValues: AtRule[] = [];
   const classSelectors: { rule: Rule; classSelector: ClassName }[] = [];
   const composesDeclarations: Declaration[] = [];
   ast.walk((node) => {
     if (isAtImportNode(node)) {
       atImports.push(node);
+    } else if (isAtValueNode(node)) {
+      atValues.push(node);
     } else if (isRuleNode(node)) {
       // In `rule.selector` comes the following string:
       // 1. ".foo"
@@ -187,7 +195,7 @@ export function collectNodes(ast: Root): CollectNodesResult {
       composesDeclarations.push(node);
     }
   });
-  return { atImports, classSelectors, composesDeclarations };
+  return { atImports, atValues, classSelectors, composesDeclarations };
 }
 
 /**
@@ -205,6 +213,27 @@ export function parseAtImport(atImport: AtRule): string | undefined {
     if (firstNode.nodes[0].type === 'word') return firstNode.nodes[0].value;
   }
   return undefined;
+}
+
+type ParsedAtValue =
+  | { type: 'valueDeclaration'; tokenName: string; value: string }
+  | { type: 'valueImport'; importedSheetPath: string; tokenNames: string[] };
+
+export function parseAtValue(atValue: AtRule): ParsedAtValue | undefined {
+  // NOTE: `@value` property syntax is...
+  // Value Declaration's syntax: `@value <token-name>[:] <value>;`
+  // Value Import's syntax: `@value <import-specifier>[, <import-specifier>]* from <module-specifier>;`
+  // - variables:
+  //   - `<token-name>`: `<identifier>`
+  //   - `<value>`: `<any>`
+  //   - `<import-specifier>`: `<identifier>` or `<identifier> as <identifier>`
+  //   - `<module-specifier>`: `<string-literal>`
+  // - ref:
+  //   - https://github.com/css-modules/css-modules/blob/master/docs/values-variables.md
+  //   - https://github.com/css-modules/postcss-modules-values/blob/master/test/index.test.js
+  const nodes = valueParser(atValue.params).nodes;
+
+  // TODO
 }
 
 /**
