@@ -19,7 +19,7 @@
   "author": "mizdra",
   "license": "MIT",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=20.12.0"
   },
   "packageManager": "npm@9.6.4",
   "prettier": "@mizdra/prettier-config-mizdra",
@@ -44,7 +44,7 @@
     "@types/less": "^3.0.5",
     "@types/line-column": "^1.0.1",
     "@types/minimatch": "^5.1.2",
-    "@types/node": "^18.0.6",
+    "@types/node": "^20.11.30",
     "@types/yargs": "^17.0.13",
     "@typescript-eslint/eslint-plugin": "^5.31.0",
     "@typescript-eslint/parser": "^5.31.0",
