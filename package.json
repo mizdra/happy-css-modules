@@ -51,7 +51,7 @@
     "@typescript/server-harness": "^0.2.0",
     "dedent": "^1.5.1",
     "eslint": "^8.20.0",
-    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.26.0",
     "jest": "^29.0.3",
     "less": "^4.1.3",
