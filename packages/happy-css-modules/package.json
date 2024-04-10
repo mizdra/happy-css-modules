@@ -28,7 +28,7 @@
   "author": "mizdra",
   "license": "MIT",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.20.2"
   },
   "dependencies": {
     "@file-cache/core": "^1.1.4",

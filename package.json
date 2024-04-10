@@ -19,7 +19,7 @@
   "author": "mizdra",
   "license": "MIT",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.20.2"
   },
   "packageManager": "npm@9.6.4",
   "prettier": "@mizdra/prettier-config-mizdra",
