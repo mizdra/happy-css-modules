@@ -5,6 +5,7 @@ import { FlatCompat } from '@eslint/eslintrc';
 // @ts-expect-error
 import js from '@eslint/js';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 const __dirname = new URL('.', import.meta.url).pathname;
 
 const compat = new FlatCompat({
