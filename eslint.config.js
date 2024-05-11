@@ -5,6 +5,7 @@ import { FlatCompat } from '@eslint/eslintrc';
 // @ts-expect-error
 import js from '@eslint/js';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 const __dirname = new URL('.', import.meta.url).pathname;
 
 const compat = new FlatCompat({
@@ -16,7 +17,15 @@ const compat = new FlatCompat({
 /** @type {import('eslint').Linter.FlatConfig[]} */
 // eslint-disable-next-line import/no-default-export
 export default [
-  { ignores: ['**/dist', '**/*.css.d.ts', 'packages/example', 'docs/how-does-definition-jumps-work'] },
+  {
+    ignores: [
+      '**/dist',
+      '**/*.css.d.ts',
+      'packages/example',
+      'docs/how-does-definition-jumps-work',
+      'packages/happy-css-modules/bin/**',
+    ],
+  },
   // NOTE: This is a hack that allows eslint-plugin-import to work with flat config.
   // ref: https://github.com/import-js/eslint-plugin-import/issues/2556#issuecomment-1419518561
   {
@@ -57,7 +66,9 @@ export default [
       //     ],
       //   },
       // ],
+      'import/no-extraneous-dependencies': 'off',
       'no-console': 2,
+      'no-use-before-define': 0,
     },
   },
   {
@@ -70,6 +81,7 @@ export default [
     rules: {
       '@typescript-eslint/no-unused-vars': [2, { argsIgnorePattern: '^_' }],
       '@typescript-eslint/consistent-type-imports': [2, { disallowTypeAnnotations: false }],
+      '@typescript-eslint/no-non-null-assertion': 0,
     },
   },
   ...compat.env({

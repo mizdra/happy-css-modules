@@ -12,7 +12,7 @@ export function getRelativePath(fromFilePath: string, toFilePath: string): strin
   if (resolved.startsWith('..')) {
     return resolved;
   } else {
-    return './' + resolved;
+    return `./${resolved}`;
   }
 }
 

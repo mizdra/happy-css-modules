@@ -94,6 +94,7 @@ type OverrideProp<T, K extends keyof T, V extends T[K]> = Omit<T, K> & { [P in K
 export async function run(options: OverrideProp<RunnerOptions, 'watch', true>): Promise<Watcher>;
 export async function run(options: RunnerOptions): Promise<void>;
 export async function run(options: RunnerOptions): Promise<Watcher | void> {
+  // eslint-disable-next-line new-cap
   const lock = new AwaitLock.default();
   const logger = new Logger(options.logLevel ?? 'info');
 
@@ -128,6 +129,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
   async function processFile(filePath: string) {
     async function isChangedFile(filePath: string) {
       const result = await cache.getAndUpdateCache(filePath);
+      // eslint-disable-next-line @typescript-eslint/no-throw-literal
       if (result.error) throw result.error;
       return result.changed;
     }
@@ -175,6 +177,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
 
     const errors: unknown[] = [];
     for (const filePath of filePaths) {
+      // eslint-disable-next-line no-await-in-loop
       await processFile(filePath).catch((e) => errors.push(e));
     }
 
@@ -184,13 +187,13 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
   }
 
   if (!options.watch) {
-    logger.info('Generate .d.ts for ' + options.pattern + '...');
+    logger.info(`Generate .d.ts for ${options.pattern}...`);
     await processAllFiles();
     // Write cache state to file for persistence
   } else {
     // First, watch files.
-    logger.info('Watch ' + options.pattern + '...');
-    const watcher = chokidar.watch([options.pattern.replace(/\\/g, '/')], { cwd });
+    logger.info(`Watch ${options.pattern}...`);
+    const watcher = chokidar.watch([options.pattern.replace(/\\/gu, '/')], { cwd });
     watcher.on('all', (eventName, relativeFilePath) => {
       const filePath = resolve(cwd, relativeFilePath);
 

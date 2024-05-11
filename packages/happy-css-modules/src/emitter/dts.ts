@@ -15,14 +15,14 @@ import { getRelativePath, type DtsFormatOptions } from './index.js';
 export function getDtsFilePath(filePath: string, arbitraryExtensions: boolean): string {
   if (arbitraryExtensions) {
     const { dir, name, ext } = parse(filePath);
-    return join(dir, name + '.d' + ext + '.ts');
+    return join(dir, `${name}.d${ext}.ts`);
   } else {
-    return filePath + '.d.ts';
+    return `${filePath}.d.ts`;
   }
 }
 
 function dashesCamelCase(str: string): string {
-  return str.replace(/-+(\w)/g, function (match, firstLetter) {
+  return str.replace(/-+(\w)/gu, (match, firstLetter) => {
     return firstLetter.toUpperCase();
   });
 }
@@ -66,7 +66,7 @@ function generateTokenDeclarations(
       if (originalLocation.filePath === undefined) {
         // If the original location is not specified, fallback to the source file.
         originalLocation = {
-          filePath: filePath,
+          filePath,
           start: { line: 1, column: 1 },
           end: { line: 1, column: 1 },
         };
@@ -101,6 +101,7 @@ function generateTokenDeclarations(
   return result;
 }
 
+// eslint-disable-next-line max-params
 export function generateDtsContentWithSourceMap(
   filePath: string,
   dtsFilePath: string,
@@ -122,10 +123,10 @@ export function generateDtsContentWithSourceMap(
     sourceNode = new SourceNode(null, null, null, '');
   } else {
     sourceNode = new SourceNode(1, 0, getRelativePath(sourceMapFilePath, filePath), [
-      'declare const styles:' + EOL,
+      `declare const styles:${EOL}`,
       ...tokenDeclarations.map((tokenDeclaration) => ['  ', tokenDeclaration, EOL]),
-      ';' + EOL,
-      'export default styles;' + EOL,
+      `;${EOL}`,
+      `export default styles;${EOL}`,
     ]);
   }
   const codeWithSourceMap = sourceNode.toStringWithSourceMap({

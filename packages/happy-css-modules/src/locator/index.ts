@@ -98,6 +98,7 @@ export class Locator {
     for (const dependency of dependencies) {
       const entry = this.cache.get(dependency);
       if (!entry) return true;
+      // eslint-disable-next-line no-await-in-loop
       const mtime = (await stat(dependency)).mtime.getTime();
       if (entry.mtime !== mtime) return true;
     }
@@ -124,7 +125,7 @@ export class Locator {
       dependencies: result.dependencies
         .map((dep) => {
           if (typeof dep === 'string') return dep;
-          if (dep.protocol !== 'file:') throw new Error('Unsupported protocol: ' + dep.protocol);
+          if (dep.protocol !== 'file:') throw new Error(`Unsupported protocol: ${dep.protocol}`);
           return dep.pathname;
         })
         .filter((dep) => {
@@ -171,7 +172,9 @@ export class Locator {
       const importedSheetPath = parseAtImport(atImport);
       if (!importedSheetPath) continue;
       if (isIgnoredSpecifier(importedSheetPath)) continue;
+      // eslint-disable-next-line no-await-in-loop
       const from = await this.resolver(importedSheetPath, { request: filePath });
+      // eslint-disable-next-line no-await-in-loop
       const result = await this._load(from);
       const externalTokens = result.tokens;
       dependencies.push(from, ...result.dependencies);
@@ -197,7 +200,9 @@ export class Locator {
       const declarationDetail = parseComposesDeclarationWithFromUrl(composesDeclaration);
       if (!declarationDetail) continue;
       if (isIgnoredSpecifier(declarationDetail.from)) continue;
+      // eslint-disable-next-line no-await-in-loop
       const from = await this.resolver(declarationDetail.from, { request: filePath });
+      // eslint-disable-next-line no-await-in-loop
       const result = await this._load(from);
       const externalTokens = result.tokens.filter((token) => declarationDetail.tokenNames.includes(token.name));
       dependencies.push(from, ...result.dependencies);

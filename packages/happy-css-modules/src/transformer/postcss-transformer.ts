@@ -8,7 +8,7 @@ const require = createRequire(import.meta.url);
 
 const postcssrc: typeof import('postcss-load-config') = require('postcss-load-config');
 
-//ref: https://github.com/postcss/postcss-import#dependency-message-support
+// ref: https://github.com/postcss/postcss-import#dependency-message-support
 interface DependencyMessage extends Message {
   type: 'dependency';
   file: string;

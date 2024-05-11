@@ -9,9 +9,9 @@ import { getRelativePath } from './index.js';
  * @returns The path to the .d.ts.map file. It is absolute.
  */
 export function getSourceMapFilePath(filePath: string, arbitraryExtensions: boolean): string {
-  return getDtsFilePath(filePath, arbitraryExtensions) + '.map';
+  return `${getDtsFilePath(filePath, arbitraryExtensions)}.map`;
 }
 
 export function generateSourceMappingURLComment(dtsFilePath: string, sourceMapFilePath: string): string {
-  return `//# sourceMappingURL=${getRelativePath(dtsFilePath, sourceMapFilePath)}` + EOL;
+  return `//# sourceMappingURL=${getRelativePath(dtsFilePath, sourceMapFilePath)}${EOL}`;
 }

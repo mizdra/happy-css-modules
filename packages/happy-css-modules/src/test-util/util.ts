@@ -53,7 +53,9 @@ export function fakeToken(args: {
 }
 
 export async function waitForAsyncTask(ms?: number): Promise<void> {
-  await new Promise((resolve) => setTimeout(resolve, ms ?? 0));
+  await new Promise((resolve) => {
+    setTimeout(resolve, ms ?? 0);
+  });
 }
 
 export async function exists(path: string): Promise<boolean> {

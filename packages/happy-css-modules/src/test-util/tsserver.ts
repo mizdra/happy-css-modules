@@ -67,6 +67,7 @@ export async function createTSServer() {
       const results: { identifier: string; definitions: Definition[] }[] = [];
 
       for (let i = 0; i < identifiers.length; i++) {
+        // eslint-disable-next-line no-await-in-loop
         const response: server.protocol.DefinitionResponse = await server.message({
           seq: 0,
           type: 'request',
