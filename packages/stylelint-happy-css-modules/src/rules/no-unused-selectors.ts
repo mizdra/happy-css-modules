@@ -37,7 +37,7 @@ function walkClassSelectors(root: Root, callback: (rule: Rule, classSelector: Cl
 }
 
 function dashesCamelCase(str: string): string {
-  return str.replace(/-+(\w)/g, function (match, firstLetter) {
+  return str.replace(/-+(\w)/g, (match, firstLetter) => {
     return firstLetter.toUpperCase();
   });
 }

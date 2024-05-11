@@ -124,7 +124,7 @@ export class Locator {
       dependencies: result.dependencies
         .map((dep) => {
           if (typeof dep === 'string') return dep;
-          if (dep.protocol !== 'file:') throw new Error('Unsupported protocol: ' + dep.protocol);
+          if (dep.protocol !== 'file:') throw new Error(`Unsupported protocol: ${dep.protocol}`);
           return dep.pathname;
         })
         .filter((dep) => {
