@@ -7,7 +7,7 @@ import { createScssTransformer } from './scss-transformer.js';
 /**
  * The value returned from the transformer.
  * `false` means to skip transpiling on that file.
- * */
+ */
 export type TransformResult =
   | {
       /** The transformed code. */

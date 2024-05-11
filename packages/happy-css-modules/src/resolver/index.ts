@@ -11,7 +11,7 @@ export type ResolverOptions = {
 /**
  * The function to resolve the path of the imported file.
  * @returns The resolved path of the imported file. `false` means to skip resolving.
- * */
+ */
 export type Resolver = (specifier: string, options: ResolverOptions) => string | false | Promise<string | false>;
 
 export type DefaultResolverOptions = WebpackResolverOptions;
