@@ -3,7 +3,7 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "explicit"
   },
   "jest.jestCommandLine": "npm run test --",
   // It is expensive to run the test each time the file to be tested (e.g. `loader.ts`) is saved.
