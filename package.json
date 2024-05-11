@@ -26,6 +26,7 @@
   "workspaces": [
     "packages/happy-css-modules",
     "packages/stylelint-happy-css-modules",
+    "packages/typescript-happy-css-modules-plugin",
     "packages/example"
   ],
   "devDependencies": {
