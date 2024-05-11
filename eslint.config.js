@@ -16,7 +16,15 @@ const compat = new FlatCompat({
 /** @type {import('eslint').Linter.FlatConfig[]} */
 // eslint-disable-next-line import/no-default-export
 export default [
-  { ignores: ['**/dist', '**/*.css.d.ts', 'packages/example', 'docs/how-does-definition-jumps-work'] },
+  {
+    ignores: [
+      '**/dist',
+      '**/*.css.d.ts',
+      'packages/example',
+      'docs/how-does-definition-jumps-work',
+      'packages/happy-css-modules/bin/**',
+    ],
+  },
   // NOTE: This is a hack that allows eslint-plugin-import to work with flat config.
   // ref: https://github.com/import-js/eslint-plugin-import/issues/2556#issuecomment-1419518561
   {
