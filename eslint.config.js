@@ -70,6 +70,7 @@ export default [
     rules: {
       '@typescript-eslint/no-unused-vars': [2, { argsIgnorePattern: '^_' }],
       '@typescript-eslint/consistent-type-imports': [2, { disallowTypeAnnotations: false }],
+      '@typescript-eslint/no-non-null-assertion': 0,
     },
   },
   ...compat.env({
