@@ -57,6 +57,7 @@ export default [
       //     ],
       //   },
       // ],
+      'import/no-extraneous-dependencies': 'off',
       'no-console': 2,
     },
   },
