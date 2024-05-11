@@ -1,3 +1,4 @@
+import path from 'path';
 import type ts from 'typescript/lib/tsserverlibrary';
 
 function init(modules: { typescript: typeof import('typescript/lib/tsserverlibrary') }) {
@@ -22,6 +23,59 @@ function init(modules: { typescript: typeof import('typescript/lib/tsserverlibra
         kind: ts.ScriptElementKind.variableElement,
         kindModifiers: '',
         sortText: '0',
+      });
+      return prior;
+    };
+    proxy.getApplicableRefactors = (fileName, position, preferences) => {
+      const prior = info.languageService.getApplicableRefactors(fileName, position, preferences);
+      prior?.push({
+        name: 'Define new css rule',
+        description: 'Define new css rule',
+        actions: [
+          {
+            name: 'Define new css rule',
+            description: 'Define new css rule',
+          },
+        ],
+      });
+      return prior;
+    };
+    // eslint-disable-next-line max-params
+    proxy.getEditsForRefactor = (fileName, formatOptions, positionOrRange, refactorName, actionName, preferences) => {
+      if (!(refactorName === 'Define new css rule' && actionName === 'Define new css rule')) {
+        return info.languageService.getEditsForRefactor(
+          fileName,
+          formatOptions,
+          positionOrRange,
+          refactorName,
+          actionName,
+          preferences,
+        );
+      }
+      let prior = info.languageService.getEditsForRefactor(
+        fileName,
+        formatOptions,
+        positionOrRange,
+        refactorName,
+        actionName,
+        preferences,
+      );
+
+      const { dir, name } = path.parse(fileName);
+
+      prior ??= { edits: [] };
+      prior.edits.push({
+        fileName: `${dir}/${name}.module.css`,
+        textChanges: [
+          {
+            span: {
+              start: 0,
+              length: 0,
+            },
+            newText: '.content {\n  \n}\n\n',
+          },
+        ],
+        // isNewFile: true,
       });
       return prior;
     };
