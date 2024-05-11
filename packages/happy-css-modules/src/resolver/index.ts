@@ -43,8 +43,10 @@ export const createDefaultResolver: (defaultResolverOptions?: DefaultResolverOpt
   return async (specifier, options) => {
     for (const resolver of resolvers) {
       try {
+        // eslint-disable-next-line no-await-in-loop
         const resolved = await resolver(specifier, options);
         if (resolved !== false) {
+          // eslint-disable-next-line no-await-in-loop
           const isExists = await exists(resolved);
           if (isExists) return resolved;
         }

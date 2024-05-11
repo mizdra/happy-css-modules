@@ -111,6 +111,7 @@ export const createWebpackResolver: (webpackResolverOptions?: WebpackResolverOpt
         try {
           const resolved = resolver(dirname(options.request), specifierVariant);
           if (resolved !== false) {
+            // eslint-disable-next-line no-await-in-loop
             const isExists = await exists(resolved);
             if (isExists) return resolved;
           }
