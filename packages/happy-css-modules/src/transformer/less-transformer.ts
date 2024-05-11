@@ -44,6 +44,7 @@ function createLessPluginResolver(Less: typeof import('less'), options: Transfor
 export const createLessTransformer: () => Transformer = () => {
   let less: typeof import('less');
   return async (source, options) => {
+    // eslint-disable-next-line require-atomic-updates
     less ??= (await import('less').catch(handleImportError('less'))).default;
     const result = await less.render(source, {
       filename: options.from,
