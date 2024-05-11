@@ -12,6 +12,7 @@
   "license": "MIT",
   "dependencies": {
     "happy-css-modules": "../happy-css-modules",
-    "stylelint-happy-css-modules": "../stylelint-happy-css-modules"
+    "stylelint-happy-css-modules": "../stylelint-happy-css-modules",
+    "typescript-happy-css-modules-plugin": "../typescript-happy-css-modules-plugin"
   }
 }
