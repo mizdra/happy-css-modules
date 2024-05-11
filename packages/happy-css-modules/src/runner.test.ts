@@ -187,7 +187,7 @@ test('does not emit declaration map if declarationMap is false', async () => {
   });
   await run({ ...defaultOptions, declarationMap: false });
   await expect(readFile(getFixturePath('/test/1.css.d.ts'), 'utf8')).resolves.not.toThrow();
-  await expect(readFile(getFixturePath('/test/1.css.d.ts.map'), 'utf8')).rejects.toThrow(/ENOENT/);
+  await expect(readFile(getFixturePath('/test/1.css.d.ts.map'), 'utf8')).rejects.toThrow(/ENOENT/u);
 });
 test('supports transformer', async () => {
   createFixtures({
@@ -205,17 +205,17 @@ test('watches for changes in files', async () => {
 
   await writeFile(getFixturePath('/test/1.css'), '.a-1 {}');
   await waitForAsyncTask(500); // Wait until the file is written
-  expect(await readFile(getFixturePath('/test/1.css.d.ts'), 'utf8')).toMatch(/a-1/);
+  expect(await readFile(getFixturePath('/test/1.css.d.ts'), 'utf8')).toMatch(/a-1/u);
 
   await writeFile(getFixturePath('/test/1.css'), '.a-2 {}');
   await waitForAsyncTask(500); // Wait until the file is written
-  expect(await readFile(getFixturePath('/test/1.css.d.ts'), 'utf8')).toMatch(/a-2/);
+  expect(await readFile(getFixturePath('/test/1.css.d.ts'), 'utf8')).toMatch(/a-2/u);
 
   await writeFile(getFixturePath('/test/2.css'), '.b {}');
   await writeFile(getFixturePath('/test/3.css'), '.c {}');
   await waitForAsyncTask(500); // Wait until the file is written
-  expect(await readFile(getFixturePath('/test/2.css.d.ts'), 'utf8')).toMatch(/b/);
-  expect(await readFile(getFixturePath('/test/3.css.d.ts'), 'utf8')).toMatch(/c/);
+  expect(await readFile(getFixturePath('/test/2.css.d.ts'), 'utf8')).toMatch(/b/u);
+  expect(await readFile(getFixturePath('/test/3.css.d.ts'), 'utf8')).toMatch(/c/u);
 });
 test('returns an error if the file fails to process in non-watch mode', async () => {
   createFixtures({

@@ -37,7 +37,7 @@ function walkClassSelectors(root: Root, callback: (rule: Rule, classSelector: Cl
 }
 
 function dashesCamelCase(str: string): string {
-  return str.replace(/-+(\w)/g, (match, firstLetter) => {
+  return str.replace(/-+(\w)/gu, (match, firstLetter) => {
     return firstLetter.toUpperCase();
   });
 }
@@ -99,7 +99,7 @@ function checkUnsupportedSelector(classSelectorName: string, lang: Lang): void {
   if (lang === 'css') {
     // ref: https://github.com/postcss/postcss-simple-vars#interpolation
     // ref: https://github.com/postcss/postcss-simple-vars/blob/b045c1c60e19fb75d8c3b38822063b05c4685bf3/index.js#L59
-    if (/\$\(\s*[\w\d-_]+\s*\)/.test(classSelectorName)) {
+    if (/\$\(\s*[\w\d-_]+\s*\)/u.test(classSelectorName)) {
       throw new UnsupportedSelectorError(
         `postcss-simple-var's interpolation(\`$(...)\`) is not supported in stylelint-happy-css-modules.`,
       );
@@ -107,7 +107,7 @@ function checkUnsupportedSelector(classSelectorName: string, lang: Lang): void {
   } else if (lang === 'scss') {
     // ref: https://lesscss.org/features/#parent-selectors-feature
     // ref: https://github.com/sass/dart-sass/blob/702a7ee7a18c0265f8f90ff1155268e477dd77cf/lib/src/parse/selector.dart#L228-L234
-    if (/\$/.test(classSelectorName)) {
+    if (/\$/u.test(classSelectorName)) {
       throw new UnsupportedSelectorError(
         `Sass's parent selector(\`$\`) is not supported in stylelint-happy-css-modules.`,
       );
@@ -115,7 +115,7 @@ function checkUnsupportedSelector(classSelectorName: string, lang: Lang): void {
   } else if (lang === 'less') {
     // ref: https://lesscss.org/features/#parent-selectors-feature
     // ref: https://github.com/less/less.js/blob/a917965340631f9a32b73726313cc91de08596b9/packages/less/src/less/tree/selector.js#L111
-    if (/&/.test(classSelectorName)) {
+    if (/&/u.test(classSelectorName)) {
       throw new UnsupportedSelectorError(
         `Less's parent selector(\`&\`) is not supported in stylelint-happy-css-modules.`,
       );

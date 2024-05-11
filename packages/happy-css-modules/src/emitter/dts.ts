@@ -22,7 +22,7 @@ export function getDtsFilePath(filePath: string, arbitraryExtensions: boolean): 
 }
 
 function dashesCamelCase(str: string): string {
-  return str.replace(/-+(\w)/g, (match, firstLetter) => {
+  return str.replace(/-+(\w)/gu, (match, firstLetter) => {
     return firstLetter.toUpperCase();
   });
 }

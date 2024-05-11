@@ -65,7 +65,7 @@ export const createWebpackResolver: (webpackResolverOptions?: WebpackResolverOpt
     mainFields: ['sass', 'style', 'main', '...'],
     mainFiles: ['_index', 'index', '...'],
     extensions: ['.sass', '.scss', '.css'],
-    restrictions: [/\.((sa|sc|c)ss)$/i],
+    restrictions: [/\.((sa|sc|c)ss)$/iu],
     preferRelative: true,
     alias: webpackResolveAlias,
     modules: ['node_modules', ...(sassLoadPaths ?? [])],
