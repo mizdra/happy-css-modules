@@ -16,12 +16,73 @@ function init(modules: { typescript: typeof import('typescript/lib/tsserverlibra
       proxy[k] = (...args: {}[]) => x.apply(info.languageService, args);
     }
 
+    // eslint-disable-next-line max-params
+    proxy.getCompletionEntryDetails = (fileName, position, itemName, formatOptions, source, preferences, data) => {
+      const { dir, name } = path.parse(fileName);
+      if (itemName !== 'styles' || source !== `./${name}.module.css`) {
+        return info.languageService.getCompletionEntryDetails(
+          fileName,
+          position,
+          itemName,
+          formatOptions,
+          source,
+          preferences,
+          data,
+        );
+      }
+      return {
+        name: 'styles',
+        kind: ts.ScriptElementKind.alias,
+        kindModifiers: 'declare,export',
+        sourceDisplay: [{ text: `./${name}.module.css`, kind: 'text' }],
+        displayParts: [{ text: 'styles', kind: 'aliasName' }],
+        codeActions: [
+          {
+            description: `Add an import statement from "./${name}.module.css".`,
+            changes: [
+              // Add an import statement.
+              // TODO: Prefer `typescript.preferences.importModuleSpecifier` of VS Code settings. Should I use Volar.js?
+              {
+                fileName,
+                textChanges: [
+                  {
+                    span: { start: 0, length: 0 },
+                    newText: `import styles from "./${name}.module.css";\n`,
+                  },
+                ],
+              },
+              // Create a new css file.
+              // This doesn't work. Why?
+              {
+                fileName: `${dir}/${name}.module.css`,
+                textChanges: [
+                  {
+                    span: { start: 0, length: 0 },
+                    newText: '',
+                  },
+                ],
+                isNewFile: true,
+              },
+            ],
+          },
+        ],
+      };
+    };
     proxy.getCompletionsAtPosition = (fileName, position, options) => {
+      const { dir, name } = path.parse(fileName);
       const prior = info.languageService.getCompletionsAtPosition(fileName, position, options);
       prior?.entries.push({
-        name: 'Hello',
-        kind: ts.ScriptElementKind.variableElement,
-        kindModifiers: '',
+        name: 'styles',
+        kind: ts.ScriptElementKind.alias,
+        kindModifiers: 'declare,export',
+        source: `./${name}.module.css`,
+        sourceDisplay: [{ text: `./${name}.module.css`, kind: 'text' }],
+        hasAction: true,
+        data: {
+          exportName: 'default',
+          fileName: `${dir}/${name}.module.css`,
+          moduleSpecifier: `./${name}.module.css`,
+        },
         sortText: '0',
       });
       return prior;
@@ -72,10 +133,12 @@ function init(modules: { typescript: typeof import('typescript/lib/tsserverlibra
               start: 0,
               length: 0,
             },
+            // TODO: Insert an any rule.
             newText: '.content {\n  \n}\n\n',
           },
         ],
-        // isNewFile: true,
+        // TODO: If the file already exists, this should be false.
+        isNewFile: true,
       });
       return prior;
     };
