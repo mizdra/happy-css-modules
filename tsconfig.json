@@ -4,6 +4,7 @@
     /* Distribution Options */
     // "target": "ES2019", // Override by inheritance
     "sourceMap": true,
+    "jsx": "react-jsx",
 
     /* Module Options */
     "module": "Node16",
