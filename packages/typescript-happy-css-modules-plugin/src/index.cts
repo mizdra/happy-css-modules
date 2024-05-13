@@ -1,5 +1,5 @@
 import path from 'path';
-import type ts from 'typescript/lib/tsserverlibrary';
+import ts from 'typescript/lib/tsserverlibrary';
 
 function init(modules: { typescript: typeof import('typescript/lib/tsserverlibrary') }) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -52,7 +52,7 @@ function init(modules: { typescript: typeof import('typescript/lib/tsserverlibra
                 ],
               },
               // Create a new css file.
-              // This doesn't work. Why?
+              // TODO: This doesn't work. Why?
               {
                 fileName: `${dir}/${name}.module.css`,
                 textChanges: [
@@ -87,9 +87,15 @@ function init(modules: { typescript: typeof import('typescript/lib/tsserverlibra
       });
       return prior;
     };
-    proxy.getApplicableRefactors = (fileName, position, preferences) => {
-      const prior = info.languageService.getApplicableRefactors(fileName, position, preferences);
-      prior?.push({
+    proxy.getApplicableRefactors = (fileName, positionOrRange, preferences) => {
+      const prior = info.languageService.getApplicableRefactors(fileName, positionOrRange, preferences) ?? [];
+
+      const sourceFile = info.project.getSourceFile(info.project.projectService.toPath(fileName));
+      if (!sourceFile) throw new Error('unreachable: sourceFile is undefined');
+      const stylesNode = getStylesPropertyAccessExpression(sourceFile, positionOrRange);
+      if (!stylesNode) return prior;
+
+      prior.push({
         name: 'Define new css rule',
         description: 'Define new css rule',
         actions: [
@@ -99,33 +105,31 @@ function init(modules: { typescript: typeof import('typescript/lib/tsserverlibra
           },
         ],
       });
+
       return prior;
     };
     // eslint-disable-next-line max-params
     proxy.getEditsForRefactor = (fileName, formatOptions, positionOrRange, refactorName, actionName, preferences) => {
-      if (!(refactorName === 'Define new css rule' && actionName === 'Define new css rule')) {
-        return info.languageService.getEditsForRefactor(
-          fileName,
-          formatOptions,
-          positionOrRange,
-          refactorName,
-          actionName,
-          preferences,
-        );
-      }
-      let prior = info.languageService.getEditsForRefactor(
+      const prior = info.languageService.getEditsForRefactor(
         fileName,
         formatOptions,
         positionOrRange,
         refactorName,
         actionName,
         preferences,
-      );
+      ) ?? { edits: [] };
+
+      if (refactorName !== 'Define new css rule' || actionName !== 'Define new css rule') return prior;
+
+      const sourceFile = info.project.getSourceFile(info.project.projectService.toPath(fileName));
+      if (!sourceFile) throw new Error('unreachable: sourceFile is undefined');
+      const stylesNode = getStylesPropertyAccessExpression(sourceFile, positionOrRange);
+      if (!stylesNode) throw new Error('unreachable: stylesNode is undefined');
+
+      const className = stylesNode.name.getText();
 
       const { dir, name } = path.parse(fileName);
       const cssFileName = `${dir}/${name}.module.css`;
-
-      prior ??= { edits: [] };
       prior.edits.push({
         fileName: cssFileName,
         textChanges: [
@@ -134,13 +138,13 @@ function init(modules: { typescript: typeof import('typescript/lib/tsserverlibra
               start: 0,
               length: 0,
             },
-            // TODO: Insert an any rule.
-            newText: '.content {\n  \n}\n\n',
+            newText: `.${className} {\n  \n}\n\n`,
           },
         ],
         // For some reason, adding a rule to an already existing file also requires `isNewFile: true`.
         isNewFile: true,
       });
+
       return prior;
     };
 
@@ -148,6 +152,32 @@ function init(modules: { typescript: typeof import('typescript/lib/tsserverlibra
   }
 
   return { create };
+}
+
+function positionOrRangeToIndex(positionOrRange: number | ts.TextRange): number {
+  return typeof positionOrRange === 'number' ? positionOrRange : positionOrRange.pos;
+}
+
+/**
+ * Get the `styles` property access expression at the specified position or range. (e.g. `styles.foo`)
+ */
+function getStylesPropertyAccessExpression(
+  sourceFile: ts.SourceFile,
+  positionOrRange: number | ts.TextRange,
+): ts.PropertyAccessExpression | undefined {
+  const index = positionOrRangeToIndex(positionOrRange);
+  function getStylesPropertyAccessExpressionImpl(node: ts.Node): ts.PropertyAccessExpression | undefined {
+    if (
+      node.pos <= index &&
+      index <= node.end &&
+      ts.isPropertyAccessExpression(node) &&
+      node.expression.getText() === 'styles'
+    ) {
+      return ts.forEachChild(node, getStylesPropertyAccessExpressionImpl) ?? node;
+    }
+    return ts.forEachChild(node, getStylesPropertyAccessExpressionImpl);
+  }
+  return getStylesPropertyAccessExpressionImpl(sourceFile);
 }
 
 export = init;
