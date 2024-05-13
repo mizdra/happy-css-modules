@@ -123,10 +123,11 @@ function init(modules: { typescript: typeof import('typescript/lib/tsserverlibra
       );
 
       const { dir, name } = path.parse(fileName);
+      const cssFileName = `${dir}/${name}.module.css`;
 
       prior ??= { edits: [] };
       prior.edits.push({
-        fileName: `${dir}/${name}.module.css`,
+        fileName: cssFileName,
         textChanges: [
           {
             span: {
@@ -137,8 +138,7 @@ function init(modules: { typescript: typeof import('typescript/lib/tsserverlibra
             newText: '.content {\n  \n}\n\n',
           },
         ],
-        // TODO: If the file already exists, this should be false.
-        isNewFile: true,
+        isNewFile: !info.languageServiceHost.fileExists(cssFileName),
       });
       return prior;
     };
