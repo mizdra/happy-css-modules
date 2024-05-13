@@ -138,7 +138,8 @@ function init(modules: { typescript: typeof import('typescript/lib/tsserverlibra
             newText: '.content {\n  \n}\n\n',
           },
         ],
-        isNewFile: !info.languageServiceHost.fileExists(cssFileName),
+        // For some reason, adding a rule to an already existing file also requires `isNewFile: true`.
+        isNewFile: true,
       });
       return prior;
     };
