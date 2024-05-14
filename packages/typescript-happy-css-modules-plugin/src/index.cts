@@ -57,7 +57,7 @@ function init(modules: { typescript: typeof import('typescript/lib/tsserverlibra
                 ],
               },
               // Create a new css file.
-              // TODO: This doesn't work. Why?
+              // FIXME: This doesn't work. Why?
               {
                 fileName: cssFileName,
                 textChanges: [
@@ -142,6 +142,7 @@ function init(modules: { typescript: typeof import('typescript/lib/tsserverlibra
               start: 0,
               length: 0,
             },
+            // TODO: Focus on CSS rule after insertion. But, that is technically feasible?
             newText: `.${className} {\n  \n}\n\n`,
           },
         ],
