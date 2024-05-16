@@ -46,6 +46,7 @@
     "@types/line-column": "^1.0.2",
     "@types/minimatch": "^5.1.2",
     "@types/node": "^18.0.6",
+    "@types/prettier": "^2.7.3",
     "@types/yargs": "^17.0.13",
     "@typescript/server-harness": "^0.3.5",
     "dedent": "^1.5.3",
