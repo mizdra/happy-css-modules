@@ -53,9 +53,9 @@ function generateTokenDeclarations(
   tokens: Token[],
   dtsFormatOptions: DtsFormatOptions | undefined,
   isExternalFile: (filePath: string) => boolean,
-): typeof SourceNode[] {
+): (typeof SourceNode)[] {
   const formattedTokens = formatTokens(tokens, dtsFormatOptions?.localsConvention);
-  const result: typeof SourceNode[] = [];
+  const result: (typeof SourceNode)[] = [];
 
   for (const token of formattedTokens) {
     // Only one original position can be associated with one generated position.
