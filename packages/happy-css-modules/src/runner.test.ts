@@ -3,23 +3,22 @@ import { randomUUID } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'path';
 import { fileURLToPath } from 'url';
-import * as fileCacheNpm from '@file-cache/npm';
+import * as fileCacheCore from '@file-cache/core';
+import type { CreateCacheOptions } from '@file-cache/core';
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
 import type { RunnerOptions, Watcher } from './runner.js';
 import { createFixtures, exists, getFixturePath, waitForAsyncTask } from './test-util/util.js';
 
-const packageRootDir = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-
 const require = createRequire(import.meta.url);
 
-jest.unstable_mockModule('@file-cache/npm', () => ({
-  ...fileCacheNpm, // Inherit native functions
-  createNpmPackageKey: () => 'mocked-key',
-}));
-
-jest.unstable_mockModule('happy-css-modules', () => ({
-  packageDirectory: () => packageRootDir,
+const uuid = randomUUID();
+jest.unstable_mockModule('@file-cache/core', () => ({
+  ...fileCacheCore, // Inherit native functions
+  createCache: async (options: CreateCacheOptions) => {
+    options.keys.push(() => uuid); // Add a random key to avoid cache collision
+    return fileCacheCore.createCache(options);
+  },
 }));
 
 const { run } = await import('./runner.js');
