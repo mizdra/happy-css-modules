@@ -44,14 +44,13 @@ export const createWebpackResolver: (webpackResolverOptions?: WebpackResolverOpt
    * @see https://github.com/webpack-contrib/css-loader/blob/897e7dd250ccdb0d31e6c66d4cd0d009f2022a85/src/plugins/postcss-import-parser.js#L228-L235
    */
   const cssLoaderResolver = enhancedResolve.create.sync({
-    dependencyType: 'css',
     conditionNames: ['style'],
     // We are not sure how "..." affects behavior...
     mainFields: ['css', 'style', 'main', '...'],
     mainFiles: ['index', '...'],
     extensions: ['.css', '...'],
     preferRelative: true,
-    alias: webpackResolveAlias,
+    alias: webpackResolveAlias ?? {},
   });
 
   /**
@@ -60,14 +59,13 @@ export const createWebpackResolver: (webpackResolverOptions?: WebpackResolverOpt
    * @see https://github.com/webpack-contrib/sass-loader/blob/49a578a218574ddc92a597c7e365b6c21960717e/src/utils.js#L531-L539
    */
   const sassLoaderResolver = enhancedResolve.create.sync({
-    dependencyType: 'sass',
     conditionNames: ['sass', 'style'],
     mainFields: ['sass', 'style', 'main', '...'],
     mainFiles: ['_index', 'index', '...'],
     extensions: ['.sass', '.scss', '.css'],
     restrictions: [/\.((sa|sc|c)ss)$/iu],
     preferRelative: true,
-    alias: webpackResolveAlias,
+    alias: webpackResolveAlias ?? {},
     modules: ['node_modules', ...(sassLoadPaths ?? [])],
   });
 
@@ -77,13 +75,12 @@ export const createWebpackResolver: (webpackResolverOptions?: WebpackResolverOpt
    * @see https://github.com/webpack-contrib/less-loader/blob/d74f740c100c4006b00dfb3e02c6d5aaf8713519/src/utils.js#L35-L42
    */
   const lessLoaderResolver = enhancedResolve.create.sync({
-    dependencyType: 'less',
     conditionNames: ['less', 'style'],
     mainFields: ['less', 'style', 'main', '...'],
     mainFiles: ['index', '...'],
     extensions: ['.less', '.css'],
     preferRelative: true,
-    alias: webpackResolveAlias,
+    alias: webpackResolveAlias ?? {},
     modules: ['node_modules', ...(lessIncludePaths ?? [])],
   });
 
