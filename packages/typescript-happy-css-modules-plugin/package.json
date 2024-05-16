@@ -24,7 +24,7 @@
   "author": "mizdra <pp.mizdra@gmail.com>",
   "license": "MIT",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.13.1"
   },
   "dependencies": {},
   "peerDependencies": {
