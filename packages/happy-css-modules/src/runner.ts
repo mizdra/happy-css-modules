@@ -111,6 +111,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
 
   const installedPeerDependencies = await getInstalledPeerDependencies();
   const cache = await createCache({
+    name: 'happy-css-modules',
     mode: options.cacheStrategy ?? 'content',
     keys: [
       () => createNpmPackageKey(['happy-css-modules', ...installedPeerDependencies]),

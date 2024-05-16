@@ -18,7 +18,7 @@ jest.unstable_mockModule('@file-cache/npm', () => ({
   createNpmPackageKey: () => 'mocked-key',
 }));
 
-jest.unstable_mockModule('pkg-dir', () => ({
+jest.unstable_mockModule('happy-css-modules', () => ({
   packageDirectory: () => packageRootDir,
 }));
 
