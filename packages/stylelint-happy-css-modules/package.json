@@ -25,7 +25,7 @@
   "author": "mizdra <pp.mizdra@gmail.com>",
   "license": "MIT",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "dependencies": {
     "camelcase": "^6.3.0",

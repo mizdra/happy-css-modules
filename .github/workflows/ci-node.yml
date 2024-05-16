@@ -24,12 +24,11 @@ jobs:
       matrix:
         include:
           # Node.js
-          - node: '16.x'
-          - node: '18.x'
+          - node: '18'
+          - node: '20'
+          - node: '22'
           # less
-          - node: '16.x'
-            less: '^3.0.0'
-          - node: '18.x'
+          - node: '22'
             less: '^3.0.0'
     runs-on: ubuntu-latest
     steps:
