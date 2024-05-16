@@ -60,7 +60,7 @@
     "postcss-less": "^6.0.0",
     "postcss-scss": "^4.0.9",
     "postcss-simple-vars": "^7.0.1",
-    "prettier": "~2.7.1",
+    "prettier": "~2.8.8",
     "sass": "^1.77.1",
     "stylelint": "^16.5.0",
     "typescript": "^5.0.3"
