@@ -3,7 +3,7 @@ import { access } from 'fs/promises';
 import { join, dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { resolve as importMetaResolve } from 'import-meta-resolve';
-import minimatch from 'minimatch';
+import { minimatch } from 'minimatch';
 
 /**
  * The SystemError type of Node.js.
