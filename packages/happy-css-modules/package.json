@@ -52,7 +52,7 @@
   "peerDependencies": {
     "less": "^3.0.0 || ^4.0.0",
     "postcss": "^8.0.0",
-    "sass": "^1.0.0"
+    "sass": "^1.63.3"
   },
   "peerDependenciesMeta": {
     "sass": {
