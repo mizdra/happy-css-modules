@@ -22,8 +22,8 @@ function promisifySassRender(sass: typeof import('sass')) {
 export const createScssTransformer: () => Transformer = () => {
   let sass: typeof import('sass');
   return async (source, options) => {
-    const sassModule = await import('sass').catch(handleImportError('sass'));
-    sass ??= sassModule.default ?? sassModule;
+    // eslint-disable-next-line require-atomic-updates
+    sass ??= await import('sass').catch(handleImportError('sass'));
     const render = promisifySassRender(sass);
     const result = await render({
       data: source,
