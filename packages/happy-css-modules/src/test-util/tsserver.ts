@@ -2,14 +2,12 @@ import { readFileSync } from 'fs';
 import { mkdir, writeFile as nativeWriteFile } from 'fs/promises';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { promisify } from 'util';
 import serverHarness from '@typescript/server-harness';
-import _glob from 'glob';
+import { glob } from 'glob';
 import { resolve } from 'import-meta-resolve';
 import lineColumn from 'line-column';
 import type { server } from 'typescript/lib/tsserverlibrary.js';
 import { getFixturePath } from './util.js';
-const glob = promisify(_glob);
 
 async function writeFile(path: string, content: string): Promise<void> {
   await mkdir(dirname(path), { recursive: true });
@@ -37,14 +35,11 @@ type Definition = {
   };
 };
 
-export async function createTSServer() {
-  const server = serverHarness.launchServer(
-    fileURLToPath(await resolve('typescript/lib/tsserver.js', import.meta.url)),
-    [
-      // ATA generates some extra network traffic and isn't usually relevant when profiling
-      '--disableAutomaticTypingAcquisition',
-    ],
-  );
+export function createTSServer() {
+  const server = serverHarness.launchServer(fileURLToPath(resolve('typescript/lib/tsserver.js', import.meta.url)), [
+    // ATA generates some extra network traffic and isn't usually relevant when profiling
+    '--disableAutomaticTypingAcquisition',
+  ]);
 
   return {
     async getIdentifierDefinitions(filePath: string, identifier: string): Promise<Definition[]> {

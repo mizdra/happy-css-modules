@@ -1,12 +1,11 @@
 import { resolve, relative } from 'path';
 import * as process from 'process';
-import * as util from 'util';
 import { createCache } from '@file-cache/core';
 import { createNpmPackageKey } from '@file-cache/npm';
 import AwaitLock from 'await-lock';
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
-import _glob from 'glob';
+import { glob } from 'glob';
 import { DEFAULT_ARBITRARY_EXTENSIONS } from './config.js';
 import { isGeneratedFilesExist, emitGeneratedFiles } from './emitter/index.js';
 import { Locator } from './locator/index.js';
@@ -15,8 +14,6 @@ import type { Resolver } from './resolver/index.js';
 import { createDefaultResolver } from './resolver/index.js';
 import { createDefaultTransformer, type Transformer } from './transformer/index.js';
 import { getInstalledPeerDependencies, isMatchByGlob } from './util.js';
-
-const glob = util.promisify(_glob);
 
 export type Watcher = {
   close: () => Promise<void>;
@@ -109,8 +106,9 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
     });
   const transformer = options.transformer ?? createDefaultTransformer({ cwd, postcssConfig: options.postcssConfig });
 
-  const installedPeerDependencies = await getInstalledPeerDependencies();
+  const installedPeerDependencies = getInstalledPeerDependencies();
   const cache = await createCache({
+    name: 'happy-css-modules',
     mode: options.cacheStrategy ?? 'content',
     keys: [
       () => createNpmPackageKey(['happy-css-modules', ...installedPeerDependencies]),

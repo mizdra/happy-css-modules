@@ -3,7 +3,7 @@ import { access } from 'fs/promises';
 import { join, dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { resolve as importMetaResolve } from 'import-meta-resolve';
-import minimatch from 'minimatch';
+import { minimatch } from 'minimatch';
 
 /**
  * The SystemError type of Node.js.
@@ -73,15 +73,17 @@ export function getPackageJson() {
   return JSON.parse(readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '../package.json'), 'utf-8'));
 }
 
-export async function getInstalledPeerDependencies(): Promise<string[]> {
+export function getInstalledPeerDependencies(): string[] {
   const pkgJson = getPackageJson();
   const result = [];
   for (const deps of Object.keys(pkgJson.peerDependencies)) {
-    // eslint-disable-next-line no-await-in-loop
-    const isInstalled = await importMetaResolve(deps, import.meta.url)
-      .then(() => true)
-      .catch(() => false);
-    if (isInstalled) result.push(deps);
+    try {
+      importMetaResolve(deps, import.meta.url);
+      // If the package is installed, push it to the result array.
+      result.push(deps);
+    } catch {
+      // If the package is not installed, do nothing.
+    }
   }
   return result;
 }
