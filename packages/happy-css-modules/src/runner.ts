@@ -106,7 +106,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
     });
   const transformer = options.transformer ?? createDefaultTransformer({ cwd, postcssConfig: options.postcssConfig });
 
-  const installedPeerDependencies = await getInstalledPeerDependencies();
+  const installedPeerDependencies = getInstalledPeerDependencies();
   const cache = await createCache({
     name: 'happy-css-modules',
     mode: options.cacheStrategy ?? 'content',

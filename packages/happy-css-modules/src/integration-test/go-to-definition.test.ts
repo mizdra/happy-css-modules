@@ -4,7 +4,7 @@ import { run } from '../runner.js';
 import { createTSServer } from '../test-util/tsserver.js';
 import { createFixtures, getFixturePath } from '../test-util/util.js';
 
-const server = await createTSServer();
+const server = createTSServer();
 
 const defaultOptions: RunnerOptions = {
   pattern: 'test/**/*.{css,scss}',

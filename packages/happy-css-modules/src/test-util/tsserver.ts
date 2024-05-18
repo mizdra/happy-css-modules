@@ -35,14 +35,11 @@ type Definition = {
   };
 };
 
-export async function createTSServer() {
-  const server = serverHarness.launchServer(
-    fileURLToPath(await resolve('typescript/lib/tsserver.js', import.meta.url)),
-    [
-      // ATA generates some extra network traffic and isn't usually relevant when profiling
-      '--disableAutomaticTypingAcquisition',
-    ],
-  );
+export function createTSServer() {
+  const server = serverHarness.launchServer(fileURLToPath(resolve('typescript/lib/tsserver.js', import.meta.url)), [
+    // ATA generates some extra network traffic and isn't usually relevant when profiling
+    '--disableAutomaticTypingAcquisition',
+  ]);
 
   return {
     async getIdentifierDefinitions(filePath: string, identifier: string): Promise<Definition[]> {
