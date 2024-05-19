@@ -1,33 +1,26 @@
 changelog:
-  exclude:
-    labels:
-      - 'ignore for release'
-
   categories:
-    # ref: https://github.com/azu/github-label-setup#default-labels
-    - title: Breaking Change
-      labels: ['Type: Breaking Change']
-
-    - title: Feature
-      labels: ['Type: Feature']
-    - title: Bug
-      labels: ['Type: Bug']
-    - title: Documentation
-      labels: ['Type: Documentation']
-    # - title: Refactoring
-    #   labels: ['Type: Refactoring']
-    # - title: Testing
-    #   labels: ['Type: Testing']
-    # - title: Maintenance
-    #   labels: ['Type: Maintenance']
-    # - title: CI
-    #   labels: ['Type: CI']
-    # - title: Question
-    #   labels: ['Type: Question']
-    - title: Security
-      labels: ['Type: Security']
+    - title: Added
+      labels:
+        - 'Type: Add'
+    - title: Changed
+      labels:
+        - 'Type: Change'
+    - title: Deprecated
+      labels:
+        - 'Type: Deprecate'
+    - title: Fixed
+      labels:
+        - 'Type: Fix'
+    - title: Removed
+      labels:
+        - 'Type: Remove'
     - title: Dependencies
-      labels: ['Type: Dependencies']
-
-    - title: Other Changes
-      labels: ['*']
+      labels:
+        - 'Type: Dependencies'
+    - title: Security
+      labels:
+        - 'Type: Security'
+    - title: Others
+      labels:
+        - '*'
