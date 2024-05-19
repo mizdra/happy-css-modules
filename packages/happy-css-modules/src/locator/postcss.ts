@@ -72,12 +72,12 @@ export async function generateLocalTokenNames(ast: Root): Promise<string[]> {
 }
 
 /**
- * Get the token's location on the source file.
+ * Get the original location of the class selector.
  * @param rule The rule node that contains the token.
  * @param classSelector The class selector node that contains the token.
- * @returns The token's location on the source file.
+ * @returns The original location of the class selector.
  */
-export function getOriginalLocation(rule: Rule, classSelector: ClassName): Location {
+export function getOriginalLocationOfClassSelector(rule: Rule, classSelector: ClassName): Location {
   // The node derived from `postcss.parse` always has `source` property. Therefore, this line is unreachable.
   if (rule.source === undefined || classSelector.source === undefined) throw new Error('Node#source is undefined');
   // The node derived from `postcss.parse` always has `start` and `end` property. Therefore, this line is unreachable.

@@ -4,7 +4,13 @@ import type { Resolver } from '../resolver/index.js';
 import { createDefaultResolver } from '../resolver/index.js';
 import { createDefaultTransformer, type Transformer } from '../transformer/index.js';
 import { unique, uniqueBy } from '../util.js';
-import { getOriginalLocation, generateLocalTokenNames, parseAtImport, type Location, collectNodes } from './postcss.js';
+import {
+  getOriginalLocationOfClassSelector,
+  generateLocalTokenNames,
+  parseAtImport,
+  type Location,
+  collectNodes,
+} from './postcss.js';
 
 export { collectNodes, type Location } from './postcss.js';
 
@@ -164,7 +170,7 @@ export class Locator {
       // NOTE: This method has false positives. However, it works as expected in many cases.
       if (!localTokenNames.includes(classSelector.value)) continue;
 
-      const originalLocation = getOriginalLocation(rule, classSelector);
+      const originalLocation = getOriginalLocationOfClassSelector(rule, classSelector);
 
       tokens.push({
         name: classSelector.value,
