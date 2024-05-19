@@ -1,4 +1,4 @@
-import postcss, { type Rule, type AtRule, type Root, type Node, type Declaration, type Plugin } from 'postcss';
+import postcss, { type Rule, type AtRule, type Root, type Node } from 'postcss';
 import modules from 'postcss-modules';
 import selectorParser, { type ClassName } from 'postcss-selector-parser';
 import valueParser from 'postcss-value-parser';
@@ -26,40 +26,27 @@ export type Location =
       end: undefined;
     };
 
-function removeDependenciesPlugin(): Plugin {
-  return {
-    postcssPlugin: 'remove-dependencies',
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    AtRule(atRule) {
-      if (isAtImportNode(atRule) || isAtValueNode(atRule)) {
-        atRule.remove();
-      }
-    },
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    Declaration(declaration) {
-      if (isComposesDeclaration(declaration)) {
-        declaration.remove();
-      }
-    },
-  };
-}
-
 /**
  * Traverses a local token from the AST and returns its name.
  * @param ast The AST to traverse.
  * @returns The name of the local token.
  */
 export async function generateLocalTokenNames(ast: Root): Promise<string[]> {
+  class EmptyLoader {
+    async fetch(_file: string, _relativeTo: string, _depTrace: string): Promise<{ [key: string]: string }> {
+      // Return an empty object because we do not want to load external tokens in `generateLocalTokenNames`.
+      return Promise.resolve({});
+    }
+  }
   return new Promise((resolve, reject) => {
     postcss
       .default()
-      // postcss-modules collects tokens (i.e., includes external tokens) by following
-      // the dependencies specified in the @import.
-      // However, we do not want `generateLocalTokenNames` to return external tokens.
-      // So we remove the @import beforehand.
-      .use(removeDependenciesPlugin())
       .use(
         modules({
+          // `@import`, `@value`, and `composes` can read tokens from external files.
+          // However, we want to collect only local tokens. So we will fake that
+          // an empty token is exported from the external file.
+          Loader: EmptyLoader,
           getJSON: (_cssFileName, json) => {
             resolve(Object.keys(json));
           },
@@ -141,14 +128,6 @@ function isAtValueNode(node: Node): node is AtRule {
 
 function isRuleNode(node: Node): node is Rule {
   return node.type === 'rule';
-}
-
-function isDeclaration(node: Node): node is Declaration {
-  return node.type === 'decl';
-}
-
-function isComposesDeclaration(node: Node): node is Declaration {
-  return isDeclaration(node) && node.prop === 'composes';
 }
 
 type CollectNodesResult = {
