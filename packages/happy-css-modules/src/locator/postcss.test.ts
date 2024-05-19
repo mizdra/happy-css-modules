@@ -1,6 +1,18 @@
 import dedent from 'dedent';
-import { createRoot, createClassSelectors, createAtImports, createFixtures } from '../test-util/util.js';
-import { generateLocalTokenNames, getOriginalLocationOfClassSelector, parseAtImport, collectNodes } from './postcss.js';
+import {
+  createRoot,
+  createClassSelectors,
+  createAtImports,
+  createFixtures,
+  createAtValues,
+} from '../test-util/util.js';
+import {
+  generateLocalTokenNames,
+  getOriginalLocationOfClassSelector,
+  parseAtImport,
+  parseAtValue,
+  collectNodes,
+} from './postcss.js';
 
 describe('generateLocalTokenNames', () => {
   test('basic', async () => {
@@ -310,4 +322,46 @@ test('parseAtImport', () => {
   expect(parseAtImport(atImports[2]!)).toBe('test.css');
   expect(parseAtImport(atImports[3]!)).toBe('test.css');
   expect(parseAtImport(atImports[4]!)).toBe('test.css');
+});
+
+test('parseAtValue', () => {
+  const atValues = createAtValues(
+    createRoot(dedent`
+    @value basic: #000;
+    @value withoutColon #000;
+    @value empty:;
+    @value comment:/* comment */;
+    @value complex: (max-width: 599px);
+    @value import from "test.css";
+    @value import1, import2 from "test.css";
+    @value import as alias from "test.css";
+    /*
+     * NOTE: happy-css-modules intentionally does not support module specifier as variable.
+     * e.g. \`@value d, e from moduleName;\`
+     */
+    `),
+  );
+  expect(parseAtValue(atValues[0]!)).toStrictEqual({ type: 'valueDeclaration', tokenName: 'basic' });
+  expect(parseAtValue(atValues[1]!)).toStrictEqual({ type: 'valueDeclaration', tokenName: 'withoutColon' });
+  expect(parseAtValue(atValues[2]!)).toStrictEqual({ type: 'valueDeclaration', tokenName: 'empty' });
+  expect(parseAtValue(atValues[3]!)).toStrictEqual({ type: 'valueDeclaration', tokenName: 'comment' });
+  expect(parseAtValue(atValues[4]!)).toStrictEqual({ type: 'valueDeclaration', tokenName: 'complex' });
+  expect(parseAtValue(atValues[5]!)).toStrictEqual({
+    type: 'valueImportDeclaration',
+    imports: [{ importedTokenName: 'import', localTokenName: 'import' }],
+    from: 'test.css',
+  });
+  expect(parseAtValue(atValues[6]!)).toStrictEqual({
+    type: 'valueImportDeclaration',
+    imports: [
+      { importedTokenName: 'import1', localTokenName: 'import1' },
+      { importedTokenName: 'import2', localTokenName: 'import2' },
+    ],
+    from: 'test.css',
+  });
+  expect(parseAtValue(atValues[7]!)).toStrictEqual({
+    type: 'valueImportDeclaration',
+    imports: [{ importedTokenName: 'import', localTokenName: 'alias' }],
+    from: 'test.css',
+  });
 });

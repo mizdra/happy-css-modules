@@ -181,3 +181,77 @@ export function parseAtImport(atImport: AtRule): string | undefined {
   }
   return undefined;
 }
+
+type ParsedAtValue =
+  | {
+      type: 'valueDeclaration';
+      tokenName: string;
+      // value: string; // unneeded
+    }
+  | {
+      type: 'valueImportDeclaration';
+      imports: { importedTokenName: string; localTokenName: string }[];
+      from: string;
+    };
+
+const matchImports = /^(.+?|\([\s\S]+?\))\s+from\s+("[^"]*"|'[^']*'|[\w-]+)$/u;
+const matchValueDefinition = /(?:\s+|^)([\w-]+):?(.*?)$/u;
+const matchImport = /^([\w-]+)(?:\s+as\s+([\w-]+))?/u;
+
+/**
+ * Parse the `@value` rule.
+ * Forked from https://github.com/css-modules/postcss-modules-values/blob/v4.0.0/src/index.js.
+ *
+ * @license
+ * ISC License (ISC)
+ * Copyright (c) 2015, Glen Maddern
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted,
+ * provided that the above copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING
+ * ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+ * WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH
+ * THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+export function parseAtValue(atValue: AtRule): ParsedAtValue {
+  const matchesForImports = atValue.params.match(matchImports);
+  if (matchesForImports) {
+    const [, aliases, path] = matchesForImports;
+
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    if (aliases === undefined || path === undefined) throw new Error(`unreachable`);
+
+    const imports = aliases
+      .replace(/^\(\s*([\s\S]+)\s*\)$/u, '$1')
+      .split(/\s*,\s*/u)
+      .map((alias) => {
+        const tokens = matchImport.exec(alias);
+
+        if (tokens) {
+          const [, theirName, myName] = tokens;
+          if (theirName === undefined) throw new Error(`unreachable`);
+          return { importedTokenName: theirName, localTokenName: myName ?? theirName };
+        } else {
+          throw new Error(`@import statement "${alias}" is invalid!`);
+        }
+      });
+
+    // Remove quotes from the path.
+    // NOTE: This is a restriction unique to "happy-css-modules" and not a specification of CSS Modules.
+    const normalizedPath = path.replace(/^['"]|['"]$/gu, '');
+
+    return { type: 'valueImportDeclaration', imports, from: normalizedPath };
+  }
+
+  const matchesForValueDefinitions = `${atValue.params}${atValue.raws.between!}`.match(matchValueDefinition);
+  if (matchesForValueDefinitions) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [, key, value] = matchesForValueDefinitions;
+    if (key === undefined) throw new Error(`unreachable`);
+    return { type: 'valueDeclaration', tokenName: key };
+  }
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  throw new Error(`@value statement "${atValue.source!}" is invalid!`);
+}
