@@ -114,6 +114,32 @@ export function getOriginalLocationOfClassSelector(rule: Rule, classSelector: Cl
   };
 }
 
+/**
+ * Get the original location of `@value`.
+ * @param atValue The `@value` rule.
+ * @returns The location of the `@value` rule.
+ */
+export function getOriginalLocationOfAtValue(atValue: AtRule, valueDeclaration: ValueDeclaration): Location {
+  // The node derived from `postcss.parse` always has `source` property. Therefore, this line is unreachable.
+  if (atValue.source === undefined) throw new Error('Node#source is undefined');
+  // The node derived from `postcss.parse` always has `start` and `end` property. Therefore, this line is unreachable.
+  if (atValue.source.start === undefined) throw new Error('Node#start is undefined');
+  if (atValue.source.end === undefined) throw new Error('Node#end is undefined');
+  if (atValue.source.input.file === undefined) throw new Error('Node#input.file is undefined');
+
+  return {
+    filePath: atValue.source.input.file,
+    start: {
+      line: atValue.source.start.line,
+      column: atValue.source.start.column + 7, // Add for `@value `
+    },
+    end: {
+      line: atValue.source.start.line,
+      column: atValue.source.start.column + 7 + valueDeclaration.tokenName.length, // Add for `@value ` and token name
+    },
+  };
+}
+
 function isAtRuleNode(node: Node): node is AtRule {
   return node.type === 'atrule';
 }
@@ -182,17 +208,18 @@ export function parseAtImport(atImport: AtRule): string | undefined {
   return undefined;
 }
 
-type ParsedAtValue =
-  | {
-      type: 'valueDeclaration';
-      tokenName: string;
-      // value: string; // unneeded
-    }
-  | {
-      type: 'valueImportDeclaration';
-      imports: { importedTokenName: string; localTokenName: string }[];
-      from: string;
-    };
+type ValueDeclaration = {
+  type: 'valueDeclaration';
+  tokenName: string;
+  // value: string; // unneeded
+};
+type ValueImportDeclaration = {
+  type: 'valueImportDeclaration';
+  imports: { importedTokenName: string; localTokenName: string }[];
+  from: string;
+};
+
+type ParsedAtValue = ValueDeclaration | ValueImportDeclaration;
 
 const matchImports = /^(.+?|\([\s\S]+?\))\s+from\s+("[^"]*"|'[^']*'|[\w-]+)$/u;
 const matchValueDefinition = /(?:\s+|^)([\w-]+):?(.*?)$/u;

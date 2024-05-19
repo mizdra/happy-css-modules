@@ -1,4 +1,5 @@
 import dedent from 'dedent';
+import type { AtRule } from 'postcss';
 import {
   createRoot,
   createClassSelectors,
@@ -12,6 +13,7 @@ import {
   parseAtImport,
   parseAtValue,
   collectNodes,
+  getOriginalLocationOfAtValue,
 } from './postcss.js';
 
 describe('generateLocalTokenNames', () => {
@@ -284,6 +286,25 @@ describe('getOriginalLocationOfClassSelector', () => {
       `{ filePath: "/test/test.css", start: { line: 3, column: 5 }, end: { line: 3, column: 19 } }`,
     );
   });
+});
+
+test('getOriginalLocationOfAtValue', () => {
+  function tryGetOriginalLocationOfAtValue(atValue: AtRule) {
+    const parsed = parseAtValue(atValue);
+    if (parsed.type === 'valueDeclaration') {
+      return getOriginalLocationOfAtValue(atValue, parsed);
+    } else {
+      throw new Error('Unexpected type');
+    }
+  }
+  const [basic] = createAtValues(
+    createRoot(dedent`
+    @value basic: #000;
+    `),
+  );
+  expect(tryGetOriginalLocationOfAtValue(basic!)).toMatchInlineSnapshot(
+    `{ filePath: "/test/test.css", start: { line: 1, column: 8 }, end: { line: 1, column: 13 } }`,
+  );
 });
 
 test('collectNodes', () => {
