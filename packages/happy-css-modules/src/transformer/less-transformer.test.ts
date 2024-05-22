@@ -23,8 +23,6 @@ test('handles less features', async () => {
         &_2 { dummy: ''; }
         .b_1();
         .b_2();
-        composes: a_1; // css module feature test (composes)
-        composes: c from './3.less'; // css module feature test (composes from other file)
       }
       `,
     '/test/2.less': dedent`

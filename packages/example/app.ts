@@ -22,8 +22,6 @@ console.log(styles1.local_class_name_1);
 console.log(styles1.local_class_name_2);
 console.log(styles1.local_class_name_3);
 console.log(styles1.local_class_name_4);
-console.log(styles1.composes_target);
-console.log(styles1.composes);
 
 console.log(styles2.a);
 console.log(styles2.b);

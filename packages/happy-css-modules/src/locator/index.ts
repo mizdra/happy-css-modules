@@ -31,7 +31,7 @@ type CacheEntry = {
 
 /** The result of `Locator#load`. */
 export type LoadResult = {
-  /** The path of the file imported from the source file with `@import` or `composes`. */
+  /** The path of the file imported from the source file with `@import`. */
   dependencies: string[];
   /** The tokens exported by the source file. */
   tokens: Token[];

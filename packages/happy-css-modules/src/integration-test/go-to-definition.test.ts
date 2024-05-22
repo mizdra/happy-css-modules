@@ -41,10 +41,6 @@ test('basic', async () => {
       .local_class_name_3 {}
     }
     :local(.local_class_name_4) {}
-    .composes_target {}
-    .composes {
-      composes: composes_target;
-    }
     `,
   });
   await run({ ...defaultOptions });
@@ -65,8 +61,6 @@ test('basic', async () => {
     'local_class_name_2',
     'local_class_name_3',
     'local_class_name_4',
-    'composes_target',
-    'composes',
   ]);
   // FIXME: Fix an issue where the text at definition destination was incorrect.
   expect(results).toMatchInlineSnapshot(`
@@ -208,23 +202,6 @@ test('basic', async () => {
         ],
         "identifier": "local_class_name_4",
       },
-      {
-        "definitions": [
-          {
-      file: "<fixtures>/test/1.css",
-      text: ".composes_target ",
-      start: { line: 21, offset: 1 },
-      end: { line: 21, offset: 18 },
-    },
-        ],
-        "identifier": "composes_target",
-      },
-      {
-        "definitions": [
-          { file: "<fixtures>/test/1.css", text: ".composes ", start: { line: 22, offset: 1 }, end: { line: 22, offset: 11 } },
-        ],
-        "identifier": "composes",
-      },
     ]
   `);
   const moduleDefinitions = await server.getModuleDefinitions(getFixturePath('/test/1.css'));
@@ -295,8 +272,6 @@ test('with transformer', async () => {
       // sass feature test (nesting)
       .nesting_1 { dummy: ''; }
       &_2 { dummy: ''; }
-      composes: basic; // css module feature test (composes)
-      composes: d from './4.scss'; // css module feature test (composes from other file)
     }
     `,
     '/test/2.scss': dedent`
@@ -305,9 +280,6 @@ test('with transformer', async () => {
     `,
     '/test/3.scss': dedent`
     .c { dummy: ''; }
-    `,
-    '/test/4.scss': dedent`
-    .d { dummy: ''; }
     `,
   });
   await run({ ...defaultOptions });
@@ -319,7 +291,6 @@ test('with transformer', async () => {
     'b_1',
     'b_2',
     'c',
-    'd',
   ]);
   expect(results).toMatchInlineSnapshot(`
     [
@@ -363,10 +334,6 @@ test('with transformer', async () => {
           { file: "<fixtures>/test/3.scss", text: ".c ", start: { line: 1, offset: 1 }, end: { line: 1, offset: 4 } },
         ],
         "identifier": "c",
-      },
-      {
-        "definitions": [],
-        "identifier": "d",
       },
     ]
   `);
