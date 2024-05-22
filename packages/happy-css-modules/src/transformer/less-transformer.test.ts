@@ -40,7 +40,7 @@ test('handles less features', async () => {
   // FIXME: The end position of 'a_2_2' is incorrect.
   expect(result).toMatchInlineSnapshot(`
     {
-      dependencies: ["<fixtures>/test/2.less", "<fixtures>/test/3.less"],
+      dependencies: ["<fixtures>/test/2.less"],
       tokens: [
         {
           name: "b_1",
@@ -70,12 +70,6 @@ test('handles less features', async () => {
           name: "a_2_2",
           originalLocations: [
             { filePath: "<fixtures>/test/1.less", start: { line: 7, column: 3 }, end: { line: 7, column: 8 } },
-          ],
-        },
-        {
-          name: "c",
-          originalLocations: [
-            { filePath: "<fixtures>/test/3.less", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
       ],

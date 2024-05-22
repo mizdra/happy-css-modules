@@ -154,7 +154,6 @@ function isComposesDeclaration(node: Node): node is Declaration {
 type CollectNodesResult = {
   atImports: AtRule[];
   classSelectors: { rule: Rule; classSelector: ClassName }[];
-  composesDeclarations: Declaration[];
 };
 
 /**
@@ -164,7 +163,6 @@ type CollectNodesResult = {
 export function collectNodes(ast: Root): CollectNodesResult {
   const atImports: AtRule[] = [];
   const classSelectors: { rule: Rule; classSelector: ClassName }[] = [];
-  const composesDeclarations: Declaration[] = [];
   ast.walk((node) => {
     if (isAtImportNode(node)) {
       atImports.push(node);
@@ -183,11 +181,9 @@ export function collectNodes(ast: Root): CollectNodesResult {
           }
         });
       }).processSync(node);
-    } else if (isComposesDeclaration(node)) {
-      composesDeclarations.push(node);
     }
   });
-  return { atImports, classSelectors, composesDeclarations };
+  return { atImports, classSelectors };
 }
 
 /**
@@ -205,41 +201,4 @@ export function parseAtImport(atImport: AtRule): string | undefined {
     if (firstNode.nodes[0].type === 'word') return firstNode.nodes[0].value;
   }
   return undefined;
-}
-
-/**
- * Parse `composes` declaration with `from <url>`.
- * If the declaration is not found or do not have `from <url>`, return `undefined`.
- * @param composesDeclaration The `composes` declaration to parse.
- * @returns The information of the declaration.
- */
-export function parseComposesDeclarationWithFromUrl(
-  composesDeclaration: Declaration,
-): { from: string; tokenNames: string[] } | undefined {
-  // NOTE: `composes` property syntax is...
-  // - syntax: `composes: <class-name> [...<class-name>] [from <url>];`
-  // - variables:
-  //   - `<class-name>`: `<sting>`
-  //   - `<url>`: `<string>`
-  // - ref:
-  //   - https://github.com/css-modules/css-modules#composition
-  //   - https://github.com/css-modules/css-modules#composing-from-other-files
-  //   - https://github.com/css-modules/postcss-modules-extract-imports#specification
-
-  const nodes = valueParser(composesDeclaration.value).nodes;
-  if (nodes.length < 5) return undefined;
-
-  const classNamesOrSpaces = nodes.slice(0, -3);
-  const [from, , url] = nodes.slice(-3);
-
-  const classNames = classNamesOrSpaces.filter((node) => node.type === 'word');
-
-  // validate nodes
-  if (from === undefined) return undefined;
-  if (from.type !== 'word' || from.value !== 'from') return undefined;
-  if (url === undefined) return undefined;
-  if (url.type !== 'string') return undefined;
-  if (classNames.length === 0) return undefined;
-
-  return { from: url.value, tokenNames: classNames.map((node) => node.value) };
 }

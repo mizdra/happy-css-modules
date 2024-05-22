@@ -4,14 +4,7 @@ import type { Resolver } from '../resolver/index.js';
 import { createDefaultResolver } from '../resolver/index.js';
 import { createDefaultTransformer, type Transformer } from '../transformer/index.js';
 import { unique, uniqueBy } from '../util.js';
-import {
-  getOriginalLocation,
-  generateLocalTokenNames,
-  parseAtImport,
-  type Location,
-  parseComposesDeclarationWithFromUrl,
-  collectNodes,
-} from './postcss.js';
+import { getOriginalLocation, generateLocalTokenNames, parseAtImport, type Location, collectNodes } from './postcss.js';
 
 export { collectNodes, type Location } from './postcss.js';
 
@@ -165,7 +158,7 @@ export class Locator {
 
     const tokens: Token[] = [];
 
-    const { atImports, classSelectors, composesDeclarations } = collectNodes(ast);
+    const { atImports, classSelectors } = collectNodes(ast);
 
     // Load imported sheets recursively.
     for (const atImport of atImports) {
@@ -193,20 +186,6 @@ export class Locator {
         name: classSelector.value,
         originalLocations: [originalLocation],
       });
-    }
-
-    // Load imported tokens by the names recursively.
-    for (const composesDeclaration of composesDeclarations) {
-      const declarationDetail = parseComposesDeclarationWithFromUrl(composesDeclaration);
-      if (!declarationDetail) continue;
-      if (isIgnoredSpecifier(declarationDetail.from)) continue;
-      // eslint-disable-next-line no-await-in-loop
-      const from = await this.resolver(declarationDetail.from, { request: filePath });
-      // eslint-disable-next-line no-await-in-loop
-      const result = await this._load(from);
-      const externalTokens = result.tokens.filter((token) => declarationDetail.tokenNames.includes(token.name));
-      dependencies.push(from, ...result.dependencies);
-      tokens.push(...externalTokens);
     }
 
     const result: LoadResult = {

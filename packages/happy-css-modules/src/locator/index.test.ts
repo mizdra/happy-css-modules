@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
 import { createDefaultTransformer } from '../index.js';
-import { createFixtures, FIXTURE_DIR_PATH, getFixturePath } from '../test-util/util.js';
+import { createFixtures, getFixturePath } from '../test-util/util.js';
 import { sleepSync } from '../util.js';
 
 const readFileSpy = jest.spyOn(fs, 'readFile');
@@ -140,36 +140,12 @@ test('tracks other files when `composes` is present', async () => {
   const result = await locator.load(getFixturePath('/test/1.css'));
   expect(result).toMatchInlineSnapshot(`
     {
-      dependencies: ["<fixtures>/test/2.css", "<fixtures>/test/3.css", "<fixtures>/test/4.css"],
+      dependencies: [],
       tokens: [
         {
           name: "a",
           originalLocations: [
             { filePath: "<fixtures>/test/1.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
-          ],
-        },
-        {
-          name: "b",
-          originalLocations: [
-            { filePath: "<fixtures>/test/2.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
-          ],
-        },
-        {
-          name: "c",
-          originalLocations: [
-            { filePath: "<fixtures>/test/3.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
-          ],
-        },
-        {
-          name: "d",
-          originalLocations: [
-            { filePath: "<fixtures>/test/3.css", start: { line: 2, column: 1 }, end: { line: 2, column: 2 } },
-          ],
-        },
-        {
-          name: "e",
-          originalLocations: [
-            { filePath: "<fixtures>/test/4.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
       ],
@@ -204,7 +180,7 @@ test('normalizes tokens', async () => {
   const result = await locator.load(getFixturePath('/test/1.css'));
   expect(result).toMatchInlineSnapshot(`
     {
-      dependencies: ["<fixtures>/test/2.css", "<fixtures>/test/3.css"],
+      dependencies: ["<fixtures>/test/2.css"],
       tokens: [
         {
           name: "a",
@@ -218,12 +194,6 @@ test('normalizes tokens', async () => {
           name: "b",
           originalLocations: [
             { filePath: "<fixtures>/test/2.css", start: { line: 2, column: 1 }, end: { line: 2, column: 2 } },
-          ],
-        },
-        {
-          name: "c",
-          originalLocations: [
-            { filePath: "<fixtures>/test/3.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
       ],
@@ -292,25 +262,7 @@ test('ignores the composition of non-existent tokens', async () => {
     `,
   });
   const result = await locator.load(getFixturePath('/test/1.css'));
-  expect(result.tokens.map((t) => t.name)).toStrictEqual(['a', 'b']);
-});
-
-test('throws error the composition of non-existent file', async () => {
-  // In postcss-modules, compositions of non-existent file are causes an error.
-  // Therefore, happy-css-modules follows suit.
-  createFixtures({
-    '/test/1.css': dedent`
-    .a {
-      composes: a from './2.css';
-    }
-    `,
-  });
-  await expect(async () => {
-    await locator.load(getFixturePath('/test/1.css')).catch((e) => {
-      e.message = e.message.replace(FIXTURE_DIR_PATH, '<fixtures>');
-      throw e;
-    });
-  }).rejects.toThrowError(`Could not resolve './2.css' in '<fixtures>/test/1.css'`);
+  expect(result.tokens.map((t) => t.name)).toStrictEqual(['a']);
 });
 
 describe('supports sourcemap', () => {

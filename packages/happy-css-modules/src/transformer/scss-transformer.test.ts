@@ -46,7 +46,7 @@ test('handles sass features', async () => {
   // FIXME: The end position of 'a_2_2' is incorrect.
   expect(result).toMatchInlineSnapshot(`
     {
-      dependencies: ["<fixtures>/test/2.scss", "<fixtures>/test/3.scss", "<fixtures>/test/4.scss"],
+      dependencies: ["<fixtures>/test/2.scss", "<fixtures>/test/3.scss"],
       tokens: [
         {
           name: "b_1",
@@ -83,12 +83,6 @@ test('handles sass features', async () => {
           name: "a_2_2",
           originalLocations: [
             { filePath: "<fixtures>/test/1.scss", start: { line: 8, column: 3 }, end: { line: 8, column: 8 } },
-          ],
-        },
-        {
-          name: "d",
-          originalLocations: [
-            { filePath: "<fixtures>/test/4.scss", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
           ],
         },
       ],
