@@ -29,8 +29,6 @@ console.log(styles2.a);
 console.log(styles2.b);
 
 console.log(styles3.a);
-console.log(styles3.b);
-// console.log(styles3.c); // Maybe it needs fixing?
 
 console.log(styles4.a_1);
 console.log(styles4.a_2);
@@ -38,14 +36,12 @@ console.log(styles4.a_2_1);
 console.log(styles4.a_2_2);
 console.log(styles4.b_1);
 console.log(styles4.c);
-console.log(styles4.d);
 
 console.log(styles5.a_1);
 console.log(styles5.a_2);
 console.log(styles5.a_2_1);
 console.log(styles5.a_2_2);
 console.log(styles5.b_1);
-console.log(styles5.c);
 
 console.log(styles6.a_1);
 console.log(styles6.a_2);
