@@ -2,7 +2,7 @@ import { constants, mkdirSync, realpathSync, rmSync, writeFileSync } from 'fs';
 import { access } from 'fs/promises';
 import { tmpdir } from 'os';
 import { dirname, join, resolve } from 'path';
-import postcss, { type Root, type Rule, type AtRule, type Declaration } from 'postcss';
+import postcss, { type Root, type Rule, type AtRule } from 'postcss';
 import { type ClassName } from 'postcss-selector-parser';
 import { type Token, collectNodes, type Location } from '../locator/index.js';
 import { sleepSync } from '../util.js';
@@ -23,10 +23,6 @@ export function createAtImports(root: Root): AtRule[] {
 
 export function createClassSelectors(root: Root): { rule: Rule; classSelector: ClassName }[] {
   return collectNodes(root).classSelectors;
-}
-
-export function createComposesDeclarations(root: Root): Declaration[] {
-  return collectNodes(root).composesDeclarations;
 }
 
 export function fakeToken(args: {
