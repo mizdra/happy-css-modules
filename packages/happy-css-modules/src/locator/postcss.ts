@@ -54,9 +54,9 @@ export async function generateLocalTokenNames(ast: Root): Promise<string[]> {
     postcss
       .default()
       // postcss-modules collects tokens (i.e., includes external tokens) by following
-      // the dependencies specified in the @import and composes properties.
+      // the dependencies specified in the @import.
       // However, we do not want `generateLocalTokenNames` to return external tokens.
-      // So we remove the @import and composes properties beforehand.
+      // So we remove the @import beforehand.
       .use(removeDependenciesPlugin())
       .use(
         modules({

@@ -27,10 +27,6 @@ describe('generateLocalTokenNames', () => {
           .local_class_name_3 {}
         }
         :local(.local_class_name_4) {}
-        .composes_target {}
-        .composes {
-          composes: composes_target;
-        }
         `),
       ),
     ).toStrictEqual([
@@ -50,8 +46,6 @@ describe('generateLocalTokenNames', () => {
       'local_class_name_2',
       'local_class_name_3',
       'local_class_name_4',
-      'composes_target',
-      'composes',
     ]);
   });
   test('does not track styles imported by @import in other file because it is not a local token', async () => {
@@ -224,23 +218,6 @@ describe('getOriginalLocation', () => {
       `{ filePath: "/test/test.css", start: { line: 6, column: 8 }, end: { line: 6, column: 26 } }`,
     );
   });
-  test('composes', () => {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    const [composes_target, composes] = createClassSelectors(
-      createRoot(dedent`
-      .composes_target {}
-      .composes {
-        composes: composes_target;
-      }
-      `),
-    );
-    expect(getOriginalLocation(composes_target!.rule, composes_target!.classSelector)).toMatchInlineSnapshot(
-      `{ filePath: "/test/test.css", start: { line: 1, column: 1 }, end: { line: 1, column: 16 } }`,
-    );
-    expect(getOriginalLocation(composes!.rule, composes!.classSelector)).toMatchInlineSnapshot(
-      `{ filePath: "/test/test.css", start: { line: 2, column: 1 }, end: { line: 2, column: 9 } }`,
-    );
-  });
   test('with_newline', () => {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const [with_newline_1, with_newline_2, with_newline_3] = createClassSelectors(
@@ -268,8 +245,8 @@ test('collectNodes', () => {
     @import;
     @import "test.css";
     @ignored;
-    .a { ignored: "ignored"; composes: a; }
-    .b { ignored: "ignored"; composes: b; }
+    .a { ignored: "ignored"; }
+    .b { ignored: "ignored"; }
     `);
 
   const { atImports, classSelectors } = collectNodes(ast);
@@ -278,9 +255,9 @@ test('collectNodes', () => {
   expect(atImports[0]!.toString()).toEqual('@import');
   expect(atImports[1]!.toString()).toEqual('@import "test.css"');
   expect(classSelectors).toHaveLength(2);
-  expect(classSelectors[0]!.rule.toString()).toEqual('.a { ignored: "ignored"; composes: a; }');
+  expect(classSelectors[0]!.rule.toString()).toEqual('.a { ignored: "ignored"; }');
   expect(classSelectors[0]!.classSelector.toString()).toEqual('.a');
-  expect(classSelectors[1]!.rule.toString()).toEqual('.b { ignored: "ignored"; composes: b; }');
+  expect(classSelectors[1]!.rule.toString()).toEqual('.b { ignored: "ignored"; }');
   expect(classSelectors[1]!.classSelector.toString()).toEqual('.b');
 });
 

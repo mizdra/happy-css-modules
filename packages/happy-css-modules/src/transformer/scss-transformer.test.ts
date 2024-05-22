@@ -22,8 +22,6 @@ test('handles sass features', async () => {
         // sass feature test (nesting)
         .a_2_1 { dummy: ''; }
         &_2 { dummy: ''; }
-        composes: a_1; // css module feature test (composes)
-        composes: d from './4.scss'; // css module feature test (composes from other file)
       }
       `,
     '/test/2.scss': dedent`

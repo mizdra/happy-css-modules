@@ -117,24 +117,16 @@ test('tracks other files when `@import` is present', async () => {
   `);
 });
 
-test('tracks other files when `composes` is present', async () => {
+test('does not track other files by `composes`', async () => {
   createFixtures({
     '/test/1.css': dedent`
     .a {
       composes: b from './2.css';
-      composes: c d from './3.css';
-      composes: e from '${getFixturePath('/test/4.css')}';
+      composes: c from './3.css'; /* non-existent file */
     }
     `,
     '/test/2.css': dedent`
     .b {}
-    `,
-    '/test/3.css': dedent`
-    .c {}
-    .d {}
-    `,
-    '/test/4.css': dedent`
-    .e {}
     `,
   });
   const result = await locator.load(getFixturePath('/test/1.css'));
@@ -159,14 +151,7 @@ test('normalizes tokens', async () => {
     /* duplicate import */
     @import './2.css';
     @import '2.css';
-    .a {
-      /* duplicate composes */
-      composes: c from './3.css';
-      composes: c from '3.css';
-      composes: c c from './3.css';
-      /* duplicate import and composes */
-      composes: b from './2.css';
-    }
+    .a {}
     .a {} /* duplicate class selector */
     `,
     '/test/2.css': dedent`
@@ -187,7 +172,7 @@ test('normalizes tokens', async () => {
           originalLocations: [
             { filePath: "<fixtures>/test/2.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
             { filePath: "<fixtures>/test/1.css", start: { line: 4, column: 1 }, end: { line: 4, column: 2 } },
-            { filePath: "<fixtures>/test/1.css", start: { line: 12, column: 1 }, end: { line: 12, column: 2 } },
+            { filePath: "<fixtures>/test/1.css", start: { line: 5, column: 1 }, end: { line: 5, column: 2 } },
           ],
         },
         {
@@ -205,12 +190,7 @@ test.failing('returns the result from the cache when the file has not been modif
   createFixtures({
     '/test/1.css': dedent`
     @import './2.css';
-    @import './2.css';
-    .a {
-      composes: b from './2.css';
-      composes: c from './3.css';
-      composes: d from './3.css';
-    }
+    @import './3.css';
     `,
     '/test/2.css': dedent`
     .b {}
@@ -244,25 +224,6 @@ test.failing('returns the result from the cache when the file has not been modif
   // ``2.css` is updated, but the cache is already available because it was updated in the previous step. Therefore, `readFile` is not called.
   await locator.load(getFixturePath('/test/2.css'));
   expect(readFileSpy).toHaveBeenCalledTimes(2);
-});
-
-test('ignores the composition of non-existent tokens', async () => {
-  // In css-loader and postcss-modules, compositions of non-existent tokens are simply ignored.
-  // Therefore, happy-css-modules follows suit.
-  // It may be preferable to warn rather than ignore, but for now, we will focus on compatibility.
-  // ref: https://github.com/css-modules/css-modules/issues/356
-  createFixtures({
-    '/test/1.css': dedent`
-    .a {
-      composes: b c from './2.css';
-    }
-    `,
-    '/test/2.css': dedent`
-    .b {}
-    `,
-  });
-  const result = await locator.load(getFixturePath('/test/1.css'));
-  expect(result.tokens.map((t) => t.name)).toStrictEqual(['a']);
 });
 
 describe('supports sourcemap', () => {
