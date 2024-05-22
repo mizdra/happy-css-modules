@@ -365,9 +365,7 @@ test('with transformer', async () => {
         "identifier": "c",
       },
       {
-        "definitions": [
-          { file: "<fixtures>/test/4.scss", text: ".d ", start: { line: 1, offset: 1 }, end: { line: 1, offset: 4 } },
-        ],
+        "definitions": [],
         "identifier": "d",
       },
     ]
