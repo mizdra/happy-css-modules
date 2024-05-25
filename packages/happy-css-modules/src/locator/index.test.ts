@@ -1,28 +1,12 @@
-import fs, { readFile, writeFile } from 'fs/promises';
+import { readFile, writeFile } from 'fs/promises';
 import { randomUUID } from 'node:crypto';
 import { jest } from '@jest/globals';
 import dedent from 'dedent';
-import { createDefaultTransformer } from '../index.js';
+import { Locator, createDefaultTransformer } from '../index.js';
 import { createFixtures, getFixturePath } from '../test-util/util.js';
 import { sleepSync } from '../util.js';
 
-const readFileSpy = jest.spyOn(fs, 'readFile');
-// In ESM, for some reason, we need to explicitly mock module
-jest.unstable_mockModule('fs/promises', () => ({
-  ...fs, // Inherit native functions (e.g., fs.stat)
-  readFile: readFileSpy,
-}));
-
-// After the mock of fs/promises is complete, . /index.js after the mock of fs/promises is complete.
-// ref: https://www.coolcomputerclub.com/posts/jest-hoist-await/
-const { Locator } = await import('./index.js');
-// NOTE: ../test/util.js depends on . /index.js, so it must also be imported dynamically...
-
 const locator = new Locator();
-
-afterEach(() => {
-  readFileSpy.mockClear();
-});
 
 test('basic', async () => {
   createFixtures({
@@ -186,7 +170,7 @@ test('normalizes tokens', async () => {
   `);
 });
 
-test.failing('returns the result from the cache when the file has not been modified', async () => {
+test('returns the result from the cache when the file has not been modified', async () => {
   createFixtures({
     '/test/1.css': dedent`
     @import './2.css';
@@ -200,12 +184,14 @@ test.failing('returns the result from the cache when the file has not been modif
     .d {}
     `,
   });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const readCSSSpy = jest.spyOn(locator, 'readCSS' as any);
   await locator.load(getFixturePath('/test/1.css'));
-  expect(readFileSpy).toHaveBeenCalledTimes(3);
-  expect(readFileSpy).toHaveBeenNthCalledWith(1, '/test/1.css', 'utf-8');
-  expect(readFileSpy).toHaveBeenNthCalledWith(2, '/test/2.css', 'utf-8');
-  expect(readFileSpy).toHaveBeenNthCalledWith(3, '/test/3.css', 'utf-8');
-  readFileSpy.mockClear();
+  expect(readCSSSpy).toHaveBeenCalledTimes(3);
+  expect(readCSSSpy).toHaveBeenNthCalledWith(1, getFixturePath('/test/1.css'));
+  expect(readCSSSpy).toHaveBeenNthCalledWith(2, getFixturePath('/test/2.css'));
+  expect(readCSSSpy).toHaveBeenNthCalledWith(3, getFixturePath('/test/3.css'));
+  readCSSSpy.mockClear();
 
   // update `/test/2.css`
   sleepSync(1); // wait for the file system to update the mtime
@@ -213,17 +199,17 @@ test.failing('returns the result from the cache when the file has not been modif
 
   // `3.css` is not updated, so the cache is used. Therefore, `readFile` is not called.
   await locator.load(getFixturePath('/test/3.css'));
-  expect(readFileSpy).toHaveBeenCalledTimes(0);
+  expect(readCSSSpy).toHaveBeenCalledTimes(0);
 
   // `1.css` is not updated, but dependencies are updated, so the cache is used. Therefore, `readFile` is called.
   await locator.load(getFixturePath('/test/1.css'));
-  expect(readFileSpy).toHaveBeenCalledTimes(2);
-  expect(readFileSpy).toHaveBeenNthCalledWith(1, '/test/1.css', 'utf-8');
-  expect(readFileSpy).toHaveBeenNthCalledWith(2, '/test/2.css', 'utf-8');
+  expect(readCSSSpy).toHaveBeenCalledTimes(2);
+  expect(readCSSSpy).toHaveBeenNthCalledWith(1, getFixturePath('/test/1.css'));
+  expect(readCSSSpy).toHaveBeenNthCalledWith(2, getFixturePath('/test/2.css'));
 
   // ``2.css` is updated, but the cache is already available because it was updated in the previous step. Therefore, `readFile` is not called.
   await locator.load(getFixturePath('/test/2.css'));
-  expect(readFileSpy).toHaveBeenCalledTimes(2);
+  expect(readCSSSpy).toHaveBeenCalledTimes(2);
 });
 
 describe('supports sourcemap', () => {
