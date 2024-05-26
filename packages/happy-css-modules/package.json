@@ -1,6 +1,6 @@
 {
   "name": "happy-css-modules",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Creates .d.ts files from CSS Modules .css files",
   "type": "module",
   "main": "dist/index.js",
