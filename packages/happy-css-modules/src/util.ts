@@ -66,7 +66,7 @@ export async function exists(path: string): Promise<boolean> {
 }
 
 export function isMatchByGlob(filePath: string, pattern: string, options: { cwd: string }): boolean {
-  return minimatch(filePath, join(options.cwd, pattern));
+  return minimatch(filePath, join(options.cwd, pattern), { windowsPathsNoEscape: true });
 }
 
 export function getPackageJson() {
