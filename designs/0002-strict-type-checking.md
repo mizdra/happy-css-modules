@@ -4,11 +4,11 @@
 
 # Summary
 
-この RFC は CSS Modules で厳密な型チェックをサポートするための戦略を提案します。
+This RFC proposes a strategy to support strict type checking in CSS Modules.
 
 # Motivation
 
-CSS Modules では、スタイルは `.module.css` に記述されます。そして `.js` から `.module.css` をインポートしてそのスタイルを利用します。以下はその例です。
+In CSS Modules, styles are written in `.module.css` files and then imported into `.js` files to use those styles. Here is an example:
 
 ```css
 /* src/Counter.module.css */
@@ -35,7 +35,7 @@ function Counter({ count }) {
 }
 ```
 
-TypeScript で CSS Modules を利用する場合、`Counter.module.css` の型定義ファイルを用意する必要があります。TypeScript では、型情報のないモジュールの import がエラーとなるためです。以下はその例です。
+When using CSS Modules with TypeScript, a type definition file for `Counter.module.css` is needed. TypeScript will throw an error when importing a module without type information. Here is an example:
 
 ```tsx
 /* types/css-modules.d.ts */
@@ -45,12 +45,12 @@ declare module '*.module.css' {
 }
 ```
 
-この型定義は、Next.js や Remix などの一般的なフレームワークで利用されています。
+This type definition is used in common frameworks like Next.js and Remix.
 
 - https://github.com/vercel/next.js/blob/v14.2.3/packages/next/types/global.d.ts#L30-L33
 - https://github.com/remix-run/remix/blob/remix%402.9.2/packages/remix-dev/modules.ts#L11-L14
 
-しかし、この型定義は厳密な型チェックを行うことができません。例えば、以下のようなコードはコンパイルエラーとなりません。
+However, this type definition cannot perform strict type checking. For example, the following code will not cause a compilation error:
 
 ```tsx
 /* src/Counter.jsx */
@@ -68,11 +68,11 @@ function Counter({ count }) {
 }
 ```
 
-このような問題を解決するために、この RFC では CSS Modules で厳密な型チェックをサポートする仕組みを提案します。
+To solve this issue, this RFC proposes a mechanism to support strict type checking in CSS Modules.
 
 # Detailed design
 
-この RFC では、`.module.css` の型定義ファイルを生成する CLI ツールを提案します。この CLI ツールは、`.module.css` を読み取り、その型定義ファイルを生成します。以下はその例です。
+This RFC proposes a CLI tool that generates type definition files for `.module.css` files. The CLI tool reads `.module.css` files and generates their type definition files. Here is an example:
 
 <!-- prettier-ignore-start -->
 ```css
@@ -93,7 +93,7 @@ export default styles;
 ```
 <!-- prettier-ignore-end -->
 
-この型定義ファイルにより、型チェックが厳密になり、以下のようなコンパイルエラーが発生します。
+With this type definition file, strict type checking will be enforced, and compilation errors will occur for code like the following:
 
 ```console
 $ npx tsc
@@ -108,11 +108,11 @@ src/Counter.tsx:6:31 - error TS2551: Property 'counter' does not exist on type '
     'count' is declared here.
 ```
 
-## `@value` のサポート
+## Support for `@value`
 
-CSS Modules では、`@value` を用いて変数を定義することができます。この変数は、`.js` から利用することができます。従って、型定義ファイルにもこの変数を含めるようにします。
+CSS Modules allows defining variables using `@value`. These variables can be used in `.js` files. Therefore, these variables should also be included in the type definition files.
 
-以下はその例です。
+Here is an example:
 
 ```css
 /* src/Box.module.css */
@@ -143,11 +143,11 @@ export default styles;
 ```
 <!-- prettier-ignore-end -->
 
-## `@import` のサポート
+## Support for `@import`
 
-`@import` は css-loader や postcss-modules による拡張機能です。この機能使うと、他の CSS Modules ファイルを import 元のファイルに展開することができます。これは CSS Modules の仕様では定義されていませんが、エコシステムとの互換性を保つため、happy-css-modules もこの機能をサポートします。
+`@import` is an extension provided by css-loader and postcss-modules. It allows importing other CSS Modules files into the source file. Although not defined in the CSS Modules specification, happy-css-modules will support this feature to maintain compatibility with the ecosystem.
 
-以下はその例です。
+Here is an example:
 
 <!-- prettier-ignore-start -->
 ```css
@@ -187,48 +187,48 @@ export default styles;
 ```
 <!-- prettier-ignore-end -->
 
-`Import.module.css.d.ts` に `common.module.css` の型定義を展開するために、`import('./common.module.css').default` を利用します。これにより、`Import.module.css` をパースするだけで `Import.module.css.d.ts` が生成可能となります。これにより、コード生成ツールは型定義ファイルの生成を容易に並列化できます。
+To expand the type definitions of `common.module.css` into `Import.module.css.d.ts`, `import('./common.module.css').default` is used. This allows generating `Import.module.css.d.ts` by simply parsing `Import.module.css`. This enables the code generation tool to easily parallelize the generation of type definition files.
 
 # Drawbacks
 
-## 編集中の変更が反映されない
+## Changes while editing are not reflected
 
-コード生成ツールはファイルシステム上にある `.module.css` を読み取り、型定義ファイルを生成します。このため、エディタで `.module.css` を編集中で、未保存の変更がある場合、型定義ファイルには反映されません。その結果、しばしばエディタ上で古い型エラーが表示されたり、本来型エラーが表示されるべき箇所で型エラーが表示されなかったりします。これは開発者を混乱させる可能性があります。
+The code generation tool reads `.module.css` files from the file system and generates type definition files. Therefore, if there are unsaved changes in the editor, they will not be reflected in the type definition files. This may result in outdated type errors being displayed in the editor, or type errors not being displayed where they should be. This can confuse developers.
 
-## 型定義ファイルが煩わしい
+## Type definition files can be annoying
 
-型定義ファイルはエディタのファイルエクスプローラや、Pull Request の差分に表示されます。しかしながら、開発者は型定義ファイルを見たいと思うことは滅多にありません。従って、開発者はそれを煩わしく感じる可能性があります。
+Type definition files appear in the editor's file explorer and in the diffs of pull requests. However, developers rarely want to see type definition files. Therefore, they may find them annoying.
 
-ただしエディタやツールの設定を変更すると、問題を軽減できるかもしれません。例えば、VS Code では、`files.exclude` や `search.exclude` などの設定を変更することで、型定義ファイルを非表示にできます。`.gitignore` に型定義ファイルを追加したり、`.gitattributes` で `linguist-generated` 属性を設定することで、Pull Request で型定義ファイルを非表示にできます。
+Changing editor or tool settings can alleviate this problem. For example, in VS Code, you can hide type definition files by adjusting the `files.exclude` or `search.exclude` settings. Adding type definition files to `.gitignore` or setting the `linguist-generated` attribute in `.gitattributes` can hide them in pull requests.
 
 # Alternatives
 
 ## TypeScript Language Service Plugin
 
-TypeScript Language Service Plugin は、Language Server の挙動をカスタマイズできる技術です。これを用いると、エディタ上で型エラーを表示できます。
+The TypeScript Language Service Plugin is a technology that allows customizing the behavior of the Language Server. It can be used to display type errors in the editor.
 
-しかし、TypeScript Language Service Plugin は、Language Server の挙動をカスタマイズできますが、コンパイルの挙動をカスタマイズすることはできません。そのため、エディタでは型エラーが表示されますが、コンパイルには成功します。これは開発者を混乱させる可能性があります。
+However, while the TypeScript Language Service Plugin can customize the behavior of the Language Server, it cannot customize the compilation behavior. Therefore, type errors are displayed in the editor, but the compilation succeeds. This can confuse developers.
 
 # Prior art
 
 - https://github.com/mrmckeb/typescript-plugin-css-modules
-  - CSS Modules の型チェックを行う TypeScript Language Service Plugin です。
+  - A TypeScript Language Service Plugin for type-checking CSS Modules.
 - https://github.com/Quramy/typed-css-modules
-  - `.module.css` の型定義ファイルを生成する CLI ツールです。
+  - A CLI tool for generating type definition files for `.module.css` files.
 - https://github.com/skovy/typed-scss-modules
-  - `.module.scss` の型定義ファイルを生成する CLI ツールです。
+  - A CLI tool for generating type definition files for `.module.scss` files.
 - https://github.com/qiniu/typed-less-modules
-  - `.module.less` の型定義ファイルを生成する CLI ツールです。
+  - A CLI tool for generating type definition files for `.module.less` files.
 - https://github.com/Viijay-Kr/react-ts-css
-  - CSS Modules の型チェックを行う VS Code 拡張機能です。
+  - A VS Code extension for type-checking CSS Modules.
 
 # Unresolved questions
 
-## named export をサポートするべきか
+## Should named exports be supported?
 
-この RFC では、CSS Modules の型定義ファイルを default export 形式で生成することを提案しています。しかし、css-loader の [`namedExport`](https://github.com/webpack-contrib/css-loader?tab=readme-ov-file#namedexport) オプションを用いると、`.module.css` から named export 形式でトークンが export されます。従って、このオプションを併用する場合、型定義ファイルも named export 形式で生成しなければなりません。
+This RFC proposes generating type definition files for CSS Modules in a default export format. However, using the [`namedExport`](https://github.com/webpack-contrib/css-loader?tab=readme-ov-file#namedexport) option of css-loader, tokens can be exported from `.module.css` in a named export format. Therefore, if using this option, type definition files must also be generated in a named export format.
 
-恐らく、生成される型定義ファイルは以下のようになるでしょう。
+The generated type definition file might look like this:
 
 <!-- prettier-ignore-start -->
 ```css
@@ -251,10 +251,10 @@ export const container: string;
 ```
 <!-- prettier-ignore-end -->
 
-しかし、named export 形式で型定義ファイルを生成すると、TypeScript の completion items にトークンが含まれます。小さなプロジェクトでは問題ありませんが、大規模なプロジェクトでは completion items の数が過剰になり、開発者を混乱させる可能性があります。
+However, generating type definition files in a named export format includes _tokens_ (_tokens_ are the internal name of the item being exported) in TypeScript's completion items. In small projects, this is not an issue, but in large projects, the number of completion items can become excessive, potentially confusing developers.
 
-![エディタのスクリーンショット。`.ts` ファイル内に "pad" と入力して completion している。completion items には paddingSmall が含まれている。](namex-export.png)
+![Editor screenshot showing "pad" completion in a .ts file, with paddingSmall included in the completion items.](./0002-strict-type-checking/namex-export.png)
 
-VS Code の `typescript.preferences.autoImportFileExcludePatterns` オプションを利用すると、この問題を軽減できます。しかし、このオプションは VS Code にしか存在せず、他のエディタでは利用できません。
+Using the `typescript.preferences.autoImportFileExcludePatterns` setting in VS Code can mitigate this issue. However, this setting is only available in VS Code and not in other editors.
 
-よって named export 形式の型定義ファイルは、開発者体験とエディタの互換性の観点から、サポートを見送ります。
+Therefore, in order to prioritize developer experience and editor compatibility, support for named export format type definition files will be withheld.
