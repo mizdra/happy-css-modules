@@ -1,6 +1,6 @@
 - Feature Name: Strict Type Checking
 - Start Date: 2024-05-28
-- RFC PR: [#0](https://github.com/mizdra/happy-css-modules/pull/0)
+- RFC PR: [#259](https://github.com/mizdra/happy-css-modules/pull/259)
 
 # Summary
 
