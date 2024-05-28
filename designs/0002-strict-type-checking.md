@@ -257,4 +257,4 @@ However, generating type definition files in a named export format includes _tok
 
 Using the `typescript.preferences.autoImportFileExcludePatterns` setting in VS Code can mitigate this issue. However, this setting is only available in VS Code and not in other editors.
 
-Therefore, in order to prioritize developer experience and editor compatibility, support for named export format type definition files will be withheld.
+Therefore, considering these issues, this RFC does not support named exports. It may be supported in the future, but it is currently undecided.
