@@ -1,6 +1,6 @@
 - Feature Name: Philosophy
 - Start Date: 2024-05-28
-- RFC PR: [#0](https://github.com/mizdra/happy-css-modules/pull/0)
+- RFC PR: [#258](https://github.com/mizdra/happy-css-modules/pull/258)
 
 # Summary
 
