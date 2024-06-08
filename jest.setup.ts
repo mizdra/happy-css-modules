@@ -12,8 +12,8 @@ const jsonSerializer: jest.SnapshotSerializerPlugin = {
   test(val) {
     const isLoadResult =
       val &&
-      Object.prototype.hasOwnProperty.call(val, 'tokens') &&
-      Object.prototype.hasOwnProperty.call(val, 'dependencies');
+      Object.prototype.hasOwnProperty.call(val, 'tokenInfos') &&
+      Object.prototype.hasOwnProperty.call(val, 'transpileDependencies');
     const isLocation =
       val &&
       Object.prototype.hasOwnProperty.call(val, 'filePath') &&

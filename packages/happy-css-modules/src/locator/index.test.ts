@@ -18,19 +18,25 @@ test('basic', async () => {
   const result = await locator.load(getFixturePath('/test/1.css'));
   expect(result).toMatchInlineSnapshot(`
     {
-      dependencies: [],
-      tokens: [
+      transpileDependencies: [],
+      tokenInfos: [
         {
+          type: "localToken",
           name: "a",
-          originalLocations: [
-            { filePath: "<fixtures>/test/1.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
-          ],
+          originalLocation: {
+            filePath: "<fixtures>/test/1.css",
+            start: { line: 1, column: 1 },
+            end: { line: 1, column: 2 },
+          },
         },
         {
+          type: "localToken",
           name: "b",
-          originalLocations: [
-            { filePath: "<fixtures>/test/1.css", start: { line: 2, column: 1 }, end: { line: 2, column: 2 } },
-          ],
+          originalLocation: {
+            filePath: "<fixtures>/test/1.css",
+            start: { line: 2, column: 1 },
+            end: { line: 2, column: 2 },
+          },
         },
       ],
     }
@@ -64,38 +70,12 @@ test('tracks other files when `@import` is present', async () => {
   const result = await locator.load(getFixturePath('/test/1.css'));
   expect(result).toMatchInlineSnapshot(`
     {
-      dependencies: [
-        "<fixtures>/test/2.css",
-        "<fixtures>/test/3.css",
-        "<fixtures>/test/4.css",
-        "<fixtures>/test/5.css",
-        "<fixtures>/test/5-recursive.css",
-      ],
-      tokens: [
-        {
-          name: "a",
-          originalLocations: [
-            { filePath: "<fixtures>/test/2.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
-          ],
-        },
-        {
-          name: "b",
-          originalLocations: [
-            { filePath: "<fixtures>/test/3.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
-          ],
-        },
-        {
-          name: "c",
-          originalLocations: [
-            { filePath: "<fixtures>/test/4.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
-          ],
-        },
-        {
-          name: "d",
-          originalLocations: [
-            { filePath: "<fixtures>/test/5-recursive.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
-          ],
-        },
+      transpileDependencies: [],
+      tokenInfos: [
+        { type: "importedAllTokensFromModule", filePath: "<fixtures>/test/2.css" },
+        { type: "importedAllTokensFromModule", filePath: "<fixtures>/test/3.css" },
+        { type: "importedAllTokensFromModule", filePath: "<fixtures>/test/4.css" },
+        { type: "importedAllTokensFromModule", filePath: "<fixtures>/test/5.css" },
       ],
     }
   `);
@@ -116,13 +96,16 @@ test('does not track other files by `composes`', async () => {
   const result = await locator.load(getFixturePath('/test/1.css'));
   expect(result).toMatchInlineSnapshot(`
     {
-      dependencies: [],
-      tokens: [
+      transpileDependencies: [],
+      tokenInfos: [
         {
+          type: "localToken",
           name: "a",
-          originalLocations: [
-            { filePath: "<fixtures>/test/1.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
-          ],
+          originalLocation: {
+            filePath: "<fixtures>/test/1.css",
+            start: { line: 1, column: 1 },
+            end: { line: 1, column: 2 },
+          },
         },
       ],
     }
@@ -149,21 +132,27 @@ test('normalizes tokens', async () => {
   const result = await locator.load(getFixturePath('/test/1.css'));
   expect(result).toMatchInlineSnapshot(`
     {
-      dependencies: ["<fixtures>/test/2.css"],
-      tokens: [
+      transpileDependencies: [],
+      tokenInfos: [
+        { type: "importedAllTokensFromModule", filePath: "<fixtures>/test/2.css" },
+        { type: "importedAllTokensFromModule", filePath: "<fixtures>/test/2.css" },
         {
+          type: "localToken",
           name: "a",
-          originalLocations: [
-            { filePath: "<fixtures>/test/2.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
-            { filePath: "<fixtures>/test/1.css", start: { line: 4, column: 1 }, end: { line: 4, column: 2 } },
-            { filePath: "<fixtures>/test/1.css", start: { line: 5, column: 1 }, end: { line: 5, column: 2 } },
-          ],
+          originalLocation: {
+            filePath: "<fixtures>/test/1.css",
+            start: { line: 4, column: 1 },
+            end: { line: 4, column: 2 },
+          },
         },
         {
-          name: "b",
-          originalLocations: [
-            { filePath: "<fixtures>/test/2.css", start: { line: 2, column: 1 }, end: { line: 2, column: 2 } },
-          ],
+          type: "localToken",
+          name: "a",
+          originalLocation: {
+            filePath: "<fixtures>/test/1.css",
+            start: { line: 5, column: 1 },
+            end: { line: 5, column: 2 },
+          },
         },
       ],
     }
@@ -229,20 +218,34 @@ describe('supports sourcemap', () => {
     const result = await locator.load(getFixturePath('/test/1.scss'));
     expect(result).toMatchInlineSnapshot(`
       {
-        dependencies: [],
-        tokens: [
+        transpileDependencies: [],
+        tokenInfos: [
           {
+            type: "localToken",
             name: "nesting",
-            originalLocations: [
-              { filePath: "<fixtures>/test/1.scss", start: { line: 1, column: 1 }, end: { line: 1, column: 8 } },
-              { filePath: "<fixtures>/test/1.scss", start: { line: 3, column: 3 }, end: { line: 3, column: 10 } },
-            ],
+            originalLocation: {
+              filePath: "<fixtures>/test/1.scss",
+              start: { line: 1, column: 1 },
+              end: { line: 1, column: 8 },
+            },
           },
           {
+            type: "localToken",
+            name: "nesting",
+            originalLocation: {
+              filePath: "<fixtures>/test/1.scss",
+              start: { line: 3, column: 3 },
+              end: { line: 3, column: 10 },
+            },
+          },
+          {
+            type: "localToken",
             name: "nesting_child",
-            originalLocations: [
-              { filePath: "<fixtures>/test/1.scss", start: { line: 3, column: 3 }, end: { line: 3, column: 16 } },
-            ],
+            originalLocation: {
+              filePath: "<fixtures>/test/1.scss",
+              start: { line: 3, column: 3 },
+              end: { line: 3, column: 16 },
+            },
           },
         ],
       }
@@ -268,22 +271,28 @@ describe('supports sourcemap', () => {
     const result = await locator.load(getFixturePath('/test/1.css'));
     expect(result).toMatchInlineSnapshot(`
       {
-        dependencies: [],
-        tokens: [
+        transpileDependencies: [],
+        tokenInfos: [
           {
+            type: "localToken",
             name: "selector_list_a_1",
-            originalLocations: [
-              { filePath: "<fixtures>/test/1.css", start: { line: 1, column: 1 }, end: { line: 1, column: 18 } },
-            ],
+            originalLocation: {
+              filePath: "<fixtures>/test/1.css",
+              start: { line: 1, column: 1 },
+              end: { line: 1, column: 18 },
+            },
           },
           {
+            type: "localToken",
             name: "selector_list_a_2",
-            originalLocations: [
-              { filePath: "<fixtures>/test/1.css", start: { line: 1, column: 1 }, end: { line: 1, column: 18 } },
-            ],
+            originalLocation: {
+              filePath: "<fixtures>/test/1.css",
+              start: { line: 1, column: 1 },
+              end: { line: 1, column: 18 },
+            },
           },
-          { name: "selector_list_b_1", originalLocations: [{}] },
-          { name: "selector_list_b_2", originalLocations: [{}] },
+          { type: "localToken", name: "selector_list_b_1", originalLocation: {} },
+          { type: "localToken", name: "selector_list_b_2", originalLocation: {} },
         ],
       }
     `);
@@ -298,7 +307,7 @@ test('ignores http(s) protocol file', async () => {
     `,
   });
   const result = await locator.load(getFixturePath('/test/1.css'));
-  expect(result.dependencies).toStrictEqual([]);
+  expect(result).toStrictEqual({ tokenInfos: [], transpileDependencies: [] });
 });
 
 test('block concurrent calls to load method', async () => {

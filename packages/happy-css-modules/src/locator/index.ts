@@ -3,7 +3,7 @@ import postcss from 'postcss';
 import type { Resolver } from '../resolver/index.js';
 import { createDefaultResolver } from '../resolver/index.js';
 import { createDefaultTransformer, type Transformer } from '../transformer/index.js';
-import { unique, uniqueBy } from '../util.js';
+import { unique } from '../util.js';
 import { getOriginalLocation, generateLocalTokenNames, parseAtImport, type Location, collectNodes } from './postcss.js';
 
 export { collectNodes, type Location } from './postcss.js';
@@ -16,13 +16,29 @@ function isIgnoredSpecifier(specifier: string): boolean {
   return specifier.startsWith('http://') || specifier.startsWith('https://');
 }
 
-/** The exported token. */
-export type Token = {
-  /** The token name. */
+/**
+ * The token defined in the file.
+ * @example 'class' of `.class {}`
+ * @example 'val' of `@value val: #000;`
+ */
+type LocalToken = {
+  type: 'localToken';
   name: string;
-  /** The original locations of the token in the source file. */
-  originalLocations: Location[];
+  /** The original location of the token in the source file. */
+  originalLocation: Location;
 };
+
+/**
+ * The all tokens imported from other CSS Modules files.
+ * @example `@import './file.css';`.
+ */
+type ImportedAllTokensFromModule = {
+  type: 'importedAllTokensFromModule';
+  filePath: string;
+};
+
+/** The exported token info. */
+export type TokenInfo = LocalToken | ImportedAllTokensFromModule;
 
 type CacheEntry = {
   mtime: number; // TODO: `--cache-strategy` option will allow you to switch between `content` and `metadata` modes.
@@ -31,27 +47,11 @@ type CacheEntry = {
 
 /** The result of `Locator#load`. */
 export type LoadResult = {
-  /** The path of the file imported from the source file with `@import`. */
-  dependencies: string[];
-  /** The tokens exported by the source file. */
-  tokens: Token[];
+  /** The information of the exported tokens from CSS Modules files. */
+  tokenInfos: TokenInfo[];
+  /** The path to the dependent files needed to transpile that file. */
+  transpileDependencies: string[];
 };
-
-function normalizeTokens(tokens: Token[]): Token[] {
-  const tokenNameToOriginalLocations = new Map<string, Location[]>();
-  for (const token of tokens) {
-    tokenNameToOriginalLocations.set(
-      token.name,
-      uniqueBy([...(tokenNameToOriginalLocations.get(token.name) ?? []), ...token.originalLocations], (location) =>
-        JSON.stringify(location),
-      ),
-    );
-  }
-  return Array.from(tokenNameToOriginalLocations.entries()).map(([name, originalLocations]) => ({
-    name,
-    originalLocations,
-  }));
-}
 
 export type LocatorOptions = {
   /** The function to transform source code. */
@@ -87,8 +87,8 @@ export class Locator {
     const mtime = (await stat(filePath)).mtime.getTime();
     if (entry.mtime !== mtime) return true;
 
-    const { dependencies } = entry.result;
-    for (const dependency of dependencies) {
+    const { transpileDependencies } = entry.result;
+    for (const dependency of transpileDependencies) {
       const entry = this.cache.get(dependency);
       if (!entry) return true;
       // eslint-disable-next-line no-await-in-loop
@@ -148,7 +148,7 @@ export class Locator {
 
     const mtime = (await stat(filePath)).mtime.getTime();
 
-    const { css, map, dependencies } = await this.readCSS(filePath);
+    const { css, map, dependencies: transpileDependencies } = await this.readCSS(filePath);
 
     const ast = postcss.parse(css, { from: filePath, map: map ? { inline: false, prev: map } : { inline: false } });
 
@@ -156,24 +156,24 @@ export class Locator {
     // The tokens are fetched using `postcss-modules` plugin.
     const localTokenNames = await generateLocalTokenNames(ast);
 
-    const tokens: Token[] = [];
+    const tokenInfos: TokenInfo[] = [];
 
     const { atImports, classSelectors } = collectNodes(ast);
 
-    // Load imported sheets recursively.
+    // Handle `@import`.
     for (const atImport of atImports) {
       const importedSheetPath = parseAtImport(atImport);
       if (!importedSheetPath) continue;
       if (isIgnoredSpecifier(importedSheetPath)) continue;
       // eslint-disable-next-line no-await-in-loop
       const from = await this.resolver(importedSheetPath, { request: filePath });
-      // eslint-disable-next-line no-await-in-loop
-      const result = await this._load(from);
-      const externalTokens = result.tokens;
-      dependencies.push(from, ...result.dependencies);
-      tokens.push(...externalTokens);
+      tokenInfos.push({
+        type: 'importedAllTokensFromModule',
+        filePath: from,
+      });
     }
 
+    // Handle `.class {}` and `@value val: #000;`.
     // Traverse the source file to find a class selector that matches the local token.
     for (const { rule, classSelector } of classSelectors) {
       // Consider a class selector to be the origin of a token if it matches a token fetched by postcss-modules.
@@ -182,15 +182,16 @@ export class Locator {
 
       const originalLocation = getOriginalLocation(rule, classSelector);
 
-      tokens.push({
+      tokenInfos.push({
+        type: 'localToken',
         name: classSelector.value,
-        originalLocations: [originalLocation],
+        originalLocation,
       });
     }
 
     const result: LoadResult = {
-      dependencies: unique(dependencies).filter((dep) => dep !== filePath),
-      tokens: normalizeTokens(tokens),
+      transpileDependencies: unique(transpileDependencies).filter((dep) => dep !== filePath),
+      tokenInfos,
     };
     this.cache.set(filePath, { mtime, result });
     return result;
