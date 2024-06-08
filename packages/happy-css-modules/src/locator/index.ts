@@ -80,24 +80,6 @@ export class Locator {
     };
   }
 
-  /** Returns `true` if the cache is outdated. */
-  private async isCacheOutdated(filePath: string): Promise<boolean> {
-    const entry = this.cache.get(filePath);
-    if (!entry) return true;
-    const mtime = (await stat(filePath)).mtime.getTime();
-    if (entry.mtime !== mtime) return true;
-
-    const { transpileDependencies } = entry.result;
-    for (const dependency of transpileDependencies) {
-      const entry = this.cache.get(dependency);
-      if (!entry) return true;
-      // eslint-disable-next-line no-await-in-loop
-      const mtime = (await stat(dependency)).mtime.getTime();
-      if (entry.mtime !== mtime) return true;
-    }
-    return false;
-  }
-
   /**
    * Reads the source file and returns the code.
    * If transformer is specified, the code is transformed before returning.
@@ -141,11 +123,6 @@ export class Locator {
   }
 
   private async _load(filePath: string): Promise<LoadResult> {
-    if (!(await this.isCacheOutdated(filePath))) {
-      const cacheEntry = this.cache.get(filePath)!;
-      return cacheEntry.result;
-    }
-
     const mtime = (await stat(filePath)).mtime.getTime();
 
     const { css, map, dependencies: transpileDependencies } = await this.readCSS(filePath);
