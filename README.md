@@ -93,7 +93,7 @@ The case of multiple definitions is a bit more complicated. This is because the 
 
 `happy-css-modules` provides Node.js API for programmatically generating .d.ts and .d.ts.map.
 
-See [src/index.ts](https://github.com/mizdra/happy-css-modules/blob/main/src/index.ts) for available API.
+See [packages/happy-css-modules/src/index.ts](https://github.com/mizdra/happy-css-modules/blob/main/packages/happy-css-modules/src/index.ts) for available API.
 
 ### Example: Custom `hcm` commands
 
