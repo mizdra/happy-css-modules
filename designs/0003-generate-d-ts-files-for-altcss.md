@@ -8,7 +8,7 @@ This RFC proposes the feature to generate `.d.ts` files for AltCSS files such as
 
 # Motivation
 
-The `happy-css-modules` command parses `.module.css` files, detects the classes and variables (internally referred to as "tokens") exported by those files, and generates type definition files. The parsing is using PostCSS.
+The `happy-css-modules` command parses `.module.css` files, detects the classes and variables (internally referred to as "tokens") exported by those files, and generates type definition files. The parsing is implemented with [PostCSS](https://github.com/postcss/postcss).
 
 By default, PostCSS can only parse CSS. Therefore, to support AltCSS in the `happy-css-modules` command, additional implementation is required.
 
@@ -18,7 +18,7 @@ This RFC proposes a feature to support AltCSS files.
 
 When the `happy-css-modules` command detects a CSS Modules file in an AltCSS format, it will transpile the file to CSS using an AltCSS preprocessor before parsing it with PostCSS. For example, when a `.module.scss` file is detected, it will be transpiled to CSS using [`sass`](https://www.npmjs.com/package/sass).
 
-The following is a pseudo-code example:
+The following is a code example:
 
 ```ts
 import path from 'node:path';
@@ -67,11 +67,21 @@ For example, consider the following Sass files:
 
 In this case, the tokens exported from `1.module.scss` are `foo` and `bar`.
 
-Here, the tokens from `1.module.scss` are `foo` and `bar`.
+Now, if `2.module.scss` is changed as follows:
 
-If `happy-css-modules` is run with the `--cache` option, it needs to detect that `1.module.scss` should be reprocessed if `2.module.scss` changes. To achieve this, we need to implement a dependency graph that tracks the relationship between AltCSS files. When an AltCSS file is transpiled, its dependencies should be detected, and this information should be stored in the dependency graph. When a file changes, the dependency graph should be consulted to determine which files need to be reprocessed.
+```scss
+// 2.module.scss
+.bar {
+  color: green;
+}
+.baz {
+  color: yellow;
+}
+```
 
-The following pseudo-code demonstrates this:
+In this case, the tokens exported from `1.module.scss` will be `foo`, `bar`, and `baz`. Therefore, even if `1.module.scss` itself has not been modified, the `happy-css-modules` command needs to regenerate the type definition file for `1.module.scss`.
+
+To achieve this, `happy-css-modules` will retrieve information about embedded files from the preprocessor. Here is the code:
 
 ```ts
 import path from 'node:path';
@@ -121,7 +131,7 @@ However, this method has the following issues:
     - `happy-css-modules` needs to handle `@use` like css-loader's `@import`.
   - Less's `@import` is similar to css-loader's `@import` but can be customized with options.
     - There are many variations of these options.
-  - Implementation is possible but requires significant effort.
+  - It is possible to implement them but requires significant effort.
 
 # Prior art
 
