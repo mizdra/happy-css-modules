@@ -4,21 +4,21 @@
 
 # Summary
 
-この RFC は、Sass や Less などの AltCSS ファイル向けの `.d.ts` を生成する機能を提案します。
+This RFC proposes the feature to generate `.d.ts` files for AltCSS files such as Sass and Less.
 
 # Motivation
 
-`happy-css-modules` コマンドは、`.module.css` をパースし、そのファイルが export するクラスや variable (内部的に "token" と呼びます) を検出し、型定義ファイルを生成します。パースには PostCSS を利用しています。
+The `happy-css-modules` command parses `.module.css` files, detects the classes and variables (internally referred to as "tokens") exported by those files, and generates type definition files. The parsing is using PostCSS.
 
-PostCSS はデフォルトでは CSS のみをパースできます。そのため、`happy-css-modules` コマンドで AltCSS をサポートするには、追加の実装が必要です。
+By default, PostCSS can only parse CSS. Therefore, to support AltCSS in the `happy-css-modules` command, additional implementation is required.
 
-この RFC では、AltCSS ファイルをサポートするための機能を提案します。
+This RFC proposes a feature to support AltCSS files.
 
 # Detailed design
 
-AltCSS 形式の CSS Modules ファイル を `happy-css-modules` コマンドが検出したら、そのファイルを PostCSS でパースする前に、AltCSS プリプロセッサを利用して CSS にトランスパイルします。例えば、`.module.scss` ファイルを検出したら、そのファイルを [`sass`](https://www.npmjs.com/package/sass) で CSS にトランスパイルします。
+When the `happy-css-modules` command detects a CSS Modules file in an AltCSS format, it will transpile the file to CSS using an AltCSS preprocessor before parsing it with PostCSS. For example, when a `.module.scss` file is detected, it will be transpiled to CSS using [`sass`](https://www.npmjs.com/package/sass).
 
-以下は疑似コードです:
+The following is a pseudo-code example:
 
 ```ts
 import path from 'node:path';
@@ -42,13 +42,13 @@ async function loadTokens(filePath: string): Promise<string[]> {
 console.log(await loadTokens(path.resolve('src/Counter.module.scss')));
 ```
 
-## キャッシュ機構との互換性
+## Compatibility with caching mechanism
 
-`happy-css-modules` コマンドには、`--cache` オプションがあります。このオプションを指定すると、CSS Modules ファイルが以前から変更されていない場合、型定義ファイルの生成をスキップします。つまり、`happy-css-modules` コマンドは、`1.module.scss` が以前の型定義ファイル生成時から変更されていなければ、その型定義ファイルを再生成しません。
+The `happy-css-modules` command has a `--cache` option. When this option is specified, the command skips generating type definition files if the CSS Modules file has not changed since the last generation. In other words, the command does not regenerate the type definition file if `1.module.scss` has not changed since the previous generation.
 
-ところで Sass や Less では、`@import` を利用してあるファイルに、別のファイルを埋め込むことができます。この場合、埋め込まれたファイルが変更された場合、埋め込んだファイルから export される token も変更される可能性があります。
+In Sass and Less, it is possible to embed another file into a file using `@import`. If the embedded file changes, the tokens exported from the embedding file may also change.
 
-例えば、以下の Sass ファイルを考えます:
+For example, consider the following Sass files:
 
 ```scss
 // 1.module.scss
@@ -65,23 +65,13 @@ console.log(await loadTokens(path.resolve('src/Counter.module.scss')));
 }
 ```
 
-このとき、`1.module.scss` から export される token は、`foo` と `bar` です。
+In this case, the tokens exported from `1.module.scss` are `foo` and `bar`.
 
-ここで、もし以下のように `2.module.scss` が変更された場合:
+Here, the tokens from `1.module.scss` are `foo` and `bar`.
 
-```scss
-// 2.module.scss
-.bar {
-  color: green;
-}
-.baz {
-  color: yellow;
-}
-```
+If `happy-css-modules` is run with the `--cache` option, it needs to detect that `1.module.scss` should be reprocessed if `2.module.scss` changes. To achieve this, we need to implement a dependency graph that tracks the relationship between AltCSS files. When an AltCSS file is transpiled, its dependencies should be detected, and this information should be stored in the dependency graph. When a file changes, the dependency graph should be consulted to determine which files need to be reprocessed.
 
-このとき、`1.module.scss` から export される token は、`foo` と `bar` と `baz` になります。従って、`1.module.scss` を変更していない場合でも、`happy-css-modules` コマンドは `1.module.scss` の型定義ファイルを再生成する必要があります。
-
-そのために、`happy-css-modules` はプリプロセッサから埋め込まれたファイルの情報を取得するようにします。以下は疑似コードです:
+The following pseudo-code demonstrates this:
 
 ```ts
 import path from 'node:path';
@@ -117,22 +107,21 @@ watcher.on('change', async (changedFilePath) => {
 
 # Alternatives
 
-## PostCSS の custom syntax を利用する
+## Using PostCSS custom syntax
 
-トランスパイラの代わりに、PostCSS の custom syntax を利用します。custom syntax は PostCSS のプラグインを利用して、PostCSS が未知の構文をパースできるようにする機能です。この方法を利用すると、PostCSS で AltCSS ファイルをパースできます。例えば、Sass 向けの custom syntax は [`postcss-scss`](https://github.com/postcss/postcss-scss) です。
+Instead of a transpiler, use PostCSS custom syntax. Custom syntax allows PostCSS to parse unknown syntax using plugins. This method allows PostCSS to parse AltCSS files. For example, the custom syntax for Sass is [`postcss-scss`](https://github.com/postcss/postcss-scss).
 
-しかし、この方法には以下の問題があります:
+However, this method has the following issues:
 
-- Sass の [parent selector](https://sass-lang.com/documentation/style-rules/parent-selector/) (`&`) が使われている場合、export されるトークンを正しく検出できない
-  - `.box { &_inner {} }` は `box` と `box_inner` の 2 つのトークンを export します
-  - しかし `postcss-scss` を使った場合、`box` と `&_inner` の 2 つのトークンを export するものとして解釈されます
-  - これはユーザを混乱させる可能性があります
-- Sass の [`@use`](https://sass-lang.com/documentation/at-rules/use/)、Less の [`@import`](https://lesscss.org/features/#import-atrules-feature) をサポートするために、追加の実装が必要
-  - Sass の `@use` は、css-loader の `@import` のように、他のスタイルシートを埋め込むことができます
-    - happy-css-modules は css-loader の `@import` と同じように、`@use` を扱う必要があります
-  - Less の `@import` は、css-loader の `@import` と似ていますが、オプションで挙動をカスタマイズできます
-    - しかも、オプションにはいくつものバリエーションがあります
-  - 実装は可能ですが、多くの労力が必要です
+- If Sass's [parent selector](https://sass-lang.com/documentation/style-rules/parent-selector/) (`&`) is used, the exported tokens cannot be correctly detected.
+  - `.box { &_inner {} }` exports two tokens: `box` and `box_inner`.
+  - However, when using `postcss-scss`, it is interpreted as exporting `box` and `&_inner`, which can confuse users.
+- Additional implementation is needed to support Sass's [`@use`](https://sass-lang.com/documentation/at-rules/use/) and Less's [`@import`](https://lesscss.org/features/#import-atrules-feature).
+  - Sass's `@use` can embed other stylesheets, similar to css-loader's `@import`.
+    - `happy-css-modules` needs to handle `@use` like css-loader's `@import`.
+  - Less's `@import` is similar to css-loader's `@import` but can be customized with options.
+    - There are many variations of these options.
+  - Implementation is possible but requires significant effort.
 
 # Prior art
 
