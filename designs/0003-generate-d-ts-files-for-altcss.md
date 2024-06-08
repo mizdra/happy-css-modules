@@ -1,6 +1,6 @@
 - Feature Name: Generate .d.ts files for AltCSS
 - Start Date: 2024-06-08
-- RFC PR: [#0](https://github.com/mizdra/happy-css-modules/pull/0)
+- RFC PR: [#261](https://github.com/mizdra/happy-css-modules/pull/261)
 
 # Summary
 
