@@ -133,6 +133,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
     }
 
     // Locator#load cannot be called concurrently. Therefore, it takes a lock and waits.
+    // TODO: Concurrent calls to Locator#load are now allowed. Therefore, it is necessary to remove the lock.
     await lock.acquireAsync();
 
     try {

@@ -68,7 +68,6 @@ export class Locator {
   private readonly cache: Map<string, CacheEntry> = new Map();
   private readonly transformer: Transformer | undefined;
   private readonly resolver: StrictlyResolver;
-  private loading = false;
 
   constructor(options?: LocatorOptions) {
     this.transformer = options?.transformer ?? createDefaultTransformer();
@@ -114,15 +113,6 @@ export class Locator {
 
   /** Returns information about the tokens exported from the CSS Modules file. */
   async load(filePath: string): Promise<LoadResult> {
-    if (this.loading) throw new Error('Cannot call `Locator#load` concurrently.');
-    this.loading = true;
-    const result = await this._load(filePath).finally(() => {
-      this.loading = false;
-    });
-    return result;
-  }
-
-  private async _load(filePath: string): Promise<LoadResult> {
     const mtime = (await stat(filePath)).mtime.getTime();
 
     const { css, map, dependencies: transpileDependencies } = await this.readCSS(filePath);

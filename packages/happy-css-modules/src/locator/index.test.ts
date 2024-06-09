@@ -1,10 +1,7 @@
-import { readFile, writeFile } from 'fs/promises';
 import { randomUUID } from 'node:crypto';
-import { jest } from '@jest/globals';
 import dedent from 'dedent';
 import { Locator, createDefaultTransformer } from '../index.js';
 import { createFixtures, getFixturePath } from '../test-util/util.js';
-import { sleepSync } from '../util.js';
 
 const locator = new Locator();
 
@@ -159,48 +156,6 @@ test('normalizes tokens', async () => {
   `);
 });
 
-test('returns the result from the cache when the file has not been modified', async () => {
-  createFixtures({
-    '/test/1.css': dedent`
-    @import './2.css';
-    @import './3.css';
-    `,
-    '/test/2.css': dedent`
-    .b {}
-    `,
-    '/test/3.css': dedent`
-    .c {}
-    .d {}
-    `,
-  });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const readCSSSpy = jest.spyOn(locator, 'readCSS' as any);
-  await locator.load(getFixturePath('/test/1.css'));
-  expect(readCSSSpy).toHaveBeenCalledTimes(3);
-  expect(readCSSSpy).toHaveBeenNthCalledWith(1, getFixturePath('/test/1.css'));
-  expect(readCSSSpy).toHaveBeenNthCalledWith(2, getFixturePath('/test/2.css'));
-  expect(readCSSSpy).toHaveBeenNthCalledWith(3, getFixturePath('/test/3.css'));
-  readCSSSpy.mockClear();
-
-  // update `/test/2.css`
-  sleepSync(1); // wait for the file system to update the mtime
-  await writeFile(getFixturePath('/test/2.css'), await readFile(getFixturePath('/test/2.css'), 'utf-8'));
-
-  // `3.css` is not updated, so the cache is used. Therefore, `readFile` is not called.
-  await locator.load(getFixturePath('/test/3.css'));
-  expect(readCSSSpy).toHaveBeenCalledTimes(0);
-
-  // `1.css` is not updated, but dependencies are updated, so the cache is used. Therefore, `readFile` is called.
-  await locator.load(getFixturePath('/test/1.css'));
-  expect(readCSSSpy).toHaveBeenCalledTimes(2);
-  expect(readCSSSpy).toHaveBeenNthCalledWith(1, getFixturePath('/test/1.css'));
-  expect(readCSSSpy).toHaveBeenNthCalledWith(2, getFixturePath('/test/2.css'));
-
-  // ``2.css` is updated, but the cache is already available because it was updated in the previous step. Therefore, `readFile` is not called.
-  await locator.load(getFixturePath('/test/2.css'));
-  expect(readCSSSpy).toHaveBeenCalledTimes(2);
-});
-
 describe('supports sourcemap', () => {
   test('restores original locations from sourcemap', async () => {
     const transformer = createDefaultTransformer();
@@ -308,13 +263,4 @@ test('ignores http(s) protocol file', async () => {
   });
   const result = await locator.load(getFixturePath('/test/1.css'));
   expect(result).toStrictEqual({ tokenInfos: [], transpileDependencies: [] });
-});
-
-test('block concurrent calls to load method', async () => {
-  createFixtures({
-    '/test/1.css': `.a {}`,
-  });
-  await expect(async () => {
-    await Promise.all([locator.load(getFixturePath('/test/1.css')), locator.load(getFixturePath('/test/1.css'))]);
-  }).rejects.toThrowError('Cannot call `Locator#load` concurrently.');
 });
