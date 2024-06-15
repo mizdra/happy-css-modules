@@ -2,6 +2,7 @@ import dedent from 'dedent';
 import { SourceMapConsumer } from 'source-map';
 import { Locator } from '../locator/index.js';
 import { getFixturePath, createFixtures } from '../test-util/util.js';
+import { createDefaultTransformer } from '../transformer/index.js';
 import { generateDtsContentWithSourceMap, getDtsFilePath } from './dts.js';
 import { type DtsFormatOptions } from './index.js';
 
@@ -43,14 +44,13 @@ describe('generateDtsContentWithSourceMap', () => {
       filePath,
       dtsFilePath,
       sourceMapFilePath,
-      result.tokens,
+      result.tokenInfos,
       dtsFormatOptions,
       isExternalFile,
     );
     expect(dtsContent).toMatchInlineSnapshot(`
       "declare const styles:
-        & Readonly<Pick<(typeof import("./3.css"))["default"], "d">>
-        & Readonly<Pick<(typeof import("./2.css"))["default"], "c">>
+        & Readonly<typeof import("./2.css")["default"]>
         & Readonly<{ "a": string }>
         & Readonly<{ "b": string }>
         & Readonly<{ "b": string }>
@@ -59,7 +59,7 @@ describe('generateDtsContentWithSourceMap', () => {
       "
     `);
     const smc = await new SourceMapConsumer(sourceMap.toJSON());
-    expect(smc.originalPositionFor({ line: 4, column: 15 })).toMatchInlineSnapshot(`
+    expect(smc.originalPositionFor({ line: 3, column: 15 })).toMatchInlineSnapshot(`
       {
         "column": 0,
         "line": 2,
@@ -67,7 +67,7 @@ describe('generateDtsContentWithSourceMap', () => {
         "source": "1.css",
       }
     `);
-    expect(smc.originalPositionFor({ line: 5, column: 15 })).toMatchInlineSnapshot(`
+    expect(smc.originalPositionFor({ line: 4, column: 15 })).toMatchInlineSnapshot(`
       {
         "column": 0,
         "line": 3,
@@ -75,7 +75,7 @@ describe('generateDtsContentWithSourceMap', () => {
         "source": "1.css",
       }
     `);
-    expect(smc.originalPositionFor({ line: 6, column: 15 })).toMatchInlineSnapshot(`
+    expect(smc.originalPositionFor({ line: 5, column: 15 })).toMatchInlineSnapshot(`
       {
         "column": 0,
         "line": 4,
@@ -100,7 +100,7 @@ describe('generateDtsContentWithSourceMap', () => {
         filePath,
         dtsFilePath,
         sourceMapFilePath,
-        result.tokens,
+        result.tokenInfos,
         {
           ...dtsFormatOptions,
           localsConvention: undefined,
@@ -122,7 +122,7 @@ describe('generateDtsContentWithSourceMap', () => {
         filePath,
         dtsFilePath,
         sourceMapFilePath,
-        result.tokens,
+        result.tokenInfos,
         {
           ...dtsFormatOptions,
           localsConvention: 'camelCaseOnly',
@@ -144,7 +144,7 @@ describe('generateDtsContentWithSourceMap', () => {
         filePath,
         dtsFilePath,
         sourceMapFilePath,
-        result.tokens,
+        result.tokenInfos,
         {
           ...dtsFormatOptions,
           localsConvention: 'camelCase',
@@ -168,7 +168,7 @@ describe('generateDtsContentWithSourceMap', () => {
         filePath,
         dtsFilePath,
         sourceMapFilePath,
-        result.tokens,
+        result.tokenInfos,
         {
           ...dtsFormatOptions,
           localsConvention: 'dashesOnly',
@@ -190,7 +190,7 @@ describe('generateDtsContentWithSourceMap', () => {
         filePath,
         dtsFilePath,
         sourceMapFilePath,
-        result.tokens,
+        result.tokenInfos,
         {
           ...dtsFormatOptions,
           localsConvention: 'dashes',
@@ -218,7 +218,7 @@ describe('generateDtsContentWithSourceMap', () => {
       getFixturePath('/test/src/1.css'),
       getFixturePath('/test/dist/1.css.d.ts'),
       getFixturePath('/test/dist/1.css.d.ts.map'),
-      result.tokens,
+      result.tokenInfos,
       dtsFormatOptions,
       isExternalFile,
     );
@@ -232,7 +232,7 @@ describe('generateDtsContentWithSourceMap', () => {
     expect(sourceMap.toJSON().sources).toStrictEqual(['../src/1.css']);
     expect(sourceMap.toJSON().file).toStrictEqual('1.css.d.ts');
   });
-  test('treats imported tokens from external files the same as local tokens', async () => {
+  test('removes imported tokens from external files with @import', async () => {
     createFixtures({
       '/test/1.css': dedent`
       @import './2.css';
@@ -247,13 +247,45 @@ describe('generateDtsContentWithSourceMap', () => {
       filePath,
       dtsFilePath,
       sourceMapFilePath,
-      result.tokens,
+      result.tokenInfos,
       dtsFormatOptions,
       (filePath) => filePath.endsWith('3.css'),
     );
     expect(dtsContent).toMatchInlineSnapshot(`
       "declare const styles:
-        & Readonly<Pick<(typeof import("./2.css"))["default"], "b">>
+        & Readonly<typeof import("./2.css")["default"]>
+        & Readonly<{ "a": string }>
+      ;
+      export default styles;
+      "
+    `);
+  });
+  test('treats sass imported tokens from external files the same as local tokens', async () => {
+    const locator = new Locator({ transformer: createDefaultTransformer() });
+    createFixtures({
+      '/test/1.scss': dedent`
+      @import './2.scss';
+      @import './3.scss';
+      .a { dummy: ''; }
+      `,
+      '/test/2.scss': `.b { dummy: ''; }`,
+      '/test/3.scss': `.c { dummy: ''; }`,
+    });
+    const filePath = getFixturePath('/test/1.scss');
+    const dtsFilePath = getFixturePath('/test/1.scss.d.ts');
+    const sourceMapFilePath = getFixturePath('/test/1.scss.map');
+    const result = await locator.load(filePath);
+    const { dtsContent } = generateDtsContentWithSourceMap(
+      filePath,
+      dtsFilePath,
+      sourceMapFilePath,
+      result.tokenInfos,
+      dtsFormatOptions,
+      (filePath) => filePath.endsWith('3.scss'),
+    );
+    expect(dtsContent).toMatchInlineSnapshot(`
+      "declare const styles:
+        & Readonly<Pick<(typeof import("./2.scss"))["default"], "b">>
         & Readonly<{ "c": string }>
         & Readonly<{ "a": string }>
       ;

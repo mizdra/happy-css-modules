@@ -56,12 +56,12 @@ describe('emitGeneratedFiles', () => {
   });
   test('skips writing to disk if the generated files are the same', async () => {
     const tokens1 = [fakeToken({ name: 'foo', originalLocations: [{ start: { line: 1, column: 1 } }] })];
-    await emitGeneratedFiles({ ...defaultArgs, tokens: tokens1 });
+    await emitGeneratedFiles({ ...defaultArgs, tokenInfos: tokens1 });
     const mtimeForDts1 = (await stat(getFixturePath('/test/1.css.d.ts'))).mtime;
     const mtimeForSourceMap1 = (await stat(getFixturePath('/test/1.css.d.ts.map'))).mtime;
 
     await waitForAsyncTask(1); // so that mtime changes.
-    await emitGeneratedFiles({ ...defaultArgs, tokens: tokens1 });
+    await emitGeneratedFiles({ ...defaultArgs, tokenInfos: tokens1 });
     const mtimeForDts2 = (await stat(getFixturePath('/test/1.css.d.ts'))).mtime;
     const mtimeForSourceMap2 = (await stat(getFixturePath('/test/1.css.d.ts.map'))).mtime;
     expect(mtimeForDts1).toEqual(mtimeForDts2); // skipped
@@ -69,7 +69,7 @@ describe('emitGeneratedFiles', () => {
 
     await waitForAsyncTask(1); // so that mtime changes.
     const tokens2 = [fakeToken({ name: 'bar', originalLocations: [{ start: { line: 1, column: 1 } }] })];
-    await emitGeneratedFiles({ ...defaultArgs, tokens: tokens2 });
+    await emitGeneratedFiles({ ...defaultArgs, tokenInfos: tokens2 });
     const mtimeForDts3 = (await stat(getFixturePath('/test/1.css.d.ts'))).mtime;
     const mtimeForSourceMap3 = (await stat(getFixturePath('/test/1.css.d.ts.map'))).mtime;
     expect(mtimeForDts1).not.toEqual(mtimeForDts3); // not skipped

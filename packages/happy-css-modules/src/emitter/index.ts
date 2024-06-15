@@ -1,6 +1,6 @@
 import { dirname, isAbsolute, relative } from 'path';
 import { DEFAULT_ARBITRARY_EXTENSIONS } from '../config.js';
-import { type Token } from '../locator/index.js';
+import { type TokenInfo } from '../locator/index.js';
 import { type LocalsConvention } from '../runner.js';
 import { exists } from '../util.js';
 import { generateDtsContentWithSourceMap, getDtsFilePath } from './dts.js';
@@ -37,8 +37,8 @@ export type DtsFormatOptions = {
 export type EmitterOptions = {
   /** The path to the source file (i.e. `/dir/foo.css`). It is absolute. */
   filePath: string;
-  /** The tokens exported by the source file. */
-  tokens: Token[];
+  /** The information of tokens exported by the source file. */
+  tokenInfos: TokenInfo[];
   /** Whether to output declaration map (i.e. `/dir/foo.css.d.ts.map`) or not. */
   emitDeclarationMap: boolean | undefined;
   /** The options for formatting the type definition. */
@@ -49,7 +49,7 @@ export type EmitterOptions = {
 
 export async function emitGeneratedFiles({
   filePath,
-  tokens,
+  tokenInfos,
   emitDeclarationMap,
   dtsFormatOptions,
   isExternalFile,
@@ -61,7 +61,7 @@ export async function emitGeneratedFiles({
     filePath,
     dtsFilePath,
     sourceMapFilePath,
-    tokens,
+    tokenInfos,
     dtsFormatOptions,
     isExternalFile,
   );

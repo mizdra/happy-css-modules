@@ -21,7 +21,7 @@ function isIgnoredSpecifier(specifier: string): boolean {
  * @example 'class' of `.class {}`
  * @example 'val' of `@value val: #000;`
  */
-type LocalToken = {
+export type LocalToken = {
   type: 'localToken';
   name: string;
   /** The original location of the token in the source file. */
@@ -32,7 +32,7 @@ type LocalToken = {
  * The all tokens imported from other CSS Modules files.
  * @example `@import './file.css';`.
  */
-type ImportedAllTokensFromModule = {
+export type ImportedAllTokensFromModule = {
   type: 'importedAllTokensFromModule';
   filePath: string;
 };
