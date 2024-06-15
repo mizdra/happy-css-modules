@@ -41,9 +41,11 @@ test('handles postcss features', async () => {
       tokens: [
         {
           name: "foo_bar",
-          originalLocations: [
-            { filePath: "<fixtures>/test/1.css", start: { line: 2, column: 1 }, end: { line: 2, column: 8 } },
-          ],
+          originalLocation: {
+            filePath: "<fixtures>/test/1.css",
+            start: { line: 2, column: 1 },
+            end: { line: 2, column: 8 },
+          },
         },
       ],
     }

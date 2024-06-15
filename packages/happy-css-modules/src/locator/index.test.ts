@@ -22,15 +22,19 @@ test('basic', async () => {
       tokens: [
         {
           name: "a",
-          originalLocations: [
-            { filePath: "<fixtures>/test/1.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
-          ],
+          originalLocation: {
+            filePath: "<fixtures>/test/1.css",
+            start: { line: 1, column: 1 },
+            end: { line: 1, column: 2 },
+          },
         },
         {
           name: "b",
-          originalLocations: [
-            { filePath: "<fixtures>/test/1.css", start: { line: 2, column: 1 }, end: { line: 2, column: 2 } },
-          ],
+          originalLocation: {
+            filePath: "<fixtures>/test/1.css",
+            start: { line: 2, column: 1 },
+            end: { line: 2, column: 2 },
+          },
         },
       ],
     }
@@ -74,27 +78,35 @@ test('tracks other files when `@import` is present', async () => {
       tokens: [
         {
           name: "a",
-          originalLocations: [
-            { filePath: "<fixtures>/test/2.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
-          ],
+          originalLocation: {
+            filePath: "<fixtures>/test/2.css",
+            start: { line: 1, column: 1 },
+            end: { line: 1, column: 2 },
+          },
         },
         {
           name: "b",
-          originalLocations: [
-            { filePath: "<fixtures>/test/3.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
-          ],
+          originalLocation: {
+            filePath: "<fixtures>/test/3.css",
+            start: { line: 1, column: 1 },
+            end: { line: 1, column: 2 },
+          },
         },
         {
           name: "c",
-          originalLocations: [
-            { filePath: "<fixtures>/test/4.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
-          ],
+          originalLocation: {
+            filePath: "<fixtures>/test/4.css",
+            start: { line: 1, column: 1 },
+            end: { line: 1, column: 2 },
+          },
         },
         {
           name: "d",
-          originalLocations: [
-            { filePath: "<fixtures>/test/5-recursive.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
-          ],
+          originalLocation: {
+            filePath: "<fixtures>/test/5-recursive.css",
+            start: { line: 1, column: 1 },
+            end: { line: 1, column: 2 },
+          },
         },
       ],
     }
@@ -120,16 +132,18 @@ test('does not track other files by `composes`', async () => {
       tokens: [
         {
           name: "a",
-          originalLocations: [
-            { filePath: "<fixtures>/test/1.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
-          ],
+          originalLocation: {
+            filePath: "<fixtures>/test/1.css",
+            start: { line: 1, column: 1 },
+            end: { line: 1, column: 2 },
+          },
         },
       ],
     }
   `);
 });
 
-test('normalizes tokens', async () => {
+test('unique tokens', async () => {
   createFixtures({
     '/test/1.css': dedent`
     /* duplicate import */
@@ -142,9 +156,6 @@ test('normalizes tokens', async () => {
     .a {} /* class selector that duplicates the import source */
     .b {}
     `,
-    '/test/3.css': dedent`
-    .c {}
-    `,
   });
   const result = await locator.load(getFixturePath('/test/1.css'));
   expect(result).toMatchInlineSnapshot(`
@@ -153,17 +164,35 @@ test('normalizes tokens', async () => {
       tokens: [
         {
           name: "a",
-          originalLocations: [
-            { filePath: "<fixtures>/test/2.css", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
-            { filePath: "<fixtures>/test/1.css", start: { line: 4, column: 1 }, end: { line: 4, column: 2 } },
-            { filePath: "<fixtures>/test/1.css", start: { line: 5, column: 1 }, end: { line: 5, column: 2 } },
-          ],
+          originalLocation: {
+            filePath: "<fixtures>/test/2.css",
+            start: { line: 1, column: 1 },
+            end: { line: 1, column: 2 },
+          },
         },
         {
           name: "b",
-          originalLocations: [
-            { filePath: "<fixtures>/test/2.css", start: { line: 2, column: 1 }, end: { line: 2, column: 2 } },
-          ],
+          originalLocation: {
+            filePath: "<fixtures>/test/2.css",
+            start: { line: 2, column: 1 },
+            end: { line: 2, column: 2 },
+          },
+        },
+        {
+          name: "a",
+          originalLocation: {
+            filePath: "<fixtures>/test/1.css",
+            start: { line: 4, column: 1 },
+            end: { line: 4, column: 2 },
+          },
+        },
+        {
+          name: "a",
+          originalLocation: {
+            filePath: "<fixtures>/test/1.css",
+            start: { line: 5, column: 1 },
+            end: { line: 5, column: 2 },
+          },
         },
       ],
     }
@@ -233,16 +262,27 @@ describe('supports sourcemap', () => {
         tokens: [
           {
             name: "nesting",
-            originalLocations: [
-              { filePath: "<fixtures>/test/1.scss", start: { line: 1, column: 1 }, end: { line: 1, column: 8 } },
-              { filePath: "<fixtures>/test/1.scss", start: { line: 3, column: 3 }, end: { line: 3, column: 10 } },
-            ],
+            originalLocation: {
+              filePath: "<fixtures>/test/1.scss",
+              start: { line: 1, column: 1 },
+              end: { line: 1, column: 8 },
+            },
+          },
+          {
+            name: "nesting",
+            originalLocation: {
+              filePath: "<fixtures>/test/1.scss",
+              start: { line: 3, column: 3 },
+              end: { line: 3, column: 10 },
+            },
           },
           {
             name: "nesting_child",
-            originalLocations: [
-              { filePath: "<fixtures>/test/1.scss", start: { line: 3, column: 3 }, end: { line: 3, column: 16 } },
-            ],
+            originalLocation: {
+              filePath: "<fixtures>/test/1.scss",
+              start: { line: 3, column: 3 },
+              end: { line: 3, column: 16 },
+            },
           },
         ],
       }
@@ -272,18 +312,22 @@ describe('supports sourcemap', () => {
         tokens: [
           {
             name: "selector_list_a_1",
-            originalLocations: [
-              { filePath: "<fixtures>/test/1.css", start: { line: 1, column: 1 }, end: { line: 1, column: 18 } },
-            ],
+            originalLocation: {
+              filePath: "<fixtures>/test/1.css",
+              start: { line: 1, column: 1 },
+              end: { line: 1, column: 18 },
+            },
           },
           {
             name: "selector_list_a_2",
-            originalLocations: [
-              { filePath: "<fixtures>/test/1.css", start: { line: 1, column: 1 }, end: { line: 1, column: 18 } },
-            ],
+            originalLocation: {
+              filePath: "<fixtures>/test/1.css",
+              start: { line: 1, column: 1 },
+              end: { line: 1, column: 18 },
+            },
           },
-          { name: "selector_list_b_1", originalLocations: [{}] },
-          { name: "selector_list_b_2", originalLocations: [{}] },
+          { name: "selector_list_b_1", originalLocation: {} },
+          { name: "selector_list_b_2", originalLocation: {} },
         ],
       }
     `);

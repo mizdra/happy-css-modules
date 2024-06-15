@@ -25,7 +25,7 @@ test('isSubDirectoryFile', () => {
 describe('emitGeneratedFiles', () => {
   const defaultArgs = {
     filePath: getFixturePath('/test/1.css'),
-    tokens: [fakeToken({ name: 'foo', originalLocations: [{ start: { line: 1, column: 1 } }] })],
+    tokens: [fakeToken({ name: 'foo', originalLocation: { start: { line: 1, column: 1 } } })],
     emitDeclarationMap: true,
     dtsFormatOptions: undefined,
     cwd: getFixturePath('/test'),
@@ -55,7 +55,7 @@ describe('emitGeneratedFiles', () => {
     expect(await exists(getFixturePath('/test/1.css.d.ts.map'))).toBeFalsy();
   });
   test('skips writing to disk if the generated files are the same', async () => {
-    const tokens1 = [fakeToken({ name: 'foo', originalLocations: [{ start: { line: 1, column: 1 } }] })];
+    const tokens1 = [fakeToken({ name: 'foo', originalLocation: { start: { line: 1, column: 1 } } })];
     await emitGeneratedFiles({ ...defaultArgs, tokens: tokens1 });
     const mtimeForDts1 = (await stat(getFixturePath('/test/1.css.d.ts'))).mtime;
     const mtimeForSourceMap1 = (await stat(getFixturePath('/test/1.css.d.ts.map'))).mtime;
@@ -68,7 +68,7 @@ describe('emitGeneratedFiles', () => {
     expect(mtimeForSourceMap1).toEqual(mtimeForSourceMap2); // skipped
 
     await waitForAsyncTask(1); // so that mtime changes.
-    const tokens2 = [fakeToken({ name: 'bar', originalLocations: [{ start: { line: 1, column: 1 } }] })];
+    const tokens2 = [fakeToken({ name: 'bar', originalLocation: { start: { line: 1, column: 1 } } })];
     await emitGeneratedFiles({ ...defaultArgs, tokens: tokens2 });
     const mtimeForDts3 = (await stat(getFixturePath('/test/1.css.d.ts'))).mtime;
     const mtimeForSourceMap3 = (await stat(getFixturePath('/test/1.css.d.ts.map'))).mtime;

@@ -27,25 +27,26 @@ export function createClassSelectors(root: Root): { rule: Rule; classSelector: C
 
 export function fakeToken(args: {
   name: Token['name'];
-  originalLocations: { filePath?: Location['filePath']; start?: Location['start'] }[];
+  originalLocation: { filePath?: Location['filePath']; start?: Location['start'] };
 }): Token {
-  return {
-    name: args.name,
-    originalLocations: args.originalLocations.map((location) => {
-      if (location.filePath === undefined || location.start === undefined) {
-        return { filePath: undefined, start: undefined, end: undefined };
-      } else {
-        return {
-          filePath: location.filePath ?? getFixturePath('/test/1.css'),
-          start: location.start,
-          end: {
-            line: location.start.line,
-            column: location.start.column + args.name.length - 1,
-          },
-        };
-      }
-    }),
-  };
+  if (args.originalLocation.filePath === undefined || args.originalLocation.start === undefined) {
+    return {
+      name: args.name,
+      originalLocation: { filePath: undefined, start: undefined, end: undefined },
+    };
+  } else {
+    return {
+      name: args.name,
+      originalLocation: {
+        filePath: args.originalLocation.filePath ?? getFixturePath('/test/1.css'),
+        start: args.originalLocation.start,
+        end: {
+          line: args.originalLocation.start.line,
+          column: args.originalLocation.start.column + args.name.length - 1,
+        },
+      },
+    };
+  }
 }
 
 export async function waitForAsyncTask(ms?: number): Promise<void> {
