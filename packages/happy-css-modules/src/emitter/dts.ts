@@ -62,41 +62,40 @@ function generateTokenDeclarations(
     // This is due to the sourcemap specification. Therefore, we output multiple type definitions
     // with the same name and assign a separate original position to each.
 
-    for (let originalLocation of token.originalLocations) {
-      if (originalLocation.filePath === undefined) {
-        // If the original location is not specified, fallback to the source file.
-        originalLocation = {
-          filePath,
-          start: { line: 1, column: 1 },
-          end: { line: 1, column: 1 },
-        };
-      }
-
-      result.push(
-        originalLocation.filePath === filePath || isExternalFile(originalLocation.filePath)
-          ? new SourceNode(null, null, null, [
-              '& Readonly<{ ',
-              new SourceNode(
-                originalLocation.start.line ?? null,
-                // The SourceNode's column is 0-based, but the originalLocation's column is 1-based.
-                originalLocation.start.column - 1 ?? null,
-                getRelativePath(sourceMapFilePath, originalLocation.filePath),
-                `"${token.name}"`,
-                token.name,
-              ),
-              ': string }>',
-            ])
-          : // Imported tokens in non-external files are typed by dynamic import.
-            // See https://github.com/mizdra/happy-css-modules/issues/106.
-            new SourceNode(null, null, null, [
-              '& Readonly<Pick<(typeof import(',
-              `"${getRelativePath(filePath, originalLocation.filePath)}"`,
-              '))["default"], ',
-              `"${token.name}"`,
-              '>>',
-            ]),
-      );
+    let originalLocation = token.originalLocation;
+    if (originalLocation.filePath === undefined) {
+      // If the original location is not specified, fallback to the source file.
+      originalLocation = {
+        filePath,
+        start: { line: 1, column: 1 },
+        end: { line: 1, column: 1 },
+      };
     }
+
+    result.push(
+      originalLocation.filePath === filePath || isExternalFile(originalLocation.filePath)
+        ? new SourceNode(null, null, null, [
+            '& Readonly<{ ',
+            new SourceNode(
+              originalLocation.start.line ?? null,
+              // The SourceNode's column is 0-based, but the originalLocation's column is 1-based.
+              originalLocation.start.column - 1 ?? null,
+              getRelativePath(sourceMapFilePath, originalLocation.filePath),
+              `"${token.name}"`,
+              token.name,
+            ),
+            ': string }>',
+          ])
+        : // Imported tokens in non-external files are typed by dynamic import.
+          // See https://github.com/mizdra/happy-css-modules/issues/106.
+          new SourceNode(null, null, null, [
+            '& Readonly<Pick<(typeof import(',
+            `"${getRelativePath(filePath, originalLocation.filePath)}"`,
+            '))["default"], ',
+            `"${token.name}"`,
+            '>>',
+          ]),
+    );
   }
   return result;
 }

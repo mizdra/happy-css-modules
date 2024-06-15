@@ -224,23 +224,19 @@ assert.deepEqual(result, {
   tokens: [
     {
       name: 'b',
-      originalLocations: [
-        {
-          filePath: '/Users/mizdra/src/github.com/mizdra/packages/example/02-import/3.css',
-          start: { line: 1, column: 1 },
-          end: { line: 1, column: 2 },
-        },
-      ],
+      originalLocation: {
+        filePath: '/Users/mizdra/src/github.com/mizdra/packages/example/02-import/3.css',
+        start: { line: 1, column: 1 },
+        end: { line: 1, column: 2 },
+      },
     },
     {
       name: 'a',
-      originalLocations: [
-        {
-          filePath: '/Users/mizdra/src/github.com/mizdra/packages/example/02-import/2.css',
-          start: { line: 3, column: 1 },
-          end: { line: 3, column: 2 },
-        },
-      ],
+      originalLocation: {
+        filePath: '/Users/mizdra/src/github.com/mizdra/packages/example/02-import/2.css',
+        start: { line: 3, column: 1 },
+        end: { line: 3, column: 2 },
+      },
     },
   ],
 });

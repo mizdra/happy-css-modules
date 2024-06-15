@@ -20,8 +20,8 @@ function isIgnoredSpecifier(specifier: string): boolean {
 export type Token = {
   /** The token name. */
   name: string;
-  /** The original locations of the token in the source file. */
-  originalLocations: Location[];
+  /** The original location of the token in the source file. */
+  originalLocation: Location;
 };
 
 type CacheEntry = {
@@ -36,22 +36,6 @@ export type LoadResult = {
   /** The tokens exported by the source file. */
   tokens: Token[];
 };
-
-function normalizeTokens(tokens: Token[]): Token[] {
-  const tokenNameToOriginalLocations = new Map<string, Location[]>();
-  for (const token of tokens) {
-    tokenNameToOriginalLocations.set(
-      token.name,
-      uniqueBy([...(tokenNameToOriginalLocations.get(token.name) ?? []), ...token.originalLocations], (location) =>
-        JSON.stringify(location),
-      ),
-    );
-  }
-  return Array.from(tokenNameToOriginalLocations.entries()).map(([name, originalLocations]) => ({
-    name,
-    originalLocations,
-  }));
-}
 
 export type LocatorOptions = {
   /** The function to transform source code. */
@@ -184,13 +168,13 @@ export class Locator {
 
       tokens.push({
         name: classSelector.value,
-        originalLocations: [originalLocation],
+        originalLocation,
       });
     }
 
     const result: LoadResult = {
       dependencies: unique(dependencies).filter((dep) => dep !== filePath),
-      tokens: normalizeTokens(tokens),
+      tokens: uniqueBy(tokens, (token) => JSON.stringify(token)),
     };
     this.cache.set(filePath, { mtime, result });
     return result;
