@@ -1,0 +1,4 @@
+@value value1 from './2.css'; /* single token */
+@value value2, value3 from './2.css'; /* multiple tokens */
+@value value4 as alias from './2.css'; /* alias */
+@value value5 from './2.css'; /* re-exported token */
