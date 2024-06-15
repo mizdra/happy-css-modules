@@ -48,40 +48,59 @@ test('handles sass features', async () => {
       tokens: [
         {
           name: "b_1",
-          originalLocations: [
-            { filePath: "<fixtures>/test/2.scss", start: { line: 1, column: 1 }, end: { line: 1, column: 4 } },
-          ],
+          originalLocation: {
+            filePath: "<fixtures>/test/2.scss",
+            start: { line: 1, column: 1 },
+            end: { line: 1, column: 4 },
+          },
         },
         {
           name: "c",
-          originalLocations: [
-            { filePath: "<fixtures>/test/3.scss", start: { line: 1, column: 1 }, end: { line: 1, column: 2 } },
-          ],
+          originalLocation: {
+            filePath: "<fixtures>/test/3.scss",
+            start: { line: 1, column: 1 },
+            end: { line: 1, column: 2 },
+          },
         },
         {
           name: "a_1",
-          originalLocations: [
-            { filePath: "<fixtures>/test/1.scss", start: { line: 3, column: 1 }, end: { line: 3, column: 4 } },
-          ],
+          originalLocation: {
+            filePath: "<fixtures>/test/1.scss",
+            start: { line: 3, column: 1 },
+            end: { line: 3, column: 4 },
+          },
         },
         {
           name: "a_2",
-          originalLocations: [
-            { filePath: "<fixtures>/test/1.scss", start: { line: 4, column: 1 }, end: { line: 4, column: 4 } },
-            { filePath: "<fixtures>/test/1.scss", start: { line: 7, column: 3 }, end: { line: 7, column: 6 } },
-          ],
+          originalLocation: {
+            filePath: "<fixtures>/test/1.scss",
+            start: { line: 4, column: 1 },
+            end: { line: 4, column: 4 },
+          },
+        },
+        {
+          name: "a_2",
+          originalLocation: {
+            filePath: "<fixtures>/test/1.scss",
+            start: { line: 7, column: 3 },
+            end: { line: 7, column: 6 },
+          },
         },
         {
           name: "a_2_1",
-          originalLocations: [
-            { filePath: "<fixtures>/test/1.scss", start: { line: 7, column: 3 }, end: { line: 7, column: 8 } },
-          ],
+          originalLocation: {
+            filePath: "<fixtures>/test/1.scss",
+            start: { line: 7, column: 3 },
+            end: { line: 7, column: 8 },
+          },
         },
         {
           name: "a_2_2",
-          originalLocations: [
-            { filePath: "<fixtures>/test/1.scss", start: { line: 8, column: 3 }, end: { line: 8, column: 8 } },
-          ],
+          originalLocation: {
+            filePath: "<fixtures>/test/1.scss",
+            start: { line: 8, column: 3 },
+            end: { line: 8, column: 8 },
+          },
         },
       ],
     }
