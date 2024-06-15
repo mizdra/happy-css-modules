@@ -6,10 +6,12 @@ import { createDefaultTransformer, type Transformer } from '../transformer/index
 import { unique, uniqueBy } from '../util.js';
 import {
   getOriginalLocationOfClassSelector,
+  getOriginalLocationOfAtValue,
   generateLocalTokenNames,
   parseAtImport,
   type Location,
   collectNodes,
+  parseAtValue,
 } from './postcss.js';
 
 export { collectNodes, type Location } from './postcss.js';
@@ -26,6 +28,8 @@ function isIgnoredSpecifier(specifier: string): boolean {
 export type Token = {
   /** The token name. */
   name: string;
+  /** The name of the imported token. */
+  importedName?: string;
   /** The original location of the token in the source file. */
   originalLocation: Location;
 };
@@ -179,14 +183,37 @@ export class Locator {
     }
 
     for (const atValue of atValues) {
-      const name = atValue.params.slice(0, atValue.params.indexOf(':'));
-      if (!localTokenNames.includes(name)) continue;
+      const parsedAtValue = parseAtValue(atValue);
 
-      tokens.push({
-        name,
-        // TODO: `getOriginalLocation` expects a `ClassName`.
-        originalLocations: [],
-      });
+      if (parsedAtValue.type === 'valueDeclaration') {
+        tokens.push({
+          name: parsedAtValue.tokenName,
+          originalLocation: getOriginalLocationOfAtValue(atValue, parsedAtValue),
+        });
+      } else if (parsedAtValue.type === 'valueImportDeclaration') {
+        if (isIgnoredSpecifier(parsedAtValue.from)) continue;
+        // eslint-disable-next-line no-await-in-loop
+        const from = await this.resolver(parsedAtValue.from, { request: filePath });
+        // eslint-disable-next-line no-await-in-loop
+        const result = await this._load(from);
+        dependencies.push(from, ...result.dependencies);
+        for (const token of result.tokens) {
+          const matchedImport = parsedAtValue.imports.find((i) => i.importedTokenName === token.name);
+          if (!matchedImport) continue;
+          if (matchedImport.localTokenName === matchedImport.importedTokenName) {
+            tokens.push({
+              name: matchedImport.localTokenName,
+              originalLocation: token.originalLocation,
+            });
+          } else {
+            tokens.push({
+              name: matchedImport.localTokenName,
+              importedName: matchedImport.importedTokenName,
+              originalLocation: token.originalLocation,
+            });
+          }
+        }
+      }
     }
 
     const result: LoadResult = {
