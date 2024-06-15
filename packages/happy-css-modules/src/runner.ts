@@ -153,7 +153,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
       const result = await locator.load(filePath);
       await emitGeneratedFiles({
         filePath,
-        tokens: result.tokens,
+        tokenInfos: result.tokenInfos,
         emitDeclarationMap: options.declarationMap,
         dtsFormatOptions: {
           localsConvention: options.localsConvention,
