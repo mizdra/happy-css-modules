@@ -211,9 +211,9 @@ describe('generateDtsContentWithSourceMap', () => {
   });
   test('emit other directory', async () => {
     createFixtures({
-      '/test/1.css': `.a {}`,
+      '/test/src/1.css': `.a {}`,
     });
-    const result = await locator.load(filePath);
+    const result = await locator.load(getFixturePath('/test/src/1.css'));
     const { dtsContent, sourceMap } = generateDtsContentWithSourceMap(
       getFixturePath('/test/src/1.css'),
       getFixturePath('/test/dist/1.css.d.ts'),
@@ -224,7 +224,7 @@ describe('generateDtsContentWithSourceMap', () => {
     );
     expect(dtsContent).toMatchInlineSnapshot(`
       "declare const styles:
-        & Readonly<Pick<(typeof import("../1.css"))["default"], "a">>
+        & Readonly<{ "a": string }>
       ;
       export default styles;
       "
