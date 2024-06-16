@@ -1,4 +1,4 @@
-import postcss, { type Rule, type AtRule, type Root, type Node, type Declaration, type Plugin } from 'postcss';
+import postcss, { type Rule, type AtRule, type Root, type Node } from 'postcss';
 import modules from 'postcss-modules';
 import selectorParser, { type ClassName } from 'postcss-selector-parser';
 import valueParser from 'postcss-value-parser';
@@ -26,40 +26,27 @@ export type Location =
       end: undefined;
     };
 
-function removeDependenciesPlugin(): Plugin {
-  return {
-    postcssPlugin: 'remove-dependencies',
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    AtRule(atRule) {
-      if (isAtImportNode(atRule) || isAtValueNode(atRule)) {
-        atRule.remove();
-      }
-    },
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    Declaration(declaration) {
-      if (isComposesDeclaration(declaration)) {
-        declaration.remove();
-      }
-    },
-  };
-}
-
 /**
  * Traverses a local token from the AST and returns its name.
  * @param ast The AST to traverse.
  * @returns The name of the local token.
  */
 export async function generateLocalTokenNames(ast: Root): Promise<string[]> {
+  class EmptyLoader {
+    async fetch(_file: string, _relativeTo: string, _depTrace: string): Promise<{ [key: string]: string }> {
+      // Return an empty object because we do not want to load external tokens in `generateLocalTokenNames`.
+      return Promise.resolve({});
+    }
+  }
   return new Promise((resolve, reject) => {
     postcss
       .default()
-      // postcss-modules collects tokens (i.e., includes external tokens) by following
-      // the dependencies specified in the @import.
-      // However, we do not want `generateLocalTokenNames` to return external tokens.
-      // So we remove the @import beforehand.
-      .use(removeDependenciesPlugin())
       .use(
         modules({
+          // `@import`, `@value`, and `composes` can read tokens from external files.
+          // However, we want to collect only local tokens. So we will fake that
+          // an empty token is exported from the external file.
+          Loader: EmptyLoader,
           getJSON: (_cssFileName, json) => {
             resolve(Object.keys(json));
           },
@@ -72,12 +59,12 @@ export async function generateLocalTokenNames(ast: Root): Promise<string[]> {
 }
 
 /**
- * Get the token's location on the source file.
+ * Get the original location of the class selector.
  * @param rule The rule node that contains the token.
  * @param classSelector The class selector node that contains the token.
- * @returns The token's location on the source file.
+ * @returns The original location of the class selector.
  */
-export function getOriginalLocation(rule: Rule, classSelector: ClassName): Location {
+export function getOriginalLocationOfClassSelector(rule: Rule, classSelector: ClassName): Location {
   // The node derived from `postcss.parse` always has `source` property. Therefore, this line is unreachable.
   if (rule.source === undefined || classSelector.source === undefined) throw new Error('Node#source is undefined');
   // The node derived from `postcss.parse` always has `start` and `end` property. Therefore, this line is unreachable.
@@ -127,6 +114,32 @@ export function getOriginalLocation(rule: Rule, classSelector: ClassName): Locat
   };
 }
 
+/**
+ * Get the original location of `@value`.
+ * @param atValue The `@value` rule.
+ * @returns The location of the `@value` rule.
+ */
+export function getOriginalLocationOfAtValue(atValue: AtRule, valueDeclaration: ValueDeclaration): Location {
+  // The node derived from `postcss.parse` always has `source` property. Therefore, this line is unreachable.
+  if (atValue.source === undefined) throw new Error('Node#source is undefined');
+  // The node derived from `postcss.parse` always has `start` and `end` property. Therefore, this line is unreachable.
+  if (atValue.source.start === undefined) throw new Error('Node#start is undefined');
+  if (atValue.source.end === undefined) throw new Error('Node#end is undefined');
+  if (atValue.source.input.file === undefined) throw new Error('Node#input.file is undefined');
+
+  return {
+    filePath: atValue.source.input.file,
+    start: {
+      line: atValue.source.start.line,
+      column: atValue.source.start.column + 7, // Add for `@value `
+    },
+    end: {
+      line: atValue.source.start.line,
+      column: atValue.source.start.column + 7 + valueDeclaration.tokenName.length, // Add for `@value ` and token name
+    },
+  };
+}
+
 function isAtRuleNode(node: Node): node is AtRule {
   return node.type === 'atrule';
 }
@@ -143,16 +156,9 @@ function isRuleNode(node: Node): node is Rule {
   return node.type === 'rule';
 }
 
-function isDeclaration(node: Node): node is Declaration {
-  return node.type === 'decl';
-}
-
-function isComposesDeclaration(node: Node): node is Declaration {
-  return isDeclaration(node) && node.prop === 'composes';
-}
-
 type CollectNodesResult = {
   atImports: AtRule[];
+  atValues: AtRule[];
   classSelectors: { rule: Rule; classSelector: ClassName }[];
 };
 
@@ -162,10 +168,13 @@ type CollectNodesResult = {
  */
 export function collectNodes(ast: Root): CollectNodesResult {
   const atImports: AtRule[] = [];
+  const atValues: AtRule[] = [];
   const classSelectors: { rule: Rule; classSelector: ClassName }[] = [];
   ast.walk((node) => {
     if (isAtImportNode(node)) {
       atImports.push(node);
+    } else if (isAtValueNode(node)) {
+      atValues.push(node);
     } else if (isRuleNode(node)) {
       // In `rule.selector` comes the following string:
       // 1. ".foo"
@@ -183,7 +192,7 @@ export function collectNodes(ast: Root): CollectNodesResult {
       }).processSync(node);
     }
   });
-  return { atImports, classSelectors };
+  return { atImports, atValues, classSelectors };
 }
 
 /**
@@ -201,4 +210,79 @@ export function parseAtImport(atImport: AtRule): string | undefined {
     if (firstNode.nodes[0].type === 'word') return firstNode.nodes[0].value;
   }
   return undefined;
+}
+
+type ValueDeclaration = {
+  type: 'valueDeclaration';
+  tokenName: string;
+  // value: string; // unneeded
+};
+type ValueImportDeclaration = {
+  type: 'valueImportDeclaration';
+  imports: { importedTokenName: string; localTokenName: string }[];
+  from: string;
+};
+
+type ParsedAtValue = ValueDeclaration | ValueImportDeclaration;
+
+const matchImports = /^(.+?|\([\s\S]+?\))\s+from\s+("[^"]*"|'[^']*'|[\w-]+)$/u;
+const matchValueDefinition = /(?:\s+|^)([\w-]+):?(.*?)$/u;
+const matchImport = /^([\w-]+)(?:\s+as\s+([\w-]+))?/u;
+
+/**
+ * Parse the `@value` rule.
+ * Forked from https://github.com/css-modules/postcss-modules-values/blob/v4.0.0/src/index.js.
+ *
+ * @license
+ * ISC License (ISC)
+ * Copyright (c) 2015, Glen Maddern
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted,
+ * provided that the above copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING
+ * ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+ * WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH
+ * THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+export function parseAtValue(atValue: AtRule): ParsedAtValue {
+  const matchesForImports = atValue.params.match(matchImports);
+  if (matchesForImports) {
+    const [, aliases, path] = matchesForImports;
+
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    if (aliases === undefined || path === undefined) throw new Error(`unreachable`);
+
+    const imports = aliases
+      .replace(/^\(\s*([\s\S]+)\s*\)$/u, '$1')
+      .split(/\s*,\s*/u)
+      .map((alias) => {
+        const tokens = matchImport.exec(alias);
+
+        if (tokens) {
+          const [, theirName, myName] = tokens;
+          if (theirName === undefined) throw new Error(`unreachable`);
+          return { importedTokenName: theirName, localTokenName: myName ?? theirName };
+        } else {
+          throw new Error(`@import statement "${alias}" is invalid!`);
+        }
+      });
+
+    // Remove quotes from the path.
+    // NOTE: This is a restriction unique to "happy-css-modules" and not a specification of CSS Modules.
+    const normalizedPath = path.replace(/^['"]|['"]$/gu, '');
+
+    return { type: 'valueImportDeclaration', imports, from: normalizedPath };
+  }
+
+  const matchesForValueDefinitions = `${atValue.params}${atValue.raws.between!}`.match(matchValueDefinition);
+  if (matchesForValueDefinitions) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [, key, value] = matchesForValueDefinitions;
+    if (key === undefined) throw new Error(`unreachable`);
+    return { type: 'valueDeclaration', tokenName: key };
+  }
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  throw new Error(`@value statement "${atValue.source!}" is invalid!`);
 }

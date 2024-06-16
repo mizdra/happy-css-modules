@@ -16,6 +16,7 @@ declare const styles:
   & Readonly<{ "local_class_name_2": string }>
   & Readonly<{ "local_class_name_3": string }>
   & Readonly<{ "local_class_name_4": string }>
+  & Readonly<{ "value": string }>
 ;
 export default styles;
 //# sourceMappingURL=./1.css.d.ts.map

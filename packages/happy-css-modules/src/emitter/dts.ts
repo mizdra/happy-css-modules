@@ -28,18 +28,26 @@ function dashesCamelCase(str: string): string {
 }
 
 function formatTokens(tokens: Token[], localsConvention: LocalsConvention): Token[] {
+  function formatToken(token: Token, formatter: (str: string) => string): Token {
+    if ('importedName' in token && typeof token.importedName === 'string') {
+      return { ...token, name: formatter(token.name), importedName: formatter(token.importedName) };
+    } else {
+      return { ...token, name: formatter(token.name) };
+    }
+  }
+
   const result: Token[] = [];
   for (const token of tokens) {
     if (localsConvention === 'camelCaseOnly') {
-      result.push({ ...token, name: camelcase(token.name) });
+      result.push(formatToken(token, camelcase));
     } else if (localsConvention === 'camelCase') {
       result.push(token);
-      result.push({ ...token, name: camelcase(token.name) });
+      result.push(formatToken(token, camelcase));
     } else if (localsConvention === 'dashesOnly') {
-      result.push({ ...token, name: dashesCamelCase(token.name) });
+      result.push(formatToken(token, dashesCamelCase));
     } else if (localsConvention === 'dashes') {
       result.push(token);
-      result.push({ ...token, name: dashesCamelCase(token.name) });
+      result.push(formatToken(token, dashesCamelCase));
     } else {
       result.push(token); // asIs
     }
@@ -85,6 +93,21 @@ function generateTokenDeclarations(
               token.name,
             ),
             ': string }>',
+          ])
+        : typeof token.importedName === 'string'
+        ? new SourceNode(null, null, null, [
+            `& Readonly<{ `,
+            new SourceNode(
+              originalLocation.start.line ?? null,
+              // The SourceNode's column is 0-based, but the originalLocation's column is 1-based.
+              originalLocation.start.column - 1 ?? null,
+              getRelativePath(sourceMapFilePath, originalLocation.filePath),
+              `"${token.name}"`,
+              token.name,
+            ),
+            `: (typeof import(`,
+            `"${getRelativePath(filePath, originalLocation.filePath)}"`,
+            `))["default"]["${token.importedName}"] }>`,
           ])
         : // Imported tokens in non-external files are typed by dynamic import.
           // See https://github.com/mizdra/happy-css-modules/issues/106.

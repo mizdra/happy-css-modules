@@ -4,7 +4,15 @@ import type { Resolver } from '../resolver/index.js';
 import { createDefaultResolver } from '../resolver/index.js';
 import { createDefaultTransformer, type Transformer } from '../transformer/index.js';
 import { unique, uniqueBy } from '../util.js';
-import { getOriginalLocation, generateLocalTokenNames, parseAtImport, type Location, collectNodes } from './postcss.js';
+import {
+  getOriginalLocationOfClassSelector,
+  getOriginalLocationOfAtValue,
+  generateLocalTokenNames,
+  parseAtImport,
+  type Location,
+  collectNodes,
+  parseAtValue,
+} from './postcss.js';
 
 export { collectNodes, type Location } from './postcss.js';
 
@@ -20,6 +28,8 @@ function isIgnoredSpecifier(specifier: string): boolean {
 export type Token = {
   /** The token name. */
   name: string;
+  /** The name of the imported token. */
+  importedName?: string;
   /** The original location of the token in the source file. */
   originalLocation: Location;
 };
@@ -142,7 +152,7 @@ export class Locator {
 
     const tokens: Token[] = [];
 
-    const { atImports, classSelectors } = collectNodes(ast);
+    const { atImports, atValues, classSelectors } = collectNodes(ast);
 
     // Load imported sheets recursively.
     for (const atImport of atImports) {
@@ -164,12 +174,46 @@ export class Locator {
       // NOTE: This method has false positives. However, it works as expected in many cases.
       if (!localTokenNames.includes(classSelector.value)) continue;
 
-      const originalLocation = getOriginalLocation(rule, classSelector);
+      const originalLocation = getOriginalLocationOfClassSelector(rule, classSelector);
 
       tokens.push({
         name: classSelector.value,
         originalLocation,
       });
+    }
+
+    for (const atValue of atValues) {
+      const parsedAtValue = parseAtValue(atValue);
+
+      if (parsedAtValue.type === 'valueDeclaration') {
+        tokens.push({
+          name: parsedAtValue.tokenName,
+          originalLocation: getOriginalLocationOfAtValue(atValue, parsedAtValue),
+        });
+      } else if (parsedAtValue.type === 'valueImportDeclaration') {
+        if (isIgnoredSpecifier(parsedAtValue.from)) continue;
+        // eslint-disable-next-line no-await-in-loop
+        const from = await this.resolver(parsedAtValue.from, { request: filePath });
+        // eslint-disable-next-line no-await-in-loop
+        const result = await this._load(from);
+        dependencies.push(from, ...result.dependencies);
+        for (const token of result.tokens) {
+          const matchedImport = parsedAtValue.imports.find((i) => i.importedTokenName === token.name);
+          if (!matchedImport) continue;
+          if (matchedImport.localTokenName === matchedImport.importedTokenName) {
+            tokens.push({
+              name: matchedImport.localTokenName,
+              originalLocation: token.originalLocation,
+            });
+          } else {
+            tokens.push({
+              name: matchedImport.localTokenName,
+              importedName: matchedImport.importedTokenName,
+              originalLocation: token.originalLocation,
+            });
+          }
+        }
+      }
     }
 
     const result: LoadResult = {

@@ -1,6 +1,20 @@
 import dedent from 'dedent';
-import { createRoot, createClassSelectors, createAtImports, createFixtures } from '../test-util/util.js';
-import { generateLocalTokenNames, getOriginalLocation, parseAtImport, collectNodes } from './postcss.js';
+import type { AtRule } from 'postcss';
+import {
+  createRoot,
+  createClassSelectors,
+  createAtImports,
+  createFixtures,
+  createAtValues,
+} from '../test-util/util.js';
+import {
+  generateLocalTokenNames,
+  getOriginalLocationOfClassSelector,
+  parseAtImport,
+  parseAtValue,
+  collectNodes,
+  getOriginalLocationOfAtValue,
+} from './postcss.js';
 
 describe('generateLocalTokenNames', () => {
   test('basic', async () => {
@@ -27,9 +41,11 @@ describe('generateLocalTokenNames', () => {
           .local_class_name_3 {}
         }
         :local(.local_class_name_4) {}
+        @value value: #BF4040;
         `),
       ),
     ).toStrictEqual([
+      'value',
       'basic',
       'cascading',
       'pseudo_class_1',
@@ -63,14 +79,18 @@ describe('generateLocalTokenNames', () => {
     ).toStrictEqual([]);
   });
   test('does not track styles imported by @value in other file because it is not a local token', async () => {
-    createFixtures({});
+    createFixtures({
+      '/test/1.css': dedent`
+      .a {}
+      `,
+    });
     expect(
       await generateLocalTokenNames(
         createRoot(`
-        @value something from "/test/1.css";
+        @value a from "/test/1.css";
         `),
       ),
-    ).toStrictEqual([]);
+    ).toStrictEqual(['a']);
   });
   test('does not track styles imported by composes in other file because it is not a local token', async () => {
     createFixtures({
@@ -90,14 +110,14 @@ describe('generateLocalTokenNames', () => {
   });
 });
 
-describe('getOriginalLocation', () => {
+describe('getOriginalLocationOfClassSelector', () => {
   test('basic', () => {
     const [basic] = createClassSelectors(
       createRoot(dedent`
       .basic {}
       `),
     );
-    expect(getOriginalLocation(basic!.rule, basic!.classSelector)).toMatchInlineSnapshot(
+    expect(getOriginalLocationOfClassSelector(basic!.rule, basic!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 1, column: 1 }, end: { line: 1, column: 6 } }`,
     );
   });
@@ -109,10 +129,10 @@ describe('getOriginalLocation', () => {
       .cascading {}
       `),
     );
-    expect(getOriginalLocation(cascading_1!.rule, cascading_1!.classSelector)).toMatchInlineSnapshot(
+    expect(getOriginalLocationOfClassSelector(cascading_1!.rule, cascading_1!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 1, column: 1 }, end: { line: 1, column: 10 } }`,
     );
-    expect(getOriginalLocation(cascading_2!.rule, cascading_2!.classSelector)).toMatchInlineSnapshot(
+    expect(getOriginalLocationOfClassSelector(cascading_2!.rule, cascading_2!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 2, column: 1 }, end: { line: 2, column: 10 } }`,
     );
   });
@@ -125,13 +145,19 @@ describe('getOriginalLocation', () => {
       :not(.pseudo_class_3) {}
       `),
     );
-    expect(getOriginalLocation(pseudo_class_1!.rule, pseudo_class_1!.classSelector)).toMatchInlineSnapshot(
+    expect(
+      getOriginalLocationOfClassSelector(pseudo_class_1!.rule, pseudo_class_1!.classSelector),
+    ).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 1, column: 1 }, end: { line: 1, column: 15 } }`,
     );
-    expect(getOriginalLocation(pseudo_class_2!.rule, pseudo_class_2!.classSelector)).toMatchInlineSnapshot(
+    expect(
+      getOriginalLocationOfClassSelector(pseudo_class_2!.rule, pseudo_class_2!.classSelector),
+    ).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 2, column: 1 }, end: { line: 2, column: 15 } }`,
     );
-    expect(getOriginalLocation(pseudo_class_3!.rule, pseudo_class_3!.classSelector)).toMatchInlineSnapshot(
+    expect(
+      getOriginalLocationOfClassSelector(pseudo_class_3!.rule, pseudo_class_3!.classSelector),
+    ).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 3, column: 6 }, end: { line: 3, column: 20 } }`,
     );
   });
@@ -142,10 +168,14 @@ describe('getOriginalLocation', () => {
       .multiple_selector_1.multiple_selector_2 {}
       `),
     );
-    expect(getOriginalLocation(multiple_selector_1!.rule, multiple_selector_1!.classSelector)).toMatchInlineSnapshot(
+    expect(
+      getOriginalLocationOfClassSelector(multiple_selector_1!.rule, multiple_selector_1!.classSelector),
+    ).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 1, column: 1 }, end: { line: 1, column: 20 } }`,
     );
-    expect(getOriginalLocation(multiple_selector_2!.rule, multiple_selector_2!.classSelector)).toMatchInlineSnapshot(
+    expect(
+      getOriginalLocationOfClassSelector(multiple_selector_2!.rule, multiple_selector_2!.classSelector),
+    ).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 1, column: 21 }, end: { line: 1, column: 40 } }`,
     );
   });
@@ -157,10 +187,10 @@ describe('getOriginalLocation', () => {
       .combinator_1 + .combinator_2 {}
       `),
     );
-    expect(getOriginalLocation(combinator_1!.rule, combinator_1!.classSelector)).toMatchInlineSnapshot(
+    expect(getOriginalLocationOfClassSelector(combinator_1!.rule, combinator_1!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 1, column: 1 }, end: { line: 1, column: 13 } }`,
     );
-    expect(getOriginalLocation(combinator_2!.rule, combinator_2!.classSelector)).toMatchInlineSnapshot(
+    expect(getOriginalLocationOfClassSelector(combinator_2!.rule, combinator_2!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 1, column: 17 }, end: { line: 1, column: 29 } }`,
     );
   });
@@ -175,7 +205,7 @@ describe('getOriginalLocation', () => {
       }
       `),
     );
-    expect(getOriginalLocation(at_rule!.rule, at_rule!.classSelector)).toMatchInlineSnapshot(
+    expect(getOriginalLocationOfClassSelector(at_rule!.rule, at_rule!.classSelector)).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 3, column: 5 }, end: { line: 3, column: 12 } }`,
     );
   });
@@ -186,10 +216,14 @@ describe('getOriginalLocation', () => {
       .selector_list_1, .selector_list_2 {}
       `),
     );
-    expect(getOriginalLocation(selector_list_1!.rule, selector_list_1!.classSelector)).toMatchInlineSnapshot(
+    expect(
+      getOriginalLocationOfClassSelector(selector_list_1!.rule, selector_list_1!.classSelector),
+    ).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 1, column: 1 }, end: { line: 1, column: 16 } }`,
     );
-    expect(getOriginalLocation(selector_list_2!.rule, selector_list_2!.classSelector)).toMatchInlineSnapshot(
+    expect(
+      getOriginalLocationOfClassSelector(selector_list_2!.rule, selector_list_2!.classSelector),
+    ).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 1, column: 19 }, end: { line: 1, column: 34 } }`,
     );
   });
@@ -205,16 +239,24 @@ describe('getOriginalLocation', () => {
       :local(.local_class_name_4) {}
       `),
     );
-    expect(getOriginalLocation(local_class_name_1!.rule, local_class_name_1!.classSelector)).toMatchInlineSnapshot(
+    expect(
+      getOriginalLocationOfClassSelector(local_class_name_1!.rule, local_class_name_1!.classSelector),
+    ).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 1, column: 8 }, end: { line: 1, column: 26 } }`,
     );
-    expect(getOriginalLocation(local_class_name_2!.rule, local_class_name_2!.classSelector)).toMatchInlineSnapshot(
+    expect(
+      getOriginalLocationOfClassSelector(local_class_name_2!.rule, local_class_name_2!.classSelector),
+    ).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 3, column: 3 }, end: { line: 3, column: 21 } }`,
     );
-    expect(getOriginalLocation(local_class_name_3!.rule, local_class_name_3!.classSelector)).toMatchInlineSnapshot(
+    expect(
+      getOriginalLocationOfClassSelector(local_class_name_3!.rule, local_class_name_3!.classSelector),
+    ).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 4, column: 3 }, end: { line: 4, column: 21 } }`,
     );
-    expect(getOriginalLocation(local_class_name_4!.rule, local_class_name_4!.classSelector)).toMatchInlineSnapshot(
+    expect(
+      getOriginalLocationOfClassSelector(local_class_name_4!.rule, local_class_name_4!.classSelector),
+    ).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 6, column: 8 }, end: { line: 6, column: 26 } }`,
     );
   });
@@ -227,17 +269,42 @@ describe('getOriginalLocation', () => {
         + .with_newline_3, {}
       `),
     );
-    expect(getOriginalLocation(with_newline_1!.rule, with_newline_1!.classSelector)).toMatchInlineSnapshot(
+    expect(
+      getOriginalLocationOfClassSelector(with_newline_1!.rule, with_newline_1!.classSelector),
+    ).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 1, column: 1 }, end: { line: 1, column: 15 } }`,
     );
-    expect(getOriginalLocation(with_newline_2!.rule, with_newline_2!.classSelector)).toMatchInlineSnapshot(
+    expect(
+      getOriginalLocationOfClassSelector(with_newline_2!.rule, with_newline_2!.classSelector),
+    ).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 2, column: 1 }, end: { line: 2, column: 15 } }`,
     );
 
-    expect(getOriginalLocation(with_newline_3!.rule, with_newline_3!.classSelector)).toMatchInlineSnapshot(
+    expect(
+      getOriginalLocationOfClassSelector(with_newline_3!.rule, with_newline_3!.classSelector),
+    ).toMatchInlineSnapshot(
       `{ filePath: "/test/test.css", start: { line: 3, column: 5 }, end: { line: 3, column: 19 } }`,
     );
   });
+});
+
+test('getOriginalLocationOfAtValue', () => {
+  function tryGetOriginalLocationOfAtValue(atValue: AtRule) {
+    const parsed = parseAtValue(atValue);
+    if (parsed.type === 'valueDeclaration') {
+      return getOriginalLocationOfAtValue(atValue, parsed);
+    } else {
+      throw new Error('Unexpected type');
+    }
+  }
+  const [basic] = createAtValues(
+    createRoot(dedent`
+    @value basic: #000;
+    `),
+  );
+  expect(tryGetOriginalLocationOfAtValue(basic!)).toMatchInlineSnapshot(
+    `{ filePath: "/test/test.css", start: { line: 1, column: 8 }, end: { line: 1, column: 13 } }`,
+  );
 });
 
 test('collectNodes', () => {
@@ -276,4 +343,46 @@ test('parseAtImport', () => {
   expect(parseAtImport(atImports[2]!)).toBe('test.css');
   expect(parseAtImport(atImports[3]!)).toBe('test.css');
   expect(parseAtImport(atImports[4]!)).toBe('test.css');
+});
+
+test('parseAtValue', () => {
+  const atValues = createAtValues(
+    createRoot(dedent`
+    @value basic: #000;
+    @value withoutColon #000;
+    @value empty:;
+    @value comment:/* comment */;
+    @value complex: (max-width: 599px);
+    @value import from "test.css";
+    @value import1, import2 from "test.css";
+    @value import as alias from "test.css";
+    /*
+     * NOTE: happy-css-modules intentionally does not support module specifier as variable.
+     * e.g. \`@value d, e from moduleName;\`
+     */
+    `),
+  );
+  expect(parseAtValue(atValues[0]!)).toStrictEqual({ type: 'valueDeclaration', tokenName: 'basic' });
+  expect(parseAtValue(atValues[1]!)).toStrictEqual({ type: 'valueDeclaration', tokenName: 'withoutColon' });
+  expect(parseAtValue(atValues[2]!)).toStrictEqual({ type: 'valueDeclaration', tokenName: 'empty' });
+  expect(parseAtValue(atValues[3]!)).toStrictEqual({ type: 'valueDeclaration', tokenName: 'comment' });
+  expect(parseAtValue(atValues[4]!)).toStrictEqual({ type: 'valueDeclaration', tokenName: 'complex' });
+  expect(parseAtValue(atValues[5]!)).toStrictEqual({
+    type: 'valueImportDeclaration',
+    imports: [{ importedTokenName: 'import', localTokenName: 'import' }],
+    from: 'test.css',
+  });
+  expect(parseAtValue(atValues[6]!)).toStrictEqual({
+    type: 'valueImportDeclaration',
+    imports: [
+      { importedTokenName: 'import1', localTokenName: 'import1' },
+      { importedTokenName: 'import2', localTokenName: 'import2' },
+    ],
+    from: 'test.css',
+  });
+  expect(parseAtValue(atValues[7]!)).toStrictEqual({
+    type: 'valueImportDeclaration',
+    imports: [{ importedTokenName: 'import', localTokenName: 'alias' }],
+    from: 'test.css',
+  });
 });
