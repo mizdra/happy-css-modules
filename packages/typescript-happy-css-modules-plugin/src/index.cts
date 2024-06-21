@@ -1,10 +1,13 @@
-import { decorateLanguageService } from '@volar/typescript';
+import { decorateLanguageService, decorateLanguageServiceHost } from '@volar/typescript';
 import { createLanguageServicePlugin } from '@volar/typescript/lib/quickstart/createLanguageServicePlugin';
 import type ts from 'typescript/lib/tsserverlibrary';
 import { getStylesPropertyAccessExpression } from './ast.cjs';
 import { parseConfig } from './config.cjs';
 import { createCssModulesLanguagePlugin } from './languagePlugin.cjs';
+import { createTsxLanguagePlugin } from './languagePlugin2.cjs';
 import { getCssFileName, getCssImportStatement, getCssModuleSpecifier } from './source.cjs';
+
+// import { createString }  from 'typescript';
 
 export = createLanguageServicePlugin((ts, info) => {
   if (!info.project.fileExists(info.project.getProjectName())) {
@@ -15,14 +18,78 @@ export = createLanguageServicePlugin((ts, info) => {
   }
   const config = parseConfig(info.config);
 
-  const cssModulesLanguagePlugin = createCssModulesLanguagePlugin(ts.sys, config);
+  const cssModulesLanguagePlugin = createCssModulesLanguagePlugin(info);
+  const tsxLanguagePlugin = createTsxLanguagePlugin(info);
 
   return {
-    languagePlugins: [cssModulesLanguagePlugin],
+    languagePlugins: [tsxLanguagePlugin, cssModulesLanguagePlugin],
     setup: (language) => {
       decorateLanguageService(language, info.languageService);
+      decorateLanguageServiceHost(ts, language, info.languageServiceHost);
       const getCompletionsAtPosition = info.languageService.getCompletionsAtPosition.bind(info.languageService);
+
+      const resolveModuleNameLiterals = info.languageServiceHost.resolveModuleNameLiterals!.bind(
+        info.languageServiceHost,
+      );
+      info.languageServiceHost.resolveModuleNameLiterals = (
+        moduleLiterals,
+        containingFile,
+        redirectedReference,
+        options,
+        containingSourceFile,
+        reusedNames,
+      ) => {
+        const results = resolveModuleNameLiterals(
+          moduleLiterals,
+          containingFile,
+          redirectedReference,
+          options,
+          containingSourceFile,
+          reusedNames,
+        );
+        info.project.projectService.logger.info(
+          `weiwei: ${moduleLiterals[0]?.text} => ${JSON.stringify(results[0]!.resolvedModule)}`,
+        );
+
+        // moduleLiterals.forEach((moduleLiteral) => {
+        //   info.project.projectService.logger.info(`weiwei: ${moduleLiteral.getText()}`);
+        // });
+        // info.project.projectService.logger.info(`weiwei: ${JSON.stringify({ moduleLiterals })}`);
+        return results;
+      };
+
       info.languageService.getCompletionsAtPosition = (fileName, position, options, formattingSettings) => {
+        info.project.projectService.logger.info(`weiwei`);
+
+        const source = info.project.getSourceFile(fileName as any);
+        // const languageServiceHost = info.languageServiceHost;
+
+        // if (!source) {
+        //   throw new Error('source is undefined');
+        // }
+
+        // const resolved = info.languageServiceHost.resolveModuleNameLiterals?.(
+        //   [
+        //     ts.factory.createStringLiteral(
+        //       `import '/Users/mizdra/src/github.com/mizdra/happy-css-modules/packages/example/07-typescript-plugin/test.ts'`,
+        //     ),
+        //   ],
+        //   '/Users/mizdra/src/github.com/mizdra/happy-css-modules/packages/example/07-typescript-plugin/Card.tsx',
+        //   undefined,
+        //   info.project.getCompilerOptions(),
+        //   ts.factory.createSourceFile([''], ts.factory.createToken(ts.SyntaxKind.EndOfFileToken), 0),
+        //   undefined,
+        // );
+        // const resolved = info.languageServiceHost.resolveModuleNames!(
+        //   ['/Users/mizdra/src/github.com/mizdra/happy-css-modules/packages/example/07-typescript-plugin/test.ts'],
+        //   fileName,
+        //   undefined,
+        //   undefined,
+        //   info.project.getCompilerOptions(),
+        // );
+
+        // info.project.projectService.logger.info(`weiwei: ${JSON.stringify(resolved)}`);
+
         const result = getCompletionsAtPosition(fileName, position, options, formattingSettings);
         const cssModulesEntry = result?.entries.find(
           (entry) =>
@@ -34,6 +101,7 @@ export = createLanguageServicePlugin((ts, info) => {
         }
         return result;
       };
+
       // noop
     },
   };

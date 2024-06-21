@@ -1,18 +1,17 @@
 import type { LanguagePlugin } from '@volar/language-core';
-import type * as ts from 'typescript/lib/tsserverlibrary';
-import type { Config } from './config.cjs';
+import type ts from 'typescript/lib/tsserverlibrary';
 
-export function createCssModulesLanguagePlugin(sys: ts.System, config: Config): LanguagePlugin<string> {
+export function createCssModulesLanguagePlugin(info: ts.server.PluginCreateInfo): LanguagePlugin<string> {
   return {
     getLanguageId(scriptId) {
-      if (isMatchFile(scriptId)) {
-        return 'css';
+      if (isCssModulesFile(scriptId)) {
+        return 'cssmodules';
       }
       return undefined;
     },
     createVirtualCode(fileId) {
       const fileName = fileId.includes('://') ? fileId.split('://')[1] ?? '' : fileId;
-      if (isMatchFile(fileName)) {
+      if (isCssModulesFile(fileName)) {
         const text = getCssModulesText();
         return {
           id: 'main',
@@ -49,7 +48,7 @@ export function createCssModulesLanguagePlugin(sys: ts.System, config: Config): 
     },
   };
 
-  function isMatchFile(fileName: string): boolean {
+  function isCssModulesFile(fileName: string): boolean {
     return fileName.endsWith('.module.css') || fileName.endsWith('.module.css.d.ts');
   }
 }
