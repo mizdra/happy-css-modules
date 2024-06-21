@@ -1,7 +1,43 @@
+import { decorateLanguageService } from '@volar/typescript';
+import { createLanguageServicePlugin } from '@volar/typescript/lib/quickstart/createLanguageServicePlugin';
 import type ts from 'typescript/lib/tsserverlibrary';
 import { getStylesPropertyAccessExpression } from './ast.cjs';
 import { parseConfig } from './config.cjs';
+import { createCssModulesLanguagePlugin } from './languagePlugin.cjs';
 import { getCssFileName, getCssImportStatement, getCssModuleSpecifier } from './source.cjs';
+
+export = createLanguageServicePlugin((ts, info) => {
+  if (!info.project.fileExists(info.project.getProjectName())) {
+    // project name not a tsconfig path, this is a inferred project
+    return {
+      languagePlugins: [],
+    };
+  }
+  const config = parseConfig(info.config);
+
+  const cssModulesLanguagePlugin = createCssModulesLanguagePlugin(ts.sys, config);
+
+  return {
+    languagePlugins: [cssModulesLanguagePlugin],
+    setup: (language) => {
+      decorateLanguageService(language, info.languageService);
+      const getCompletionsAtPosition = info.languageService.getCompletionsAtPosition.bind(info.languageService);
+      info.languageService.getCompletionsAtPosition = (fileName, position, options, formattingSettings) => {
+        const result = getCompletionsAtPosition(fileName, position, options, formattingSettings);
+        const cssModulesEntry = result?.entries.find(
+          (entry) =>
+            entry.name === config.exportedStylesName && entry.data?.fileName === getCssFileName(fileName, config),
+        );
+        info.project.projectService.logger.info(`cssModulesEntry: ${JSON.stringify(cssModulesEntry)}`);
+        if (cssModulesEntry) {
+          cssModulesEntry.sortText = '0';
+        }
+        return result;
+      };
+      // noop
+    },
+  };
+});
 
 function init(modules: { typescript: typeof import('typescript/lib/tsserverlibrary') }) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -158,5 +194,3 @@ function init(modules: { typescript: typeof import('typescript/lib/tsserverlibra
 
   return { create };
 }
-
-export = init;

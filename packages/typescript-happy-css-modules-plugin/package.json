@@ -26,7 +26,10 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@volar/language-core": "^2.3.0",
+    "@volar/typescript": "^2.3.0"
+  },
   "peerDependencies": {
     "typescript": ">=5.0.0"
   }
