@@ -2,6 +2,7 @@ import { decorateLanguageService, decorateLanguageServiceHost } from '@volar/typ
 import { createLanguageServicePlugin } from '@volar/typescript/lib/quickstart/createLanguageServicePlugin';
 import { getStylesPropertyAccessExpression } from './ast.cjs';
 import { parseConfig } from './config.cjs';
+import { createCssModulesLanguagePlugin } from './languagePlugin.cjs';
 import { getCssFileName } from './source.cjs';
 
 export = createLanguageServicePlugin((ts, info) => {
@@ -13,8 +14,10 @@ export = createLanguageServicePlugin((ts, info) => {
   }
   const config = parseConfig(info.config);
 
+  const cssModulesLanguagePlugin = createCssModulesLanguagePlugin(info);
+
   return {
-    languagePlugins: [],
+    languagePlugins: [cssModulesLanguagePlugin],
     setup: (language) => {
       decorateLanguageService(language, info.languageService);
       decorateLanguageServiceHost(ts, language, info.languageServiceHost);
