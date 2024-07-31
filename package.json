@@ -39,7 +39,7 @@
     "@swc/core": "^1.5.7",
     "@swc/jest": "^0.2.36",
     "@types/dedent": "^0.7.2",
-    "@types/eslint": "^8.37.0",
+    "@types/eslint": "^9.6.0",
     "@types/glob": "^8.1.0",
     "@types/jest": "^29.5.12",
     "@types/less": "^3.0.6",
