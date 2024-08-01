@@ -1,23 +1,36 @@
 import { EOL } from 'os';
-import { basename, parse, join } from 'path';
+import path, { basename, parse, join } from 'path';
 import camelcase from 'camelcase';
 import { SourceNode, type CodeWithSourceMap } from '../library/source-map/index.js';
 import { type Token } from '../locator/index.js';
 import { type LocalsConvention } from '../runner.js';
 import { getRelativePath, type DtsFormatOptions } from './index.js';
 
+const CURRENT_WORKING_DIRECTORY = process.cwd();
+
 /**
  * Get .d.ts file path.
  * @param filePath The path to the source file (i.e. `/dir/foo.css`). It is absolute.
  * @param arbitraryExtensions Generate `.d.css.ts` instead of `.css.d.ts`.
+ * @param outputFolder Output folder for generated files.
  * @returns The path to the .d.ts file. It is absolute.
  */
-export function getDtsFilePath(filePath: string, arbitraryExtensions: boolean): string {
+export function getDtsFilePath(
+  filePath: string,
+  arbitraryExtensions: boolean,
+  outputFolder: string | undefined,
+): string {
+  let outputFilePath = filePath;
+  if (outputFolder) {
+    const relativePath = path.relative(CURRENT_WORKING_DIRECTORY, filePath);
+    outputFilePath = path.resolve(CURRENT_WORKING_DIRECTORY, outputFolder, relativePath);
+  }
+
   if (arbitraryExtensions) {
-    const { dir, name, ext } = parse(filePath);
+    const { dir, name, ext } = parse(outputFilePath);
     return join(dir, `${name}.d${ext}.ts`);
   } else {
-    return `${filePath}.d.ts`;
+    return `${outputFilePath}.d.ts`;
   }
 }
 
