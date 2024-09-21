@@ -4,6 +4,7 @@ import { getStylesPropertyAccessExpression } from './ast.cjs';
 import { parseConfig } from './config.cjs';
 import { createCssModulesLanguagePlugin } from './languagePlugin.cjs';
 import { getCssFileName } from './source.cjs';
+import { proxyLanguageServiceForCssModules } from './service.cjs';
 
 export = createLanguageServicePlugin((ts, info) => {
   if (!info.project.fileExists(info.project.getProjectName())) {
@@ -20,7 +21,18 @@ export = createLanguageServicePlugin((ts, info) => {
     languagePlugins: [cssModulesLanguagePlugin],
     setup: (language) => {
       decorateLanguageService(language, info.languageService);
+      info.languageService = proxyLanguageServiceForCssModules(
+        ts,
+        language,
+        info.languageService,
+        config,
+        (fileName) => fileName,
+      );
       decorateLanguageServiceHost(ts, language, info.languageServiceHost);
+
+      info.languageService.getRenameInfo;
+      info.languageService.findRenameLocations;
+
       const getCompletionsAtPosition = info.languageService.getCompletionsAtPosition.bind(info.languageService);
       const getApplicableRefactors = info.languageService.getApplicableRefactors.bind(info.languageService);
       const getEditsForRefactor = info.languageService.getEditsForRefactor.bind(info.languageService);

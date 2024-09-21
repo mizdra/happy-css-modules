@@ -28,7 +28,8 @@
   },
   "dependencies": {
     "@volar/language-core": "^2.3.4",
-    "@volar/typescript": "^2.3.4"
+    "@volar/typescript": "^2.3.4",
+    "volar-service-css": "^0.0.54"
   },
   "peerDependencies": {
     "typescript": ">=5.0.0"

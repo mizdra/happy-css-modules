@@ -1,7 +1,9 @@
-import type { LanguagePlugin } from '@volar/language-core';
+import type { CodeMapping, LanguagePlugin, VirtualCode } from '@volar/language-core';
 import type ts from 'typescript/lib/tsserverlibrary';
 
-export function createCssModulesLanguagePlugin(info: ts.server.PluginCreateInfo): LanguagePlugin<string> {
+export function createCssModulesLanguagePlugin(
+  info: ts.server.PluginCreateInfo,
+): LanguagePlugin<string, CssModulesCode> {
   return {
     getLanguageId(scriptId) {
       if (isCssModulesFile(scriptId)) {
@@ -9,24 +11,13 @@ export function createCssModulesLanguagePlugin(info: ts.server.PluginCreateInfo)
       }
       return undefined;
     },
-    createVirtualCode(fileId, languageId) {
+    createVirtualCode(scriptId, languageId, snapshot) {
       if (languageId !== 'cssmodules') return undefined;
-
-      const text = getCssModulesText();
-      return {
-        id: 'main',
-        mappings: [],
-        embeddedCodes: [],
-        languageId: 'typescript',
-        snapshot: {
-          getText: (start, end) => text.substring(start, end),
-          getLength: () => text.length,
-          getChangeRange: () => undefined,
-        },
-      };
+      return new CssModulesCode(snapshot);
     },
-    updateVirtualCode(_fileId, virtualCode, newSnapshot) {
-      return virtualCode; // asset file content update does not affect virtual code
+    updateVirtualCode(scriptId, languageCode, snapshot) {
+      languageCode.update(snapshot);
+      return languageCode;
     },
     typescript: {
       extraFileExtensions: [
@@ -45,10 +36,43 @@ export function createCssModulesLanguagePlugin(info: ts.server.PluginCreateInfo)
       },
     },
   };
+}
 
-  function isCssModulesFile(fileName: string): boolean {
-    return fileName.endsWith('.module.css') || fileName.endsWith('.module.css.d.ts');
+export class CssModulesCode implements VirtualCode {
+  id = 'root';
+  languageId = 'cssmodules';
+  embeddedCodes: VirtualCode[] = [];
+  mappings: CodeMapping[] = [];
+
+  constructor(public snapshot: ts.IScriptSnapshot) {
+    this.onSnapshotUpdated();
   }
+
+  public update(newSnapshot: ts.IScriptSnapshot) {
+    this.snapshot = newSnapshot;
+    this.onSnapshotUpdated();
+  }
+
+  public onSnapshotUpdated() {
+    const snapshotContent = this.snapshot.getText(0, this.snapshot.getLength());
+
+    this.embeddedCodes = [
+      {
+        id: this.id + ':css',
+        languageId: 'css',
+        mappings: [],
+        snapshot: {
+          getText: (start, end) => snapshotContent.substring(start, end),
+          getLength: () => snapshotContent.length,
+          getChangeRange: () => undefined,
+        },
+      },
+    ];
+  }
+}
+
+function isCssModulesFile(fileName: string): boolean {
+  return fileName.endsWith('.module.css') || fileName.endsWith('.module.css.d.ts');
 }
 
 function getCssModulesText() {
