@@ -30,6 +30,7 @@ describe('emitGeneratedFiles', () => {
     dtsFormatOptions: undefined,
     cwd: getFixturePath('/test'),
     isExternalFile: () => false,
+    outDir: undefined,
   };
   beforeEach(() => {
     createFixtures({
@@ -74,5 +75,14 @@ describe('emitGeneratedFiles', () => {
     const mtimeForSourceMap3 = (await stat(getFixturePath('/test/1.css.d.ts.map'))).mtime;
     expect(mtimeForDts1).not.toEqual(mtimeForDts3); // not skipped
     expect(mtimeForSourceMap1).not.toEqual(mtimeForSourceMap3); // not skipped
+  });
+  test('changes output directory by outDir', async () => {
+    await emitGeneratedFiles({ ...defaultArgs, outDir: 'dist' });
+    expect(await exists(getFixturePath('/test/dist/1.css.d.ts'))).toBeTruthy();
+    // A link to the source map is not embedded.
+    expect(await readFile(getFixturePath('/test/dist/1.css.d.ts'), 'utf8')).toEqual(
+      expect.not.stringContaining('//# sourceMappingURL=1.css.d.ts.map'),
+    );
+    expect(await exists(getFixturePath('/test/dist/1.css.d.ts.map'))).toBeTruthy();
   });
 });

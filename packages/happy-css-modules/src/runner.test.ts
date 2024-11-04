@@ -351,3 +351,26 @@ test('support symlink', async () => {
     `"{"version":3,"sources":["./1.css"],"names":["a"],"mappings":"AAAA;AAAA,E,aAAAA,G,WAAA;AAAA;AAAA","file":"1.css.d.ts","sourceRoot":""}"`,
   );
 });
+
+test('changes output directory by outDir', async () => {
+  createFixtures({
+    '/test/1.css': '.a {}',
+  });
+
+  await run({ ...defaultOptions, outDir: getFixturePath('/dist'), cache: false, watch: false });
+
+  expect(await exists(getFixturePath('/dist/test/1.css.d.ts'))).toBe(true);
+  expect(await exists(getFixturePath('/dist/test/1.css.d.ts.map'))).toBe(true);
+
+  expect(await readFile(getFixturePath('/dist/test/1.css.d.ts'), 'utf8')).toMatchInlineSnapshot(`
+    "declare const styles:
+      & Readonly<{ "a": string }>
+    ;
+    export default styles;
+    //# sourceMappingURL=./1.css.d.ts.map
+    "
+  `);
+  expect(await readFile(getFixturePath('/dist/test/1.css.d.ts.map'), 'utf8')).toMatchInlineSnapshot(
+    `"{"version":3,"sources":["../../test/1.css"],"names":["a"],"mappings":"AAAA;AAAA,E,aAAAA,G,WAAA;AAAA;AAAA","file":"1.css.d.ts","sourceRoot":""}"`,
+  );
+});
