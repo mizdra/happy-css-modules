@@ -79,8 +79,8 @@ export interface RunnerOptions {
   logLevel?: 'debug' | 'info' | 'silent' | undefined;
   /** Working directory path. */
   cwd?: string | undefined;
-  /** Output folder for generated files. */
-  outputFolder?: string | undefined;
+  /** Output directory for generated files. */
+  outDir?: string | undefined;
 }
 
 type OverrideProp<T, K extends keyof T, V extends T[K]> = Omit<T, K> & { [P in K]: V };
@@ -142,7 +142,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
         filePath,
         options.declarationMap,
         options.arbitraryExtensions ?? DEFAULT_ARBITRARY_EXTENSIONS,
-        options.outputFolder,
+        options.outDir,
       );
       const _isChangedFile = await isChangedFile(filePath);
       // Generate .d.ts and .d.ts.map only when the file has been updated.
@@ -162,7 +162,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
           arbitraryExtensions: options.arbitraryExtensions,
         },
         isExternalFile,
-        outputFolder: options.outputFolder,
+        outputFolder: options.outDir,
       });
       logger.info(chalk.green(`${relative(cwd, filePath)} (generated)`));
 

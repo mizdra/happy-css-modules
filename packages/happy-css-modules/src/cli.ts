@@ -78,10 +78,10 @@ export function parseArgv(argv: string[]): RunnerOptions {
       default: 'info' as RunnerOptions['logLevel'],
       describe: 'What level of logs to report.',
     })
-    .option('outputFolder', {
+    .option('outDir', {
       type: 'string',
       alias: 'o',
-      describe: 'Output folder for generated files.',
+      describe: 'Output directory for generated files.',
     })
     .alias('h', 'help')
     .alias('v', 'version')
@@ -121,6 +121,6 @@ export function parseArgv(argv: string[]): RunnerOptions {
     cache: parsedArgv.cache,
     cacheStrategy: parsedArgv.cacheStrategy,
     logLevel: parsedArgv.logLevel,
-    outputFolder: parsedArgv.outputFolder,
+    outDir: parsedArgv.outDir,
   };
 }
