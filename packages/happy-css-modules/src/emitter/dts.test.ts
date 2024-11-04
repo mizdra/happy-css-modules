@@ -13,6 +13,9 @@ test('getDtsFilePath', () => {
   expect(getDtsFilePath('/app/src/dir/1.scss', false, undefined)).toBe('/app/src/dir/1.scss.d.ts');
   expect(getDtsFilePath('/app/src/dir/1.css', true, undefined)).toBe('/app/src/dir/1.d.css.ts');
   expect(getDtsFilePath('/app/src/dir/1.scss', true, undefined)).toBe('/app/src/dir/1.d.scss.ts');
+  expect(getDtsFilePath('/app/src/dir/1.css', false, { cwd: '/app', outDir: 'dist' })).toBe(
+    '/app/dist/src/dir/1.css.d.ts',
+  );
 });
 
 describe('generateDtsContentWithSourceMap', () => {
