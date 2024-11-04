@@ -1,7 +1,7 @@
 import { EOL } from 'os';
 import path, { basename, parse, join } from 'path';
 import camelcase from 'camelcase';
-import { SourceNode, type CodeWithSourceMap } from '../library/source-map/index.js';
+import { SourceNode, type CodeWithSourceMap } from 'source-map';
 import { type Token } from '../locator/index.js';
 import { type LocalsConvention } from '../runner.js';
 import { getRelativePath } from './index.js';
@@ -73,9 +73,9 @@ function generateTokenDeclarations(
   tokens: Token[],
   dtsFormatOptions: DtsFormatOptions | undefined,
   isExternalFile: (filePath: string) => boolean,
-): (typeof SourceNode)[] {
+): SourceNode[] {
   const formattedTokens = formatTokens(tokens, dtsFormatOptions?.localsConvention);
-  const result: (typeof SourceNode)[] = [];
+  const result: SourceNode[] = [];
 
   for (const token of formattedTokens) {
     // Only one original position can be associated with one generated position.
@@ -152,13 +152,13 @@ export function generateDtsContentWithSourceMap(
     isExternalFile,
   );
 
-  let sourceNode: typeof SourceNode;
+  let sourceNode: SourceNode;
   if (!tokenDeclarations || !tokenDeclarations.length) {
     sourceNode = new SourceNode(null, null, null, '');
   } else {
     sourceNode = new SourceNode(1, 0, getRelativePath(sourceMapFilePath, filePath), [
       `declare const styles:${EOL}`,
-      ...tokenDeclarations.map((tokenDeclaration) => ['  ', tokenDeclaration, EOL]),
+      ...tokenDeclarations.map((tokenDeclaration) => ['  ', tokenDeclaration, EOL]).flat(),
       `;${EOL}`,
       `export default styles;${EOL}`,
     ]);
