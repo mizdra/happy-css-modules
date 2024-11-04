@@ -47,6 +47,8 @@ export type EmitterOptions = {
   isExternalFile: (filePath: string) => boolean;
   /** Output directory for generated files. */
   outDir: string | undefined;
+  /** Current working directory. */
+  cwd: string;
 };
 
 export async function emitGeneratedFiles({
@@ -56,10 +58,11 @@ export async function emitGeneratedFiles({
   dtsFormatOptions,
   isExternalFile,
   outDir,
+  cwd,
 }: EmitterOptions): Promise<void> {
   const arbitraryExtensions = dtsFormatOptions?.arbitraryExtensions ?? DEFAULT_ARBITRARY_EXTENSIONS;
-  const dtsFilePath = getDtsFilePath(filePath, arbitraryExtensions, outDir);
-  const sourceMapFilePath = getSourceMapFilePath(filePath, arbitraryExtensions, outDir);
+  const dtsFilePath = getDtsFilePath(filePath, arbitraryExtensions, { outDir, cwd });
+  const sourceMapFilePath = getSourceMapFilePath(filePath, arbitraryExtensions, { outDir, cwd });
   const { dtsContent, sourceMap } = generateDtsContentWithSourceMap(
     filePath,
     dtsFilePath,
@@ -88,9 +91,10 @@ export async function isGeneratedFilesExist(
   emitDeclarationMap: boolean | undefined,
   arbitraryExtensions: boolean,
   outDir: string | undefined,
+  cwd: string,
 ): Promise<boolean> {
-  const dtsFilePath = getDtsFilePath(filePath, arbitraryExtensions, outDir);
-  const sourceMapFilePath = getSourceMapFilePath(filePath, arbitraryExtensions, outDir);
+  const dtsFilePath = getDtsFilePath(filePath, arbitraryExtensions, { outDir, cwd });
+  const sourceMapFilePath = getSourceMapFilePath(filePath, arbitraryExtensions, { outDir, cwd });
   if (emitDeclarationMap && !(await exists(sourceMapFilePath))) {
     return false;
   }
@@ -99,3 +103,8 @@ export async function isGeneratedFilesExist(
   }
   return true;
 }
+
+export type OutDirOptions = {
+  outDir: string | undefined;
+  cwd: string;
+};

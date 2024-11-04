@@ -4,22 +4,25 @@ import camelcase from 'camelcase';
 import { SourceNode, type CodeWithSourceMap } from '../library/source-map/index.js';
 import { type Token } from '../locator/index.js';
 import { type LocalsConvention } from '../runner.js';
-import { getRelativePath, type DtsFormatOptions } from './index.js';
-
-const CURRENT_WORKING_DIRECTORY = process.cwd();
+import { getRelativePath } from './index.js';
+import type { OutDirOptions, DtsFormatOptions } from './index.js';
 
 /**
  * Get .d.ts file path.
  * @param filePath The path to the source file (i.e. `/dir/foo.css`). It is absolute.
  * @param arbitraryExtensions Generate `.d.css.ts` instead of `.css.d.ts`.
- * @param outDir Output directory for generated files.
+ * @param options Output directory options
  * @returns The path to the .d.ts file. It is absolute.
  */
-export function getDtsFilePath(filePath: string, arbitraryExtensions: boolean, outDir: string | undefined): string {
+export function getDtsFilePath(
+  filePath: string,
+  arbitraryExtensions: boolean,
+  options: OutDirOptions | undefined,
+): string {
   let outputFilePath = filePath;
-  if (outDir) {
-    const relativePath = path.relative(CURRENT_WORKING_DIRECTORY, filePath);
-    outputFilePath = path.resolve(CURRENT_WORKING_DIRECTORY, outDir, relativePath);
+  if (options?.outDir) {
+    const relativePath = path.relative(options.cwd, filePath);
+    outputFilePath = path.resolve(options.cwd, options.outDir, relativePath);
   }
 
   if (arbitraryExtensions) {

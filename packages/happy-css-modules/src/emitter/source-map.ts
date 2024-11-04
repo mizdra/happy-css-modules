@@ -1,5 +1,6 @@
 import { EOL } from 'os';
 import { getDtsFilePath } from './dts.js';
+import type { OutDirOptions } from './index.js';
 import { getRelativePath } from './index.js';
 
 /**
@@ -12,9 +13,9 @@ import { getRelativePath } from './index.js';
 export function getSourceMapFilePath(
   filePath: string,
   arbitraryExtensions: boolean,
-  outDir: string | undefined,
+  options: OutDirOptions | undefined,
 ): string {
-  return `${getDtsFilePath(filePath, arbitraryExtensions, outDir)}.map`;
+  return `${getDtsFilePath(filePath, arbitraryExtensions, options)}.map`;
 }
 
 export function generateSourceMappingURLComment(dtsFilePath: string, sourceMapFilePath: string): string {
