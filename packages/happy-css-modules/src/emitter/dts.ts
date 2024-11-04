@@ -12,18 +12,14 @@ const CURRENT_WORKING_DIRECTORY = process.cwd();
  * Get .d.ts file path.
  * @param filePath The path to the source file (i.e. `/dir/foo.css`). It is absolute.
  * @param arbitraryExtensions Generate `.d.css.ts` instead of `.css.d.ts`.
- * @param outputFolder Output folder for generated files.
+ * @param outDir Output directory for generated files.
  * @returns The path to the .d.ts file. It is absolute.
  */
-export function getDtsFilePath(
-  filePath: string,
-  arbitraryExtensions: boolean,
-  outputFolder: string | undefined,
-): string {
+export function getDtsFilePath(filePath: string, arbitraryExtensions: boolean, outDir: string | undefined): string {
   let outputFilePath = filePath;
-  if (outputFolder) {
+  if (outDir) {
     const relativePath = path.relative(CURRENT_WORKING_DIRECTORY, filePath);
-    outputFilePath = path.resolve(CURRENT_WORKING_DIRECTORY, outputFolder, relativePath);
+    outputFilePath = path.resolve(CURRENT_WORKING_DIRECTORY, outDir, relativePath);
   }
 
   if (arbitraryExtensions) {

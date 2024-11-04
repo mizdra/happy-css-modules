@@ -30,7 +30,7 @@ describe('emitGeneratedFiles', () => {
     dtsFormatOptions: undefined,
     cwd: getFixturePath('/test'),
     isExternalFile: () => false,
-    outputFolder: undefined,
+    outDir: undefined,
   };
   beforeEach(() => {
     createFixtures({

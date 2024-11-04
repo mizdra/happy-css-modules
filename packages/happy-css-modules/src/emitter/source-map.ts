@@ -6,15 +6,15 @@ import { getRelativePath } from './index.js';
  * Get .d.ts.map file path.
  * @param filePath The path to the source file (i.e. `foo.css`). It is absolute.
  * @param arbitraryExtensions Generate `.d.css.ts` instead of `.css.d.ts`.
- * @param outputFolder Output folder for generated files.
+ * @param outDir Output directory for generated files.
  * @returns The path to the .d.ts.map file. It is absolute.
  */
 export function getSourceMapFilePath(
   filePath: string,
   arbitraryExtensions: boolean,
-  outputFolder: string | undefined,
+  outDir: string | undefined,
 ): string {
-  return `${getDtsFilePath(filePath, arbitraryExtensions, outputFolder)}.map`;
+  return `${getDtsFilePath(filePath, arbitraryExtensions, outDir)}.map`;
 }
 
 export function generateSourceMappingURLComment(dtsFilePath: string, sourceMapFilePath: string): string {

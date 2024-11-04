@@ -162,7 +162,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
           arbitraryExtensions: options.arbitraryExtensions,
         },
         isExternalFile,
-        outputFolder: options.outDir,
+        outDir: options.outDir,
       });
       logger.info(chalk.green(`${relative(cwd, filePath)} (generated)`));
 

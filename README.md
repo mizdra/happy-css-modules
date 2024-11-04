@@ -60,7 +60,7 @@ Options:
       --cache                Only generate .d.ts and .d.ts.map for changed files.                                  [boolean] [default: true]
       --cacheStrategy        Strategy for the cache to use for detecting changed files.[choices: "content", "metadata"] [default: "content"]
       --logLevel             What level of logs to report.                            [choices: "debug", "info", "silent"] [default: "info"]
-  -o, --outputFolder         Output folder for generated files.                                                                     [string]
+  -o, --outDir         Output directory for generated files.                                                                     [string]
   -h, --help                 Show help                                                                                             [boolean]
   -v, --version              Show version number                                                                                   [boolean]
 
