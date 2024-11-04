@@ -87,6 +87,30 @@ The case of multiple definitions is a bit more complicated. This is because the 
 
 ![Illustration of a case with multiple definitions](docs/how-does-definition-jumps-work/multiple-definitions/flow.drawio.svg)
 
+## How to use `--outDir` option
+
+Use `--outDir` to output `.module.css.d.ts` and `.module.css.d.ts.map` in a separate directory. This is useful for keeping the `src/` directory clean.
+
+However, by default tsc and tsserver cannot load it. To enable tsc or tsserver to load them, use the [`rootDirs`](https://www.typescriptlang.org/tsconfig/#rootDirs) option in `tsconfig.json`. An example is given below.
+
+```json
+// package.json
+{
+  "scripts": {
+    "gen": "hcm -o generated/hcm 'src/**/*.module.css'"
+  }
+}
+```
+
+```json
+// tsconfig.json
+{
+  "compilerOptions": {
+    "rootDirs": ["src", "generated/hcm/src"]
+  }
+}
+```
+
 ## Node.js API (Experimental)
 
 > **Warning**
