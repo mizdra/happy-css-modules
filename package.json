@@ -10,7 +10,7 @@
     "lint:prettier": "prettier --check .",
     "lint:eslint": "ESLINT_USE_FLAT_CONFIG=true eslint .",
     "lint:tsc": "tsc -p tsconfig.json",
-    "test": "NODE_OPTIONS=\"--experimental-vm-modules $NODE_OPTIONS\" jest"
+    "test": "vitest run"
   },
   "repository": {
     "type": "git",
@@ -63,6 +63,7 @@
     "prettier": "~2.8.8",
     "sass": "^1.77.1",
     "stylelint": "^16.5.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "vitest": "^2.1.4"
   }
 }

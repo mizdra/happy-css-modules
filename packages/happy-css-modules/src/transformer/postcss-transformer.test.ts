@@ -1,6 +1,5 @@
 import { randomUUID } from 'node:crypto';
 import { createRequire } from 'node:module';
-import { jest } from '@jest/globals';
 import dedent from 'dedent';
 import { Locator } from '../locator/index.js';
 import { createFixtures, getFixturePath } from '../test-util/util.js';
@@ -60,7 +59,7 @@ test('tracks dependencies that have been pre-bundled by postcss compiler', async
       postcssConfig: `${uuid}/postcss.config.js`,
     }),
   });
-  const loadSpy = jest.spyOn(locator, 'load');
+  const loadSpy = vi.spyOn(locator, 'load');
   createFixtures({
     [`/${uuid}/postcss.config.js`]: dedent`
     module.exports = {
@@ -158,8 +157,7 @@ test('returns false if postcssrc is not found', async () => {
     await transformer('', {
       from: getFixturePath('/test/1.css'),
       isIgnoredSpecifier: () => false,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      resolver: jest.fn() as any,
+      resolver: vi.fn(),
     }),
   ).toBe(false);
 });

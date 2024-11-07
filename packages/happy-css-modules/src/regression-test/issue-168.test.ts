@@ -1,5 +1,4 @@
 import { symlink } from 'fs/promises';
-import { jest } from '@jest/globals';
 import type { RunnerOptions, Watcher } from '../runner.js';
 import { run } from '../runner.js';
 import { createFixtures, getFixturePath, waitForAsyncTask } from '../test-util/util.js';
@@ -12,7 +11,7 @@ const defaultOptions: RunnerOptions = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
 // Exit the watcher even if the test fails
 let watcher: Watcher | undefined;

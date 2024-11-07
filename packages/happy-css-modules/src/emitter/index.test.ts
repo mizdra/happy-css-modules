@@ -1,10 +1,9 @@
 import { readFile, stat } from 'fs/promises';
-import { jest } from '@jest/globals';
 import { createFixtures, exists, fakeToken, getFixturePath, waitForAsyncTask } from '../test-util/util.js';
 import { emitGeneratedFiles, getRelativePath, isSubDirectoryFile } from './index.js';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 beforeEach(() => {
   consoleLogSpy.mockClear();
