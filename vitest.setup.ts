@@ -1,8 +1,9 @@
 import { format } from 'prettier';
+import type { SnapshotSerializer } from 'vitest';
 // eslint-disable-next-line no-restricted-imports
 import { FIXTURE_DIR_PATH } from './packages/happy-css-modules/src/test-util/util.js';
 
-const jsonSerializer: jest.SnapshotSerializerPlugin = {
+const jsonSerializer: SnapshotSerializer = {
   serialize(val) {
     const json = JSON.stringify(val);
     const replacedJson = json.replace(new RegExp(FIXTURE_DIR_PATH, 'gu'), '<fixtures>');
@@ -38,7 +39,7 @@ const jsonSerializer: jest.SnapshotSerializerPlugin = {
   },
 };
 
-const errorSerializer: jest.SnapshotSerializerPlugin = {
+const errorSerializer: SnapshotSerializer = {
   serialize(val) {
     if (!(val instanceof Error)) throw new Error('unreachable');
     return val.message.replace(new RegExp(FIXTURE_DIR_PATH, 'gu'), '<fixtures>');

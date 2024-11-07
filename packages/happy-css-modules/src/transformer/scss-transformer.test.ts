@@ -1,11 +1,10 @@
-import { jest } from '@jest/globals';
 import dedent from 'dedent';
 import { Locator } from '../locator/index.js';
 import { createFixtures, getFixturePath } from '../test-util/util.js';
 import { createScssTransformer } from './scss-transformer.js';
 
 const locator = new Locator({ transformer: createScssTransformer() });
-const loadSpy = jest.spyOn(locator, 'load');
+const loadSpy = vi.spyOn(locator, 'load');
 
 afterEach(() => {
   loadSpy.mockClear();

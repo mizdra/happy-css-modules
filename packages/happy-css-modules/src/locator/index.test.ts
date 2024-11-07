@@ -1,6 +1,5 @@
 import { readFile, writeFile } from 'fs/promises';
 import { randomUUID } from 'node:crypto';
-import { jest } from '@jest/globals';
 import dedent from 'dedent';
 import { Locator, createDefaultTransformer } from '../index.js';
 import { createFixtures, getFixturePath } from '../test-util/util.js';
@@ -265,7 +264,7 @@ test('returns the result from the cache when the file has not been modified', as
     `,
   });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const readCSSSpy = jest.spyOn(locator, 'readCSS' as any);
+  const readCSSSpy = vi.spyOn(locator, 'readCSS' as any);
   await locator.load(getFixturePath('/test/1.css'));
   expect(readCSSSpy).toHaveBeenCalledTimes(3);
   expect(readCSSSpy).toHaveBeenNthCalledWith(1, getFixturePath('/test/1.css'));

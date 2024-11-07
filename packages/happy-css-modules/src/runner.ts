@@ -2,7 +2,7 @@ import { resolve, relative } from 'path';
 import * as process from 'process';
 import { createCache } from '@file-cache/core';
 import { createNpmPackageKey } from '@file-cache/npm';
-import AwaitLock from 'await-lock';
+import { Mutex } from 'async-mutex';
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 import { glob } from 'glob';
@@ -93,8 +93,7 @@ type OverrideProp<T, K extends keyof T, V extends T[K]> = Omit<T, K> & { [P in K
 export async function run(options: OverrideProp<RunnerOptions, 'watch', true>): Promise<Watcher>;
 export async function run(options: RunnerOptions): Promise<void>;
 export async function run(options: RunnerOptions): Promise<Watcher | void> {
-  // eslint-disable-next-line new-cap
-  const lock = new AwaitLock.default();
+  const lock = new Mutex();
   const logger = new Logger(options.logLevel ?? 'info');
 
   const cwd = options.cwd ?? process.cwd();
@@ -135,7 +134,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
     }
 
     // Locator#load cannot be called concurrently. Therefore, it takes a lock and waits.
-    await lock.acquireAsync();
+    await lock.acquire();
 
     try {
       const _isGeneratedFilesExist = await isGeneratedFilesExist(

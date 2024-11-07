@@ -3,9 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'path';
 import { fileURLToPath } from 'url';
-import * as fileCacheCore from '@file-cache/core';
 import type { CreateCacheOptions } from '@file-cache/core';
-import { jest } from '@jest/globals';
 import dedent from 'dedent';
 import type { RunnerOptions, Watcher } from './runner.js';
 import { createFixtures, exists, getFixturePath, waitForAsyncTask } from './test-util/util.js';
@@ -13,20 +11,23 @@ import { createFixtures, exists, getFixturePath, waitForAsyncTask } from './test
 const require = createRequire(import.meta.url);
 
 const uuid = randomUUID();
-jest.unstable_mockModule('@file-cache/core', () => ({
-  ...fileCacheCore, // Inherit native functions
-  createCache: async (options: CreateCacheOptions) => {
-    options.keys.push(() => uuid); // Add a random key to avoid cache collision
-    return fileCacheCore.createCache(options);
-  },
-}));
+vi.mock(import('@file-cache/core'), async (importOriginal) => {
+  const fileCacheCore = await importOriginal();
+  return {
+    ...fileCacheCore, // Inherit native functions
+    createCache: async (options: CreateCacheOptions) => {
+      options.keys.push(() => uuid); // Add a random key to avoid cache collision
+      return fileCacheCore.createCache(options);
+    },
+  };
+});
 
 const { run } = await import('./runner.js');
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
 const defaultOptions: RunnerOptions = {
   pattern: 'test/**/*.{css,scss}',
