@@ -10,7 +10,7 @@ import { sleepSync } from '../util.js';
 export const FIXTURE_DIR_PATH = resolve(
   realpathSync(tmpdir()),
   'happy-css-modules/fixtures',
-  process.env['VITEST_WORKER_ID']!,
+  process.env['VITEST_POOL_ID']!,
 );
 
 export function createRoot(code: string, from?: string): Root {
