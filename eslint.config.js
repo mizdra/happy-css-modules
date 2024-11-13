@@ -86,9 +86,6 @@ export default [
   },
   ...compat.env({
     files: ['src/test-util/**/*.{ts,tsx,cts,mts}', '*.test.{ts,tsx,cts,mts}'],
-    env: {
-      jest: true,
-    },
     rules: {
       'no-console': 0,
     },
