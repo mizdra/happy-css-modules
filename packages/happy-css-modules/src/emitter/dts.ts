@@ -97,9 +97,9 @@ function generateTokenDeclarations(
         ? new SourceNode(null, null, null, [
             '& Readonly<{ ',
             new SourceNode(
-              originalLocation.start.line ?? null,
+              originalLocation.start.line,
               // The SourceNode's column is 0-based, but the originalLocation's column is 1-based.
-              originalLocation.start.column - 1 ?? null,
+              originalLocation.start.column - 1,
               getRelativePath(sourceMapFilePath, originalLocation.filePath),
               `"${token.name}"`,
               token.name,
@@ -110,9 +110,9 @@ function generateTokenDeclarations(
         ? new SourceNode(null, null, null, [
             `& Readonly<{ `,
             new SourceNode(
-              originalLocation.start.line ?? null,
+              originalLocation.start.line,
               // The SourceNode's column is 0-based, but the originalLocation's column is 1-based.
-              originalLocation.start.column - 1 ?? null,
+              originalLocation.start.column - 1,
               getRelativePath(sourceMapFilePath, originalLocation.filePath),
               `"${token.name}"`,
               token.name,
