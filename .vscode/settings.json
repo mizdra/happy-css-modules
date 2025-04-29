@@ -5,14 +5,6 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
-  "jest.jestCommandLine": "npm run test --",
-  // It is expensive to run the test each time the file to be tested (e.g. `loader.ts`) is saved.
-  // So, run Jest only when the test file (e.g. `loader.test.ts`) is saved.
-  "jest.autoRun": {
-    "watch": false,
-    "onSave": "test-file"
-  },
-  "eslint.experimental.useFlatConfig": true,
   "css.validate": false,
   "less.validate": false,
   "scss.validate": false
