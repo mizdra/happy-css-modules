@@ -12,6 +12,14 @@
 
 https://user-images.githubusercontent.com/9639995/189538880-872ad38d-2c9d-4c19-b257-521018963eec.mov
 
+## NOTICE: Migration to css-modules-kit
+
+Consider migrating to [`mizdra/css-modules-kit`](https://github.com/mizdra/css-modules-kit), which is the successor to happy-css-modules. It offers enhanced features such as Renaming and Find All References support.
+
+Please note that `css-modules-kit` **does not support** Sass and Less. There are no plans to add support in the future. If you depend on these preprocessors, continue using `happy-css-modules`.
+
+See the [`css-modules-kit` repository](https://github.com/mizdra/css-modules-kit).
+
 ## Features
 
 - :white_check_mark: Strict type checking
