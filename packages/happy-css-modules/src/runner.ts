@@ -5,7 +5,7 @@ import { createNpmPackageKey } from '@file-cache/npm';
 import { Mutex } from 'async-mutex';
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
-import { glob } from 'glob';
+import { glob } from 'tinyglobby';
 import { DEFAULT_ARBITRARY_EXTENSIONS } from './config.js';
 import { isGeneratedFilesExist, emitGeneratedFiles } from './emitter/index.js';
 import { Locator } from './locator/index.js';

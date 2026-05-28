@@ -3,7 +3,7 @@ import { access } from 'fs/promises';
 import { join, dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { resolve as importMetaResolve } from 'import-meta-resolve';
-import { minimatch } from 'minimatch';
+import picomatch from 'picomatch';
 
 /**
  * The SystemError type of Node.js.
@@ -66,7 +66,7 @@ export async function exists(path: string): Promise<boolean> {
 }
 
 export function isMatchByGlob(filePath: string, pattern: string, options: { cwd: string }): boolean {
-  return minimatch(filePath, join(options.cwd, pattern), { windowsPathsNoEscape: true });
+  return picomatch.isMatch(filePath, join(options.cwd, pattern), { windows: true });
 }
 
 export function getPackageJson() {

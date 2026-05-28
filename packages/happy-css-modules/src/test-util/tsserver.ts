@@ -3,9 +3,9 @@ import { mkdir, writeFile as nativeWriteFile } from 'fs/promises';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import serverHarness from '@typescript/server-harness';
-import { glob } from 'glob';
 import { resolve } from 'import-meta-resolve';
 import lineColumn from 'line-column';
+import { glob } from 'tinyglobby';
 import type { server } from 'typescript/lib/tsserverlibrary.js';
 import { getFixturePath } from './util.js';
 
@@ -120,7 +120,7 @@ export function createTSServer() {
       // When a file is updated, its cache remains with the old content.
       // Therefore we need to overwrite the cache with the latest content.
 
-      const fixtureFilePaths = await glob(getFixturePath('/**/*.ts'), { dot: true });
+      const fixtureFilePaths = await glob('**/*.ts', { dot: true, cwd: getFixturePath('/'), absolute: true });
       // latest contents
       const openFiles: server.protocol.UpdateOpenRequest['arguments']['openFiles'] = fixtureFilePaths.map(
         (filePath) => ({
