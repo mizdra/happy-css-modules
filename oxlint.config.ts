@@ -3,12 +3,7 @@ import { defineConfig } from 'oxlint';
 
 export default defineConfig({
   extends: [mizdra.base, mizdra.typescript, mizdra.node],
-  ignorePatterns: [
-    '**/*.css.d.ts',
-    'packages/example',
-    'docs/how-does-definition-jumps-work',
-    'packages/happy-css-modules/bin/**',
-  ],
+  ignorePatterns: ['**/*.css.d.ts', 'example', 'docs/how-does-definition-jumps-work', 'bin/**'],
   rules: {
     'no-console': 'error',
     'typescript/consistent-type-imports': ['error', { disallowTypeAnnotations: false }],
@@ -21,7 +16,7 @@ export default defineConfig({
       },
     },
     {
-      files: ['packages/happy-css-modules/**'],
+      files: ['src/**'],
       rules: {
         'no-restricted-imports': [
           'error',

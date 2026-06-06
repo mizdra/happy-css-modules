@@ -1,9 +1,5 @@
 .DS_Store
 node_modules/
-/packages/example/app.js
-/packages/example/*.css.d.ts
-/packages/example/bundle.js
-/packages/example/bundle.css
 *.swp
 *.swo
 dist/
