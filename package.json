@@ -5,7 +5,7 @@
     "dev:happy-css-modules": "npm -w example run hcm",
     "build": "npm run build --workspaces --if-present",
     "lint": "run-s -c lint:*",
-    "lint:prettier": "prettier --check .",
+    "lint:oxfmt": "oxfmt --check",
     "lint:eslint": "ESLINT_USE_FLAT_CONFIG=true eslint .",
     "lint:tsc": "tsc -p tsconfig.json",
     "test": "vitest run"
@@ -20,7 +20,6 @@
     "node": "^22.20.0 || ^24.8.0 || >=26.0.0"
   },
   "packageManager": "npm@11.16.0",
-  "prettier": "@mizdra/prettier-config-mizdra",
   "workspaces": [
     "packages/happy-css-modules",
     "packages/example"
@@ -29,7 +28,7 @@
     "@eslint/eslintrc": "^3.0.0",
     "@eslint/js": "^8.37.0",
     "@mizdra/eslint-config-mizdra": "^2.0.0",
-    "@mizdra/prettier-config-mizdra": "^1.0.0",
+    "@mizdra/oxfmt-config": "^0.2.0",
     "@types/dedent": "^0.7.2",
     "@types/eslint": "^9.6.0",
     "@types/glob": "^8.1.0",
@@ -42,9 +41,9 @@
     "eslint": "^8.57.0",
     "less": "^4.2.0",
     "npm-run-all2": "^6.2.0",
+    "oxfmt": "^0.53.0",
     "postcss-import": "^16.1.0",
     "postcss-simple-vars": "^7.0.1",
-    "prettier": "~2.8.8",
     "sass": "^1.77.1",
     "typescript": "^5.4.5",
     "vitest": "^2.1.4"

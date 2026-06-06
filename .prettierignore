@@ -4,3 +4,4 @@ __snapshots__/
 *.scss.d.ts
 *.less.d.ts
 /docs/how-does-definition-jumps-work
+/.claude
