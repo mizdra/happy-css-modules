@@ -43,62 +43,107 @@ test('handles sass features', async () => {
   // FIXME: The end position of 'a_2_2' is incorrect.
   expect(replaceFixtureDir(result)).toMatchInlineSnapshot(`
     {
-      dependencies: ["<fixtures>/test/2.scss", "<fixtures>/test/3.scss"],
-      tokens: [
+      "dependencies": [
+        "<fixtures>/test/2.scss",
+        "<fixtures>/test/3.scss",
+      ],
+      "tokens": [
         {
-          name: "b_1",
-          originalLocation: {
-            filePath: "<fixtures>/test/2.scss",
-            start: { line: 1, column: 1 },
-            end: { line: 1, column: 4 },
+          "name": "b_1",
+          "originalLocation": {
+            "end": {
+              "column": 4,
+              "line": 1,
+            },
+            "filePath": "<fixtures>/test/2.scss",
+            "start": {
+              "column": 1,
+              "line": 1,
+            },
           },
         },
         {
-          name: "c",
-          originalLocation: {
-            filePath: "<fixtures>/test/3.scss",
-            start: { line: 1, column: 1 },
-            end: { line: 1, column: 2 },
+          "name": "c",
+          "originalLocation": {
+            "end": {
+              "column": 2,
+              "line": 1,
+            },
+            "filePath": "<fixtures>/test/3.scss",
+            "start": {
+              "column": 1,
+              "line": 1,
+            },
           },
         },
         {
-          name: "a_1",
-          originalLocation: {
-            filePath: "<fixtures>/test/1.scss",
-            start: { line: 3, column: 1 },
-            end: { line: 3, column: 4 },
+          "name": "a_1",
+          "originalLocation": {
+            "end": {
+              "column": 4,
+              "line": 3,
+            },
+            "filePath": "<fixtures>/test/1.scss",
+            "start": {
+              "column": 1,
+              "line": 3,
+            },
           },
         },
         {
-          name: "a_2",
-          originalLocation: {
-            filePath: "<fixtures>/test/1.scss",
-            start: { line: 4, column: 1 },
-            end: { line: 4, column: 4 },
+          "name": "a_2",
+          "originalLocation": {
+            "end": {
+              "column": 4,
+              "line": 4,
+            },
+            "filePath": "<fixtures>/test/1.scss",
+            "start": {
+              "column": 1,
+              "line": 4,
+            },
           },
         },
         {
-          name: "a_2",
-          originalLocation: {
-            filePath: "<fixtures>/test/1.scss",
-            start: { line: 7, column: 3 },
-            end: { line: 7, column: 6 },
+          "name": "a_2",
+          "originalLocation": {
+            "end": {
+              "column": 6,
+              "line": 7,
+            },
+            "filePath": "<fixtures>/test/1.scss",
+            "start": {
+              "column": 3,
+              "line": 7,
+            },
           },
         },
         {
-          name: "a_2_1",
-          originalLocation: {
-            filePath: "<fixtures>/test/1.scss",
-            start: { line: 7, column: 3 },
-            end: { line: 7, column: 8 },
+          "name": "a_2_1",
+          "originalLocation": {
+            "end": {
+              "column": 8,
+              "line": 7,
+            },
+            "filePath": "<fixtures>/test/1.scss",
+            "start": {
+              "column": 3,
+              "line": 7,
+            },
           },
         },
         {
-          name: "a_2_2",
-          originalLocation: {
-            filePath: "<fixtures>/test/1.scss",
-            start: { line: 8, column: 3 },
-            end: { line: 8, column: 8 },
+          "name": "a_2_2",
+          "originalLocation": {
+            "end": {
+              "column": 8,
+              "line": 8,
+            },
+            "filePath": "<fixtures>/test/1.scss",
+            "start": {
+              "column": 3,
+              "line": 8,
+            },
           },
         },
       ],

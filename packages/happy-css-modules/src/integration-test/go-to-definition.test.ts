@@ -67,138 +67,285 @@ test('basic', async () => {
     [
       {
         "definitions": [
-          { file: "<fixtures>/test/1.css", text: ".basic ", start: { line: 1, offset: 1 }, end: { line: 1, offset: 8 } },
+          {
+            "end": {
+              "line": 1,
+              "offset": 8,
+            },
+            "file": "<fixtures>/test/1.css",
+            "start": {
+              "line": 1,
+              "offset": 1,
+            },
+            "text": ".basic ",
+          },
         ],
         "identifier": "basic",
       },
       {
         "definitions": [
-          { file: "<fixtures>/test/1.css", text: ".cascading ", start: { line: 2, offset: 1 }, end: { line: 2, offset: 12 } },
-          { file: "<fixtures>/test/1.css", text: ".cascading ", start: { line: 3, offset: 1 }, end: { line: 3, offset: 12 } },
+          {
+            "end": {
+              "line": 2,
+              "offset": 12,
+            },
+            "file": "<fixtures>/test/1.css",
+            "start": {
+              "line": 2,
+              "offset": 1,
+            },
+            "text": ".cascading ",
+          },
+          {
+            "end": {
+              "line": 3,
+              "offset": 12,
+            },
+            "file": "<fixtures>/test/1.css",
+            "start": {
+              "line": 3,
+              "offset": 1,
+            },
+            "text": ".cascading ",
+          },
         ],
         "identifier": "cascading",
       },
       {
         "definitions": [
-          { file: "<fixtures>/test/1.css", text: ".pseudo_class_1 ", start: { line: 4, offset: 1 }, end: { line: 4, offset: 17 } },
+          {
+            "end": {
+              "line": 4,
+              "offset": 17,
+            },
+            "file": "<fixtures>/test/1.css",
+            "start": {
+              "line": 4,
+              "offset": 1,
+            },
+            "text": ".pseudo_class_1 ",
+          },
         ],
         "identifier": "pseudo_class_1",
       },
       {
         "definitions": [
-          { file: "<fixtures>/test/1.css", text: ".pseudo_class_2:", start: { line: 5, offset: 1 }, end: { line: 5, offset: 17 } },
+          {
+            "end": {
+              "line": 5,
+              "offset": 17,
+            },
+            "file": "<fixtures>/test/1.css",
+            "start": {
+              "line": 5,
+              "offset": 1,
+            },
+            "text": ".pseudo_class_2:",
+          },
         ],
         "identifier": "pseudo_class_2",
       },
       {
         "definitions": [
-          { file: "<fixtures>/test/1.css", text: ".pseudo_class_3)", start: { line: 6, offset: 6 }, end: { line: 6, offset: 22 } },
+          {
+            "end": {
+              "line": 6,
+              "offset": 22,
+            },
+            "file": "<fixtures>/test/1.css",
+            "start": {
+              "line": 6,
+              "offset": 6,
+            },
+            "text": ".pseudo_class_3)",
+          },
         ],
         "identifier": "pseudo_class_3",
       },
       {
         "definitions": [
           {
-      file: "<fixtures>/test/1.css",
-      text: ".multiple_selector_1.",
-      start: { line: 7, offset: 1 },
-      end: { line: 7, offset: 22 },
-    },
+            "end": {
+              "line": 7,
+              "offset": 22,
+            },
+            "file": "<fixtures>/test/1.css",
+            "start": {
+              "line": 7,
+              "offset": 1,
+            },
+            "text": ".multiple_selector_1.",
+          },
         ],
         "identifier": "multiple_selector_1",
       },
       {
         "definitions": [
           {
-      file: "<fixtures>/test/1.css",
-      text: ".multiple_selector_2 ",
-      start: { line: 7, offset: 21 },
-      end: { line: 7, offset: 42 },
-    },
+            "end": {
+              "line": 7,
+              "offset": 42,
+            },
+            "file": "<fixtures>/test/1.css",
+            "start": {
+              "line": 7,
+              "offset": 21,
+            },
+            "text": ".multiple_selector_2 ",
+          },
         ],
         "identifier": "multiple_selector_2",
       },
       {
         "definitions": [
-          { file: "<fixtures>/test/1.css", text: ".combinator_1 ", start: { line: 8, offset: 1 }, end: { line: 8, offset: 15 } },
+          {
+            "end": {
+              "line": 8,
+              "offset": 15,
+            },
+            "file": "<fixtures>/test/1.css",
+            "start": {
+              "line": 8,
+              "offset": 1,
+            },
+            "text": ".combinator_1 ",
+          },
         ],
         "identifier": "combinator_1",
       },
       {
         "definitions": [
-          { file: "<fixtures>/test/1.css", text: ".combinator_2 ", start: { line: 8, offset: 17 }, end: { line: 8, offset: 31 } },
+          {
+            "end": {
+              "line": 8,
+              "offset": 31,
+            },
+            "file": "<fixtures>/test/1.css",
+            "start": {
+              "line": 8,
+              "offset": 17,
+            },
+            "text": ".combinator_2 ",
+          },
         ],
         "identifier": "combinator_2",
       },
       {
         "definitions": [
-          { file: "<fixtures>/test/1.css", text: ".at_rule ", start: { line: 11, offset: 5 }, end: { line: 11, offset: 14 } },
+          {
+            "end": {
+              "line": 11,
+              "offset": 14,
+            },
+            "file": "<fixtures>/test/1.css",
+            "start": {
+              "line": 11,
+              "offset": 5,
+            },
+            "text": ".at_rule ",
+          },
         ],
         "identifier": "at_rule",
       },
       {
         "definitions": [
           {
-      file: "<fixtures>/test/1.css",
-      text: ".selector_list_1,",
-      start: { line: 14, offset: 1 },
-      end: { line: 14, offset: 18 },
-    },
+            "end": {
+              "line": 14,
+              "offset": 18,
+            },
+            "file": "<fixtures>/test/1.css",
+            "start": {
+              "line": 14,
+              "offset": 1,
+            },
+            "text": ".selector_list_1,",
+          },
         ],
         "identifier": "selector_list_1",
       },
       {
         "definitions": [
           {
-      file: "<fixtures>/test/1.css",
-      text: ".selector_list_2 ",
-      start: { line: 14, offset: 19 },
-      end: { line: 14, offset: 36 },
-    },
+            "end": {
+              "line": 14,
+              "offset": 36,
+            },
+            "file": "<fixtures>/test/1.css",
+            "start": {
+              "line": 14,
+              "offset": 19,
+            },
+            "text": ".selector_list_2 ",
+          },
         ],
         "identifier": "selector_list_2",
       },
       {
         "definitions": [
           {
-      file: "<fixtures>/test/1.css",
-      text: ".local_class_name_1 ",
-      start: { line: 15, offset: 8 },
-      end: { line: 15, offset: 28 },
-    },
+            "end": {
+              "line": 15,
+              "offset": 28,
+            },
+            "file": "<fixtures>/test/1.css",
+            "start": {
+              "line": 15,
+              "offset": 8,
+            },
+            "text": ".local_class_name_1 ",
+          },
         ],
         "identifier": "local_class_name_1",
       },
       {
         "definitions": [
           {
-      file: "<fixtures>/test/1.css",
-      text: ".local_class_name_2 ",
-      start: { line: 17, offset: 3 },
-      end: { line: 17, offset: 23 },
-    },
+            "end": {
+              "line": 17,
+              "offset": 23,
+            },
+            "file": "<fixtures>/test/1.css",
+            "start": {
+              "line": 17,
+              "offset": 3,
+            },
+            "text": ".local_class_name_2 ",
+          },
         ],
         "identifier": "local_class_name_2",
       },
       {
         "definitions": [
           {
-      file: "<fixtures>/test/1.css",
-      text: ".local_class_name_3 ",
-      start: { line: 18, offset: 3 },
-      end: { line: 18, offset: 23 },
-    },
+            "end": {
+              "line": 18,
+              "offset": 23,
+            },
+            "file": "<fixtures>/test/1.css",
+            "start": {
+              "line": 18,
+              "offset": 3,
+            },
+            "text": ".local_class_name_3 ",
+          },
         ],
         "identifier": "local_class_name_3",
       },
       {
         "definitions": [
           {
-      file: "<fixtures>/test/1.css",
-      text: ".local_class_name_4)",
-      start: { line: 20, offset: 8 },
-      end: { line: 20, offset: 28 },
-    },
+            "end": {
+              "line": 20,
+              "offset": 28,
+            },
+            "file": "<fixtures>/test/1.css",
+            "start": {
+              "line": 20,
+              "offset": 8,
+            },
+            "text": ".local_class_name_4)",
+          },
         ],
         "identifier": "local_class_name_4",
       },
@@ -207,7 +354,18 @@ test('basic', async () => {
   const moduleDefinitions = await server.getModuleDefinitions(getFixturePath('/test/1.css'));
   expect(replaceFixtureDir(moduleDefinitions)).toMatchInlineSnapshot(`
     [
-      { file: "<fixtures>/test/1.css", text: "", start: { line: 1, offset: 1 }, end: { line: 1, offset: 1 } },
+      {
+        "end": {
+          "line": 1,
+          "offset": 1,
+        },
+        "file": "<fixtures>/test/1.css",
+        "start": {
+          "line": 1,
+          "offset": 1,
+        },
+        "text": "",
+      },
     ]
   `);
 });
@@ -234,26 +392,81 @@ test('imported tokens', async () => {
     [
       {
         "definitions": [
-          { file: "<fixtures>/test/1.css", text: ".a ", start: { line: 2, offset: 1 }, end: { line: 2, offset: 4 } },
+          {
+            "end": {
+              "line": 2,
+              "offset": 4,
+            },
+            "file": "<fixtures>/test/1.css",
+            "start": {
+              "line": 2,
+              "offset": 1,
+            },
+            "text": ".a ",
+          },
         ],
         "identifier": "a",
       },
       {
         "definitions": [
-          { file: "<fixtures>/test/1.css", text: ".b ", start: { line: 3, offset: 1 }, end: { line: 3, offset: 4 } },
-          { file: "<fixtures>/test/1.css", text: ".b ", start: { line: 4, offset: 1 }, end: { line: 4, offset: 4 } },
+          {
+            "end": {
+              "line": 3,
+              "offset": 4,
+            },
+            "file": "<fixtures>/test/1.css",
+            "start": {
+              "line": 3,
+              "offset": 1,
+            },
+            "text": ".b ",
+          },
+          {
+            "end": {
+              "line": 4,
+              "offset": 4,
+            },
+            "file": "<fixtures>/test/1.css",
+            "start": {
+              "line": 4,
+              "offset": 1,
+            },
+            "text": ".b ",
+          },
         ],
         "identifier": "b",
       },
       {
         "definitions": [
-          { file: "<fixtures>/test/2.css", text: ".c ", start: { line: 2, offset: 1 }, end: { line: 2, offset: 4 } },
+          {
+            "end": {
+              "line": 2,
+              "offset": 4,
+            },
+            "file": "<fixtures>/test/2.css",
+            "start": {
+              "line": 2,
+              "offset": 1,
+            },
+            "text": ".c ",
+          },
         ],
         "identifier": "c",
       },
       {
         "definitions": [
-          { file: "<fixtures>/test/3.css", text: ".d ", start: { line: 1, offset: 1 }, end: { line: 1, offset: 4 } },
+          {
+            "end": {
+              "line": 1,
+              "offset": 4,
+            },
+            "file": "<fixtures>/test/3.css",
+            "start": {
+              "line": 1,
+              "offset": 1,
+            },
+            "text": ".d ",
+          },
         ],
         "identifier": "d",
       },
@@ -296,32 +509,98 @@ test('with transformer', async () => {
     [
       {
         "definitions": [
-          { file: "<fixtures>/test/1.scss", text: ".basic ", start: { line: 3, offset: 1 }, end: { line: 3, offset: 8 } },
+          {
+            "end": {
+              "line": 3,
+              "offset": 8,
+            },
+            "file": "<fixtures>/test/1.scss",
+            "start": {
+              "line": 3,
+              "offset": 1,
+            },
+            "text": ".basic ",
+          },
         ],
         "identifier": "basic",
       },
       {
         "definitions": [
-          { file: "<fixtures>/test/1.scss", text: ".nesting ", start: { line: 4, offset: 1 }, end: { line: 4, offset: 10 } },
-          { file: "<fixtures>/test/1.scss", text: ".nesting_", start: { line: 7, offset: 3 }, end: { line: 7, offset: 12 } },
+          {
+            "end": {
+              "line": 4,
+              "offset": 10,
+            },
+            "file": "<fixtures>/test/1.scss",
+            "start": {
+              "line": 4,
+              "offset": 1,
+            },
+            "text": ".nesting ",
+          },
+          {
+            "end": {
+              "line": 7,
+              "offset": 12,
+            },
+            "file": "<fixtures>/test/1.scss",
+            "start": {
+              "line": 7,
+              "offset": 3,
+            },
+            "text": ".nesting_",
+          },
         ],
         "identifier": "nesting",
       },
       {
         "definitions": [
-          { file: "<fixtures>/test/1.scss", text: ".nesting_1 ", start: { line: 7, offset: 3 }, end: { line: 7, offset: 14 } },
+          {
+            "end": {
+              "line": 7,
+              "offset": 14,
+            },
+            "file": "<fixtures>/test/1.scss",
+            "start": {
+              "line": 7,
+              "offset": 3,
+            },
+            "text": ".nesting_1 ",
+          },
         ],
         "identifier": "nesting_1",
       },
       {
         "definitions": [
-          { file: "<fixtures>/test/1.scss", text: "&_2 { dummy", start: { line: 8, offset: 3 }, end: { line: 8, offset: 14 } },
+          {
+            "end": {
+              "line": 8,
+              "offset": 14,
+            },
+            "file": "<fixtures>/test/1.scss",
+            "start": {
+              "line": 8,
+              "offset": 3,
+            },
+            "text": "&_2 { dummy",
+          },
         ],
         "identifier": "nesting_2",
       },
       {
         "definitions": [
-          { file: "<fixtures>/test/2.scss", text: ".b_1 ", start: { line: 1, offset: 1 }, end: { line: 1, offset: 6 } },
+          {
+            "end": {
+              "line": 1,
+              "offset": 6,
+            },
+            "file": "<fixtures>/test/2.scss",
+            "start": {
+              "line": 1,
+              "offset": 1,
+            },
+            "text": ".b_1 ",
+          },
         ],
         "identifier": "b_1",
       },
@@ -331,7 +610,18 @@ test('with transformer', async () => {
       },
       {
         "definitions": [
-          { file: "<fixtures>/test/3.scss", text: ".c ", start: { line: 1, offset: 1 }, end: { line: 1, offset: 4 } },
+          {
+            "end": {
+              "line": 1,
+              "offset": 4,
+            },
+            "file": "<fixtures>/test/3.scss",
+            "start": {
+              "line": 1,
+              "offset": 1,
+            },
+            "text": ".c ",
+          },
         ],
         "identifier": "c",
       },

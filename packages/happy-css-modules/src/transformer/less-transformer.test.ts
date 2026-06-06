@@ -37,46 +37,78 @@ test('handles less features', async () => {
   // FIXME: The end position of 'a_2_2' is incorrect.
   expect(replaceFixtureDir(result)).toMatchInlineSnapshot(`
     {
-      dependencies: ["<fixtures>/test/2.less"],
-      tokens: [
+      "dependencies": [
+        "<fixtures>/test/2.less",
+      ],
+      "tokens": [
         {
-          name: "b_1",
-          originalLocation: {
-            filePath: "<fixtures>/test/2.less",
-            start: { line: 1, column: 1 },
-            end: { line: 1, column: 4 },
+          "name": "b_1",
+          "originalLocation": {
+            "end": {
+              "column": 4,
+              "line": 1,
+            },
+            "filePath": "<fixtures>/test/2.less",
+            "start": {
+              "column": 1,
+              "line": 1,
+            },
           },
         },
         {
-          name: "a_1",
-          originalLocation: {
-            filePath: "<fixtures>/test/1.less",
-            start: { line: 2, column: 1 },
-            end: { line: 2, column: 4 },
+          "name": "a_1",
+          "originalLocation": {
+            "end": {
+              "column": 4,
+              "line": 2,
+            },
+            "filePath": "<fixtures>/test/1.less",
+            "start": {
+              "column": 1,
+              "line": 2,
+            },
           },
         },
         {
-          name: "a_2",
-          originalLocation: {
-            filePath: "<fixtures>/test/1.less",
-            start: { line: 3, column: 1 },
-            end: { line: 3, column: 4 },
+          "name": "a_2",
+          "originalLocation": {
+            "end": {
+              "column": 4,
+              "line": 3,
+            },
+            "filePath": "<fixtures>/test/1.less",
+            "start": {
+              "column": 1,
+              "line": 3,
+            },
           },
         },
         {
-          name: "a_2_1",
-          originalLocation: {
-            filePath: "<fixtures>/test/1.less",
-            start: { line: 6, column: 3 },
-            end: { line: 6, column: 8 },
+          "name": "a_2_1",
+          "originalLocation": {
+            "end": {
+              "column": 8,
+              "line": 6,
+            },
+            "filePath": "<fixtures>/test/1.less",
+            "start": {
+              "column": 3,
+              "line": 6,
+            },
           },
         },
         {
-          name: "a_2_2",
-          originalLocation: {
-            filePath: "<fixtures>/test/1.less",
-            start: { line: 7, column: 3 },
-            end: { line: 7, column: 8 },
+          "name": "a_2_2",
+          "originalLocation": {
+            "end": {
+              "column": 8,
+              "line": 7,
+            },
+            "filePath": "<fixtures>/test/1.less",
+            "start": {
+              "column": 3,
+              "line": 7,
+            },
           },
         },
       ],

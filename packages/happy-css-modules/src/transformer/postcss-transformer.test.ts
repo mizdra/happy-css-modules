@@ -36,14 +36,20 @@ test('handles postcss features', async () => {
 
   expect(replaceFixtureDir(result)).toMatchInlineSnapshot(`
     {
-      dependencies: [],
-      tokens: [
+      "dependencies": [],
+      "tokens": [
         {
-          name: "foo_bar",
-          originalLocation: {
-            filePath: "<fixtures>/test/1.css",
-            start: { line: 2, column: 1 },
-            end: { line: 2, column: 8 },
+          "name": "foo_bar",
+          "originalLocation": {
+            "end": {
+              "column": 8,
+              "line": 2,
+            },
+            "filePath": "<fixtures>/test/1.css",
+            "start": {
+              "column": 1,
+              "line": 2,
+            },
           },
         },
       ],
