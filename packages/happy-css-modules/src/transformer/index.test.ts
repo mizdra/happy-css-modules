@@ -13,10 +13,10 @@ const locator = new Locator({ transformer: createDefaultTransformer({ cwd }) });
 test('processes .scss with scss transformer', async () => {
   createFixtures({
     '/test/1.scss': dedent`
-    .a {
-      // scss feature test (nesting)
-      .a_1 { dummy: ''; }
-    }
+      .a {
+        // scss feature test (nesting)
+        .a_1 { dummy: ''; }
+      }
     `,
   });
   const result = await locator.load(getFixturePath('/test/1.scss'));
@@ -26,10 +26,10 @@ test('processes .scss with scss transformer', async () => {
 test('processes .less with less transformer', async () => {
   createFixtures({
     '/test/1.less': dedent`
-    .a {
-      // less feature test (nesting)
-      .a_1 { dummy: ''; }
-    }
+      .a {
+        // less feature test (nesting)
+        .a_1 { dummy: ''; }
+      }
     `,
   });
   const result = await locator.load(getFixturePath('/test/1.less'));
@@ -41,8 +41,8 @@ test('processes .css with postcss transformer if postcssrc is found', async () =
   const locator1 = new Locator({ transformer: createDefaultTransformer() });
   createFixtures({
     '/test/1.css': dedent`
-    $prefix: foo;
-    .$(prefix)_bar {}
+      $prefix: foo;
+      .$(prefix)_bar {}
     `,
   });
   const result1 = await locator1.load(getFixturePath('/test/1.css'));
@@ -55,15 +55,15 @@ test('processes .css with postcss transformer if postcssrc is found', async () =
   });
   createFixtures({
     [`/${uuid}/postcss.config.js`]: dedent`
-    module.exports = {
-      plugins: [
-        require('${require.resolve('postcss-simple-vars')}'),
-      ],
-    };
+      module.exports = {
+        plugins: [
+          require('${require.resolve('postcss-simple-vars')}'),
+        ],
+      };
     `,
     '/test/1.css': dedent`
-    $prefix: foo;
-    .$(prefix)_bar {}
+      $prefix: foo;
+      .$(prefix)_bar {}
     `,
   });
   const result2 = await locator2.load(getFixturePath('/test/1.css'));

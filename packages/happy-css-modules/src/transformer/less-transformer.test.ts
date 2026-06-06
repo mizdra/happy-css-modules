@@ -23,14 +23,14 @@ test('handles less features', async () => {
         .b_1();
         .b_2();
       }
-      `,
+    `,
     '/test/2.less': dedent`
       .b_1 { dummy: ''; }
       .b_2() { dummy: ''; }
-      `,
+    `,
     '/test/3.less': dedent`
       .c { dummy: ''; }
-      `,
+    `,
   });
   const result = await locator.load(getFixturePath('/test/1.less'));
 
@@ -119,13 +119,13 @@ test('handles less features', async () => {
 test('tracks dependencies that have been pre-bundled by less compiler', async () => {
   createFixtures({
     '/test/1.less': dedent`
-    @import './2.less';
-    @import './3.less';
+      @import './2.less';
+      @import './3.less';
     `,
     '/test/2.less': dedent`
     `,
     '/test/3.less': dedent`
-    @import './4.less';
+      @import './4.less';
     `,
     '/test/4.less': dedent`
     `,
@@ -138,9 +138,7 @@ test('tracks dependencies that have been pre-bundled by less compiler', async ()
   expect(loadSpy).toHaveBeenNthCalledWith(1, getFixturePath('/test/1.less'));
 
   // The files pre-bundled by the compiler are also included in `result.dependencies`
-  // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
   expect(result.dependencies.sort()).toStrictEqual(
-    // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
     ['/test/2.less', '/test/3.less', '/test/4.less'].map(getFixturePath).sort(),
   );
 });
@@ -148,16 +146,14 @@ test('tracks dependencies that have been pre-bundled by less compiler', async ()
 test('resolves specifier using resolver', async () => {
   createFixtures({
     '/test/1.less': dedent`
-    @import 'package-1';
-    @import 'package-2';
+      @import 'package-1';
+      @import 'package-2';
     `,
     '/node_modules/package-1/index.css': `.a {}`,
     '/node_modules/package-2/index.less': `.a {}`,
   });
   const result = await locator.load(getFixturePath('/test/1.less'));
-  // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
   expect(result.dependencies.sort()).toStrictEqual(
-    // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
     [getFixturePath('/node_modules/package-1/index.css'), getFixturePath('/node_modules/package-2/index.less')].sort(),
   );
 });
@@ -165,9 +161,9 @@ test('resolves specifier using resolver', async () => {
 test('ignores http(s) protocol file', async () => {
   createFixtures({
     '/test/1.less': dedent`
-    @import 'http://example.com/path/http.css';
-    @import 'https://example.com/path/https.css';
-    @import 'https://example.com/path/less.less';
+      @import 'http://example.com/path/http.css';
+      @import 'https://example.com/path/https.css';
+      @import 'https://example.com/path/less.less';
     `,
   });
   const result = await locator.load(getFixturePath('/test/1.less'));

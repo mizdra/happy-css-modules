@@ -1,4 +1,4 @@
-import { symlink } from 'fs/promises';
+import { symlink } from 'node:fs/promises';
 import type { RunnerOptions, Watcher } from '../runner.js';
 import { run } from '../runner.js';
 import { createFixtures, getFixturePath, waitForAsyncTask } from '../test-util/util.js';
@@ -10,7 +10,6 @@ const defaultOptions: RunnerOptions = {
   logLevel: 'silent',
 };
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
 const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
 // Exit the watcher even if the test fails

@@ -1,10 +1,10 @@
-import { join } from 'path';
+import { join } from 'node:path';
 import { createFixtures, getFixturePath } from './test-util/util.js';
 import { hasProp, isObject, isSystemError, unique, uniqueBy, isMatchByGlob, exists } from './util.js';
 
 function fakeSystemError({ code }: { code: string }) {
   const error = new Error();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   (error as any).code = code;
   return error;
 }

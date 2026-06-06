@@ -14,7 +14,6 @@ const createFileImporter: (resolver: StrictlyResolver) => FileImporter<'async'> 
 export const createScssTransformer: () => Transformer = () => {
   let sass: typeof import('sass');
   return async (source, options) => {
-    // eslint-disable-next-line require-atomic-updates
     sass ??= await import('sass').catch(handleImportError('sass'));
     const result = await sass.compileStringAsync(source, {
       url: pathToFileURL(options.from),

@@ -67,7 +67,7 @@ describe('generateLocalTokenNames', () => {
   test('does not track styles imported by @import in other file because it is not a local token', async () => {
     createFixtures({
       '/test/1.css': dedent`
-      .a {}
+        .a {}
       `,
     });
     expect(
@@ -81,7 +81,7 @@ describe('generateLocalTokenNames', () => {
   test('does not track styles imported by @value in other file because it is not a local token', async () => {
     createFixtures({
       '/test/1.css': dedent`
-      .a {}
+        .a {}
       `,
     });
     expect(
@@ -95,7 +95,7 @@ describe('generateLocalTokenNames', () => {
   test('does not track styles imported by composes in other file because it is not a local token', async () => {
     createFixtures({
       '/test/1.css': dedent`
-      .b {}
+        .b {}
       `,
     });
     expect(
@@ -114,7 +114,7 @@ describe('getOriginalLocationOfClassSelector', () => {
   test('basic', () => {
     const [basic] = createClassSelectors(
       createRoot(dedent`
-      .basic {}
+        .basic {}
       `),
     );
     expect(getOriginalLocationOfClassSelector(basic!.rule, basic!.classSelector)).toMatchInlineSnapshot(
@@ -134,11 +134,10 @@ describe('getOriginalLocationOfClassSelector', () => {
     );
   });
   test('cascading', () => {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     const [cascading_1, cascading_2] = createClassSelectors(
       createRoot(dedent`
-      .cascading {}
-      .cascading {}
+        .cascading {}
+        .cascading {}
       `),
     );
     expect(getOriginalLocationOfClassSelector(cascading_1!.rule, cascading_1!.classSelector)).toMatchInlineSnapshot(
@@ -173,12 +172,11 @@ describe('getOriginalLocationOfClassSelector', () => {
     );
   });
   test('pseudo_class', () => {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     const [pseudo_class_1, pseudo_class_2, pseudo_class_3] = createClassSelectors(
       createRoot(dedent`
-      .pseudo_class_1 {}
-      .pseudo_class_2:hover {}
-      :not(.pseudo_class_3) {}
+        .pseudo_class_1 {}
+        .pseudo_class_2:hover {}
+        :not(.pseudo_class_3) {}
       `),
     );
     expect(
@@ -234,10 +232,9 @@ describe('getOriginalLocationOfClassSelector', () => {
     );
   });
   test('multiple_selector', () => {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     const [multiple_selector_1, multiple_selector_2] = createClassSelectors(
       createRoot(dedent`
-      .multiple_selector_1.multiple_selector_2 {}
+        .multiple_selector_1.multiple_selector_2 {}
       `),
     );
     expect(
@@ -277,10 +274,9 @@ describe('getOriginalLocationOfClassSelector', () => {
   });
 
   test('combinator', () => {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     const [combinator_1, combinator_2] = createClassSelectors(
       createRoot(dedent`
-      .combinator_1 + .combinator_2 {}
+        .combinator_1 + .combinator_2 {}
       `),
     );
     expect(getOriginalLocationOfClassSelector(combinator_1!.rule, combinator_1!.classSelector)).toMatchInlineSnapshot(
@@ -315,14 +311,13 @@ describe('getOriginalLocationOfClassSelector', () => {
     );
   });
   test('at_rule', () => {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     const [at_rule] = createClassSelectors(
       createRoot(dedent`
-      @supports (display: flex) {
-        @media screen and (min-width: 900px) {
-          .at_rule {}
+        @supports (display: flex) {
+          @media screen and (min-width: 900px) {
+            .at_rule {}
+          }
         }
-      }
       `),
     );
     expect(getOriginalLocationOfClassSelector(at_rule!.rule, at_rule!.classSelector)).toMatchInlineSnapshot(
@@ -342,10 +337,9 @@ describe('getOriginalLocationOfClassSelector', () => {
     );
   });
   test('selector_list', () => {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     const [selector_list_1, selector_list_2] = createClassSelectors(
       createRoot(dedent`
-      .selector_list_1, .selector_list_2 {}
+        .selector_list_1, .selector_list_2 {}
       `),
     );
     expect(
@@ -384,15 +378,14 @@ describe('getOriginalLocationOfClassSelector', () => {
     );
   });
   test('local_class_name', () => {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     const [local_class_name_1, local_class_name_2, local_class_name_3, local_class_name_4] = createClassSelectors(
       createRoot(dedent`
-      :local .local_class_name_1 {}
-      :local {
-        .local_class_name_2 {}
-        .local_class_name_3 {}
-      }
-      :local(.local_class_name_4) {}
+        :local .local_class_name_1 {}
+        :local {
+          .local_class_name_2 {}
+          .local_class_name_3 {}
+        }
+        :local(.local_class_name_4) {}
       `),
     );
     expect(
@@ -465,12 +458,11 @@ describe('getOriginalLocationOfClassSelector', () => {
     );
   });
   test('with_newline', () => {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     const [with_newline_1, with_newline_2, with_newline_3] = createClassSelectors(
       createRoot(dedent`
-      .with_newline_1,
-      .with_newline_2
-        + .with_newline_3, {}
+        .with_newline_1,
+        .with_newline_2
+          + .with_newline_3, {}
       `),
     );
     expect(
@@ -539,7 +531,7 @@ test('getOriginalLocationOfAtValue', () => {
   }
   const [basic] = createAtValues(
     createRoot(dedent`
-    @value basic: #000;
+      @value basic: #000;
     `),
   );
   expect(tryGetOriginalLocationOfAtValue(basic!)).toMatchInlineSnapshot(
@@ -566,7 +558,7 @@ test('collectNodes', () => {
     @ignored;
     .a { ignored: "ignored"; }
     .b { ignored: "ignored"; }
-    `);
+  `);
 
   const { atImports, classSelectors } = collectNodes(ast);
 
@@ -583,11 +575,11 @@ test('collectNodes', () => {
 test('parseAtImport', () => {
   const atImports = createAtImports(
     createRoot(dedent`
-    @import;
-    @import "test.css";
-    @import url("test.css");
-    @import url(test.css);
-    @import "test.css" print;
+      @import;
+      @import "test.css";
+      @import url("test.css");
+      @import url(test.css);
+      @import "test.css" print;
     `),
   );
   expect(parseAtImport(atImports[0]!)).toBe(undefined);
@@ -600,18 +592,18 @@ test('parseAtImport', () => {
 test('parseAtValue', () => {
   const atValues = createAtValues(
     createRoot(dedent`
-    @value basic: #000;
-    @value withoutColon #000;
-    @value empty:;
-    @value comment:/* comment */;
-    @value complex: (max-width: 599px);
-    @value import from "test.css";
-    @value import1, import2 from "test.css";
-    @value import as alias from "test.css";
-    /*
-     * NOTE: happy-css-modules intentionally does not support module specifier as variable.
-     * e.g. \`@value d, e from moduleName;\`
-     */
+      @value basic: #000;
+      @value withoutColon #000;
+      @value empty:;
+      @value comment:/* comment */;
+      @value complex: (max-width: 599px);
+      @value import from "test.css";
+      @value import1, import2 from "test.css";
+      @value import as alias from "test.css";
+      /*
+       * NOTE: happy-css-modules intentionally does not support module specifier as variable.
+       * e.g. \`@value d, e from moduleName;\`
+       */
     `),
   );
   expect(parseAtValue(atValues[0]!)).toStrictEqual({ type: 'valueDeclaration', tokenName: 'basic' });

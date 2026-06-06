@@ -1,8 +1,7 @@
-import { readFile, stat } from 'fs/promises';
+import { readFile, stat } from 'node:fs/promises';
 import { createFixtures, exists, fakeToken, getFixturePath, waitForAsyncTask } from '../test-util/util.js';
 import { emitGeneratedFiles, getRelativePath, isSubDirectoryFile } from './index.js';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
 const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 beforeEach(() => {

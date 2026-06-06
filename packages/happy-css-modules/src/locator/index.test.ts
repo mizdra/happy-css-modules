@@ -1,5 +1,5 @@
-import { readFile, writeFile } from 'fs/promises';
 import { randomUUID } from 'node:crypto';
+import { readFile, writeFile } from 'node:fs/promises';
 import dedent from 'dedent';
 import { Locator, createDefaultTransformer } from '../index.js';
 import { createFixtures, getFixturePath, replaceFixtureDir } from '../test-util/util.js';
@@ -10,8 +10,8 @@ const locator = new Locator();
 test('basic', async () => {
   createFixtures({
     '/test/1.css': dedent`
-    .a {}
-    .b {}
+      .a {}
+      .b {}
     `,
   });
   const result = await locator.load(getFixturePath('/test/1.css'));
@@ -55,25 +55,25 @@ test('basic', async () => {
 test('tracks other files when `@import` is present', async () => {
   createFixtures({
     '/test/1.css': dedent`
-    @import './2.css';
-    @import '3.css';
-    @import '${getFixturePath('/test/4.css')}';
-    @import './5.css';
+      @import './2.css';
+      @import '3.css';
+      @import '${getFixturePath('/test/4.css')}';
+      @import './5.css';
     `,
     '/test/2.css': dedent`
-    .a {}
+      .a {}
     `,
     '/test/3.css': dedent`
-    .b {}
+      .b {}
     `,
     '/test/4.css': dedent`
-    .c {}
+      .c {}
     `,
     '/test/5.css': dedent`
-    @import './5-recursive.css';
+      @import './5-recursive.css';
     `,
     '/test/5-recursive.css': dedent`
-    .d {}
+      .d {}
     `,
   });
   const result = await locator.load(getFixturePath('/test/1.css'));
@@ -151,13 +151,13 @@ test('tracks other files when `@import` is present', async () => {
 test('does not track other files by `composes`', async () => {
   createFixtures({
     '/test/1.css': dedent`
-    .a {
-      composes: b from './2.css';
-      composes: c from './3.css'; /* non-existent file */
-    }
+      .a {
+        composes: b from './2.css';
+        composes: c from './3.css'; /* non-existent file */
+      }
     `,
     '/test/2.css': dedent`
-    .b {}
+      .b {}
     `,
   });
   const result = await locator.load(getFixturePath('/test/1.css'));
@@ -187,18 +187,18 @@ test('does not track other files by `composes`', async () => {
 test('tracks other files when `@value` is present', async () => {
   createFixtures({
     '/test/1.css': dedent`
-    @value a from './2.css';
-    @value b from '3.css';
-    @value c from '${getFixturePath('/test/4.css')}';
+      @value a from './2.css';
+      @value b from '3.css';
+      @value c from '${getFixturePath('/test/4.css')}';
     `,
     '/test/2.css': dedent`
-    @value a: 1;
+      @value a: 1;
     `,
     '/test/3.css': dedent`
-    @value b: 2;
+      @value b: 2;
     `,
     '/test/4.css': dedent`
-    @value c: 3;
+      @value c: 3;
     `,
   });
   const result = await locator.load(getFixturePath('/test/1.css'));
@@ -260,15 +260,15 @@ test('tracks other files when `@value` is present', async () => {
 test('unique tokens', async () => {
   createFixtures({
     '/test/1.css': dedent`
-    /* duplicate import */
-    @import './2.css';
-    @import '2.css';
-    .a {}
-    .a {} /* duplicate class selector */
+      /* duplicate import */
+      @import './2.css';
+      @import '2.css';
+      .a {}
+      .a {} /* duplicate class selector */
     `,
     '/test/2.css': dedent`
-    .a {} /* class selector that duplicates the import source */
-    .b {}
+      .a {} /* class selector that duplicates the import source */
+      .b {}
     `,
   });
   const result = await locator.load(getFixturePath('/test/1.css'));
@@ -342,18 +342,18 @@ test('unique tokens', async () => {
 test('returns the result from the cache when the file has not been modified', async () => {
   createFixtures({
     '/test/1.css': dedent`
-    @import './2.css';
-    @import './3.css';
+      @import './2.css';
+      @import './3.css';
     `,
     '/test/2.css': dedent`
-    .b {}
+      .b {}
     `,
     '/test/3.css': dedent`
-    .c {}
-    .d {}
+      .c {}
+      .d {}
     `,
   });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   const readCSSSpy = vi.spyOn(locator, 'readCSS' as any);
   await locator.load(getFixturePath('/test/1.css'));
   expect(readCSSSpy).toHaveBeenCalledTimes(3);
@@ -387,12 +387,12 @@ describe('supports sourcemap', () => {
     const locator = new Locator({ transformer });
     createFixtures({
       '/test/1.scss': dedent`
-      .nesting {
-        dummy: '';
-        .nesting_child {
+        .nesting {
           dummy: '';
+          .nesting_child {
+            dummy: '';
+          }
         }
-      }
       `,
     });
     const result = await locator.load(getFixturePath('/test/1.scss'));
@@ -450,15 +450,15 @@ describe('supports sourcemap', () => {
     const uuid = randomUUID();
     createFixtures({
       [`/${uuid}/postcss.config.js`]: dedent`
-      module.exports = {
-        plugins: [],
-      };
+        module.exports = {
+          plugins: [],
+        };
       `,
       '/test/1.css': dedent`
-      .selector_list_a_1, .selector_list_a_2 {}
-      /* In postcss, including newlines in the selector list breaks the sourcemap. */
-      .selector_list_b_1,
-      .selector_list_b_2 {}
+        .selector_list_a_1, .selector_list_a_2 {}
+        /* In postcss, including newlines in the selector list breaks the sourcemap. */
+        .selector_list_b_1,
+        .selector_list_b_2 {}
       `,
     });
     const transformer = createDefaultTransformer({ postcssConfig: getFixturePath(`/${uuid}/postcss.config.js`) });
@@ -521,8 +521,8 @@ describe('supports sourcemap', () => {
 test('ignores http(s) protocol file', async () => {
   createFixtures({
     '/test/1.css': dedent`
-    @import 'http://example.com/path/http.css';
-    @import 'https://example.com/path/https.css';
+      @import 'http://example.com/path/http.css';
+      @import 'https://example.com/path/https.css';
     `,
   });
   const result = await locator.load(getFixturePath('/test/1.css'));

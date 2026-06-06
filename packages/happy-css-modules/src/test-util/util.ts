@@ -1,7 +1,7 @@
-import { constants, mkdirSync, realpathSync, rmSync, writeFileSync } from 'fs';
-import { access } from 'fs/promises';
-import { tmpdir } from 'os';
-import { dirname, join, resolve } from 'path';
+import { constants, mkdirSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+import { access } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { dirname, join, resolve } from 'node:path';
 import postcss, { type Root, type Rule, type AtRule } from 'postcss';
 import { type ClassName } from 'postcss-selector-parser';
 import { type Token, collectNodes, type Location } from '../locator/index.js';
@@ -63,7 +63,7 @@ export async function exists(path: string): Promise<boolean> {
   try {
     await access(path, constants.F_OK);
     return true;
-  } catch (e) {
+  } catch {
     return false;
   }
 }

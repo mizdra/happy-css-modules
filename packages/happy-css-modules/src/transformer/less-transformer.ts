@@ -2,7 +2,6 @@ import type { Transformer } from '../index.js';
 import type { TransformerOptions } from './index.js';
 import { handleImportError } from './index.js';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 function createLessPluginResolver(Less: typeof import('less'), options: TransformerOptions): Less.Plugin {
   class ResolverFileManager extends Less.FileManager {
     options: TransformerOptions;
@@ -32,7 +31,7 @@ function createLessPluginResolver(Less: typeof import('less'), options: Transfor
     constructor(options: TransformerOptions) {
       this.options = options;
     }
-    public install(less: LessStatic, pluginManager: Less.PluginManager): void {
+    public install(_less: LessStatic, pluginManager: Less.PluginManager): void {
       pluginManager.addFileManager(new ResolverFileManager(this.options));
     }
     public minVersion: [number, number, number] = [2, 1, 1];
@@ -44,7 +43,6 @@ function createLessPluginResolver(Less: typeof import('less'), options: Transfor
 export const createLessTransformer: () => Transformer = () => {
   let less: typeof import('less');
   return async (source, options) => {
-    // eslint-disable-next-line require-atomic-updates
     less ??= (await import('less').catch(handleImportError('less'))).default;
     const result = await less.render(source, {
       filename: options.from,

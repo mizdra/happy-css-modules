@@ -28,17 +28,17 @@ describe('generateDtsContentWithSourceMap', () => {
   test('generate dts content with source map', async () => {
     createFixtures({
       '/test/1.css': dedent`
-      @import './2.css';
-      .a {}
-      .b {}
-      .b {}
+        @import './2.css';
+        .a {}
+        .b {}
+        .b {}
       `,
       '/test/2.css': dedent`
-      @import './3.css';
-      .c {}
+        @import './3.css';
+        .c {}
       `,
       '/test/3.css': dedent`
-      .d {}
+        .d {}
       `,
     });
     const result = await locator.load(filePath);
@@ -91,8 +91,8 @@ describe('generateDtsContentWithSourceMap', () => {
     async function getResult(filePath: string) {
       createFixtures({
         '/test/1.css': dedent`
-        .foo-bar {}
-        .foo_bar {}
+          .foo-bar {}
+          .foo_bar {}
         `,
       });
       return locator.load(filePath);
@@ -238,9 +238,9 @@ describe('generateDtsContentWithSourceMap', () => {
   test('treats imported tokens from external files the same as local tokens', async () => {
     createFixtures({
       '/test/1.css': dedent`
-      @import './2.css';
-      @import './3.css';
-      .a {}
+        @import './2.css';
+        @import './3.css';
+        .a {}
       `,
       '/test/2.css': `.b {}`,
       '/test/3.css': `.c {}`,

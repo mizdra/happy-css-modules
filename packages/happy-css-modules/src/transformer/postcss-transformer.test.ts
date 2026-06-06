@@ -21,15 +21,15 @@ test('handles postcss features', async () => {
   });
   createFixtures({
     [`/${uuid}/postcss.config.js`]: dedent`
-    module.exports = {
-      plugins: [
-        require('${require.resolve('postcss-simple-vars')}'),
-      ],
-    };
+      module.exports = {
+        plugins: [
+          require('${require.resolve('postcss-simple-vars')}'),
+        ],
+      };
     `,
     '/test/1.css': dedent`
-    $prefix: foo;
-    .$(prefix)_bar {}
+      $prefix: foo;
+      .$(prefix)_bar {}
     `,
   });
   const result = await locator.load(getFixturePath('/test/1.css'));
@@ -68,15 +68,15 @@ test('tracks dependencies that have been pre-bundled by postcss compiler', async
   const loadSpy = vi.spyOn(locator, 'load');
   createFixtures({
     [`/${uuid}/postcss.config.js`]: dedent`
-    module.exports = {
-      plugins: [
-        require('${require.resolve('postcss-import')}'),
-      ],
-    };
+      module.exports = {
+        plugins: [
+          require('${require.resolve('postcss-import')}'),
+        ],
+      };
     `,
     '/test/1.css': dedent`
-    @import './2.css';
-    @import './3.css';
+      @import './2.css';
+      @import './3.css';
     `,
     '/test/2.css': ``,
     '/test/3.css': `@import './4.css'`,
@@ -103,16 +103,16 @@ test('resolves specifier using resolver', async () => {
   });
   createFixtures({
     [`/${uuid}/postcss.config.js`]: dedent`
-    module.exports = {
-      plugins: [
-        // When using postcss-import, the resolver of happy-css-modules is ignored.
-        // Therefore, we test here without postcss-import.
-        // require('${require.resolve('postcss-import')}'),
-      ],
-    };
+      module.exports = {
+        plugins: [
+          // When using postcss-import, the resolver of happy-css-modules is ignored.
+          // Therefore, we test here without postcss-import.
+          // require('${require.resolve('postcss-import')}'),
+        ],
+      };
     `,
     '/test/1.css': dedent`
-    @import 'package';
+      @import 'package';
     `,
     '/node_modules/package/index.css': `.a {}`,
   });
@@ -130,17 +130,17 @@ test('ignores http(s) protocol file', async () => {
   });
   createFixtures({
     [`/${uuid}/postcss.config.js`]: dedent`
-    module.exports = {
-      plugins: [
-        // When using postcss-import, the resolver of happy-css-modules is ignored.
-        // Therefore, we test here without postcss-import.
-        // require('${require.resolve('postcss-import')}'),
-      ],
-    };
+      module.exports = {
+        plugins: [
+          // When using postcss-import, the resolver of happy-css-modules is ignored.
+          // Therefore, we test here without postcss-import.
+          // require('${require.resolve('postcss-import')}'),
+        ],
+      };
     `,
     '/test/1.css': dedent`
-    @import 'http://example.com/path/http.css';
-    @import 'https://example.com/path/https.css';
+      @import 'http://example.com/path/http.css';
+      @import 'https://example.com/path/https.css';
     `,
   });
   const result = await locator.load(getFixturePath('/test/1.css'));
@@ -155,8 +155,8 @@ test('returns false if postcssrc is not found', async () => {
   });
   createFixtures({
     '/test/1.css': dedent`
-    @import 'http://example.com/path/http.css';
-    @import 'https://example.com/path/https.css';
+      @import 'http://example.com/path/http.css';
+      @import 'https://example.com/path/https.css';
     `,
   });
   expect(
@@ -178,15 +178,15 @@ test('searches config from cwd if postcssConfig option is missing', async () => 
   });
   createFixtures({
     [`/${uuid}/postcss.config.js`]: dedent`
-    module.exports = {
-      plugins: [
-        require('${require.resolve('postcss-simple-vars')}'),
-      ],
-    };
+      module.exports = {
+        plugins: [
+          require('${require.resolve('postcss-simple-vars')}'),
+        ],
+      };
     `,
     '/test/1.css': dedent`
-    $prefix: foo;
-    .$(prefix)_bar {}
+      $prefix: foo;
+      .$(prefix)_bar {}
     `,
   });
   const result = await locator.load(getFixturePath('/test/1.css'));

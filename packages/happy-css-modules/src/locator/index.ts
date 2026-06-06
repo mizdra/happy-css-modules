@@ -1,4 +1,4 @@
-import { readFile, stat } from 'fs/promises';
+import { readFile, stat } from 'node:fs/promises';
 import postcss from 'postcss';
 import type { Resolver } from '../resolver/index.js';
 import { createDefaultResolver } from '../resolver/index.js';
@@ -85,7 +85,7 @@ export class Locator {
     for (const dependency of dependencies) {
       const entry = this.cache.get(dependency);
       if (!entry) return true;
-      // eslint-disable-next-line no-await-in-loop
+      // oxlint-disable-next-line no-await-in-loop
       const mtime = (await stat(dependency)).mtime.getTime();
       if (entry.mtime !== mtime) return true;
     }
@@ -159,9 +159,9 @@ export class Locator {
       const importedSheetPath = parseAtImport(atImport);
       if (!importedSheetPath) continue;
       if (isIgnoredSpecifier(importedSheetPath)) continue;
-      // eslint-disable-next-line no-await-in-loop
+      // oxlint-disable-next-line no-await-in-loop
       const from = await this.resolver(importedSheetPath, { request: filePath });
-      // eslint-disable-next-line no-await-in-loop
+      // oxlint-disable-next-line no-await-in-loop
       const result = await this._load(from);
       const externalTokens = result.tokens;
       dependencies.push(from, ...result.dependencies);
@@ -192,9 +192,9 @@ export class Locator {
         });
       } else if (parsedAtValue.type === 'valueImportDeclaration') {
         if (isIgnoredSpecifier(parsedAtValue.from)) continue;
-        // eslint-disable-next-line no-await-in-loop
+        // oxlint-disable-next-line no-await-in-loop
         const from = await this.resolver(parsedAtValue.from, { request: filePath });
-        // eslint-disable-next-line no-await-in-loop
+        // oxlint-disable-next-line no-await-in-loop
         const result = await this._load(from);
         dependencies.push(from, ...result.dependencies);
         for (const token of result.tokens) {

@@ -1,5 +1,5 @@
-import { resolve, relative } from 'path';
-import * as process from 'process';
+import { resolve, relative } from 'node:path';
+import * as process from 'node:process';
 import { createCache } from '@file-cache/core';
 import { createNpmPackageKey } from '@file-cache/npm';
 import { Mutex } from 'async-mutex';
@@ -128,7 +128,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
   async function processFile(filePath: string) {
     async function isChangedFile(filePath: string) {
       const result = await cache.getAndUpdateCache(filePath);
-      // eslint-disable-next-line @typescript-eslint/no-throw-literal
+      // oxlint-disable-next-line typescript/only-throw-error
       if (result.error) throw result.error;
       return result.changed;
     }
@@ -180,7 +180,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
 
     const errors: unknown[] = [];
     for (const filePath of filePaths) {
-      // eslint-disable-next-line no-await-in-loop
+      // oxlint-disable-next-line no-await-in-loop
       await processFile(filePath).catch((e) => errors.push(e));
     }
 

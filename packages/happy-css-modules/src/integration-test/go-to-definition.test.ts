@@ -21,26 +21,26 @@ afterAll(async () => {
 test('basic', async () => {
   createFixtures({
     '/test/1.css': dedent`
-    .basic {}
-    .cascading {}
-    .cascading {}
-    .pseudo_class_1 {}
-    .pseudo_class_2:hover {}
-    :not(.pseudo_class_3) {}
-    .multiple_selector_1.multiple_selector_2 {}
-    .combinator_1 + .combinator_2 {}
-    @supports (display: flex) {
-      @media screen and (min-width: 900px) {
-        .at_rule {}
+      .basic {}
+      .cascading {}
+      .cascading {}
+      .pseudo_class_1 {}
+      .pseudo_class_2:hover {}
+      :not(.pseudo_class_3) {}
+      .multiple_selector_1.multiple_selector_2 {}
+      .combinator_1 + .combinator_2 {}
+      @supports (display: flex) {
+        @media screen and (min-width: 900px) {
+          .at_rule {}
+        }
       }
-    }
-    .selector_list_1, .selector_list_2 {}
-    :local .local_class_name_1 {}
-    :local {
-      .local_class_name_2 {}
-      .local_class_name_3 {}
-    }
-    :local(.local_class_name_4) {}
+      .selector_list_1, .selector_list_2 {}
+      :local .local_class_name_1 {}
+      :local {
+        .local_class_name_2 {}
+        .local_class_name_3 {}
+      }
+      :local(.local_class_name_4) {}
     `,
   });
   await run({ ...defaultOptions });
@@ -373,17 +373,17 @@ test('basic', async () => {
 test('imported tokens', async () => {
   createFixtures({
     '/test/1.css': dedent`
-    @import './2.css';
-    .a {}
-    .b {}
-    .b {}
+      @import './2.css';
+      .a {}
+      .b {}
+      .b {}
     `,
     '/test/2.css': dedent`
-    @import './3.css';
-    .c {}
+      @import './3.css';
+      .c {}
     `,
     '/test/3.css': dedent`
-    .d {}
+      .d {}
     `,
   });
   await run({ ...defaultOptions });
@@ -477,22 +477,22 @@ test('imported tokens', async () => {
 test('with transformer', async () => {
   createFixtures({
     '/test/1.scss': dedent`
-    @use './2.scss' as two; // sass feature test (@use)
-    @import './3.scss'; // css feature test (@import)
-    .basic { dummy: ''; }
-    .nesting {
-      dummy: '';
-      // sass feature test (nesting)
-      .nesting_1 { dummy: ''; }
-      &_2 { dummy: ''; }
-    }
+      @use './2.scss' as two; // sass feature test (@use)
+      @import './3.scss'; // css feature test (@import)
+      .basic { dummy: ''; }
+      .nesting {
+        dummy: '';
+        // sass feature test (nesting)
+        .nesting_1 { dummy: ''; }
+        &_2 { dummy: ''; }
+      }
     `,
     '/test/2.scss': dedent`
-    .b_1 { dummy: ''; }
-    @mixin b_2 { dummy: ''; }
+      .b_1 { dummy: ''; }
+      @mixin b_2 { dummy: ''; }
     `,
     '/test/3.scss': dedent`
-    .c { dummy: ''; }
+      .c { dummy: ''; }
     `,
   });
   await run({ ...defaultOptions });

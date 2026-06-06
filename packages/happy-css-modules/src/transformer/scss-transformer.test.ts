@@ -22,17 +22,17 @@ test('handles sass features', async () => {
         .a_2_1 { dummy: ''; }
         &_2 { dummy: ''; }
       }
-      `,
+    `,
     '/test/2.scss': dedent`
       .b_1 { dummy: ''; }
       @mixin b_2 { dummy: ''; }
-      `,
+    `,
     '/test/3.scss': dedent`
       .c { dummy: ''; }
-      `,
+    `,
     '/test/4.scss': dedent`
       .d { dummy: ''; }
-      `,
+    `,
   });
   const result = await locator.load(getFixturePath('/test/1.scss'));
 
@@ -154,13 +154,13 @@ test('handles sass features', async () => {
 test('tracks dependencies that have been pre-bundled by sass compiler', async () => {
   createFixtures({
     '/test/1.scss': dedent`
-    @import './2.scss';
-    @import './3.scss';
+      @import './2.scss';
+      @import './3.scss';
     `,
     '/test/2.scss': dedent`
     `,
     '/test/3.scss': dedent`
-    @import './4.scss';
+      @import './4.scss';
     `,
     '/test/4.scss': dedent`
     `,
@@ -179,8 +179,8 @@ test('tracks dependencies that have been pre-bundled by sass compiler', async ()
 test('resolves specifier using resolver', async () => {
   createFixtures({
     '/test/1.scss': dedent`
-    @import 'package-1';
-    @import 'package-2';
+      @import 'package-1';
+      @import 'package-2';
     `,
     '/node_modules/package-1/index.css': `.a {}`,
     '/node_modules/package-2/index.scss': `.a {}`,
@@ -194,9 +194,9 @@ test('resolves specifier using resolver', async () => {
 test('ignores http(s) protocol file', async () => {
   createFixtures({
     '/test/1.scss': dedent`
-    @import 'http://example.com/path/http.css';
-    @import 'https://example.com/path/https.css';
-    @import 'https://example.com/path/scss.scss';
+      @import 'http://example.com/path/http.css';
+      @import 'https://example.com/path/https.css';
+      @import 'https://example.com/path/scss.scss';
     `,
   });
   const result = await locator.load(getFixturePath('/test/1.scss'));

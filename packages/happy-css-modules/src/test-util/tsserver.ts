@@ -1,7 +1,7 @@
-import { readFileSync } from 'fs';
-import { mkdir, writeFile as nativeWriteFile } from 'fs/promises';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { readFileSync } from 'node:fs';
+import { mkdir, writeFile as nativeWriteFile } from 'node:fs/promises';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import serverHarness from '@typescript/server-harness';
 import { glob } from 'glob';
 import { resolve } from 'import-meta-resolve';
@@ -62,7 +62,7 @@ export function createTSServer() {
       const results: { identifier: string; definitions: Definition[] }[] = [];
 
       for (let i = 0; i < identifiers.length; i++) {
-        // eslint-disable-next-line no-await-in-loop
+        // oxlint-disable-next-line no-await-in-loop
         const response: server.protocol.DefinitionResponse = await server.message({
           seq: 0,
           type: 'request',

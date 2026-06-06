@@ -1,4 +1,4 @@
-import { dirname, isAbsolute, relative } from 'path';
+import { dirname, isAbsolute, relative } from 'node:path';
 import { DEFAULT_ARBITRARY_EXTENSIONS } from '../config.js';
 import { type Token } from '../locator/index.js';
 import { type LocalsConvention } from '../runner.js';

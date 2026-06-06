@@ -1,4 +1,4 @@
-import { basename, dirname, join, resolve } from 'path';
+import { basename, dirname, join, resolve } from 'node:path';
 import enhancedResolve from 'enhanced-resolve';
 import { exists } from '../util.js';
 import type { Resolver } from './index.js';
@@ -27,7 +27,7 @@ export type WebpackResolverOptions = {
 };
 
 // TODO: Support `resolve.alias` for Node.js API
-export const createWebpackResolver: (webpackResolverOptions?: WebpackResolverOptions | undefined) => Resolver = (
+export const createWebpackResolver: (webpackResolverOptions?: WebpackResolverOptions) => Resolver = (
   webpackResolverOptions,
 ) => {
   const cwd = webpackResolverOptions?.cwd ?? process.cwd();
@@ -93,7 +93,7 @@ export const createWebpackResolver: (webpackResolverOptions?: WebpackResolverOpt
     // ref: https://github.com/webpack-contrib/css-loader/blob/5e6cf91fd3f0c8b5fb4b91197b98dc56abdef4bf/src/utils.js#L92-L95
     // ref: https://github.com/webpack-contrib/sass-loader/blob/49a578a218574ddc92a597c7e365b6c21960717e/src/utils.js#L368-L370
     // ref: https://github.com/webpack-contrib/less-loader/blob/d74f740c100c4006b00dfb3e02c6d5aaf8713519/src/utils.js#L72-L75
-    // eslint-disable-next-line no-param-reassign
+    // oxlint-disable-next-line no-param-reassign
     if (specifier.startsWith('~')) specifier = specifier.slice(1);
 
     for (const resolver of resolvers) {
@@ -109,11 +109,11 @@ export const createWebpackResolver: (webpackResolverOptions?: WebpackResolverOpt
         try {
           const resolved = resolver(dirname(options.request), specifierVariant);
           if (resolved !== false) {
-            // eslint-disable-next-line no-await-in-loop
+            // oxlint-disable-next-line no-await-in-loop
             const isExists = await exists(resolved);
             if (isExists) return resolved;
           }
-        } catch (e) {
+        } catch {
           // noop
         }
       }
