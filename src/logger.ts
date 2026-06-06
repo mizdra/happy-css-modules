@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import { styleText } from 'node:util';
 type LogLevelLabel = 'debug' | 'info' | 'silent';
 type LogLevel = 2 | 1 | 0;
 const LOG_LEVEL: Record<LogLevelLabel, LogLevel> = {
@@ -21,11 +21,11 @@ export class Logger {
   info(message: unknown) {
     if (this.logLevel >= LOG_LEVEL['info']) {
       // oxlint-disable-next-line no-console
-      console.log(chalk.blue('[info]'), message);
+      console.log(styleText('blue', '[info]'), message);
     }
   }
   error(message: unknown) {
     // oxlint-disable-next-line no-console
-    console.error(chalk.red('[error]'), message);
+    console.error(styleText('red', '[error]'), message);
   }
 }

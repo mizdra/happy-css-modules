@@ -1,9 +1,9 @@
 import { resolve, relative } from 'node:path';
 import * as process from 'node:process';
+import { styleText } from 'node:util';
 import { createCache } from '@file-cache/core';
 import { createNpmPackageKey } from '@file-cache/npm';
 import { Mutex } from 'async-mutex';
-import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 import { glob } from 'glob';
 import { DEFAULT_ARBITRARY_EXTENSIONS } from './config.js';
@@ -148,7 +148,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
       // Generate .d.ts and .d.ts.map only when the file has been updated.
       // However, if .d.ts or .d.ts.map has not yet been generated, always generate.
       if (_isGeneratedFilesExist && !_isChangedFile) {
-        logger.debug(chalk.gray(`${relative(cwd, filePath)} (skipped)`));
+        logger.debug(styleText('gray', `${relative(cwd, filePath)} (skipped)`));
         return;
       }
 
@@ -165,7 +165,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
         outDir: options.outDir,
         cwd,
       });
-      logger.info(chalk.green(`${relative(cwd, filePath)} (generated)`));
+      logger.info(styleText('green', `${relative(cwd, filePath)} (generated)`));
 
       await cache.reconcile(); // Update cache for the file
     } finally {
