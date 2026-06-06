@@ -1,26 +1,26 @@
 changelog:
   categories:
-    - title: Added
-      labels:
-        - 'Type: Add'
-    - title: Changed
-      labels:
-        - 'Type: Change'
-    - title: Deprecated
-      labels:
-        - 'Type: Deprecate'
-    - title: Fixed
-      labels:
-        - 'Type: Fix'
-    - title: Removed
-      labels:
-        - 'Type: Remove'
-    - title: Dependencies
-      labels:
-        - 'Type: Dependencies'
+    - title: Breaking Change
+      labels: ['Type: Breaking Change']
+    - title: Bug
+      labels: ['Type: Bug']
+    - title: Documentation
+      labels: ['Type: Documentation']
+    - title: Feature
+      labels: ['Type: Feature']
+    - title: Refactoring
+      labels: ['Type: Refactoring']
+    - title: Testing
+      labels: ['Type: Testing']
+    - title: Maintenance
+      labels: ['Type: Maintenance']
+    - title: CI
+      labels: ['Type: CI']
+    - title: Question
+      labels: ['Type: Question']
     - title: Security
-      labels:
-        - 'Type: Security'
-    - title: Others
-      labels:
-        - '*'
+      labels: ['Type: Security']
+    - title: Dependencies
+      labels: ['Type: Dependencies']
+    - title: Other Changes
+      labels: ['*']
