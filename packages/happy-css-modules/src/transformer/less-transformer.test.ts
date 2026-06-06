@@ -1,6 +1,6 @@
 import dedent from 'dedent';
 import { Locator } from '../locator/index.js';
-import { createFixtures, getFixturePath } from '../test-util/util.js';
+import { createFixtures, getFixturePath, replaceFixtureDir } from '../test-util/util.js';
 import { createLessTransformer } from './less-transformer.js';
 
 const locator = new Locator({ transformer: createLessTransformer() });
@@ -35,7 +35,7 @@ test('handles less features', async () => {
   const result = await locator.load(getFixturePath('/test/1.less'));
 
   // FIXME: The end position of 'a_2_2' is incorrect.
-  expect(result).toMatchInlineSnapshot(`
+  expect(replaceFixtureDir(result)).toMatchInlineSnapshot(`
     {
       dependencies: ["<fixtures>/test/2.less"],
       tokens: [

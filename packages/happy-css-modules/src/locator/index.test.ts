@@ -2,7 +2,7 @@ import { readFile, writeFile } from 'fs/promises';
 import { randomUUID } from 'node:crypto';
 import dedent from 'dedent';
 import { Locator, createDefaultTransformer } from '../index.js';
-import { createFixtures, getFixturePath } from '../test-util/util.js';
+import { createFixtures, getFixturePath, replaceFixtureDir } from '../test-util/util.js';
 import { sleepSync } from '../util.js';
 
 const locator = new Locator();
@@ -15,7 +15,7 @@ test('basic', async () => {
     `,
   });
   const result = await locator.load(getFixturePath('/test/1.css'));
-  expect(result).toMatchInlineSnapshot(`
+  expect(replaceFixtureDir(result)).toMatchInlineSnapshot(`
     {
       dependencies: [],
       tokens: [
@@ -65,7 +65,7 @@ test('tracks other files when `@import` is present', async () => {
     `,
   });
   const result = await locator.load(getFixturePath('/test/1.css'));
-  expect(result).toMatchInlineSnapshot(`
+  expect(replaceFixtureDir(result)).toMatchInlineSnapshot(`
     {
       dependencies: [
         "<fixtures>/test/2.css",
@@ -125,7 +125,7 @@ test('does not track other files by `composes`', async () => {
     `,
   });
   const result = await locator.load(getFixturePath('/test/1.css'));
-  expect(result).toMatchInlineSnapshot(`
+  expect(replaceFixtureDir(result)).toMatchInlineSnapshot(`
     {
       dependencies: [],
       tokens: [
@@ -160,7 +160,7 @@ test('tracks other files when `@value` is present', async () => {
     `,
   });
   const result = await locator.load(getFixturePath('/test/1.css'));
-  expect(result).toMatchInlineSnapshot(`
+  expect(replaceFixtureDir(result)).toMatchInlineSnapshot(`
     {
       dependencies: ["<fixtures>/test/2.css", "<fixtures>/test/3.css", "<fixtures>/test/4.css"],
       tokens: [
@@ -208,7 +208,7 @@ test('unique tokens', async () => {
     `,
   });
   const result = await locator.load(getFixturePath('/test/1.css'));
-  expect(result).toMatchInlineSnapshot(`
+  expect(replaceFixtureDir(result)).toMatchInlineSnapshot(`
     {
       dependencies: ["<fixtures>/test/2.css"],
       tokens: [
@@ -306,7 +306,7 @@ describe('supports sourcemap', () => {
       `,
     });
     const result = await locator.load(getFixturePath('/test/1.scss'));
-    expect(result).toMatchInlineSnapshot(`
+    expect(replaceFixtureDir(result)).toMatchInlineSnapshot(`
       {
         dependencies: [],
         tokens: [
@@ -356,7 +356,7 @@ describe('supports sourcemap', () => {
     const transformer = createDefaultTransformer({ postcssConfig: getFixturePath(`/${uuid}/postcss.config.js`) });
     const locator = new Locator({ transformer });
     const result = await locator.load(getFixturePath('/test/1.css'));
-    expect(result).toMatchInlineSnapshot(`
+    expect(replaceFixtureDir(result)).toMatchInlineSnapshot(`
       {
         dependencies: [],
         tokens: [

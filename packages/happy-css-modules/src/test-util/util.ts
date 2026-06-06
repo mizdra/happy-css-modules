@@ -107,3 +107,21 @@ export function removeFixtures(): void {
 export function getFixturePath(path: string): string {
   return join(FIXTURE_DIR_PATH, path);
 }
+
+/**
+ * Deeply clone `value` and replace all occurrences of `FIXTURE_DIR_PATH` in strings with `<fixtures>`.
+ * `FIXTURE_DIR_PATH` varies for each test run, so it must be replaced with a fixed string to make snapshots deterministic.
+ * For errors, pass `error.message` instead of the error itself.
+ */
+export function replaceFixtureDir<T>(value: T): T {
+  if (typeof value === 'string') {
+    return value.replaceAll(FIXTURE_DIR_PATH, '<fixtures>') as T;
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => replaceFixtureDir(item)) as T;
+  }
+  if (value !== null && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, replaceFixtureDir(item)])) as T;
+  }
+  return value;
+}

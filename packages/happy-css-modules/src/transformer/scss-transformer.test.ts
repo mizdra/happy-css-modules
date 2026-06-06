@@ -1,6 +1,6 @@
 import dedent from 'dedent';
 import { Locator } from '../locator/index.js';
-import { createFixtures, getFixturePath } from '../test-util/util.js';
+import { createFixtures, getFixturePath, replaceFixtureDir } from '../test-util/util.js';
 import { createScssTransformer } from './scss-transformer.js';
 
 const locator = new Locator({ transformer: createScssTransformer() });
@@ -41,7 +41,7 @@ test('handles sass features', async () => {
   // FIXME: The sass compiler or Loader implementation needs to be fixed.
 
   // FIXME: The end position of 'a_2_2' is incorrect.
-  expect(result).toMatchInlineSnapshot(`
+  expect(replaceFixtureDir(result)).toMatchInlineSnapshot(`
     {
       dependencies: ["<fixtures>/test/2.scss", "<fixtures>/test/3.scss"],
       tokens: [

@@ -2,7 +2,7 @@ import dedent from 'dedent';
 import type { RunnerOptions } from '../runner.js';
 import { run } from '../runner.js';
 import { createTSServer } from '../test-util/tsserver.js';
-import { createFixtures, getFixturePath } from '../test-util/util.js';
+import { createFixtures, getFixturePath, replaceFixtureDir } from '../test-util/util.js';
 
 const server = createTSServer();
 
@@ -63,7 +63,7 @@ test('basic', async () => {
     'local_class_name_4',
   ]);
   // FIXME: Fix an issue where the text at definition destination was incorrect.
-  expect(results).toMatchInlineSnapshot(`
+  expect(replaceFixtureDir(results)).toMatchInlineSnapshot(`
     [
       {
         "definitions": [
@@ -205,7 +205,7 @@ test('basic', async () => {
     ]
   `);
   const moduleDefinitions = await server.getModuleDefinitions(getFixturePath('/test/1.css'));
-  expect(moduleDefinitions).toMatchInlineSnapshot(`
+  expect(replaceFixtureDir(moduleDefinitions)).toMatchInlineSnapshot(`
     [
       { file: "<fixtures>/test/1.css", text: "", start: { line: 1, offset: 1 }, end: { line: 1, offset: 1 } },
     ]
@@ -230,7 +230,7 @@ test('imported tokens', async () => {
   });
   await run({ ...defaultOptions });
   const results = await server.getMultipleIdentifierDefinitions(getFixturePath(`/test/1.css`), ['a', 'b', 'c', 'd']);
-  expect(results).toMatchInlineSnapshot(`
+  expect(replaceFixtureDir(results)).toMatchInlineSnapshot(`
     [
       {
         "definitions": [
@@ -292,7 +292,7 @@ test('with transformer', async () => {
     'b_2',
     'c',
   ]);
-  expect(results).toMatchInlineSnapshot(`
+  expect(replaceFixtureDir(results)).toMatchInlineSnapshot(`
     [
       {
         "definitions": [
