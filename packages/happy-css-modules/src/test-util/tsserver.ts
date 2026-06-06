@@ -5,8 +5,8 @@ import { fileURLToPath } from 'url';
 import serverHarness from '@typescript/server-harness';
 import { glob } from 'glob';
 import { resolve } from 'import-meta-resolve';
-import lineColumn from 'line-column';
 import type { server } from 'typescript/lib/tsserverlibrary.js';
+import { getIndexFromLineColumn } from './line-column.js';
 import { getFixturePath } from './util.js';
 
 async function writeFile(path: string, content: string): Promise<void> {
@@ -76,8 +76,8 @@ export function createTSServer() {
         const definitions: Definition[] = response.body!.map((definition) => {
           const { file, start, end } = definition;
           const fileContent = readFileSync(file, 'utf-8');
-          const startIndex = lineColumn(fileContent).toIndex(start.line, start.offset);
-          const endIndex = lineColumn(fileContent).toIndex(end.line, end.offset);
+          const startIndex = getIndexFromLineColumn(fileContent, start.line, start.offset);
+          const endIndex = getIndexFromLineColumn(fileContent, end.line, end.offset);
           const text = fileContent.slice(startIndex, endIndex);
           return { file, text, start, end };
         });
@@ -108,8 +108,8 @@ export function createTSServer() {
       const definitions: Definition[] = response.body!.map((definition) => {
         const { file, start, end } = definition;
         const fileContent = readFileSync(file, 'utf-8');
-        const startIndex = lineColumn(fileContent).toIndex(start.line, start.offset);
-        const endIndex = lineColumn(fileContent).toIndex(end.line, end.offset);
+        const startIndex = getIndexFromLineColumn(fileContent, start.line, start.offset);
+        const endIndex = getIndexFromLineColumn(fileContent, end.line, end.offset);
         const text = fileContent.slice(startIndex, endIndex);
         return { file, text, start, end };
       });
