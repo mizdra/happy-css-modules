@@ -240,10 +240,10 @@ test('returns an error if the file fails to process in non-watch mode', async ()
   expect(error.message).toMatchInlineSnapshot(`"Failed to process files"`);
   expect(error.errors).toHaveLength(2);
   expect(replaceFixtureDir((error.errors[0] as Error).message)).toMatchInlineSnapshot(
-    `"<fixtures>/test/3.css:1:1: Unknown word"`,
+    `"<fixtures>/test/2.css:1:1: Unknown word"`,
   );
   expect(replaceFixtureDir((error.errors[1] as Error).message)).toMatchInlineSnapshot(
-    `"<fixtures>/test/2.css:1:1: Unknown word"`,
+    `"<fixtures>/test/3.css:1:1: Unknown word"`,
   );
 
   // The valid files are emitted.

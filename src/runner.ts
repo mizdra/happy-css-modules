@@ -3,9 +3,9 @@ import * as process from 'node:process';
 import { styleText } from 'node:util';
 import { createCache } from '@file-cache/core';
 import { createNpmPackageKey } from '@file-cache/npm';
+import { glob } from 'node:fs/promises';
 import { Mutex } from 'async-mutex';
 import * as chokidar from 'chokidar';
-import { glob } from 'glob';
 import { DEFAULT_ARBITRARY_EXTENSIONS } from './config.js';
 import { isGeneratedFilesExist, emitGeneratedFiles } from './emitter/index.js';
 import { Locator } from './locator/index.js';
@@ -174,7 +174,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
   }
 
   async function processAllFiles() {
-    const filePaths = (await glob(options.pattern, { dot: true, cwd }))
+    const filePaths = (await Array.fromAsync(glob(options.pattern, { cwd })))
       // convert relative path to absolute path
       .map((file) => resolve(cwd, file));
 

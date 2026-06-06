@@ -29,9 +29,9 @@
     "skipLibCheck": true,
     "checkJs": true,
 
-    // Compatible for Node.js v16 (ref: https://github.com/microsoft/TypeScript/wiki/Node-Target-Mapping)
-    "target": "ES2021",
-    "lib": ["ES2021"],
+    // Compatible for Node.js v22 (ref: https://node.green/)
+    "target": "ES2023",
+    "lib": ["ESNext"],
     "noEmit": true,
 
     // Vitest global types

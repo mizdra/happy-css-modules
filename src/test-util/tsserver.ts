@@ -1,9 +1,8 @@
 import { readFileSync } from 'node:fs';
-import { mkdir, writeFile as nativeWriteFile } from 'node:fs/promises';
+import { mkdir, writeFile as nativeWriteFile, glob } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import serverHarness from '@typescript/server-harness';
-import { glob } from 'glob';
 import { resolve } from 'import-meta-resolve';
 import type { server } from 'typescript/lib/tsserverlibrary.js';
 import { getIndexFromLineColumn } from './line-column.js';
@@ -120,7 +119,7 @@ export function createTSServer() {
       // When a file is updated, its cache remains with the old content.
       // Therefore we need to overwrite the cache with the latest content.
 
-      const fixtureFilePaths = await glob(getFixturePath('/**/*.ts'), { dot: true });
+      const fixtureFilePaths = await Array.fromAsync(glob(getFixturePath('/**/*.ts')));
       // latest contents
       const openFiles: server.protocol.UpdateOpenRequest['arguments']['openFiles'] = fixtureFilePaths.map(
         (filePath) => ({
