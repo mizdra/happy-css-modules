@@ -35,6 +35,6 @@
     "noEmit": true,
 
     // Vitest global types
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals", "node"]
   }
 }
