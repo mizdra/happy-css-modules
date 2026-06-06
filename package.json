@@ -65,6 +65,8 @@
     "@typescript/server-harness": "^0.3.5",
     "dedent": "^1.5.3",
     "less": "^4.2.0",
+    "less-3": "npm:less@^3.0.0",
+    "less-4": "npm:less@^4.2.0",
     "npm-run-all2": "^6.2.0",
     "oxfmt": "^0.53.0",
     "oxlint": "^1.68.0",
