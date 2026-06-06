@@ -2,13 +2,13 @@
   "name": "example",
   "version": "1.0.0",
   "description": "",
+  "license": "MIT",
+  "author": "mizdra",
   "type": "commonjs",
   "main": "app.js",
   "scripts": {
     "hcm": "hcm --watch '*-*/*.{css,scss,less}'"
   },
-  "author": "mizdra",
-  "license": "MIT",
   "dependencies": {
     "happy-css-modules": "../happy-css-modules"
   },

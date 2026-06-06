@@ -107,29 +107,29 @@ function generateTokenDeclarations(
             ': string }>',
           ])
         : typeof token.importedName === 'string'
-        ? new SourceNode(null, null, null, [
-            `& Readonly<{ `,
-            new SourceNode(
-              originalLocation.start.line,
-              // The SourceNode's column is 0-based, but the originalLocation's column is 1-based.
-              originalLocation.start.column - 1,
-              getRelativePath(sourceMapFilePath, originalLocation.filePath),
+          ? new SourceNode(null, null, null, [
+              `& Readonly<{ `,
+              new SourceNode(
+                originalLocation.start.line,
+                // The SourceNode's column is 0-based, but the originalLocation's column is 1-based.
+                originalLocation.start.column - 1,
+                getRelativePath(sourceMapFilePath, originalLocation.filePath),
+                `"${token.name}"`,
+                token.name,
+              ),
+              `: (typeof import(`,
+              `"${getRelativePath(filePath, originalLocation.filePath)}"`,
+              `))["default"]["${token.importedName}"] }>`,
+            ])
+          : // Imported tokens in non-external files are typed by dynamic import.
+            // See https://github.com/mizdra/happy-css-modules/issues/106.
+            new SourceNode(null, null, null, [
+              '& Readonly<Pick<(typeof import(',
+              `"${getRelativePath(filePath, originalLocation.filePath)}"`,
+              '))["default"], ',
               `"${token.name}"`,
-              token.name,
-            ),
-            `: (typeof import(`,
-            `"${getRelativePath(filePath, originalLocation.filePath)}"`,
-            `))["default"]["${token.importedName}"] }>`,
-          ])
-        : // Imported tokens in non-external files are typed by dynamic import.
-          // See https://github.com/mizdra/happy-css-modules/issues/106.
-          new SourceNode(null, null, null, [
-            '& Readonly<Pick<(typeof import(',
-            `"${getRelativePath(filePath, originalLocation.filePath)}"`,
-            '))["default"], ',
-            `"${token.name}"`,
-            '>>',
-          ]),
+              '>>',
+            ]),
     );
   }
   return result;

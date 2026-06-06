@@ -1,5 +1,15 @@
 {
   "private": true,
+  "license": "MIT",
+  "author": "mizdra",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mizdra/happy-css-modules.git"
+  },
+  "workspaces": [
+    "packages/happy-css-modules",
+    "packages/example"
+  ],
   "type": "module",
   "scripts": {
     "dev:happy-css-modules": "npm -w example run hcm",
@@ -10,20 +20,6 @@
     "lint:tsc": "tsc -p tsconfig.json",
     "test": "vitest run"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mizdra/happy-css-modules.git"
-  },
-  "author": "mizdra",
-  "license": "MIT",
-  "engines": {
-    "node": "^22.20.0 || ^24.8.0 || >=26.0.0"
-  },
-  "packageManager": "npm@11.16.0",
-  "workspaces": [
-    "packages/happy-css-modules",
-    "packages/example"
-  ],
   "devDependencies": {
     "@eslint/eslintrc": "^3.0.0",
     "@eslint/js": "^8.37.0",
@@ -47,5 +43,9 @@
     "sass": "^1.77.1",
     "typescript": "^5.4.5",
     "vitest": "^2.1.4"
-  }
+  },
+  "engines": {
+    "node": "^22.20.0 || ^24.8.0 || >=26.0.0"
+  },
+  "packageManager": "npm@11.16.0"
 }
