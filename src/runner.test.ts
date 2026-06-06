@@ -22,6 +22,17 @@ vi.mock(import('@file-cache/core'), async (importOriginal) => {
   };
 });
 
+// `createNpmPackageKey` resolves the version of `happy-css-modules` from node_modules, but this
+// repository is the `happy-css-modules` package itself and does not install itself into node_modules.
+// Stub it so the cache key can be computed without the package being installed.
+vi.mock(import('@file-cache/npm'), async (importOriginal) => {
+  const fileCacheNpm = await importOriginal();
+  return {
+    ...fileCacheNpm,
+    createNpmPackageKey: () => '__happy-css-modules',
+  };
+});
+
 const { run } = await import('./runner.js');
 
 const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});

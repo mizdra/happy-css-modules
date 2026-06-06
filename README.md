@@ -126,7 +126,7 @@ However, by default tsc and tsserver cannot load it. To enable tsc or tsserver t
 
 `happy-css-modules` provides Node.js API for programmatically generating .d.ts and .d.ts.map.
 
-See [packages/happy-css-modules/src/index.ts](https://github.com/mizdra/happy-css-modules/blob/main/packages/happy-css-modules/src/index.ts) for available API.
+See [src/index.ts](https://github.com/mizdra/happy-css-modules/blob/main/src/index.ts) for available API.
 
 ### Example: Custom `hcm` commands
 
@@ -248,17 +248,17 @@ const locator = new Locator({
   // resolver: createDefaultResolver(),
 });
 
-// Process https://github.com/mizdra/happy-css-modules/blob/main/packages/example/02-import/2.css
+// Process https://github.com/mizdra/happy-css-modules/blob/main/example/02-import/2.css
 const filePath = resolve('example/02-import/2.css'); // Convert to absolute path
 const result = await locator.load(filePath);
 
 assert.deepEqual(result, {
-  dependencies: ['/Users/mizdra/src/github.com/mizdra/packages/example/02-import/3.css'],
+  dependencies: ['/Users/mizdra/src/github.com/mizdra/example/02-import/3.css'],
   tokens: [
     {
       name: 'b',
       originalLocation: {
-        filePath: '/Users/mizdra/src/github.com/mizdra/packages/example/02-import/3.css',
+        filePath: '/Users/mizdra/src/github.com/mizdra/example/02-import/3.css',
         start: { line: 1, column: 1 },
         end: { line: 1, column: 2 },
       },
@@ -266,7 +266,7 @@ assert.deepEqual(result, {
     {
       name: 'a',
       originalLocation: {
-        filePath: '/Users/mizdra/src/github.com/mizdra/packages/example/02-import/2.css',
+        filePath: '/Users/mizdra/src/github.com/mizdra/example/02-import/2.css',
         start: { line: 3, column: 1 },
         end: { line: 3, column: 2 },
       },

@@ -1,24 +1,56 @@
 {
-  "private": true,
+  "name": "happy-css-modules",
+  "version": "4.0.0",
+  "description": "Creates .d.ts files from CSS Modules .css files",
+  "keywords": [
+    "css-modules",
+    "typescript"
+  ],
   "license": "MIT",
   "author": "mizdra",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mizdra/happy-css-modules.git"
   },
-  "workspaces": [
-    "packages/happy-css-modules",
-    "packages/example"
+  "bin": {
+    "hcm": "bin/hcm.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "dist"
   ],
   "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "dev:happy-css-modules": "npm -w example run hcm",
-    "build": "npm run build --workspaces --if-present",
+    "update-example": "cd example && node ../bin/hcm.js '*-*/*.{css,scss,less}' --cache=false",
+    "dev": "npm run update-example -- --watch",
+    "build": "tsc -p tsconfig.build.json",
     "lint": "run-s -c lint:*",
     "lint:oxfmt": "oxfmt --check",
     "lint:oxlint": "oxlint --type-aware",
     "lint:tsc": "tsc -p tsconfig.json",
     "test": "vitest run"
+  },
+  "dependencies": {
+    "@file-cache/core": "^2.0.0",
+    "@file-cache/npm": "^2.0.0",
+    "async-mutex": "^0.5.0",
+    "camelcase": "^8.0.0",
+    "chalk": "^5.3.0",
+    "chokidar": "^3.6.0",
+    "enhanced-resolve": "^5.16.1",
+    "glob": "^10.3.15",
+    "import-meta-resolve": "^4.1.0",
+    "minimatch": "^9.0.4",
+    "postcss": "^8.4.38",
+    "postcss-load-config": "^5.1.0",
+    "postcss-modules": "^6.0.0",
+    "postcss-selector-parser": "^6.0.16",
+    "postcss-value-parser": "^4.2.0",
+    "source-map": "^0.7.4",
+    "yargs": "^17.7.2"
   },
   "devDependencies": {
     "@mizdra/oxfmt-config": "^0.2.0",
@@ -28,6 +60,7 @@
     "@types/less": "^3.0.6",
     "@types/minimatch": "^5.1.2",
     "@types/node": "^20.12.12",
+    "@types/react": "^18.3.2",
     "@types/yargs": "^17.0.32",
     "@typescript/server-harness": "^0.3.5",
     "dedent": "^1.5.3",
@@ -38,9 +71,26 @@
     "oxlint-tsgolint": "^0.23.0",
     "postcss-import": "^16.1.0",
     "postcss-simple-vars": "^7.0.1",
+    "react": "^18.3.1",
     "sass": "^1.77.1",
     "typescript": "^5.4.5",
     "vitest": "^2.1.4"
+  },
+  "peerDependencies": {
+    "less": "^3.0.0 || ^4.0.0",
+    "postcss": "^8.0.0",
+    "sass": "^1.68.0"
+  },
+  "peerDependenciesMeta": {
+    "sass": {
+      "optional": true
+    },
+    "less": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": "^22.20.0 || ^24.8.0 || >=26.0.0"
   },
   "packageManager": "npm@11.16.0"
 }

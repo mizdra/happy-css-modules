@@ -1,5 +1,5 @@
 {
-  "exclude": ["./docs", "./packages/*/dist", "./packages/*/bin"],
+  "exclude": ["./docs", "./dist", "./bin"],
   "compilerOptions": {
     /* Distribution Options */
     // "target": "ES2019", // Override by inheritance

@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.json",
+  "include": ["**/*"],
+  "compilerOptions": {
+    "outDir": "dist",
+    // Compatible for Node.js v16 (ref: https://github.com/microsoft/TypeScript/wiki/Node-Target-Mapping)
+    "target": "ES2021",
+    "lib": ["ES2021"]
+  }
+}
