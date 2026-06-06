@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { createRequire } from 'node:module';
 import dedent from 'dedent';
 import { Locator } from '../locator/index.js';
-import { createFixtures, getFixturePath } from '../test-util/util.js';
+import { createFixtures, getFixturePath, replaceFixtureDir } from '../test-util/util.js';
 import { createPostcssTransformer } from './postcss-transformer.js';
 
 const cwd = getFixturePath('/');
@@ -34,16 +34,22 @@ test('handles postcss features', async () => {
   });
   const result = await locator.load(getFixturePath('/test/1.css'));
 
-  expect(result).toMatchInlineSnapshot(`
+  expect(replaceFixtureDir(result)).toMatchInlineSnapshot(`
     {
-      dependencies: [],
-      tokens: [
+      "dependencies": [],
+      "tokens": [
         {
-          name: "foo_bar",
-          originalLocation: {
-            filePath: "<fixtures>/test/1.css",
-            start: { line: 2, column: 1 },
-            end: { line: 2, column: 8 },
+          "name": "foo_bar",
+          "originalLocation": {
+            "end": {
+              "column": 8,
+              "line": 2,
+            },
+            "filePath": "<fixtures>/test/1.css",
+            "start": {
+              "column": 1,
+              "line": 2,
+            },
           },
         },
       ],

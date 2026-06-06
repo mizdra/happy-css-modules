@@ -118,7 +118,19 @@ describe('getOriginalLocationOfClassSelector', () => {
       `),
     );
     expect(getOriginalLocationOfClassSelector(basic!.rule, basic!.classSelector)).toMatchInlineSnapshot(
-      `{ filePath: "/test/test.css", start: { line: 1, column: 1 }, end: { line: 1, column: 6 } }`,
+      `
+      {
+        "end": {
+          "column": 6,
+          "line": 1,
+        },
+        "filePath": "/test/test.css",
+        "start": {
+          "column": 1,
+          "line": 1,
+        },
+      }
+    `,
     );
   });
   test('cascading', () => {
@@ -130,10 +142,34 @@ describe('getOriginalLocationOfClassSelector', () => {
       `),
     );
     expect(getOriginalLocationOfClassSelector(cascading_1!.rule, cascading_1!.classSelector)).toMatchInlineSnapshot(
-      `{ filePath: "/test/test.css", start: { line: 1, column: 1 }, end: { line: 1, column: 10 } }`,
+      `
+      {
+        "end": {
+          "column": 10,
+          "line": 1,
+        },
+        "filePath": "/test/test.css",
+        "start": {
+          "column": 1,
+          "line": 1,
+        },
+      }
+    `,
     );
     expect(getOriginalLocationOfClassSelector(cascading_2!.rule, cascading_2!.classSelector)).toMatchInlineSnapshot(
-      `{ filePath: "/test/test.css", start: { line: 2, column: 1 }, end: { line: 2, column: 10 } }`,
+      `
+      {
+        "end": {
+          "column": 10,
+          "line": 2,
+        },
+        "filePath": "/test/test.css",
+        "start": {
+          "column": 1,
+          "line": 2,
+        },
+      }
+    `,
     );
   });
   test('pseudo_class', () => {
@@ -148,17 +184,53 @@ describe('getOriginalLocationOfClassSelector', () => {
     expect(
       getOriginalLocationOfClassSelector(pseudo_class_1!.rule, pseudo_class_1!.classSelector),
     ).toMatchInlineSnapshot(
-      `{ filePath: "/test/test.css", start: { line: 1, column: 1 }, end: { line: 1, column: 15 } }`,
+      `
+      {
+        "end": {
+          "column": 15,
+          "line": 1,
+        },
+        "filePath": "/test/test.css",
+        "start": {
+          "column": 1,
+          "line": 1,
+        },
+      }
+    `,
     );
     expect(
       getOriginalLocationOfClassSelector(pseudo_class_2!.rule, pseudo_class_2!.classSelector),
     ).toMatchInlineSnapshot(
-      `{ filePath: "/test/test.css", start: { line: 2, column: 1 }, end: { line: 2, column: 15 } }`,
+      `
+      {
+        "end": {
+          "column": 15,
+          "line": 2,
+        },
+        "filePath": "/test/test.css",
+        "start": {
+          "column": 1,
+          "line": 2,
+        },
+      }
+    `,
     );
     expect(
       getOriginalLocationOfClassSelector(pseudo_class_3!.rule, pseudo_class_3!.classSelector),
     ).toMatchInlineSnapshot(
-      `{ filePath: "/test/test.css", start: { line: 3, column: 6 }, end: { line: 3, column: 20 } }`,
+      `
+      {
+        "end": {
+          "column": 20,
+          "line": 3,
+        },
+        "filePath": "/test/test.css",
+        "start": {
+          "column": 6,
+          "line": 3,
+        },
+      }
+    `,
     );
   });
   test('multiple_selector', () => {
@@ -171,12 +243,36 @@ describe('getOriginalLocationOfClassSelector', () => {
     expect(
       getOriginalLocationOfClassSelector(multiple_selector_1!.rule, multiple_selector_1!.classSelector),
     ).toMatchInlineSnapshot(
-      `{ filePath: "/test/test.css", start: { line: 1, column: 1 }, end: { line: 1, column: 20 } }`,
+      `
+      {
+        "end": {
+          "column": 20,
+          "line": 1,
+        },
+        "filePath": "/test/test.css",
+        "start": {
+          "column": 1,
+          "line": 1,
+        },
+      }
+    `,
     );
     expect(
       getOriginalLocationOfClassSelector(multiple_selector_2!.rule, multiple_selector_2!.classSelector),
     ).toMatchInlineSnapshot(
-      `{ filePath: "/test/test.css", start: { line: 1, column: 21 }, end: { line: 1, column: 40 } }`,
+      `
+      {
+        "end": {
+          "column": 40,
+          "line": 1,
+        },
+        "filePath": "/test/test.css",
+        "start": {
+          "column": 21,
+          "line": 1,
+        },
+      }
+    `,
     );
   });
 
@@ -188,10 +284,34 @@ describe('getOriginalLocationOfClassSelector', () => {
       `),
     );
     expect(getOriginalLocationOfClassSelector(combinator_1!.rule, combinator_1!.classSelector)).toMatchInlineSnapshot(
-      `{ filePath: "/test/test.css", start: { line: 1, column: 1 }, end: { line: 1, column: 13 } }`,
+      `
+      {
+        "end": {
+          "column": 13,
+          "line": 1,
+        },
+        "filePath": "/test/test.css",
+        "start": {
+          "column": 1,
+          "line": 1,
+        },
+      }
+    `,
     );
     expect(getOriginalLocationOfClassSelector(combinator_2!.rule, combinator_2!.classSelector)).toMatchInlineSnapshot(
-      `{ filePath: "/test/test.css", start: { line: 1, column: 17 }, end: { line: 1, column: 29 } }`,
+      `
+      {
+        "end": {
+          "column": 29,
+          "line": 1,
+        },
+        "filePath": "/test/test.css",
+        "start": {
+          "column": 17,
+          "line": 1,
+        },
+      }
+    `,
     );
   });
   test('at_rule', () => {
@@ -206,7 +326,19 @@ describe('getOriginalLocationOfClassSelector', () => {
       `),
     );
     expect(getOriginalLocationOfClassSelector(at_rule!.rule, at_rule!.classSelector)).toMatchInlineSnapshot(
-      `{ filePath: "/test/test.css", start: { line: 3, column: 5 }, end: { line: 3, column: 12 } }`,
+      `
+      {
+        "end": {
+          "column": 12,
+          "line": 3,
+        },
+        "filePath": "/test/test.css",
+        "start": {
+          "column": 5,
+          "line": 3,
+        },
+      }
+    `,
     );
   });
   test('selector_list', () => {
@@ -219,12 +351,36 @@ describe('getOriginalLocationOfClassSelector', () => {
     expect(
       getOriginalLocationOfClassSelector(selector_list_1!.rule, selector_list_1!.classSelector),
     ).toMatchInlineSnapshot(
-      `{ filePath: "/test/test.css", start: { line: 1, column: 1 }, end: { line: 1, column: 16 } }`,
+      `
+      {
+        "end": {
+          "column": 16,
+          "line": 1,
+        },
+        "filePath": "/test/test.css",
+        "start": {
+          "column": 1,
+          "line": 1,
+        },
+      }
+    `,
     );
     expect(
       getOriginalLocationOfClassSelector(selector_list_2!.rule, selector_list_2!.classSelector),
     ).toMatchInlineSnapshot(
-      `{ filePath: "/test/test.css", start: { line: 1, column: 19 }, end: { line: 1, column: 34 } }`,
+      `
+      {
+        "end": {
+          "column": 34,
+          "line": 1,
+        },
+        "filePath": "/test/test.css",
+        "start": {
+          "column": 19,
+          "line": 1,
+        },
+      }
+    `,
     );
   });
   test('local_class_name', () => {
@@ -242,22 +398,70 @@ describe('getOriginalLocationOfClassSelector', () => {
     expect(
       getOriginalLocationOfClassSelector(local_class_name_1!.rule, local_class_name_1!.classSelector),
     ).toMatchInlineSnapshot(
-      `{ filePath: "/test/test.css", start: { line: 1, column: 8 }, end: { line: 1, column: 26 } }`,
+      `
+      {
+        "end": {
+          "column": 26,
+          "line": 1,
+        },
+        "filePath": "/test/test.css",
+        "start": {
+          "column": 8,
+          "line": 1,
+        },
+      }
+    `,
     );
     expect(
       getOriginalLocationOfClassSelector(local_class_name_2!.rule, local_class_name_2!.classSelector),
     ).toMatchInlineSnapshot(
-      `{ filePath: "/test/test.css", start: { line: 3, column: 3 }, end: { line: 3, column: 21 } }`,
+      `
+      {
+        "end": {
+          "column": 21,
+          "line": 3,
+        },
+        "filePath": "/test/test.css",
+        "start": {
+          "column": 3,
+          "line": 3,
+        },
+      }
+    `,
     );
     expect(
       getOriginalLocationOfClassSelector(local_class_name_3!.rule, local_class_name_3!.classSelector),
     ).toMatchInlineSnapshot(
-      `{ filePath: "/test/test.css", start: { line: 4, column: 3 }, end: { line: 4, column: 21 } }`,
+      `
+      {
+        "end": {
+          "column": 21,
+          "line": 4,
+        },
+        "filePath": "/test/test.css",
+        "start": {
+          "column": 3,
+          "line": 4,
+        },
+      }
+    `,
     );
     expect(
       getOriginalLocationOfClassSelector(local_class_name_4!.rule, local_class_name_4!.classSelector),
     ).toMatchInlineSnapshot(
-      `{ filePath: "/test/test.css", start: { line: 6, column: 8 }, end: { line: 6, column: 26 } }`,
+      `
+      {
+        "end": {
+          "column": 26,
+          "line": 6,
+        },
+        "filePath": "/test/test.css",
+        "start": {
+          "column": 8,
+          "line": 6,
+        },
+      }
+    `,
     );
   });
   test('with_newline', () => {
@@ -272,18 +476,54 @@ describe('getOriginalLocationOfClassSelector', () => {
     expect(
       getOriginalLocationOfClassSelector(with_newline_1!.rule, with_newline_1!.classSelector),
     ).toMatchInlineSnapshot(
-      `{ filePath: "/test/test.css", start: { line: 1, column: 1 }, end: { line: 1, column: 15 } }`,
+      `
+      {
+        "end": {
+          "column": 15,
+          "line": 1,
+        },
+        "filePath": "/test/test.css",
+        "start": {
+          "column": 1,
+          "line": 1,
+        },
+      }
+    `,
     );
     expect(
       getOriginalLocationOfClassSelector(with_newline_2!.rule, with_newline_2!.classSelector),
     ).toMatchInlineSnapshot(
-      `{ filePath: "/test/test.css", start: { line: 2, column: 1 }, end: { line: 2, column: 15 } }`,
+      `
+      {
+        "end": {
+          "column": 15,
+          "line": 2,
+        },
+        "filePath": "/test/test.css",
+        "start": {
+          "column": 1,
+          "line": 2,
+        },
+      }
+    `,
     );
 
     expect(
       getOriginalLocationOfClassSelector(with_newline_3!.rule, with_newline_3!.classSelector),
     ).toMatchInlineSnapshot(
-      `{ filePath: "/test/test.css", start: { line: 3, column: 5 }, end: { line: 3, column: 19 } }`,
+      `
+      {
+        "end": {
+          "column": 19,
+          "line": 3,
+        },
+        "filePath": "/test/test.css",
+        "start": {
+          "column": 5,
+          "line": 3,
+        },
+      }
+    `,
     );
   });
 });
@@ -303,7 +543,19 @@ test('getOriginalLocationOfAtValue', () => {
     `),
   );
   expect(tryGetOriginalLocationOfAtValue(basic!)).toMatchInlineSnapshot(
-    `{ filePath: "/test/test.css", start: { line: 1, column: 8 }, end: { line: 1, column: 13 } }`,
+    `
+    {
+      "end": {
+        "column": 13,
+        "line": 1,
+      },
+      "filePath": "/test/test.css",
+      "start": {
+        "column": 8,
+        "line": 1,
+      },
+    }
+  `,
   );
 });
 

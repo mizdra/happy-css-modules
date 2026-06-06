@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import type { CreateCacheOptions } from '@file-cache/core';
 import dedent from 'dedent';
 import type { RunnerOptions, Watcher } from './runner.js';
-import { createFixtures, exists, getFixturePath, waitForAsyncTask } from './test-util/util.js';
+import { createFixtures, exists, getFixturePath, replaceFixtureDir, waitForAsyncTask } from './test-util/util.js';
 
 const require = createRequire(import.meta.url);
 
@@ -231,8 +231,12 @@ test('returns an error if the file fails to process in non-watch mode', async ()
   const error = maybeError as AggregateError;
   expect(error.message).toMatchInlineSnapshot(`"Failed to process files"`);
   expect(error.errors).toHaveLength(2);
-  expect(error.errors[0]).toMatchInlineSnapshot(`<fixtures>/test/3.css:1:1: Unknown word`);
-  expect(error.errors[1]).toMatchInlineSnapshot(`<fixtures>/test/2.css:1:1: Unknown word`);
+  expect(replaceFixtureDir((error.errors[0] as Error).message)).toMatchInlineSnapshot(
+    `"<fixtures>/test/3.css:1:1: Unknown word"`,
+  );
+  expect(replaceFixtureDir((error.errors[1] as Error).message)).toMatchInlineSnapshot(
+    `"<fixtures>/test/2.css:1:1: Unknown word"`,
+  );
 
   // The valid files are emitted.
   expect(await exists(getFixturePath('/test/1.css.d.ts'))).toBe(true);
