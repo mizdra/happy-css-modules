@@ -36,7 +36,6 @@
   "dependencies": {
     "@file-cache/core": "^2.0.0",
     "@file-cache/npm": "^2.0.0",
-    "async-mutex": "^0.5.0",
     "camelcase": "^8.0.0",
     "chokidar": "^3.6.0",
     "enhanced-resolve": "^5.16.1",

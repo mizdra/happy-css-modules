@@ -1,10 +1,9 @@
+import { glob } from 'node:fs/promises';
 import { resolve, relative } from 'node:path';
 import * as process from 'node:process';
 import { styleText } from 'node:util';
 import { createCache } from '@file-cache/core';
 import { createNpmPackageKey } from '@file-cache/npm';
-import { glob } from 'node:fs/promises';
-import { Mutex } from 'async-mutex';
 import * as chokidar from 'chokidar';
 import { DEFAULT_ARBITRARY_EXTENSIONS } from './config.js';
 import { isGeneratedFilesExist, emitGeneratedFiles } from './emitter/index.js';
@@ -14,6 +13,31 @@ import type { Resolver } from './resolver/index.js';
 import { createDefaultResolver } from './resolver/index.js';
 import { createDefaultTransformer, type Transformer } from './transformer/index.js';
 import { getInstalledPeerDependencies, isMatchByGlob } from './util.js';
+
+class Mutex {
+  private _queue: (() => void)[] = [];
+  private _locked = false;
+
+  async acquire(): Promise<void> {
+    await new Promise<void>((resolve) => {
+      if (!this._locked) {
+        this._locked = true;
+        resolve();
+      } else {
+        this._queue.push(resolve);
+      }
+    });
+  }
+
+  release(): void {
+    const next = this._queue.shift();
+    if (next) {
+      next();
+    } else {
+      this._locked = false;
+    }
+  }
+}
 
 export type Watcher = {
   close: () => Promise<void>;
