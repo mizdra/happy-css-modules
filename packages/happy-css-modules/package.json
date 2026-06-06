@@ -2,33 +2,30 @@
   "name": "happy-css-modules",
   "version": "4.0.0",
   "description": "Creates .d.ts files from CSS Modules .css files",
-  "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsc -p tsconfig.build.json"
-  },
-  "bin": {
-    "hcm": "bin/hcm.js"
-  },
+  "keywords": [
+    "css-modules",
+    "typescript"
+  ],
+  "license": "MIT",
+  "author": "mizdra",
   "repository": {
     "type": "git",
     "url": "https://github.com/mizdra/happy-css-modules.git",
     "directory": "packages/happy-css-modules"
   },
-  "keywords": [
-    "css-modules",
-    "typescript"
-  ],
+  "bin": {
+    "hcm": "bin/hcm.js"
+  },
   "files": [
     "bin",
     "src",
     "dist"
   ],
-  "author": "mizdra",
-  "license": "MIT",
-  "engines": {
-    "node": ">=18.0.0"
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json"
   },
   "dependencies": {
     "@file-cache/core": "^2.0.0",
@@ -61,5 +58,8 @@
     "less": {
       "optional": true
     }
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
