@@ -5,15 +5,12 @@
   "type": "commonjs",
   "main": "app.js",
   "scripts": {
-    "hcm": "hcm --watch '*-*/*.{css,scss,less}'",
-    "lint": "stylelint '*-*/*.{css,scss,less}'"
+    "hcm": "hcm --watch '*-*/*.{css,scss,less}'"
   },
   "author": "mizdra",
   "license": "MIT",
   "dependencies": {
-    "happy-css-modules": "../happy-css-modules",
-    "stylelint-happy-css-modules": "../stylelint-happy-css-modules",
-    "typescript-happy-css-modules-plugin": "../typescript-happy-css-modules-plugin"
+    "happy-css-modules": "../happy-css-modules"
   },
   "devDependencies": {
     "@types/react": "^18.3.2",
