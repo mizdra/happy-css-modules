@@ -61,7 +61,6 @@ export default [
       //     packageDir: [
       //       __dirname,
       //       join(__dirname, 'happy-css-modules'),
-      //       join(__dirname, 'stylelint-happy-css-modules'),
       //       join(__dirname, 'example'),
       //     ],
       //   },
