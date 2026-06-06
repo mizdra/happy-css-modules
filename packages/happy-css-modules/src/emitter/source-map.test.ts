@@ -1,4 +1,4 @@
-import { EOL } from 'os';
+import { EOL } from 'node:os';
 import { getSourceMapFilePath, generateSourceMappingURLComment } from './source-map.js';
 
 test('getSourceMapFilePath', () => {

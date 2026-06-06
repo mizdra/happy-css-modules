@@ -1,8 +1,8 @@
-import { readFile, rm, symlink, writeFile } from 'fs/promises';
 import { randomUUID } from 'node:crypto';
+import { readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
-import { dirname, join, resolve } from 'path';
-import { fileURLToPath } from 'url';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import type { CreateCacheOptions } from '@file-cache/core';
 import dedent from 'dedent';
 import type { RunnerOptions, Watcher } from './runner.js';
@@ -24,9 +24,7 @@ vi.mock(import('@file-cache/core'), async (importOriginal) => {
 
 const { run } = await import('./runner.js');
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
 const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-// eslint-disable-next-line @typescript-eslint/no-empty-function
 const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
 const defaultOptions: RunnerOptions = {
@@ -144,7 +142,6 @@ test('uses cache in watch mode', async () => {
   await waitForAsyncTask(500); // Wait until the file is written
 
   // The updated 1.css will be processed, and the non-updated 2.css will be skipped.
-  // eslint-disable-next-line require-atomic-updates
   watcher = await run({ ...defaultOptions, declarationMap: true, logLevel: 'debug', cache: true, watch: true });
   await waitForAsyncTask(1000); // Wait until the watcher is ready
   expect(consoleLogSpy).toBeCalledTimes(3);
@@ -246,9 +243,9 @@ describe('handles external files', () => {
   beforeEach(() => {
     createFixtures({
       '/test/1.css': dedent`
-      @import './2.css';
-      @import 'external-library';
-      .a {}
+        @import './2.css';
+        @import 'external-library';
+        .a {}
       `,
       '/test/2.css': `.b {}`,
       '/node_modules/external-library/index.css': `.c {}`,
@@ -279,7 +276,7 @@ test('sassLoadPaths', async () => {
   const sassLoadPaths = ['test/relative'];
   createFixtures({
     '/test/1.scss': dedent`
-    @import '2.scss';
+      @import '2.scss';
     `,
     '/test/relative/2.scss': `.a { dummy: ''; }`,
   });
@@ -290,7 +287,7 @@ test('lessIncludePaths', async () => {
   const lessIncludePaths = ['test/relative'];
   createFixtures({
     '/test/1.less': dedent`
-    @import '2.less';
+      @import '2.less';
     `,
     '/test/relative/2.less': `.a { dummy: ''; }`,
   });
@@ -301,7 +298,7 @@ test('webpackResolveAlias', async () => {
   const webpackResolveAlias = { '@relative': 'test/relative' };
   createFixtures({
     '/test/1.less': dedent`
-    @import '@relative/2.less';
+      @import '@relative/2.less';
     `,
     '/test/relative/2.less': `.a { dummy: ''; }`,
   });
@@ -313,15 +310,15 @@ test('postcssConfig', async () => {
   const postcssConfig = `${uuid}/postcss.config.js`;
   createFixtures({
     [`/${uuid}/postcss.config.js`]: dedent`
-    module.exports = {
-      plugins: [
-        require('${require.resolve('postcss-simple-vars')}'),
-      ],
-    };
+      module.exports = {
+        plugins: [
+          require('${require.resolve('postcss-simple-vars')}'),
+        ],
+      };
     `,
     '/test/1.css': dedent`
-    $prefix: foo;
-    .$(prefix)_bar {}
+      $prefix: foo;
+      .$(prefix)_bar {}
     `,
   });
   await run({ ...defaultOptions, postcssConfig }); // not throw

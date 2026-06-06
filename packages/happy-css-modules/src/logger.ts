@@ -14,18 +14,18 @@ export class Logger {
   }
   debug(message: unknown) {
     if (this.logLevel >= LOG_LEVEL['debug']) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.log('[debug]', message);
     }
   }
   info(message: unknown) {
     if (this.logLevel >= LOG_LEVEL['info']) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.log(chalk.blue('[info]'), message);
     }
   }
   error(message: unknown) {
-    // eslint-disable-next-line no-console
+    // oxlint-disable-next-line no-console
     console.error(chalk.red('[error]'), message);
   }
 }

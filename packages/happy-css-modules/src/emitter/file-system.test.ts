@@ -1,4 +1,4 @@
-import { readFile, rm, stat } from 'fs/promises';
+import { readFile, rm, stat } from 'node:fs/promises';
 import { createFixtures, getFixturePath } from '../test-util/util.js';
 import { writeFileIfChanged } from './file-system.js';
 

@@ -1,4 +1,4 @@
-import { fileURLToPath, pathToFileURL } from 'url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { resolve } from 'import-meta-resolve';
 import type { Resolver } from './index.js';
 

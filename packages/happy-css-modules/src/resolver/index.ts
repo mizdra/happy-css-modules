@@ -27,7 +27,7 @@ export type DefaultResolverOptions = WebpackResolverOptions;
  * @param options The options to resolve
  * @returns The resolved path (absolute). `false` means to skip resolving.
  */
-export const createDefaultResolver: (defaultResolverOptions?: DefaultResolverOptions | undefined) => Resolver = (
+export const createDefaultResolver: (defaultResolverOptions?: DefaultResolverOptions) => Resolver = (
   defaultResolverOptions,
 ) => {
   const relativeResolver = createRelativeResolver();
@@ -43,14 +43,14 @@ export const createDefaultResolver: (defaultResolverOptions?: DefaultResolverOpt
   return async (specifier, options) => {
     for (const resolver of resolvers) {
       try {
-        // eslint-disable-next-line no-await-in-loop
+        // oxlint-disable-next-line no-await-in-loop
         const resolved = await resolver(specifier, options);
         if (resolved !== false) {
-          // eslint-disable-next-line no-await-in-loop
+          // oxlint-disable-next-line no-await-in-loop
           const isExists = await exists(resolved);
           if (isExists) return resolved;
         }
-      } catch (e) {
+      } catch {
         // noop
       }
     }

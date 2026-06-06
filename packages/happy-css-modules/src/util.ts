@@ -1,7 +1,7 @@
-import { constants, readFileSync } from 'fs';
-import { access } from 'fs/promises';
-import { join, dirname, resolve } from 'path';
-import { fileURLToPath } from 'url';
+import { constants, readFileSync } from 'node:fs';
+import { access } from 'node:fs/promises';
+import { join, dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { resolve as importMetaResolve } from 'import-meta-resolve';
 import { minimatch } from 'minimatch';
 
@@ -52,7 +52,6 @@ export function uniqueBy<T, U>(arr: T[], fn: (el: T) => U): T[] {
 
 export function sleepSync(ms: number) {
   const start = Date.now();
-  // eslint-disable-next-line no-empty
   while (Date.now() - start < ms) {}
 }
 
@@ -60,7 +59,7 @@ export async function exists(path: string): Promise<boolean> {
   try {
     await access(path, constants.F_OK);
     return true;
-  } catch (e) {
+  } catch {
     return false;
   }
 }

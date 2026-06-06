@@ -1,4 +1,4 @@
-import { EOL } from 'os';
+import { EOL } from 'node:os';
 import { getDtsFilePath } from './dts.js';
 import type { OutDirOptions } from './index.js';
 import { getRelativePath } from './index.js';

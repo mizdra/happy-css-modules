@@ -1,5 +1,5 @@
-import { EOL } from 'os';
-import path, { basename, parse, join } from 'path';
+import { EOL } from 'node:os';
+import path, { basename, parse, join } from 'node:path';
 import camelcase from 'camelcase';
 import { SourceNode, type CodeWithSourceMap } from 'source-map';
 import { type Token } from '../locator/index.js';
@@ -34,7 +34,7 @@ export function getDtsFilePath(
 }
 
 function dashesCamelCase(str: string): string {
-  return str.replace(/-+(\w)/gu, (match, firstLetter) => {
+  return str.replace(/-+(\w)/gu, (_match, firstLetter) => {
     return firstLetter.toUpperCase();
   });
 }
@@ -135,7 +135,6 @@ function generateTokenDeclarations(
   return result;
 }
 
-// eslint-disable-next-line max-params
 export function generateDtsContentWithSourceMap(
   filePath: string,
   dtsFilePath: string,

@@ -251,7 +251,6 @@ export function parseAtValue(atValue: AtRule): ParsedAtValue {
   if (matchesForImports) {
     const [, aliases, path] = matchesForImports;
 
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     if (aliases === undefined || path === undefined) throw new Error(`unreachable`);
 
     const imports = aliases
@@ -278,11 +277,11 @@ export function parseAtValue(atValue: AtRule): ParsedAtValue {
 
   const matchesForValueDefinitions = `${atValue.params}${atValue.raws.between!}`.match(matchValueDefinition);
   if (matchesForValueDefinitions) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // oxlint-disable-next-line no-unused-vars
     const [, key, value] = matchesForValueDefinitions;
     if (key === undefined) throw new Error(`unreachable`);
     return { type: 'valueDeclaration', tokenName: key };
   }
-  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  // oxlint-disable-next-line typescript/restrict-template-expressions, typescript/no-base-to-string
   throw new Error(`@value statement "${atValue.source!}" is invalid!`);
 }
