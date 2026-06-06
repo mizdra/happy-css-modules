@@ -21,7 +21,7 @@
   "engines": {
     "node": "^22.20.0 || ^24.8.0 || >=26.0.0"
   },
-  "packageManager": "npm@9.6.4",
+  "packageManager": "npm@11.16.0",
   "prettier": "@mizdra/prettier-config-mizdra",
   "workspaces": [
     "packages/happy-css-modules",
