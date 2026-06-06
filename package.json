@@ -60,7 +60,6 @@
     "@types/less": "^3.0.6",
     "@types/minimatch": "^5.1.2",
     "@types/node": "^20.12.12",
-    "@types/react": "^18.3.2",
     "@types/yargs": "^17.0.32",
     "@typescript/server-harness": "^0.3.5",
     "dedent": "^1.5.3",
@@ -73,7 +72,6 @@
     "oxlint-tsgolint": "^0.23.0",
     "postcss-import": "^16.1.0",
     "postcss-simple-vars": "^7.0.1",
-    "react": "^18.3.1",
     "sass": "^1.77.1",
     "typescript": "^5.4.5",
     "vitest": "^2.1.4"
