@@ -44,8 +44,5 @@
     "typescript": "^5.4.5",
     "vitest": "^2.1.4"
   },
-  "engines": {
-    "node": "^22.20.0 || ^24.8.0 || >=26.0.0"
-  },
   "packageManager": "npm@11.16.0"
 }
