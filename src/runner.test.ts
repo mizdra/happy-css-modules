@@ -33,6 +33,16 @@ vi.mock(import('@file-cache/npm'), async (importOriginal) => {
   };
 });
 
+vi.mock('sass', async (importOriginal) => {
+  const sass = await importOriginal<typeof import('sass')>();
+  return {
+    ...sass,
+    // Suppress the warning: `Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.`
+    compileStringAsync: async (source: string, options?: Parameters<typeof sass.compileStringAsync>[1]) =>
+      sass.compileStringAsync(source, { silenceDeprecations: ['import'], ...options }),
+  };
+});
+
 const { run } = await import('./runner.js');
 
 const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
