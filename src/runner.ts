@@ -1,10 +1,11 @@
+import type { Stats } from 'node:fs';
 import { glob } from 'node:fs/promises';
-import { resolve, relative } from 'node:path';
+import { resolve, relative, basename } from 'node:path';
 import * as process from 'node:process';
 import { styleText } from 'node:util';
 import { createCache } from '@file-cache/core';
 import { createNpmPackageKey } from '@file-cache/npm';
-import * as chokidar from 'chokidar';
+import chokidar from 'chokidar';
 import { DEFAULT_ARBITRARY_EXTENSIONS } from './config.js';
 import { isGeneratedFilesExist, emitGeneratedFiles } from './emitter/index.js';
 import { Locator } from './locator/index.js';
@@ -220,14 +221,21 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
   } else {
     // First, watch files.
     logger.info(`Watch ${options.pattern}...`);
-    const watcher = chokidar.watch([options.pattern.replace(/\\/gu, '/')], { cwd });
-    watcher.on('all', (eventName, relativeFilePath) => {
-      const filePath = resolve(cwd, relativeFilePath);
-
-      // There is a bug in chokidar that matches symlinks that do not match the pattern.
-      // ref: https://github.com/paulmillr/chokidar/issues/967
-      if (isExternalFile(filePath)) return;
-
+    const watcher = chokidar.watch(cwd, {
+      ignored: (filePath: string, stats?: Stats) => {
+        // The ignored function is called twice for the same path. The first time with stats undefined,
+        // and the second time with stats provided.
+        // In the first call, we can't determine if the path is a directory or file,
+        // so we include it considering it might be a directory.
+        if (!stats) return false;
+        if (stats.isDirectory()) {
+          const name = basename(filePath);
+          return name === 'node_modules' || name === '.git';
+        }
+        return isExternalFile(filePath);
+      },
+    });
+    watcher.on('all', (eventName, filePath) => {
       if (eventName !== 'add' && eventName !== 'change') return;
 
       processFile(filePath).catch((e) => {
