@@ -54,33 +54,36 @@ If you want to customize the behavior, see `--help`.
 $ hcm --help
 Generate .d.ts and .d.ts.map for CSS modules.
 
-hcm [options] <glob>
+Usage: hcm [options] <glob>
 
 Options:
-  -w, --watch                Watch input directory's css files or pattern                                         [boolean] [default: false]
-      --localsConvention     Style of exported class names.                  [choices: "camelCase", "camelCaseOnly", "dashes", "dashesOnly"]
-      --declarationMap       Create sourcemaps for d.ts files                                                      [boolean] [default: true]
-      --sassLoadPaths        The option compatible with sass's `--load-path`.                                                        [array]
-      --lessIncludePaths     The option compatible with less's `--include-path`.                                                     [array]
-      --webpackResolveAlias  The option compatible with webpack's `resolve.alias`.                                                  [string]
-      --postcssConfig        The option compatible with postcss's `--config`.                                                       [string]
-      --arbitraryExtensions  Generate `.d.css.ts` instead of `.css.d.ts`.                                          [boolean] [default: true]
-      --cache                Only generate .d.ts and .d.ts.map for changed files.                                  [boolean] [default: true]
-      --cacheStrategy        Strategy for the cache to use for detecting changed files.[choices: "content", "metadata"] [default: "content"]
-      --logLevel             What level of logs to report.                            [choices: "debug", "info", "silent"] [default: "info"]
-  -o, --outDir               Output directory for generated files.                                                                  [string]
-  -h, --help                 Show help                                                                                             [boolean]
-  -v, --version              Show version number                                                                                   [boolean]
+  -w, --[no-]watch               Watch input directory's css files or pattern (default: false)
+      --localsConvention         Style of exported class names.
+                                 [choices: camelCase, camelCaseOnly, dashes, dashesOnly]
+      --[no-]declarationMap      Create sourcemaps for d.ts files (default: true)
+      --sassLoadPaths            The option compatible with sass's `--load-path`.
+      --lessIncludePaths         The option compatible with less's `--include-path`.
+      --webpackResolveAlias      The option compatible with webpack's `resolve.alias`.
+      --postcssConfig            The option compatible with postcss's `--config`.
+      --[no-]arbitraryExtensions Generate `.d.css.ts` instead of `.css.d.ts` (default: false)
+      --[no-]cache               Only generate .d.ts and .d.ts.map for changed files (default: true)
+      --cacheStrategy            Strategy for the cache to use for detecting changed files.
+                                 [choices: content, metadata] (default: content)
+      --logLevel                 What level of logs to report.
+                                 [choices: debug, info, silent] (default: info)
+  -o, --outDir                   Output directory for generated files.
+  -h, --help                     Show help
+  -v, --version                  Show version number
 
 Examples:
-  hcm 'src/**/*.module.css'                                       Generate .d.ts and .d.ts.map.
-  hcm 'src/**/*.module.{css,scss,less}'                           Also generate files for sass and less.
-  hcm 'src/**/*.module.css' --watch                               Watch for changes and generate .d.ts and .d.ts.map.
-  hcm 'src/**/*.module.css' --declarationMap=false                Generate .d.ts only.
-  hcm 'src/**/*.module.css' --sassLoadPaths=src/style             Run with sass's `--load-path`.
-  hcm 'src/**/*.module.css' --lessIncludePaths=src/style          Run with less's `--include-path`.
-  hcm 'src/**/*.module.css' --webpackResolveAlias='{"@": "src"}'  Run with webpack's `resolve.alias`.
-  hcm 'src/**/*.module.css' --cache=false                         Disable cache.
+  hcm 'src/**/*.module.css'
+  hcm 'src/**/*.module.{css,scss,less}'
+  hcm 'src/**/*.module.css' --watch
+  hcm 'src/**/*.module.css' --no-declarationMap
+  hcm 'src/**/*.module.css' --sassLoadPaths src/style
+  hcm 'src/**/*.module.css' --lessIncludePaths src/style
+  hcm 'src/**/*.module.css' --webpackResolveAlias '{"@": "src"}'
+  hcm 'src/**/*.module.css' --no-cache
 ```
 
 ## How docs definition jumps work?
