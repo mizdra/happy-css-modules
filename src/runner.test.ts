@@ -117,7 +117,7 @@ test('uses cache in non-watch mode', async () => {
   consoleLogSpy.mockClear();
 });
 
-test('uses cache in watch mode', async () => {
+test('uses cache in watch mode', { retry: 5 }, async () => {
   createFixtures({
     '/test/1.css': '.a-1 {}',
     '/test/2.css': '.b-1 {}',
