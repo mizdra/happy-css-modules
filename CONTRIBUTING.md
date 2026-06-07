@@ -15,14 +15,12 @@ This is a guide for contributors.
   git switch main && git pull
   ```
 - ```bash
-  rm -rf dist && npm run build
-  ```
-- ```bash
   npm version <major|minor|patch>
-  ```
-- ```bash
-  npm publish
   ```
 - ```bash
   git push --follow-tags
   ```
+- Approve a staged package on npmjs.com and publish it.
+  - https://www.npmjs.com/settings/mizdra/staged-packages
+- Create a release on GitHub.
+  - https://github.com/mizdra/happy-css-modules/releases/new
