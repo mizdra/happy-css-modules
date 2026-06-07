@@ -169,7 +169,7 @@ test('tracks dependencies that have been pre-bundled by sass compiler', async ()
 
   // The files imported using @import are pre-bundled by the compiler.
   // Therefore, `Locator#load` is not called to process other files.
-  expect(loadSpy).toBeCalledTimes(1);
+  expect(loadSpy).toHaveBeenCalledTimes(1);
   expect(loadSpy).toHaveBeenNthCalledWith(1, getFixturePath('/test/1.scss'));
 
   // The files pre-bundled by the compiler are also included in `result.dependencies`

@@ -79,14 +79,14 @@ test('uses cache in non-watch mode', async () => {
     '/test/1.css': '.a {}',
   });
   await run({ ...defaultOptions, declarationMap: true, logLevel: 'debug', cache: true });
-  expect(consoleLogSpy).toBeCalledTimes(2);
+  expect(consoleLogSpy).toHaveBeenCalledTimes(2);
   expect(consoleLogSpy).toHaveBeenNthCalledWith(1, expect.anything(), expect.stringContaining('Generate .d.ts for'));
   expect(consoleLogSpy).toHaveBeenNthCalledWith(2, expect.anything(), expect.stringContaining('generated'));
   consoleLogSpy.mockClear();
 
   // Skip generation
   await run({ ...defaultOptions, declarationMap: true, logLevel: 'debug', cache: true });
-  expect(consoleLogSpy).toBeCalledTimes(2);
+  expect(consoleLogSpy).toHaveBeenCalledTimes(2);
   expect(consoleLogSpy).toHaveBeenNthCalledWith(1, expect.anything(), expect.stringContaining('Generate .d.ts for'));
   expect(consoleLogSpy).toHaveBeenNthCalledWith(2, expect.anything(), expect.stringContaining('skipped'));
   consoleLogSpy.mockClear();
@@ -94,14 +94,14 @@ test('uses cache in non-watch mode', async () => {
   // Generates if generated files are missing
   await rm(getFixturePath('/test/1.css.d.ts'));
   await run({ ...defaultOptions, declarationMap: true, logLevel: 'debug', cache: true });
-  expect(consoleLogSpy).toBeCalledTimes(2);
+  expect(consoleLogSpy).toHaveBeenCalledTimes(2);
   expect(consoleLogSpy).toHaveBeenNthCalledWith(1, expect.anything(), expect.stringContaining('Generate .d.ts for'));
   expect(consoleLogSpy).toHaveBeenNthCalledWith(2, expect.anything(), expect.stringContaining('generated'));
   consoleLogSpy.mockClear();
 
   // Generates if options are changed
   await run({ ...defaultOptions, declarationMap: false, logLevel: 'debug', cache: true });
-  expect(consoleLogSpy).toBeCalledTimes(2);
+  expect(consoleLogSpy).toHaveBeenCalledTimes(2);
   expect(consoleLogSpy).toHaveBeenNthCalledWith(1, expect.anything(), expect.stringContaining('Generate .d.ts for'));
   expect(consoleLogSpy).toHaveBeenNthCalledWith(2, expect.anything(), expect.stringContaining('generated'));
   consoleLogSpy.mockClear();
@@ -116,7 +116,7 @@ test('uses cache in watch mode', async () => {
   // At first, process all files
   watcher = await run({ ...defaultOptions, declarationMap: true, logLevel: 'debug', cache: true, watch: true });
   await waitForAsyncTask(1000); // Wait until the watcher is ready
-  expect(consoleLogSpy).toBeCalledTimes(3);
+  expect(consoleLogSpy).toHaveBeenCalledTimes(3);
   expect(consoleLogSpy).toHaveBeenNthCalledWith(
     1,
     expect.anything(),
@@ -137,7 +137,7 @@ test('uses cache in watch mode', async () => {
   // Updating 1.css, it will only be processed
   await writeFile(getFixturePath('/test/1.css'), '.a-2 {}');
   await waitForAsyncTask(500); // Wait until the file is written
-  expect(consoleLogSpy).toBeCalledTimes(1);
+  expect(consoleLogSpy).toHaveBeenCalledTimes(1);
   expect(consoleLogSpy).toHaveBeenNthCalledWith(
     1,
     expect.anything(),
@@ -155,7 +155,7 @@ test('uses cache in watch mode', async () => {
   // The updated 1.css will be processed, and the non-updated 2.css will be skipped.
   watcher = await run({ ...defaultOptions, declarationMap: true, logLevel: 'debug', cache: true, watch: true });
   await waitForAsyncTask(1000); // Wait until the watcher is ready
-  expect(consoleLogSpy).toBeCalledTimes(3);
+  expect(consoleLogSpy).toHaveBeenCalledTimes(3);
   expect(consoleLogSpy).toHaveBeenNthCalledWith(
     1,
     expect.anything(),
@@ -174,7 +174,7 @@ test('outputs logs', async () => {
     '/test/1.css': '.a {}',
   });
   await run({ ...defaultOptions, logLevel: 'debug', cache: true });
-  expect(consoleLogSpy).toBeCalledTimes(2);
+  expect(consoleLogSpy).toHaveBeenCalledTimes(2);
   expect(consoleLogSpy).toHaveBeenNthCalledWith(1, expect.anything(), expect.stringContaining('Generate .d.ts for'));
   expect(consoleLogSpy).toHaveBeenNthCalledWith(
     2,
@@ -184,7 +184,7 @@ test('outputs logs', async () => {
   consoleLogSpy.mockClear();
 
   await run({ ...defaultOptions, logLevel: 'debug', cache: true });
-  expect(consoleLogSpy).toBeCalledTimes(2);
+  expect(consoleLogSpy).toHaveBeenCalledTimes(2);
   expect(consoleLogSpy).toHaveBeenNthCalledWith(1, expect.anything(), expect.stringContaining('Generate .d.ts for'));
   expect(consoleLogSpy).toHaveBeenNthCalledWith(2, expect.anything(), expect.stringContaining('test/1.css (skipped)'));
 });
@@ -240,10 +240,10 @@ test('returns an error if the file fails to process in non-watch mode', async ()
   expect(error.message).toMatchInlineSnapshot(`"Failed to process files"`);
   expect(error.errors).toHaveLength(2);
   expect(replaceFixtureDir((error.errors[0] as Error).message)).toMatchInlineSnapshot(
-    `"<fixtures>/test/2.css:1:1: Unknown word"`,
+    `"<fixtures>/test/2.css:1:1: Unknown word INVALID"`,
   );
   expect(replaceFixtureDir((error.errors[1] as Error).message)).toMatchInlineSnapshot(
-    `"<fixtures>/test/3.css:1:1: Unknown word"`,
+    `"<fixtures>/test/3.css:1:1: Unknown word INVALID"`,
   );
 
   // The valid files are emitted.

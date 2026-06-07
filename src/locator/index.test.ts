@@ -535,5 +535,5 @@ test('block concurrent calls to load method', async () => {
   });
   await expect(async () => {
     await Promise.all([locator.load(getFixturePath('/test/1.css')), locator.load(getFixturePath('/test/1.css'))]);
-  }).rejects.toThrowError('Cannot call `Locator#load` concurrently.');
+  }).rejects.toThrow('Cannot call `Locator#load` concurrently.');
 });

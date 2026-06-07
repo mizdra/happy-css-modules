@@ -28,5 +28,5 @@ it('issue-168', async () => {
   await symlink(getFixturePath('/test/non-css-file.txt'), getFixturePath('/test/symlink.txt'));
   watcher = await run({ ...defaultOptions, watch: true });
   await waitForAsyncTask(300); // Wait for initial code generation to complete
-  expect(consoleErrorSpy).not.toBeCalled(); // If an error is output, then failed
+  expect(consoleErrorSpy).not.toHaveBeenCalled(); // If an error is output, then failed
 });
