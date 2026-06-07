@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: 26
           cache: 'npm'
-      - run: npm install
+      - run: npm ci
       - run: npm run lint
 
   test:
@@ -37,8 +37,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: 'npm'
-      - run: npm install
-
+      - run: npm ci
       - run: npm run test
         env:
           LESS_VERSION: ${{ matrix.less }}
@@ -51,7 +50,7 @@ jobs:
         with:
           node-version: 26
           cache: 'npm'
-      - run: npm install
+      - run: npm ci
       - run: npm run build
       - run: npm run update-example
       - name: Verify if there is a difference in example
