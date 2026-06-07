@@ -25,7 +25,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "update-example": "cd example && node ../bin/hcm.js '*-*/*.{css,scss,less}' --no-cache",
-    "dev": "npm run update-example -- --watch",
+    "dev": "npm run build && npm run update-example -- --watch",
     "build": "tsc -p tsconfig.build.json",
     "lint": "run-s -c lint:*",
     "lint:oxfmt": "oxfmt --check",
