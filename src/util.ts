@@ -2,7 +2,6 @@ import { constants, readFileSync } from 'node:fs';
 import { access } from 'node:fs/promises';
 import { join, dirname, resolve, matchesGlob } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { resolve as importMetaResolve } from 'import-meta-resolve';
 
 /**
  * The SystemError type of Node.js.
@@ -76,7 +75,7 @@ export function getInstalledPeerDependencies(): string[] {
   const result = [];
   for (const deps of Object.keys(pkgJson.peerDependencies)) {
     try {
-      importMetaResolve(deps, import.meta.url);
+      import.meta.resolve(deps);
       // If the package is installed, push it to the result array.
       result.push(deps);
     } catch {

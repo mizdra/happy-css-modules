@@ -3,7 +3,6 @@ import { mkdir, writeFile as nativeWriteFile, glob } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import serverHarness from '@typescript/server-harness';
-import { resolve } from 'import-meta-resolve';
 import type { server } from 'typescript/lib/tsserverlibrary.js';
 import { getIndexFromLineColumn } from './line-column.js';
 import { getFixturePath } from './util.js';
@@ -35,7 +34,7 @@ type Definition = {
 };
 
 export function createTSServer() {
-  const server = serverHarness.launchServer(fileURLToPath(resolve('typescript/lib/tsserver.js', import.meta.url)), [
+  const server = serverHarness.launchServer(fileURLToPath(import.meta.resolve('typescript/lib/tsserver.js')), [
     // ATA generates some extra network traffic and isn't usually relevant when profiling
     '--disableAutomaticTypingAcquisition',
   ]);
