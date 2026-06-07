@@ -1,11 +1,10 @@
+import { glob } from 'node:fs/promises';
 import { resolve, relative } from 'node:path';
 import * as process from 'node:process';
+import { styleText } from 'node:util';
 import { createCache } from '@file-cache/core';
 import { createNpmPackageKey } from '@file-cache/npm';
-import { Mutex } from 'async-mutex';
-import chalk from 'chalk';
 import * as chokidar from 'chokidar';
-import { glob } from 'glob';
 import { DEFAULT_ARBITRARY_EXTENSIONS } from './config.js';
 import { isGeneratedFilesExist, emitGeneratedFiles } from './emitter/index.js';
 import { Locator } from './locator/index.js';
@@ -14,6 +13,31 @@ import type { Resolver } from './resolver/index.js';
 import { createDefaultResolver } from './resolver/index.js';
 import { createDefaultTransformer, type Transformer } from './transformer/index.js';
 import { getInstalledPeerDependencies, isMatchByGlob } from './util.js';
+
+class Mutex {
+  private _queue: (() => void)[] = [];
+  private _locked = false;
+
+  async acquire(): Promise<void> {
+    await new Promise<void>((resolve) => {
+      if (!this._locked) {
+        this._locked = true;
+        resolve();
+      } else {
+        this._queue.push(resolve);
+      }
+    });
+  }
+
+  release(): void {
+    const next = this._queue.shift();
+    if (next) {
+      next();
+    } else {
+      this._locked = false;
+    }
+  }
+}
 
 export type Watcher = {
   close: () => Promise<void>;
@@ -148,7 +172,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
       // Generate .d.ts and .d.ts.map only when the file has been updated.
       // However, if .d.ts or .d.ts.map has not yet been generated, always generate.
       if (_isGeneratedFilesExist && !_isChangedFile) {
-        logger.debug(chalk.gray(`${relative(cwd, filePath)} (skipped)`));
+        logger.debug(styleText('gray', `${relative(cwd, filePath)} (skipped)`));
         return;
       }
 
@@ -165,7 +189,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
         outDir: options.outDir,
         cwd,
       });
-      logger.info(chalk.green(`${relative(cwd, filePath)} (generated)`));
+      logger.info(styleText('green', `${relative(cwd, filePath)} (generated)`));
 
       await cache.reconcile(); // Update cache for the file
     } finally {
@@ -174,7 +198,7 @@ export async function run(options: RunnerOptions): Promise<Watcher | void> {
   }
 
   async function processAllFiles() {
-    const filePaths = (await glob(options.pattern, { dot: true, cwd }))
+    const filePaths = (await Array.fromAsync(glob(options.pattern, { cwd })))
       // convert relative path to absolute path
       .map((file) => resolve(cwd, file));
 

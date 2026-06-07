@@ -1,9 +1,8 @@
 import { constants, readFileSync } from 'node:fs';
 import { access } from 'node:fs/promises';
-import { join, dirname, resolve } from 'node:path';
+import { join, dirname, resolve, matchesGlob } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolve as importMetaResolve } from 'import-meta-resolve';
-import { minimatch } from 'minimatch';
 
 /**
  * The SystemError type of Node.js.
@@ -65,7 +64,7 @@ export async function exists(path: string): Promise<boolean> {
 }
 
 export function isMatchByGlob(filePath: string, pattern: string, options: { cwd: string }): boolean {
-  return minimatch(filePath, join(options.cwd, pattern), { windowsPathsNoEscape: true });
+  return matchesGlob(filePath, join(options.cwd, pattern));
 }
 
 export function getPackageJson() {
