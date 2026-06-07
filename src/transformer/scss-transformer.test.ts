@@ -3,6 +3,16 @@ import { Locator } from '../locator/index.js';
 import { createFixtures, getFixturePath, replaceFixtureDir } from '../test-util/util.js';
 import { createScssTransformer } from './scss-transformer.js';
 
+vi.mock('sass', async (importOriginal) => {
+  const sass = await importOriginal<typeof import('sass')>();
+  return {
+    ...sass,
+    // Suppress the warning: `Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.`
+    compileStringAsync: async (source: string, options?: Parameters<typeof sass.compileStringAsync>[1]) =>
+      sass.compileStringAsync(source, { silenceDeprecations: ['import'], ...options }),
+  };
+});
+
 const locator = new Locator({ transformer: createScssTransformer() });
 const loadSpy = vi.spyOn(locator, 'load');
 
