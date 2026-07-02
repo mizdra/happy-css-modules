@@ -103,11 +103,11 @@ export function getOriginalLocationOfClassSelector(rule: Rule, classSelector: Cl
     filePath: classSelectorOrigin.file,
     start: {
       line: classSelectorOrigin.line,
-      column: classSelectorOrigin.column + 1,
+      column: classSelectorOrigin.column,
     },
     end: {
       line: classSelectorOrigin.line,
-      column: classSelectorOrigin.column + classSelector.value.length + 1,
+      column: classSelectorOrigin.column + classSelector.value.length,
     },
   };
 }
