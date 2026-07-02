@@ -94,9 +94,7 @@ export function getOriginalLocationOfClassSelector(rule: Rule, classSelector: Cl
 
   const classSelectorOrigin = rule.source.input.origin(
     classSelectorLocation.start.line,
-    // The column of `Input#origin` is 0-based. This behavior is undocumented and probably a postcss's bug.
-    // TODO: Open PR to postcss/postcss
-    classSelectorLocation.start.column - 1,
+    classSelectorLocation.start.column,
   );
   if (classSelectorOrigin === false || classSelectorOrigin.file === undefined) {
     return { filePath: undefined, start: undefined, end: undefined };
@@ -105,11 +103,11 @@ export function getOriginalLocationOfClassSelector(rule: Rule, classSelector: Cl
     filePath: classSelectorOrigin.file,
     start: {
       line: classSelectorOrigin.line,
-      column: classSelectorOrigin.column + 1,
+      column: classSelectorOrigin.column,
     },
     end: {
       line: classSelectorOrigin.line,
-      column: classSelectorOrigin.column + classSelector.value.length + 1,
+      column: classSelectorOrigin.column + classSelector.value.length,
     },
   };
 }
