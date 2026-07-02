@@ -43,7 +43,7 @@
     "chokidar": "^5.0.0",
     "enhanced-resolve": "^5.22.2",
     "import-meta-resolve": "^4.2.0",
-    "postcss": "^8.5.15",
+    "postcss": "^8.5.16",
     "postcss-load-config": "^6.0.1",
     "postcss-modules": "^6.0.1",
     "postcss-selector-parser": "^7.1.1",
